@@ -1,3 +1,120 @@
-<p>
-  core works!
-</p>
+
+<div hidden id="mainscreen">
+
+  <div id="codeTikzDialog" title="Code TikZ for LaTEX">
+      <textarea id="codeTikz"  rows="12" cols="50"></textarea>
+  </div>
+
+
+  <div class="background-image"></div>
+
+  <div id="error">
+  </div>
+<table>
+  <tr>
+<td id="topbar">
+  <button id="resetButton" title="Reset">
+     <img width=24px src="img/reset.png">
+  </button>
+  <button id="chooseExample" onclick="showExamplesScreen()" title="Choose an other example">
+     <img width=24px src="img/examples.png">
+  </button>
+  
+  <div id="exampleName"></div>
+   <div class="vr"></div>
+  
+  
+  <input checked type="radio" name="perspective"  value=""  id="externalPerspective"
+  onclick="setExternalPerspective()"/>
+  <label id="labelexternalPerspective" for="externalPerspective" title="External perspective">
+    <img width=32px src="img/god.svg"/>
+    </label>
+  <input type="radio" name="perspective" value="a" id="internalPerspectiveAgenta"
+   onclick="setInternalPerspective('a')"/>
+  <label id="labelinternalPerspectiveAgenta" for="internalPerspectiveAgenta"  title="Internal perspective of agent a">
+    <img width=32px src="img/agenta.png">
+    </label>
+  
+  <input type="radio" name="perspective" value="b"  onclick="setInternalPerspective('b')"
+  id="internalPerspectiveAgentb"/>
+  <label id="labelinternalPerspectiveAgentb" for="internalPerspectiveAgentb" title="Internal perspective of agent b">
+    <img width=32px src="img/agentb.png">
+    </label>
+  
+  <input type="radio" name="perspective" value="c"  onclick="setInternalPerspective('c')"
+     id="internalPerspectiveAgentc"/>
+  <label id="labelinternalPerspectiveAgentc" for="internalPerspectiveAgentc" title="Internal perspective of agent c">
+    <img width=32px src="img/agentc.png">
+    </label>
+    
+    
+    <div class="vr"></div>
+  <a hidden class="roundButton" onclick="GUIExportInTikz(); return false;" title="Export in Tikz (latex)" href="#">tikz</a>
+  <a hidden  class="roundButton" target="_blank" href="displayMEstar.html" title="Advanced mode">A</a>
+ 
+
+  φ = <input id="formula" title="Type a formula." value="(K a p)"></input>
+  <button id="modelCheckingButton" title="Model checking of the formula" onclick="modelChecking()"><img width=24px src="img/ok.png"></button>
+  <button title="Public announcement of the formula." onclick="performAnnouncement()"><img width=24px src="img/announce.png"></img></button>
+  
+ 
+ <div class="vr"></div>
+  <button id="helpButton" onclick="showHelp()" title="Help/About"><img width=24px src="img/help.png"></button>
+</td>
+<td>
+
+</td>
+
+</tr>
+</table>
+
+<table>
+<tr>
+<td id="palette" valign="top">
+  <center>
+<img id="hintikkasWorldLogo" src="img/hintikkas_world_logo.png" alt="Hintikka's world" ></img></center>
+
+      <div id="panelExample"></div>
+      <div id="guiExample"></div>
+  <div id="panel">
+    <div id="panelGeneralTool">
+    </div>
+  </div>
+</td>
+
+
+
+<td id="hintikkasWorldScene" valign="top">
+<div id="scene">
+<div id="canvas-wrap">
+
+  <p hidden id="phylactere" class="triangle-isosceles">message</p>
+  <canvas id="canvasBackground" width=640 height=680></canvas>
+  <canvas id="canvasRealWorld" class="canvasWorld"></canvas>
+  <div id="explanationGUI">Click on an agent to see its mental states.</div>
+</div>
+</div>
+</td>
+
+<td id="hintikkasWorldKripkeModel" valign="top">
+<div id="divGraphVisualizationEpistemicModel">
+Epistemic state:<br/>
+  <svg id="graphVisualizationEpistemicModel" class="main" width=1000 height=500>
+  </svg>
+</div>
+<div hidden id="divgraphVisualizationActionModel">
+Action:<br/>
+  <svg id="graphVisualizationActionModel" class="main" width=1000 height=500>
+  </svg>
+  <br/>
+Epistemic state after executing the action:<br/>
+  <svg id="graphVisualizationEpistemicModel2" class="main" width=1000 height=500>
+  </svg>
+</div>
+
+</td>
+
+</tr>
+</table>
+<div id="test" style="float: left;"></div>
+</div>

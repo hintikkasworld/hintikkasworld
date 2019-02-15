@@ -1,0 +1,12 @@
+#examplesscreen {
+    text-align: center;
+    background-color: #CCCCFF;
+}
+
+#examplesscreen div  {
+    padding: 32px;
+}
+
+#examples div {
+    padding: 8px;
+}
