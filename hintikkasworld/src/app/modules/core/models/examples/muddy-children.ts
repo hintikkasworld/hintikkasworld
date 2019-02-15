@@ -1,7 +1,7 @@
-import { WorldValuation } from '../world-valuation';
+import { WorldValuation } from '../epistemicmodel/world-valuation';
+import { ExampleDescription } from './exampledescription';
+import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 
-import { ExampleDescription } from '../exampledescription';
-import { ExplicitEpistemicModel } from '../explicit-epistemic-model';
 
 /**
  * @param truePropositions an array of true propositions. Proposition "ma" stands for "a is muddy" and "mb" stands for "b is muddy".

@@ -39,13 +39,7 @@ function clone(e)
 	else
 	if(e instanceof Object)
 	{
-   	var c = $.extend(true, Object.create(Object.getPrototypeOf(e)), e);;
-
-
-/*		for(let i in e)	{
-			c[i] = clone(e[i]);
-		}*/
-
+        var c = $.extend(true, Object.create(Object.getPrototypeOf(e)), e);;
 		return c;
 	}
 	else

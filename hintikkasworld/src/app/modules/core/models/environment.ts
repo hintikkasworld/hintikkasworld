@@ -1,4 +1,4 @@
-import { ExampleDescription } from './exampledescription';
+import { ExampleDescription } from './examples/exampledescription';
 
 export class Environment {
     private _epistemicModel;
