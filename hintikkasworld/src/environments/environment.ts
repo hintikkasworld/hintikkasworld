@@ -3,7 +3,14 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+
+   agents: ["a", "b", "c", "d"],
+   agentColor: {"a": "#ED5D1B", "b": "#80AAFF", "c":"#72267C", "d":"#008800"},
+   agentImageURL: {"a": "img/agenta.png", "b": "img/agentb.png",  "c": "img/agentc.png",  "d": "img/agentd.png"}
+
+
+
 };
 
 /*
@@ -14,3 +21,5 @@ export const environment = {
  * on performance if an error is thrown.
  */
 // import 'zone.js/dist/zone-error';  // Included with Angular CLI.
+
+
