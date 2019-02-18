@@ -1,6 +1,10 @@
+import { ExplicitEventModel } from './../eventmodel/explicit-event-model';
+import { EventModelAction } from './../environment/event-model-action';
+import { EventModel } from './../eventmodel/event-model';
 import { WorldValuation } from '../epistemicmodel/world-valuation';
-import { ExampleDescription } from './exampledescription';
+import { ExampleDescription } from '../environment/exampledescription';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
+import { Formula } from '../formula/formula';
 
 
 /**
@@ -27,8 +31,10 @@ class MuddyChildrenWorld extends WorldValuation {
     draw(context: CanvasRenderingContext2D) {
         this.drawAgents(context);
 
-        if (this.modelCheck("ma"))
+        if (this.modelCheck("ma")) 
             context.drawImage(MuddyChildrenWorld.mud, 16, 0, 32, 16);
+        
+            
 
         if (this.modelCheck("mb"))
             context.drawImage(MuddyChildrenWorld.mud, this.agentPos["b"].x - 16, 0, 32, 16);
@@ -59,7 +65,12 @@ export class MuddyChildren implements ExampleDescription {
     }
 
     getActions() {
-        return [];
+        return [new EventModelAction("Father says at least one child is muddy.", 
+                ExplicitEventModel.getEventModelPublicAnnouncement(new Formula("(ma or mb)"))),
+                
+                new EventModelAction("Publicly a is muddy!", 
+                ExplicitEventModel.getEventModelPublicAnnouncement(new Formula("ma")))
+                ];
     }
 
 /*

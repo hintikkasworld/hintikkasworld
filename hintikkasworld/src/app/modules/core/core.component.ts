@@ -1,6 +1,8 @@
 import { MuddyChildren } from './models/examples/muddy-children';
-import { Environment } from './models/environment';
+import { Environment } from './models/environment/environment';
 import { Component, OnInit, Input } from '@angular/core';
+import { ExampleDescription } from './models/environment/exampledescription';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-core',
@@ -9,11 +11,19 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class CoreComponent implements OnInit {
 
-  @Input() env: Environment = new Environment(new MuddyChildren());
+  @Input() exampleDescription: ExampleDescription;
+  bsEnv: BehaviorSubject<Environment>;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
+    let env: Environment = new Environment(new MuddyChildren());
+    this.bsEnv = new BehaviorSubject(env);
   }
 
+  perform(action) {
+    console.log(action)
+    this.bsEnv.value.perform(action);
+    this.bsEnv.next(this.bsEnv.value);
+  }
 }

@@ -1,6 +1,7 @@
 import { environment } from './../../../../../environments/environment';
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
-import { Environment } from '../../models/environment';
+import { Environment } from '../../models/environment/environment';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-comics',
@@ -13,7 +14,10 @@ import { Environment } from '../../models/environment';
 export class ComicsComponent implements OnInit {
 
   private _env: Environment;
+
+
   @Input() perspectiveAgent: string;
+  @Input() obsEnv: Observable<Environment>;
 
   constructor() {
 
@@ -44,7 +48,6 @@ export class ComicsComponent implements OnInit {
     setTimeout(initGui.bind(this), 500);
   }
 
-  @Input()
   public set env(env: Environment) {
     this._env = env;
     console.log(env);
@@ -59,6 +62,7 @@ export class ComicsComponent implements OnInit {
 
 
   ngOnInit() {
+    this.obsEnv.subscribe((env) => this.env = env); //pas bon... pas besoin de compute
   }
 
   private openWorlds = [];

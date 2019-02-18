@@ -66,7 +66,7 @@
 <tr>
 <td id="palette" valign="top">
 <img id="hintikkasWorldLogo" src="assets/img/hintikkas_world_logo.png" alt="Hintikka's world"/>
-
+<app-action-list [obsEnv]='bsEnv.asObservable()' (toPerform)='perform($event)'></app-action-list>
       <div id="panelExample"></div>
       <div id="guiExample"></div>
   <div id="panel">
@@ -77,7 +77,7 @@
 
 
 <td id="hintikkasWorldScene" valign="top">
-  <app-comics [env]='env'></app-comics>
+  <app-comics [obsEnv]='bsEnv.asObservable()'></app-comics>
 </td>
 
 <td id="hintikkasWorldKripkeModel" valign="top">
