@@ -7,3 +7,65 @@
   margin: 0px;
   background-color: #F7D64F;
   }
+
+  #exampleName {
+    display: inline-block;
+    font-size: 22px;
+    height: 48px;
+    margin: 8px;
+  }
+
+  
+  
+input[type="radio"] {
+	display: none;
+}
+
+input[type="radio"]:checked + label {
+  background-color: #8888FF;
+}
+
+input[type="radio"] + label {
+  background-color: white;
+  border-radius: 16px;
+  padding: 4px;
+}
+
+#hintikkasWorldLogo {
+  margin: 0px;
+  padding: 0px;
+  height:120px;
+}
+
+button {
+  background-color: white;
+  border-radius: 16px;
+  margin-top: 8px;
+  margin-left: 2px;
+  margin-bottom: 0px;
+  padding: 4px 4px 4px 4px;
+}
+
+#topbar button {
+  height:42px;
+}
+
+
+button:focus {
+  outline: none;
+}
+
+ button :hover {
+  background-color: #EEDDAA;
+}
+
+.vr {
+  border-left:1px solid #000;
+  height:42px;
+  transform: rotate(20deg);
+  margin-left:16px;
+  margin-right:16px;
+  display: inline-block;
+   vertical-align: text-bottom;
+}
+

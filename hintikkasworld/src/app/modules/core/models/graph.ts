@@ -1,13 +1,13 @@
 export class Graph {
 
-    protected nodes: any;
+    protected nodes: { [id: string]: object };
     protected successors: { [key: string]: any; };
     private dotstyle: any;
     protected agents: string;
     protected pointed: string;
 
     constructor() {
-        this.nodes = new Object();
+        this.nodes = {};
         this.successors = new Object();
         this.dotstyle = '';
     }
@@ -237,7 +237,7 @@ export class Graph {
     /**
     @returns a clone of the graph.
     */
-    clone() {
+ /**   clone() {
         var g = new Graph();
 
         g.nodes = this.nodes.clone();
@@ -245,7 +245,7 @@ export class Graph {
 
         return g;
     }
-
+*/
 
 
     /**

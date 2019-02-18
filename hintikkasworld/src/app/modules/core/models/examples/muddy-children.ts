@@ -13,7 +13,7 @@ class MuddyChildrenWorld extends WorldValuation {
 
     static getMudImage() {
         let mud = new Image();
-        mud.src = "img/mud.png";
+        mud.src = "assets/img/mud.png";
         return mud;
     }
 
@@ -24,7 +24,7 @@ class MuddyChildrenWorld extends WorldValuation {
         this.agentPos["c"] = undefined;
     }
 
-    draw(context) {
+    draw(context: CanvasRenderingContext2D) {
         this.drawAgents(context);
 
         if (this.modelCheck("ma"))

@@ -1,0 +1,84 @@
+#scene {
+  position: relative
+}
+
+#canvas-wrap {
+  position: relative;
+  width: 640px;
+  height: 680px;
+}
+
+#phylactere {
+  z-index: 10;
+  border-style: solid;
+  font-size: 18;
+}
+
+/*canvas in the background*/
+#canvasBackground {
+  z-index: 0;
+}
+
+#canvasRealWorld {
+  position: absolute;
+  width: 300px;
+  height: 150px;
+}
+
+#explanationGUI {
+  position: absolute;
+  z-index: 2;
+  font-size: 18pt;
+  color: brown;
+}
+
+
+.orBetweenWorlds {
+  font-size:8pt;
+  vertical-align: bottom;
+  display: inline-block;
+}
+
+.bulle {
+  background-color: white;
+  position:absolute;
+  z-index: 2;
+  max-width:500px;
+  height:96px;
+  border-radius: 25px;
+  border: 3px solid black;
+  padding: 8px 4px 4px 4px;
+}
+
+
+
+.bullethought {
+  z-index: 2;
+  border-radius: 50%;
+  border: 3px solid black;
+  position:absolute;
+  background-color: white;
+}
+
+.bulle:hover {
+  border-radius:32px;
+  border-width: 4px;
+  padding: 7px 3px 3px 3px;
+}
+
+.worldcontainer    {
+  position:absolute;
+  max-width:480px;
+  max-height:96px;
+  overflow:auto;
+}
+
+
+
+.canvasWorld {
+  background-color: #F7D64F;
+}
+
+.canvasWorld:hover {
+  opacity: 0.9;
+}
