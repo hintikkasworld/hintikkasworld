@@ -2,6 +2,6 @@
   <img src="assets/img/hintikkas_world_logo.png" height=300px onclick="showTitleScreen()" /><br />
   <div id="examplesscreenexplanation">Please select an example in the list:</div>
   <div id="examples" *ngFor="let example of examples">
-   <a href="core"> <app-example [exampleDescription]='example'></app-example></a>
+   <app-example (click)="openExampleDescription(example)" [exampleDescription]='example'></app-example>
   </div>
 </div>

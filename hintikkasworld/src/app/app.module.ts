@@ -18,6 +18,7 @@ const appRoutes: Routes = [
   {path: 'core', component: CoreComponent},
 ];
 
+
 @NgModule({
   declarations: [
     AppComponent

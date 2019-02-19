@@ -1,8 +1,10 @@
-import { MuddyChildren } from './models/examples/muddy-children';
+import { ExampleService } from './../../services/example.service';
 import { Environment } from './models/environment/environment';
 import { Component, OnInit, Input } from '@angular/core';
 import { ExampleDescription } from './models/environment/exampledescription';
 import { BehaviorSubject } from 'rxjs';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-core',
@@ -11,13 +13,16 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class CoreComponent implements OnInit {
 
-  @Input() exampleDescription: ExampleDescription;
   bsEnv: BehaviorSubject<Environment>;
 
-  constructor() {}
+  constructor(private exampleService: ExampleService) {}
 
   ngOnInit() {
-    let env: Environment = new Environment(new MuddyChildren());
+    
+   let exampleDescription = this.exampleService.getExampleDescription();
+ //console.log( this.route.paramMap.pipe(switchMap((params: ParamMap) => this.exampleDescription = JSON.parse(params.get('example')))) );
+   
+    let env: Environment = new Environment(exampleDescription);
     this.bsEnv = new BehaviorSubject(env);
   }
 

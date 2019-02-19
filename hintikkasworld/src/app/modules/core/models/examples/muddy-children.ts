@@ -70,7 +70,13 @@ export class MuddyChildren extends ExampleDescription {
                 ExplicitEventModel.getEventModelPublicAnnouncement(new Formula("(ma or mb)"))),
                 
                 new EventModelAction("Publicly a is muddy!", 
-                ExplicitEventModel.getEventModelPublicAnnouncement(new Formula("ma")))
+                ExplicitEventModel.getEventModelPublicAnnouncement(new Formula("ma"))),
+
+                new EventModelAction( "Children say they do not know.", 
+                ExplicitEventModel.getEventModelPublicAnnouncement(new Formula("((not (K a ma)) and (not (K b mb)))")))
+
+
+               
                 ];
     }
 

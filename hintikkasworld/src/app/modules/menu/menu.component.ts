@@ -1,7 +1,10 @@
+import {Router} from '@angular/router';
 import { ConsecutiveNumbers } from './../core/models/examples/consecutive-numbers';
 import { MuddyChildren } from './../core/models/examples/muddy-children';
 import { ExampleDescription } from './../core/models/environment/exampledescription';
 import { Component, OnInit, Input } from '@angular/core';
+import { ExampleService } from 'src/app/services/example.service';
+
 
 
 @Component({
@@ -13,7 +16,11 @@ export class MenuComponent implements OnInit {
 
   examples = [new MuddyChildren(), new ConsecutiveNumbers()];
 
-  constructor() { }
+  openExampleDescription(exampleDescription: ExampleDescription ) {
+    this.exampleService.setExampleDescription(exampleDescription);
+    this.router.navigate(['core']);
+  }
+  constructor(private exampleService: ExampleService, private router: Router) { }
 
   ngOnInit() {
   }
