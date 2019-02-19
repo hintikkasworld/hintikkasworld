@@ -43,7 +43,8 @@ class MuddyChildrenWorld extends WorldValuation {
 }
 
 
-export class MuddyChildren implements ExampleDescription {
+export class MuddyChildren extends ExampleDescription {
+    getName() {return "Muddy Children"};
 
     getInitialEpistemicModel() {
         let M = new ExplicitEpistemicModel();

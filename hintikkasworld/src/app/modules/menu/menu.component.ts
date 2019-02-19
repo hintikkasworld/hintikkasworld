@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ConsecutiveNumbers } from './../core/models/examples/consecutive-numbers';
+import { MuddyChildren } from './../core/models/examples/muddy-children';
+import { ExampleDescription } from './../core/models/environment/exampledescription';
+import { Component, OnInit, Input } from '@angular/core';
+
 
 @Component({
   selector: 'app-menu',
@@ -6,6 +10,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnInit {
+
+  examples = [new MuddyChildren(), new ConsecutiveNumbers()];
 
   constructor() { }
 

@@ -3,7 +3,6 @@ export class Graph {
     protected nodes: { [id: string]: object };
     protected successors: { [key: string]: any; };
     private dotstyle: any;
-    protected agents: string;
     protected pointed: string;
 
     constructor() {
@@ -12,6 +11,10 @@ export class Graph {
         this.dotstyle = '';
     }
 
+
+    getAgents() {
+        return Object.keys(this.successors);
+    }
     /**
      * @returns a dictionnary containing pairs (nodeid, node)  
      */
@@ -27,7 +30,7 @@ export class Graph {
 
 
     _removeEdgesWithUndefinedNodes() {
-        for(let agent of this.agents)
+        for(let agent of this.getAgents())
             for(let inode in this.successors[agent])
                 if(this.nodes[inode] == undefined)
                     delete this.successors[agent][inode];
@@ -423,7 +426,7 @@ export class Graph {
 
         while (queue.length != 0) {
             let world = queue.shift();
-            for (let a of this.agents)
+            for (let a of this.getAgents())
                 for (let u of this.getSuccessors(world, a))
                     if (visited[u] == undefined) {
                         if (visited[world].distance >= maxDistance) {
@@ -460,7 +463,7 @@ export class Graph {
             if (world == destinationNode) {
                 return visited;
             }
-            for (let a of this.agents)
+            for (let a of this.getAgents())
                 for (let u of this.getSuccessors(world, a))
                     if (visited[u] == undefined) {
                         visited[u] = { distance: visited[world].distance + 1, parent: world, agent: a };
