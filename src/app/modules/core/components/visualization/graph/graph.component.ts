@@ -25,7 +25,10 @@ export class GraphComponent implements OnInit {
   constructor(private d3Service: D3Service) { }
 
   ngOnInit() {
-    this.obsEnv.subscribe((env) => this.update(env.getEpistemicModel()));
+    this.obsEnv.subscribe((env) => {
+      if (env.getEpistemicModel() instanceof ExplicitEpistemicModel)
+        this.update(<ExplicitEpistemicModel>env.getEpistemicModel());
+    });
 
   }
 

@@ -155,22 +155,28 @@ export class MineSweeper extends ExampleDescription {
     /*
      * event when the player clicks on the real world
      */
-    onRealWorldClick(env: Environment, evt) {
-        let M = env.getEpistemicModel();
-        let cell = M.getNode(M.getPointedWorld()).getCell(evt);
+    onRealWorldClick(env: Environment, point) {
+        let M: ExplicitEpistemicModel = <ExplicitEpistemicModel>env.getEpistemicModel();
+        let pointedWorld: MineSweeperWorld = <MineSweeperWorld>M.getPointedWorld();
+        let cell = pointedWorld.getCell(point);
 
         if (cell == undefined) return;
 
-        if (M.getNode(M.getPointedWorld()).isMine(cell))
+        if (pointedWorld.isMine(cell)) {
+            console.log("lost");
             env.setEpistemicModel(this.getMineSweeperGameOverKripkeModel());
+        }
         else {
-            let hint = M.getNode(M.getPointedWorld()).getHint(cell);
+            let hint = pointedWorld.getHint(cell);
 
             /* remove worlds in which the hint is different or
              worlds for which there is a bomb at cell*/
-            for (let id in M.getNodes())
-                if (M.getNode(id).isMine(cell) || (M.getNode(id).getHint(cell) !== hint))
+            for (let id in M.getNodes()) {
+                let world: MineSweeperWorld = <MineSweeperWorld>M.getNode(id);
+                if (world.isMine(cell) || (world.getHint(cell) !== hint))
                     M.removeNode(id);
+            }
+
             env.setEpistemicModel(M);
         }
     }
@@ -183,5 +189,5 @@ export class MineSweeper extends ExampleDescription {
         return [];
     }
 
-    
+
 }

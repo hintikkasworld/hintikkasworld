@@ -18,10 +18,7 @@ export class CoreComponent implements OnInit {
   constructor(private exampleService: ExampleService) {}
 
   ngOnInit() {
-    
    let exampleDescription = this.exampleService.getExampleDescription();
- //console.log( this.route.paramMap.pipe(switchMap((params: ParamMap) => this.exampleDescription = JSON.parse(params.get('example')))) );
-   
     let env: Environment = new Environment(exampleDescription);
     this.bsEnv = new BehaviorSubject(env);
   }
@@ -29,6 +26,16 @@ export class CoreComponent implements OnInit {
   perform(action) {
     console.log(action)
     this.bsEnv.value.perform(action);
+    this.bsEnv.next(this.bsEnv.value);
+  }
+
+  setInternalPerspective(a: string) {
+    this.bsEnv.value.agentPerspective = a;
+    this.bsEnv.next(this.bsEnv.value);
+  }
+
+  setExternalPerspective() {
+    this.bsEnv.value.agentPerspective = undefined;
     this.bsEnv.next(this.bsEnv.value);
   }
 }
