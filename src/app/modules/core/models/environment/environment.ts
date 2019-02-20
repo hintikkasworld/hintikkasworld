@@ -3,15 +3,16 @@ import { ExampleDescription } from './exampledescription';
 import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 
 export class Environment {
-    private _epistemicModel;
-    private _exampleDescription;
+    private _epistemicModel: EpistemicModel;
+    private _exampleDescription: ExampleDescription;
+    private _agentPerspective: string;
 
     constructor(exampleDescription: ExampleDescription) {
         this._exampleDescription = exampleDescription;
         this.reset();
     }
 
-    getEpistemicModel() {
+    getEpistemicModel(): EpistemicModel {
         return this._epistemicModel;
     }
 
@@ -19,8 +20,19 @@ export class Environment {
         this._epistemicModel = M;
     }
 
+    getExampleDescription(): ExampleDescription {
+        return this._exampleDescription;
+    }
     getActions() {
         return this._exampleDescription.getActions();
+    }
+
+    set agentPerspective(a: string) {
+        this._agentPerspective = a;
+    }
+
+    get agentPerspective() {
+        return this._agentPerspective;
     }
 
 

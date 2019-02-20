@@ -14,5 +14,5 @@ export abstract class ExampleDescription {
     }
 
 
-    onRealWorldClick(env: Environment, evt) {};
+    onRealWorldClick(env: Environment, point) {};
 }

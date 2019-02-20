@@ -325,8 +325,8 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
     }
 
 
-    getPointedWorld() {
-        return this.getNode(this.getPointedWorldID());
+    getPointedWorld(): World {
+        return <World> this.getNode(this.getPointedWorldID());
     }
 
 

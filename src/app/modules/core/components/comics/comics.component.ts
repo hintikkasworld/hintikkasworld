@@ -8,16 +8,13 @@ import { World } from '../../models/epistemicmodel/world';
   selector: 'app-comics',
   templateUrl: './comics.component.html',
   styleUrls: ['./comics.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None //because of JQuery dynamics
 })
 
 
 export class ComicsComponent implements OnInit {
 
   private _env: Environment;
-
-
-  @Input() perspectiveAgent: string;
   @Input() obsEnv: Observable<Environment>;
 
   constructor() {
@@ -28,16 +25,16 @@ export class ComicsComponent implements OnInit {
       $('#explanationGUI').css({ top: 150, left: 50 });
       $('#canvasRealWorld').css({ top: 250, left: $('#canvas').width() / 2 - $('#canvasRealWorld').width() / 2 });
 
+      let comics = this;
+      let canvasRealWorld = (<HTMLCanvasElement>$('#canvasRealWorld')[0]);
 
-      $('#canvasRealWorld').bind("click",
-        (evt) => {
-          console.log(this.env)
-          if (!comics.modifyOpenWorldsClick.bind(comics)(0,
-            (<HTMLCanvasElement>$('#canvasRealWorld')[0]),
-            comics.env.getEpistemicModel().getPointedWorld())(evt)) {
-            let point = this.getMousePos((<HTMLCanvasElement>$('#canvasRealWorld')[0]), evt); comics.onRealWorldClick(point)
-          }
-        });
+      canvasRealWorld.addEventListener("click", function (evt) {
+
+        if (!comics.modifyOpenWorldsClick.bind(comics)(0, canvasRealWorld, comics.env.getEpistemicModel().getPointedWorld())(evt)) {
+          let point = comics.getMousePos(canvasRealWorld, evt);
+          comics.env.getExampleDescription().onRealWorldClick(comics.env, point);
+        }
+      });
 
 
       $('#canvasBackground').click(function () {
@@ -51,7 +48,6 @@ export class ComicsComponent implements OnInit {
 
   public set env(env: Environment) {
     this._env = env;
-    console.log(env);
     this.compute(0);
 
   }
@@ -66,7 +62,7 @@ export class ComicsComponent implements OnInit {
     this.obsEnv.subscribe((env) => this.env = env); //pas bon... pas besoin de compute
   }
 
-  private openWorlds: {world:World, agent:string}[] = [];
+  private openWorlds: { world: World, agent: string }[] = [];
   /*
    if openWorld = [], no thoughts are shown
    if openWorld = [{world: "w", agent: "a"}], the real world is w and the GUI shows the thoughts of agent a
@@ -74,7 +70,7 @@ export class ComicsComponent implements OnInit {
          there is a possible world u where we show the thoughts of agent b.
   */
   private canvasRealWorldTop = 250;
-  private canvasFromWorld  : (Map<World, HTMLCanvasElement>)[] = [];
+  private canvasFromWorld: (Map<World, HTMLCanvasElement>)[] = [];
   private canvasWorldStandardWidth = 128;
   private zoomWorldCanvasInBubble = 1;
   private levelheight = this.zoomWorldCanvasInBubble * this.canvasWorldStandardWidth + 40; //170
@@ -153,17 +149,14 @@ export class ComicsComponent implements OnInit {
   @returns the coordinates of the world of ID worldID at level
   */
   private getWorldPosition(level: number, world: World) {
-    console.log(this.canvasFromWorld[level])
-    console.log(world)
-    console.log(this.canvasFromWorld[level].get(world))
     return this.cumulativeOffset(this.canvasFromWorld[level].get(world));
   }
 
   /**
   @returns a new canvas
   */
-  private getNewCanvas() {
-    let canvas = document.createElement('canvas');
+  private getNewCanvas(): HTMLCanvasElement {
+    let canvas: HTMLCanvasElement = document.createElement('canvas');
     canvas.id = "CursorLayer";
     canvas.width = this.canvasWorldStandardWidth * this.zoomWorldCanvasInBubble;
     canvas.height = this.canvasWorldStandardWidth * this.zoomWorldCanvasInBubble / 2;
@@ -183,7 +176,7 @@ export class ComicsComponent implements OnInit {
 
 
 
-  private getMousePos(canvas: HTMLCanvasElement, evt) {
+  private getMousePos(canvas: HTMLCanvasElement, evt: MouseEvent) {
     var rect = canvas.getBoundingClientRect();
     return {
       x: (evt.clientX - rect.left) / this.getWorldZoomFactor(canvas),
@@ -200,12 +193,11 @@ export class ComicsComponent implements OnInit {
   */
   private modifyOpenWorldsClick(level: number, canvasWorld: HTMLCanvasElement, world: World) {
     let comics = this;
-    console.log(comics)
     return function (evt) {
       comics.openWorlds = comics.openWorlds.slice(0, level);
       var point = comics.getMousePos(canvasWorld, evt);
       for (let a of environment.agents)
-        if ((canvasWorld.id != "canvasRealWorld") || (comics.perspectiveAgent == undefined) || (a == comics.perspectiveAgent)) {
+        if ((canvasWorld.id != "canvasRealWorld") || (comics.env.agentPerspective == undefined) || (a == comics.env.agentPerspective)) {
           if (world.getAgentRectangle(a).isPointIn(point)) {
             comics.openWorlds.push({ world: world, agent: a });
             comics.compute(level);
@@ -254,17 +246,6 @@ export class ComicsComponent implements OnInit {
 
 
 
-
-
-
-
-
-  private onRealWorldClick = (evt) => { };
-
-
-  private setOnRealWorldClick(f) {
-    this.onRealWorldClick = f;
-  }
 
 
 
@@ -403,6 +384,24 @@ export class ComicsComponent implements OnInit {
   @description update the GUI
   */
   private compute(fromlevel: number) {
+    function getRandomElementInArray(array) {
+      // if (array.length > 100)
+      return array[Math.floor(Math.random() * array.length)]
+      /** else {
+         if (getRandomElementPermutation == undefined)
+           getRandomElementPermutation = createRandomPermutation(array.length);
+ 
+         if (getRandomElementPermutation.length != array.length)
+           getRandomElementPermutation = createRandomPermutation(array.length);
+ 
+         getRandomElementPermutationIndex++;
+         if (getRandomElementPermutationIndex >= array.length)
+           getRandomElementPermutationIndex = 0;
+ 
+         return array[getRandomElementPermutation[getRandomElementPermutationIndex]];
+       }*/
+    }
+
     if (this.env.getEpistemicModel().getPointedWorld() == undefined) {
       this.guiError();
       return;
@@ -432,18 +431,28 @@ export class ComicsComponent implements OnInit {
     if (fromlevel == 0) {
       let canvas = $('#canvasRealWorld')[0];
       this.canvasFromWorld[0] = new Map();
-      this.canvasFromWorld[0].set(this.env.getEpistemicModel().getPointedWorld(), <HTMLCanvasElement> canvas);
-      (<any> canvas).draw = () => {
+      this.canvasFromWorld[0].set(this.env.getEpistemicModel().getPointedWorld(), <HTMLCanvasElement>canvas);
+      (<any>canvas).draw = () => {
         let context = this.getContext((<HTMLCanvasElement>document.getElementById("canvasRealWorld")));
 
         let world: World;
-        if (this.perspectiveAgent == undefined)
-          world = this.env.getEpistemicModel().getPointedWorld();
-        else {
+        world = this.env.getEpistemicModel().getPointedWorld();
 
+
+        if (this.env.agentPerspective != undefined) {
+          let comics = this;
+          let loop = function () {
+            let M = comics.env.getEpistemicModel();
+            let worlds = M.getSuccessors(M.getPointedWorld(), comics.env.agentPerspective);
+            world = getRandomElementInArray(worlds);
+            world.draw(context);
+            if (comics.env.agentPerspective != undefined)
+              setTimeout(loop, 500);
+          }
+          loop();
         }
-
-        world.draw(context);
+        else
+          world.draw(context);
 
       }
 
@@ -458,8 +467,6 @@ export class ComicsComponent implements OnInit {
 
       var u = worldagent.world;
 
-      if(u == undefined)
-        console.log("ARGGGGGGGGGGG");
 
       var y = this.getYLevelBulle(level);
       var x1 = this.getWorldPosition(level - 1, u).x;
