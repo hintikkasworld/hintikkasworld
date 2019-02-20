@@ -2,6 +2,6 @@ import { PropositionalAssignmentsPostcondition } from './propositional-assignmen
 
 describe('PropositionalAssignmentsPostcondition', () => {
   it('should create an instance', () => {
-    expect(new PropositionalAssignmentsPostcondition()).toBeTruthy();
+    expect(new PropositionalAssignmentsPostcondition(null)).toBeTruthy();
   });
 });
