@@ -5,7 +5,11 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { World } from './world';
 
 
-export class SymbolicEpistemicModel implements EpistemicModel{
+export class SymbolicEpistemicModel implements EpistemicModel {
+    
+    getAgents(): string[] {
+        throw new Error("Method not implemented.");
+    }
 
     protected pointed: any;
 

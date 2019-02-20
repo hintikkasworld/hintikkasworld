@@ -69,3 +69,6 @@ button:focus {
    vertical-align: text-bottom;
 }
 
+#internalPerspectiveAgent {
+  display: inline-block;
+}

@@ -1,3 +1,5 @@
+import { environment } from './../../../environments/environment';
+
 import { ExampleService } from './../../services/example.service';
 import { Environment } from './models/environment/environment';
 import { Component, OnInit, Input } from '@angular/core';
@@ -5,6 +7,8 @@ import { ExampleDescription } from './models/environment/exampledescription';
 import { BehaviorSubject } from 'rxjs';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
+
+
 
 @Component({
   selector: 'app-core',
@@ -37,5 +41,9 @@ export class CoreComponent implements OnInit {
   setExternalPerspective() {
     this.bsEnv.value.agentPerspective = undefined;
     this.bsEnv.next(this.bsEnv.value);
+  }
+
+  getAgents() {
+    this.bsEnv.value.getEpistemicModel().getAgents();
   }
 }
