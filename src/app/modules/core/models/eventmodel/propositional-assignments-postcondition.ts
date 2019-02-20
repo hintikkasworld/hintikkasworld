@@ -10,7 +10,7 @@ export class PropositionalAssignmentsPostcondition {
 
         for (let p in post) {
             if (typeof (post[p]) == "string")
-                post[p] = FormulaFactory.createformula(post[p]);
+                post[p] = FormulaFactory.createFormula(post[p]);
         }
     }
 

@@ -67,13 +67,13 @@ export class MuddyChildren extends ExampleDescription {
 
     getActions() {
         return [new EventModelAction("Father says at least one child is muddy.", 
-                ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createformula("(ma or mb)"))),
+                ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("(ma or mb)"))),
                 
                 new EventModelAction("Publicly a is muddy!", 
-                ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createformula("ma"))),
+                ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("ma"))),
 
                 new EventModelAction( "Children say they do not know.", 
-                ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createformula("((not (K a ma)) and (not (K b mb)))")))
+                ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("((not (K a ma)) and (not (K b mb)))")))
 
 
                

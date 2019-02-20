@@ -1,16 +1,26 @@
+
 import { Scheme } from './scheme';
 
 export interface Formula {
-     
+    prettyPrint(): String;
 }
 
 export class TrueFormula implements Formula {
+    prettyPrint(): String {
+        throw new Error("Method not implemented.");
+    }
 
 }
 export class FalseFormula implements Formula {
+    prettyPrint(): String {
+        throw new Error("Method not implemented.");
+    }
 
 }
 export class AtomicFormula implements Formula {
+    prettyPrint(): String {
+        throw new Error("Method not implemented.");
+    }
     private _atomicString: string;
     constructor(name: string) {
         this._atomicString = name;
@@ -22,6 +32,9 @@ export class AtomicFormula implements Formula {
 }
 
 export class OrFormula implements Formula {
+    prettyPrint(): String {
+        throw new Error("Method not implemented.");
+    }
     private _formulas: Array<Formula>;
     constructor(f: Array<Formula>) {
         this._formulas = f;
@@ -32,6 +45,9 @@ export class OrFormula implements Formula {
 }
 
 export class AndFormula implements Formula {
+    prettyPrint(): String {
+        throw new Error("Method not implemented.");
+    }
     private _formulas: Array<Formula>;
     constructor(f: Array<Formula>) {
         this._formulas = f;
@@ -42,6 +58,9 @@ export class AndFormula implements Formula {
 }
 
 export class KFormula implements Formula {
+    prettyPrint(): String {
+        throw new Error("Method not implemented.");
+    }
     private _agent: string;
     private _formula: Formula;
     constructor(a: string, f: Formula) {
@@ -57,6 +76,9 @@ export class KFormula implements Formula {
 }
 
 export class KposFormula implements Formula {
+    prettyPrint(): String {
+        throw new Error("Method not implemented.");
+    }
     private _agent: string;
     private _formula: Formula;
     constructor(a: string, f: Formula) {
@@ -72,6 +94,9 @@ export class KposFormula implements Formula {
 }
 
 export class KwFormula implements Formula {
+    prettyPrint(): String {
+        throw new Error("Method not implemented.");
+    }
     private _agent: string;
     private _formula: Formula;
     constructor(a: string, f: Formula) {
@@ -88,6 +113,9 @@ export class KwFormula implements Formula {
 
 
 export class NotFormula implements Formula {
+    prettyPrint(): String {
+        throw new Error("Method not implemented.");
+    }
     private _formula: Formula;
     constructor(f: Formula) {
         this._formula = f;
@@ -99,6 +127,9 @@ export class NotFormula implements Formula {
 
 
 export class XorFormula implements Formula {
+    prettyPrint(): String {
+        throw new Error("Method not implemented.");
+    }
     private _formulas: Array<Formula>;
     constructor(f: Array<Formula>) {
         this._formulas = f;
@@ -110,6 +141,9 @@ export class XorFormula implements Formula {
 
 
 export class ImplyFormula implements Formula {
+    prettyPrint(): String {
+        throw new Error("Method not implemented.");
+    }
     private _formula1: Formula;
     private _formula2: Formula;
     constructor(f1: Formula, f2: Formula) {
@@ -126,6 +160,9 @@ export class ImplyFormula implements Formula {
 
 
 export class EquivFormula implements Formula {
+    prettyPrint(): String {
+        throw new Error("Method not implemented.");
+    }
     private _formula1: Formula;
     private _formula2: Formula;
     constructor(f1: Formula, f2: Formula) {
@@ -145,10 +182,7 @@ export class EquivFormula implements Formula {
 
 
 export class FormulaFactory{
-    private _content: Formula;
-
-
-    static createformula(schemeExpression: string | Array<any>) {
+    static createFormula(schemeExpression: string | Array<any>) {
         let ast;
         if (typeof schemeExpression == "string")
             ast = Scheme.parser(<string> schemeExpression);
@@ -205,10 +239,6 @@ export class FormulaFactory{
         }
     }
 
-    prettyPrint(): string {
-        throw "To be implemented by Tristan Charrier";
-    }
-    get content() {
-        return this._content;
-    }
+
+
 }
