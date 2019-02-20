@@ -1,4 +1,4 @@
-import { Formula } from '../formula/formula';
+import { Formula, FormulaFactory } from '../formula/formula';
 import { SymbolicEpistemicModel } from './symbolic-epistemic-model';
 
 export interface SymbolicRelation {
@@ -15,9 +15,9 @@ export class Obs implements SymbolicRelation{
     }
     toFormula(){
         let strFormula:string = "";
-        this.variables.forEach(var => {
+       /* this.variables.forEach(var => {
             strFormula += "(" + var + "<->" + SymbolicEpistemicModel.getPrimedVarName(var) + ")";
-        });
+        }); */
         return null;
     };
     toBDD(){
