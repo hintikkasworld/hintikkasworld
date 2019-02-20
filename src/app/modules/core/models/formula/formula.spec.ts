@@ -10,7 +10,7 @@ describe('Formula', () => {
   });
 
   it('should be able to create a disjunction', () => {
-    expect(new Formula("(ma or mb)").getType() != FormulaType.Or).toBeTruthy();
+    expect(new Formula("(ma or mb)").getType() == FormulaType.Or).toBeTruthy();
   });
   it('should be able to create a conjuncion', () => {
     expect(new Formula("(ma and mb)").getType() == FormulaType.And).toBeTruthy();

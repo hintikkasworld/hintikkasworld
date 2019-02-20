@@ -2,6 +2,7 @@ import { environment } from './../../../../../environments/environment';
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { Environment } from '../../models/environment/environment';
 import { Observable } from 'rxjs';
+import { World } from '../../models/epistemicmodel/world';
 
 @Component({
   selector: 'app-comics',
@@ -65,7 +66,7 @@ export class ComicsComponent implements OnInit {
     this.obsEnv.subscribe((env) => this.env = env); //pas bon... pas besoin de compute
   }
 
-  private openWorlds = [];
+  private openWorlds: {world:World, agent:string}[] = [];
   /*
    if openWorld = [], no thoughts are shown
    if openWorld = [{world: "w", agent: "a"}], the real world is w and the GUI shows the thoughts of agent a
@@ -73,7 +74,7 @@ export class ComicsComponent implements OnInit {
          there is a possible world u where we show the thoughts of agent b.
   */
   private canvasRealWorldTop = 250;
-  private canvasFromWorld = new Array();
+  private canvasFromWorld  : (Map<World, HTMLCanvasElement>)[] = [];
   private canvasWorldStandardWidth = 128;
   private zoomWorldCanvasInBubble = 1;
   private levelheight = this.zoomWorldCanvasInBubble * this.canvasWorldStandardWidth + 40; //170
@@ -151,8 +152,11 @@ export class ComicsComponent implements OnInit {
   @param worldID ID of a world in the Kripke model
   @returns the coordinates of the world of ID worldID at level
   */
-  private getWorldPosition(level: number, worldID: string) {
-    return this.cumulativeOffset(this.canvasFromWorld[level][worldID]);
+  private getWorldPosition(level: number, world: World) {
+    console.log(this.canvasFromWorld[level])
+    console.log(world)
+    console.log(this.canvasFromWorld[level].get(world))
+    return this.cumulativeOffset(this.canvasFromWorld[level].get(world));
   }
 
   /**
@@ -190,11 +194,11 @@ export class ComicsComponent implements OnInit {
   /**
   @param level level of the world
   @param canvasWorld canvas of the world
-  @param worldID ID of the world
+  @param world the world
   @returns the event that is triggered with clicking on canvasWorld. This event closes all
    levels > level. Then if the user clicks on an agent, it opens her thoughts.
   */
-  private modifyOpenWorldsClick(level: number, canvasWorld: HTMLCanvasElement, worldID: string) {
+  private modifyOpenWorldsClick(level: number, canvasWorld: HTMLCanvasElement, world: World) {
     let comics = this;
     console.log(comics)
     return function (evt) {
@@ -202,8 +206,8 @@ export class ComicsComponent implements OnInit {
       var point = comics.getMousePos(canvasWorld, evt);
       for (let a of environment.agents)
         if ((canvasWorld.id != "canvasRealWorld") || (comics.perspectiveAgent == undefined) || (a == comics.perspectiveAgent)) {
-          if (comics.env.getEpistemicModel().getNode(worldID).getAgentRectangle(a).isPointIn(point)) {
-            comics.openWorlds.push({ world: worldID, agent: a });
+          if (world.getAgentRectangle(a).isPointIn(point)) {
+            comics.openWorlds.push({ world: world, agent: a });
             comics.compute(level);
             return true;
           }
@@ -324,14 +328,14 @@ export class ComicsComponent implements OnInit {
 
   /**
   @param level number of the level
-  @param worlds an array of worlds ID
+  @param worlds an array of worlds
   @description it fills the GUI level with images of worlds in worlds
   */
-  private levelFillWithWorlds(level, worlds) {
+  private levelFillWithWorlds(level, worlds: Array<World>) {
 
     let levelContainer = $('#level-content' + level);
 
-    this.canvasFromWorld[level] = {};
+    this.canvasFromWorld[level] = new Map();
     levelContainer.empty();
 
     if (worlds.length == 0)
@@ -345,7 +349,7 @@ export class ComicsComponent implements OnInit {
         levelContainer.append('<div class="orBetweenWorlds"> or </div>');
 
       let canvasWorld = this.getNewCanvas();
-      this.canvasFromWorld[level][u] = canvasWorld;
+      this.canvasFromWorld[level].set(u, canvasWorld);
       levelContainer.append(canvasWorld);
 
       (<any>canvasWorld).draw = () => {
@@ -426,19 +430,19 @@ export class ComicsComponent implements OnInit {
 
 
     if (fromlevel == 0) {
-      this.canvasFromWorld[0] = {};
+      this.canvasFromWorld[0] = new Map();
       this.canvasFromWorld[0][this.env.getEpistemicModel().getPointedWorld()] = $('#canvasRealWorld')[0];
       this.canvasFromWorld[0][this.env.getEpistemicModel().getPointedWorld()].draw = () => {
         let context = this.getContext((<HTMLCanvasElement>document.getElementById("canvasRealWorld")));
 
-        let idNode;
+        let world: World;
         if (this.perspectiveAgent == undefined)
-          idNode = this.env.getEpistemicModel().getPointedWorld();
+          world = this.env.getEpistemicModel().getPointedWorld();
         else {
 
         }
 
-        this.env.getEpistemicModel().getNode(idNode).draw(context);
+        world.draw(context);
 
       }
 
@@ -457,12 +461,12 @@ export class ComicsComponent implements OnInit {
       var x1 = this.getWorldPosition(level - 1, u).x;
       var y1 = this.getWorldPosition(level - 1, u).y;
 
-      let factor = this.getWorldZoomFactor(this.canvasFromWorld[level - 1][u]);
-      x1 += factor * (this.env.getEpistemicModel().getNode(u).getAgentRectangle(worldagent.agent).x1
-        + this.env.getEpistemicModel().getNode(u).getAgentRectangle(worldagent.agent).w / 2);
+      let factor = this.getWorldZoomFactor(this.canvasFromWorld[level - 1].get(u));
+      x1 += factor * (u.getAgentRectangle(worldagent.agent).x1
+        + u.getAgentRectangle(worldagent.agent).w / 2);
 
-      y1 += factor * (this.env.getEpistemicModel().getNode(u).getAgentRectangle(worldagent.agent).y1
-        + this.env.getEpistemicModel().getNode(u).getAgentRectangle(worldagent.agent).h / 2) - 96;
+      y1 += factor * (u.getAgentRectangle(worldagent.agent).y1
+        + u.getAgentRectangle(worldagent.agent).h / 2) - 96;
 
       this.drawThinkingCircles(x1, y1, x1, y);
 

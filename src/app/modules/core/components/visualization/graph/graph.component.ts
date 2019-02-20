@@ -42,7 +42,7 @@ export class GraphComponent implements OnInit {
     this.edges = [];
     for (let agent of M.getAgents())
       for (let idnode in M.getNodes())
-        for (let idnode2 of M.getSuccessors(idnode, agent))
+        for (let idnode2 of M.getSuccessorsID(idnode, agent))
           this.edges.push(new Edge(dictionnaryNode[idnode], dictionnaryNode[idnode2], agent));
 
     this.graph = this.d3Service.getGraph(this.nodes, this.edges, this.options);

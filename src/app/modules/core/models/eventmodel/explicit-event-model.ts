@@ -137,8 +137,8 @@ export class ExplicitEventModel extends Graph implements EventModel {
                     let we1 = createWorldActionName(w1, e1);
                     if (ME.hasNode(we1)) {
                         for (let a of agents) {
-                            let succw1 = M.getSuccessors(w1, a);
-                            let succe1 = E.getSuccessors(e1, a);
+                            let succw1 = M.getSuccessorsID(w1, a);
+                            let succe1 = E.getSuccessorsID(e1, a);
                             for (let w2 of succw1)
                                 for (let e2 of succe1) {
                                     let we2 = createWorldActionName(w2, e2);
@@ -152,8 +152,8 @@ export class ExplicitEventModel extends Graph implements EventModel {
                 }
 
 
-            if (M.getPointedWorld() != undefined && E.getPointedAction() != undefined) {
-                let we = createWorldActionName(M.getPointedWorld(), E.getPointedAction());
+            if (M.getPointedWorldID() != undefined && E.getPointedAction() != undefined) {
+                let we = createWorldActionName(M.getPointedWorldID(), E.getPointedAction());
                 if (ME.hasNode(we))
                     ME.setPointedWorld(we);
                     else

@@ -6,6 +6,7 @@ describe('ExampleComponent', () => {
   let component: ExampleComponent;
   let fixture: ComponentFixture<ExampleComponent>;
 
+  /**
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ ExampleComponent ]
@@ -21,5 +22,5 @@ describe('ExampleComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
+  }); */
 });

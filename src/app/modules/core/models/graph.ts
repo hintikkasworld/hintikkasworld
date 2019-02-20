@@ -23,7 +23,7 @@ export class Graph {
         return this.nodes;
     }
 
-    removeNode(id) {
+    removeNode(id: string) {
         delete this.nodes[id];
         this._removeEdgesWithUndefinedNodes();
     }
@@ -91,8 +91,8 @@ export class Graph {
                     nodesVisited[inode] = true;
 
                     for (let a in graph.successors) {
-                        if (graph.getSuccessors(inode, a) != undefined)
-                            for (let inode2 of graph.getSuccessors(inode, a))
+                        if (graph.getSuccessorsID(inode, a) != undefined)
+                            for (let inode2 of graph.getSuccessorsID(inode, a))
                                 stack.push(inode2);
                     }
                 }
@@ -127,7 +127,7 @@ export class Graph {
      * @param agent, an agent (label)
      * @returns an array of all successors of node via the agent
      * */
-    getSuccessors(node, agent) {
+    getSuccessorsID(node, agent) {
         if (this.nodes[node] == undefined) throw ("getSuccessors : There is no source node of ID " + node);
 
         if (this.successors[agent] == undefined)
@@ -273,12 +273,12 @@ export class Graph {
     @param idnode is the ID of the node to be added
     @returns the content of the node
     */
-    getNode(idnode) {
+    getNode(idnode: string) {
         return this.nodes[idnode];
     }
 
 
-    hasNode(idnode) {
+    hasNode(idnode: string) {
         if (idnode in this.nodes) return true;
         return false;
     }
@@ -427,7 +427,7 @@ export class Graph {
         while (queue.length != 0) {
             let world = queue.shift();
             for (let a of this.getAgents())
-                for (let u of this.getSuccessors(world, a))
+                for (let u of this.getSuccessorsID(world, a))
                     if (visited[u] == undefined) {
                         if (visited[world].distance >= maxDistance) {
                             return visited;
@@ -464,7 +464,7 @@ export class Graph {
                 return visited;
             }
             for (let a of this.getAgents())
-                for (let u of this.getSuccessors(world, a))
+                for (let u of this.getSuccessorsID(world, a))
                     if (visited[u] == undefined) {
                         visited[u] = { distance: visited[world].distance + 1, parent: world, agent: a };
                         queue.push(u);

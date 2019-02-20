@@ -4,8 +4,14 @@ import { EpistemicModel } from './epistemic-model';
 import { WorldValuation } from './world-valuation';
 import { environment } from 'src/environments/environment';
 import { World } from './world';
+import { getNodeInjectable } from '@angular/core/src/render3/di';
 
 export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
+
+    nodeToID: Map<World, string> = new Map();
+    getSuccessors(w: World, a: string): Array<World> {
+        return this.getSuccessorsID(this.nodeToID.get(w), a).map((id) => this.getNode(id));
+    }
     /**
     @param w ID of a node
     @example M.setPointedWorld("w")
@@ -20,7 +26,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
     /**
     @returns the pointed world
     **/
-    getPointedWorld() {
+    getPointedWorldID() {
         return this.getPointedNode();
     }
 
@@ -37,6 +43,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
      * */
     addWorld(w: string, content: World) {
         this.addNode(w, content);
+        this.nodeToID.set(content, w);
     }
 
 
@@ -96,7 +103,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
 
                 let agent = phi.getAgent();
                 let psi = phi.getSubFormula();
-                return this.getSuccessors(w, agent)
+                return this.getSuccessorsID(w, agent)
                     .every(u => this.modelCheck(u, psi));
             }
             case FormulaType.Kpos:
@@ -104,16 +111,16 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
                     let agent = phi.getAgent();
                     let psi = phi.getSubFormula();
 
-                    return this.getSuccessors(w, agent)
+                    return this.getSuccessorsID(w, agent)
                         .some(u => this.modelCheck(u, psi));
                 }
             case FormulaType.Kw: {
                 let agent = phi.getAgent();
                 let psi = phi.getSubFormula();
-                if (this.getSuccessors(w, agent)
+                if (this.getSuccessorsID(w, agent)
                     .every(u => this.modelCheck(u, psi)))
                     return true;
-                else if (this.getSuccessors(w, agent)
+                else if (this.getSuccessorsID(w, agent)
                     .every(u => !this.modelCheck(u, psi))) {
                     return true;
                 }
@@ -285,7 +292,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
             }
             for (let i = 1; i < pireversed.length; i++) { // boucle de création des mondes et du pointage
                 contracted.addWorld(getClassNumberToWorldName(i), M.nodes[pireversed[i][0]]);//crée le monde
-                if (pireversed[i].includes(M.getPointedWorld())) {
+                if (pireversed[i].includes(M.getPointedWorldID())) {
                     contracted.setPointedWorld(getClassNumberToWorldName(i));		//ajoute le pointage
                 }
             }
@@ -303,7 +310,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
                     }
                 }
             }
-            if (contracted.getPointedWorld() == undefined)
+            if (contracted.getPointedWorldID() == undefined)
                 throw "the contracted model has no pointed world! aïe!";
 
 
@@ -318,7 +325,9 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
     }
 
 
-
+    getPointedWorld() {
+        return this.getNode(this.getPointedWorldID());
+    }
 
 
 }
