@@ -80,9 +80,9 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
         }
 
         switch (true) {
+            case (phi instanceof types.TrueFormula): return true;
             case (phi instanceof types.AtomicFormula): return (<World>this.nodes[w]).modelCheck((<types.AtomicFormula>phi).getAtomicString());
             case (phi instanceof types.FalseFormula): return false;
-            case (phi instanceof types.TrueFormula): return true;
             case (phi instanceof types.ImplyFormula): return !this.modelCheck(w, (<types.ImplyFormula>phi).formula1) || this.modelCheck(w, (<types.ImplyFormula>phi).formula2);
             case (phi instanceof types.EquivFormula): return this.modelCheck(w, (<types.EquivFormula>phi).formula1) == this.modelCheck(w, (<types.EquivFormula>phi).formula2);
             case (phi instanceof types.AndFormula): return (<types.AndFormula>phi).formulas.every((f) => this.modelCheck(w, f));
