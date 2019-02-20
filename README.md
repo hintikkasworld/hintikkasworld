@@ -6,7 +6,9 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ## Settings
 
 
-Before install Angular: `npm install -g @angular/cli`.
+Before install Angular:
+- `sudo npm update -g`;
+- `npm install -g @angular/cli`.
 
 Please install:
 - npm install d3 -save
