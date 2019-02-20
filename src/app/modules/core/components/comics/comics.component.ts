@@ -430,9 +430,10 @@ export class ComicsComponent implements OnInit {
 
 
     if (fromlevel == 0) {
+      let canvas = $('#canvasRealWorld')[0];
       this.canvasFromWorld[0] = new Map();
-      this.canvasFromWorld[0][this.env.getEpistemicModel().getPointedWorld()] = $('#canvasRealWorld')[0];
-      this.canvasFromWorld[0][this.env.getEpistemicModel().getPointedWorld()].draw = () => {
+      this.canvasFromWorld[0].set(this.env.getEpistemicModel().getPointedWorld(), <HTMLCanvasElement> canvas);
+      (<any> canvas).draw = () => {
         let context = this.getContext((<HTMLCanvasElement>document.getElementById("canvasRealWorld")));
 
         let world: World;
@@ -456,6 +457,9 @@ export class ComicsComponent implements OnInit {
       level++;
 
       var u = worldagent.world;
+
+      if(u == undefined)
+        console.log("ARGGGGGGGGGGG");
 
       var y = this.getYLevelBulle(level);
       var x1 = this.getWorldPosition(level - 1, u).x;
