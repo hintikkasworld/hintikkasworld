@@ -43,7 +43,7 @@ export class CoreComponent implements OnInit {
     this.bsEnv.next(this.bsEnv.value);
   }
 
-  getAgents() {
-    this.bsEnv.value.getEpistemicModel().getAgents();
+  getAgents(): string[] {
+    return this.bsEnv.value.getEpistemicModel().getAgents();
   }
 }

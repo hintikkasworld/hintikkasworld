@@ -12,7 +12,7 @@ export class Graph {
     }
 
 
-    getAgents() {
+    getAgents(): string[] {
         return Object.keys(this.successors);
     }
     /**
@@ -23,13 +23,13 @@ export class Graph {
         return this.nodes;
     }
 
-    removeNode(id: string) {
+    removeNode(id: string): void {
         delete this.nodes[id];
         this._removeEdgesWithUndefinedNodes();
     }
 
 
-    _removeEdgesWithUndefinedNodes() {
+    _removeEdgesWithUndefinedNodes(): void {
         for(let agent of this.getAgents())
             for(let inode in this.successors[agent])
                 if(this.nodes[inode] == undefined)
@@ -55,7 +55,7 @@ export class Graph {
      it is as if we gave the array [inodes]
     * @description remove all nodes that are not reachable from inode
     * */
-    removeUnReachablePartFrom(inodes) {
+    removeUnReachablePartFrom(inodes): void {
         if (!(inodes instanceof Array))
             inodes = [inodes];
 
@@ -113,7 +113,7 @@ export class Graph {
     /**
      * @returns the number of nodes in the graph
      * */
-    getNodesNumber() {
+    getNodesNumber(): number {
         var c = 0;
 
         for (let o in this.nodes)
@@ -140,13 +140,12 @@ export class Graph {
 
 
 
-
     /**
     @param agent
     @result true iff the relation for agent is reflexive (there is a self-loop over all nodes)
     */
 
-    isReflexive(agent) {
+    isReflexive(agent: string) {
         for (let inode in this.nodes)
             if (!this.isEdge(agent, inode, inode))
                 return false;

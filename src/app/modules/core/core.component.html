@@ -7,29 +7,30 @@
   <table>
     <tr>
       <td id="topbar">
+
+        <a href="menu"><button id="chooseExample" title="Choose an other example">
+            <img width=24px src="assets/img/examples.png" />
+          </button></a>
         <button (click)="bsEnv.value.reset()" title="Reset">
           <img width=24px src="assets/img/reset.png" />
         </button>
-        <a href="menu"><button id="chooseExample" title="Choose an other example">
-          <img width=24px src="assets/img/examples.png" />
-        </button></a>
 
         <div id="exampleName"></div>
         <div class="vr"></div>
 
-        
+
         <input checked type="radio" name="perspective" value="" id="externalPerspective" (click)="setExternalPerspective()" />
         <label id="labelexternalPerspective" for="externalPerspective" title="External perspective">
           <img width=32px src="assets/img/god.svg" />
         </label>
-        
-        <div id="internalPerspectiveAgent" *ngFor="let agent of getAgents()">
-        <input type="radio" name="perspective" value="agent" id="'internalPerspectiveAgent' + agent" (click)="setInternalPerspective(agent)" />
-        <label id="'labelinternalPerspectiveAgent' + agent" for="'internalPerspectiveAgent' + agent" title="'Internal perspective of agent ' + agent">
-          <img width=32px [src]="'assets/img/agent' + agent + '.png'" />
-        </label>
 
-      </div>
+        <div id="internalPerspectiveAgent" *ngFor="let agent of getAgents()">
+          <input type="radio" name="perspective" value="agent" [id]="'internalPerspectiveAgent' + agent" (click)="setInternalPerspective(agent)" />
+          <label id="'labelinternalPerspectiveAgent' + agent" [for]="'internalPerspectiveAgent' + agent" title="'Internal perspective of agent ' + agent">
+            <img width=32px [src]="'assets/img/agent' + agent + '.png'" />
+          </label>
+
+        </div>
 
         <div class="vr"></div>
         <a hidden class="roundButton" onclick="GUIExportInTikz(); return false;" title="Export in Tikz (latex)" href="#">tikz</a>
