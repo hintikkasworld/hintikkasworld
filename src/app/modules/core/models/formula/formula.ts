@@ -1,157 +1,214 @@
 import { Scheme } from './scheme';
 
-export enum FormulaType {
-    Atomic, Or, And, K, Kpos, Kw, Not, Xor, Imply, Equiv, True, False
+export interface Formula {
+     
 }
 
+export class TrueFormula implements Formula {
 
-export class Formula {
-    private _type: FormulaType;
+}
+export class FalseFormula implements Formula {
+
+}
+export class AtomicFormula implements Formula {
     private _atomicString: string;
-    private _agent: string;
-    private formulas: Array<Formula> = [];
-
-
-    getType(): FormulaType {
-        return this._type;
+    constructor(name: string) {
+        this._atomicString = name;
     }
-
 
     getAtomicString(): string {
         return this._atomicString;
     }
+}
 
-    constructor(schemeExpression: string | Array<any>) {
+export class OrFormula implements Formula {
+    private _formulas: Array<Formula>;
+    constructor(f: Array<Formula>) {
+        this._formulas = f;
+    }
+    get formulas() {
+        return this._formulas;
+    }
+}
+
+export class AndFormula implements Formula {
+    private _formulas: Array<Formula>;
+    constructor(f: Array<Formula>) {
+        this._formulas = f;
+    }
+    get formulas() {
+        return this._formulas;
+    }
+}
+
+export class KFormula implements Formula {
+    private _agent: string;
+    private _formula: Formula;
+    constructor(a: string, f: Formula) {
+        this._agent = a;
+        this._formula = f;
+    }
+    get agent() {
+        return this._agent;
+    }
+    get formula() {
+        return this._formula;
+    }
+}
+
+export class KposFormula implements Formula {
+    private _agent: string;
+    private _formula: Formula;
+    constructor(a: string, f: Formula) {
+        this._agent = a;
+        this._formula = f;
+    }
+    get agent() {
+        return this._agent;
+    }
+    get formula() {
+        return this._formula;
+    }
+}
+
+export class KwFormula implements Formula {
+    private _agent: string;
+    private _formula: Formula;
+    constructor(a: string, f: Formula) {
+        this._agent = a;
+        this._formula = f;
+    }
+    get agent() {
+        return this._agent;
+    }
+    get formula() {
+        return this._formula;
+    }
+}
+
+
+export class NotFormula implements Formula {
+    private _formula: Formula;
+    constructor(f: Formula) {
+        this._formula = f;
+    }
+    get formula() {
+        return this._formula;
+    }
+}
+
+
+export class XorFormula implements Formula {
+    private _formulas: Array<Formula>;
+    constructor(f: Array<Formula>) {
+        this._formulas = f;
+    }
+    get formulas() {
+        return this._formulas;
+    }
+}
+
+
+export class ImplyFormula implements Formula {
+    private _formula1: Formula;
+    private _formula2: Formula;
+    constructor(f1: Formula, f2: Formula) {
+        this._formula1 = f1;
+        this._formula2 = f2;
+    }
+    get formula1() {
+        return this._formula1;
+    }
+    get formula2() {
+        return this._formula2;
+    }
+}
+
+
+export class EquivFormula implements Formula {
+    private _formula1: Formula;
+    private _formula2: Formula;
+    constructor(f1: Formula, f2: Formula) {
+        this._formula1 = f1;
+        this._formula2 = f2;
+    }
+    get formula1() {
+        return this._formula1;
+    }
+    get formula2() {
+        return this._formula2;
+    }
+}
+/* export enum FormulaType {
+    Atomic, Or, And, K, Kpos, Kw, Not, Xor, Imply, Equiv, True, False
+} */
+
+
+export class FormulaFactory{
+    private _content: Formula;
+
+
+    static createformula(schemeExpression: string | Array<any>) {
         let ast;
         if (typeof schemeExpression == "string")
             ast = Scheme.parser(<string> schemeExpression);
         else
             ast = schemeExpression;
 
-        this.installFormula(ast);
+        return this.installFormula(ast);
     }
 
 
-    private installFormula(ast: string | Array<any>) {
+    private static installFormula(ast: string | Array<any>){
         if (ast instanceof Array) {
-            if ((ast[0] == "K") || (ast[0] == "know") || (ast[0] == "box") || (ast[0] == "[]")) {
+           if ((ast[0] == "K") || (ast[0] == "know") || (ast[0] == "box") || (ast[0] == "[]")) {
                 if(ast.length != 3) throw "Parsing error: (K a phi)";
-                this._type = FormulaType.K;
-                this._agent = ast[1];
-                this.formulas.push(new Formula(ast[2]));
+                return new KFormula(ast[1], this.installFormula(ast[2]))
             } else if ((ast[0] == "Kpos") || (ast[0] == "knowpos") || (ast[0] == "diamond") || (ast[0] == "<>")) {
                 if(ast.length != 3) throw "Parsing error: (Kpos a phi)";
-                this._type = FormulaType.Kpos;
-                this._agent = ast[1];
-                this.formulas.push(new Formula(ast[2]));
+                return new KposFormula(ast[1], this.installFormula(ast[2]))
             } else if ((ast[0] == "Kw") || (ast[0] == "knowwhether")) {
                 if(ast.length != 3) throw "Parsing error: (Kw a phi)";
-                this._type = FormulaType.Kw;
-                this._agent = ast[1];
-                this.formulas.push(new Formula(ast[2]));
+                return new KwFormula(ast[1], this.installFormula(ast[2]))
             } else if (ast[0] == "not") {
                 if(ast.length != 2) throw "Parsing error: (not phi)";
-                this._type = FormulaType.Not;
-                this.formulas.push(new Formula(ast[1]));
+                return new NotFormula(this.installFormula(ast[1]))
             }
             else if (ast[1] == "and") {
-                this._type = FormulaType.And;
-                for (let i = 0; i < ast.length; i += 2) {
-                    this.formulas.push(new Formula(ast[i]));
-                }
+                return new AndFormula(ast.slice(1).map(this.installFormula))
             }
             else if (ast[1] == "or") {
-                this._type = FormulaType.Or;
-                for (let i = 0; i < ast.length; i += 2) {
-                    this.formulas.push(new Formula(ast[i]));
-                }
+                return new OrFormula(ast.slice(1).map(this.installFormula))
             }
             else if (ast[1] == "xor") {
-                this._type = FormulaType.Xor;
-                for (let i = 0; i < ast.length; i += 2) {
-                    this.formulas.push(new Formula(ast[i]));
-                }
+                return new XorFormula(ast.slice(1).map(this.installFormula))
             }
             else if ((ast[1] == "->" || ast[1] == "imply")) {
-                this._type = FormulaType.Imply;
-                for (let i = 0; i < ast.length; i += 2) {
-                    this.formulas.push(new Formula(ast[i]));
-                }
+                return new ImplyFormula(this.installFormula(ast[0]),this.installFormula(ast[2]))
             }
             else if ((ast[1] == "<->" || ast[1] == "equiv")) {
-                this._type = FormulaType.Equiv;
-                for (let i = 0; i < ast.length; i += 2) {
-                    this.formulas.push(new Formula(ast[i]));
-                }
-            }
+                return new EquivFormula(this.installFormula(ast[0]),this.installFormula(ast[2]))
+            } 
             else {
                 throw "Error while parsing the formula";
             }
 
         }
         else if (ast == "top" || ast == "true" || ast == "1") {
-            this._type = FormulaType.True;
+            return new TrueFormula
         }
         else if (ast == "bottom" || ast == "false" || ast == "0") {
-            this._type = FormulaType.False;
+            return new FalseFormula
         }
         else {
-            this._type = FormulaType.Atomic;
-            this._atomicString = ast;
+            return new AtomicFormula(ast)
         }
     }
-
-
-
-    getAgent() {
-        return this._agent;
-    }
-
-
-    getSubFormula() {
-        return this.formulas[0];
-    }
-
-    getSubFormulaFirst() {
-        return this.formulas[0];
-    }
-
-    getSubFormulaSecond() {
-        return this.formulas[1];
-    }
-
-    getFormulaSubFormulas() {
-        return this.formulas;
-    }
-
-
 
     prettyPrint(): string {
-        function prettyPrintInfixOperator(op: string) {
-            let s = "";
-            for(let f of this.formulas) {
-                if(s == "")
-                    s = "(" + f.prettyPrint();
-                else 
-                    s += " " + op + " " + f.prettyPrint();
-            }
-            s += ")";
-            return s;
-        }
-
-
-        switch(this._type) {
-            case FormulaType.Atomic: return this._atomicString;
-            case FormulaType.False: return "false";
-            case FormulaType.True: return "true";
-            case FormulaType.Imply: return prettyPrintInfixOperator("->");
-            case FormulaType.Equiv: return prettyPrintInfixOperator("<->");
-            case FormulaType.And: return prettyPrintInfixOperator("and");
-            case FormulaType.Or: return prettyPrintInfixOperator("or");
-            case FormulaType.Xor: return prettyPrintInfixOperator("xor");
-            case FormulaType.Not: return "(not " + this.getSubFormula() + ")";
-            case FormulaType.K: return "(K " + this.getAgent() + " " + this.getSubFormula() + ")";
-            case FormulaType.Kpos: return "(Kpos " + this.getAgent() + " " + this.getSubFormula() + ")";
-        }
+        throw "To be implemented by Tristan Charrier";
+    }
+    get content() {
+        return this._content;
     }
 }

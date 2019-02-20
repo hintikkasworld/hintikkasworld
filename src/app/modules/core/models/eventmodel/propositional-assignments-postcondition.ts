@@ -1,4 +1,4 @@
-import { Formula } from './../formula/formula';
+import { Formula, FormulaFactory } from './../formula/formula';
 import * as jQuery from 'jquery';
 
 
@@ -10,7 +10,7 @@ export class PropositionalAssignmentsPostcondition {
 
         for (let p in post) {
             if (typeof (post[p]) == "string")
-                post[p] = new Formula(post[p]);
+                post[p] = FormulaFactory.createformula(post[p]);
         }
     }
 

@@ -4,7 +4,7 @@ import { EventModel } from './../eventmodel/event-model';
 import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
-import { Formula } from '../formula/formula';
+import { Formula, FormulaFactory } from '../formula/formula';
 
 
 /**
@@ -67,13 +67,13 @@ export class MuddyChildren extends ExampleDescription {
 
     getActions() {
         return [new EventModelAction("Father says at least one child is muddy.", 
-                ExplicitEventModel.getEventModelPublicAnnouncement(new Formula("(ma or mb)"))),
+                ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createformula("(ma or mb)"))),
                 
                 new EventModelAction("Publicly a is muddy!", 
-                ExplicitEventModel.getEventModelPublicAnnouncement(new Formula("ma"))),
+                ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createformula("ma"))),
 
                 new EventModelAction( "Children say they do not know.", 
-                ExplicitEventModel.getEventModelPublicAnnouncement(new Formula("((not (K a ma)) and (not (K b mb)))")))
+                ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createformula("((not (K a ma)) and (not (K b mb)))")))
 
 
                

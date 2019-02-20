@@ -1,4 +1,4 @@
-import { Formula, FormulaType } from './../formula/formula';
+import * as types from './../formula/formula';
 import { Graph } from './../graph';
 import { EpistemicModel } from './epistemic-model';
 import { WorldValuation } from './world-valuation';
@@ -73,23 +73,23 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
      * @example M.modelCheck("w", createFormula("(not p)"))
      * @example M.modelCheck("w", createFormula("(not (K a p))"))
      * */
-    modelCheck(w: string, phi: Formula): boolean {
+    modelCheck(w: string, phi: types.Formula): boolean {
         if (this.getNode(w) == undefined) {
             throw ("No worlds named " + w + ". Worlds of the epistemic model are "
                 + this.getWorldsPrettyPrint());
         }
 
-        switch (phi.getType()) {
-            case FormulaType.Atomic: return (<World>this.nodes[w]).modelCheck(phi.getAtomicString());
-            case FormulaType.False: return false;
-            case FormulaType.True: return true;
-            case FormulaType.Imply: return !this.modelCheck(w, phi.getSubFormulaFirst()) || this.modelCheck(w, phi.getSubFormulaSecond());
-            case FormulaType.Equiv: return this.modelCheck(w, phi.getSubFormulaFirst()) == this.modelCheck(w, phi.getSubFormulaSecond());
-            case FormulaType.And: return phi.getFormulaSubFormulas().every((f) => this.modelCheck(w, f));
-            case FormulaType.Or: return phi.getFormulaSubFormulas().some((f) => this.modelCheck(w, f));
-            case FormulaType.Xor: {
+        switch (true) {
+            case (phi instanceof types.AtomicFormula): return (<World>this.nodes[w]).modelCheck((<types.AtomicFormula>phi).getAtomicString());
+            case (phi instanceof types.FalseFormula): return false;
+            case (phi instanceof types.TrueFormula): return true;
+            case (phi instanceof types.ImplyFormula): return !this.modelCheck(w, (<types.ImplyFormula>phi).formula1) || this.modelCheck(w, (<types.ImplyFormula>phi).formula2);
+            case (phi instanceof types.EquivFormula): return this.modelCheck(w, (<types.EquivFormula>phi).formula1) == this.modelCheck(w, (<types.EquivFormula>phi).formula2);
+            case (phi instanceof types.AndFormula): return (<types.AndFormula>phi).formulas.every((f) => this.modelCheck(w, f));
+            case (phi instanceof types.OrFormula): return (<types.OrFormula>phi).formulas.some((f) => this.modelCheck(w, f));
+            case (phi instanceof types.XorFormula): {
                 let c = 0;
-                for (let f of phi.getFormulaSubFormulas()) {
+                for (let f of (<types.XorFormula>phi).formulas) {
                     if (this.modelCheck(w, f))
                         c++;
 
@@ -98,25 +98,26 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
                 }
                 return (c == 1);
             }
-            case FormulaType.Not: return !this.modelCheck(w, phi.getSubFormula());
-            case FormulaType.K: {
-
-                let agent = phi.getAgent();
-                let psi = phi.getSubFormula();
+            case (phi instanceof types.NotFormula): return !this.modelCheck(w, (<types.NotFormula>phi).formula);
+            case (phi instanceof types.KFormula): {
+                let phi2 = <types.KFormula>phi;
+                let agent = phi2.agent;
+                let psi = phi2.formula;
                 return this.getSuccessorsID(w, agent)
                     .every(u => this.modelCheck(u, psi));
             }
-            case FormulaType.Kpos:
+            case (phi instanceof types.KposFormula):
                 {
-                    let agent = phi.getAgent();
-                    let psi = phi.getSubFormula();
-
+                    let phi2 = <types.KposFormula>phi;
+                    let agent = phi2.agent;
+                    let psi = phi2.formula;
                     return this.getSuccessorsID(w, agent)
                         .some(u => this.modelCheck(u, psi));
                 }
-            case FormulaType.Kw: {
-                let agent = phi.getAgent();
-                let psi = phi.getSubFormula();
+            case (phi instanceof types.KwFormula): {
+                let phi2 = <types.KwFormula>phi;
+                let agent = phi2.agent;
+                let psi = phi2.formula;
                 if (this.getSuccessorsID(w, agent)
                     .every(u => this.modelCheck(u, psi)))
                     return true;
