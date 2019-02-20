@@ -18,21 +18,21 @@
         <div class="vr"></div>
 
 
-        <input checked type="radio" name="perspective" value="" id="externalPerspective" onclick="setExternalPerspective()" />
+        <input checked type="radio" name="perspective" value="" id="externalPerspective" (click)="setExternalPerspective()" />
         <label id="labelexternalPerspective" for="externalPerspective" title="External perspective">
           <img width=32px src="assets/img/god.svg" />
         </label>
-        <input type="radio" name="perspective" value="a" id="internalPerspectiveAgenta" onclick="setInternalPerspective('a')" />
+        <input type="radio" name="perspective" value="a" id="internalPerspectiveAgenta" (click)="setInternalPerspective('a')" />
         <label id="labelinternalPerspectiveAgenta" for="internalPerspectiveAgenta" title="Internal perspective of agent a">
           <img width=32px src="assets/img/agenta.png" />
         </label>
 
-        <input type="radio" name="perspective" value="b" onclick="setInternalPerspective('b')" id="internalPerspectiveAgentb" />
+        <input type="radio" name="perspective" value="b" (click)="setInternalPerspective('b')" id="internalPerspectiveAgentb" />
         <label id="labelinternalPerspectiveAgentb" for="internalPerspectiveAgentb" title="Internal perspective of agent b">
           <img width=32px src="assets/img/agentb.png" />
         </label>
 
-        <input type="radio" name="perspective" value="c" onclick="setInternalPerspective('c')" id="internalPerspectiveAgentc" />
+        <input type="radio" name="perspective" value="c" (click)="setInternalPerspective('c')" id="internalPerspectiveAgentc" />
         <label id="labelinternalPerspectiveAgentc" for="internalPerspectiveAgentc" title="Internal perspective of agent c">
           <img width=32px src="assets/img/agentc.png" />
         </label>
