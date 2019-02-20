@@ -1,0 +1,3 @@
+<div *ngFor="let action of (obsEnv | async)?.getActions()">
+  <button (click)="perform(action)">{{action.getName()}}</button>
+</div>

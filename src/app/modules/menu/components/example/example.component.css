@@ -1,0 +1,34 @@
+:host {
+    display: inline-block;
+	background-color: white;
+    padding: 8px;
+    cursor: pointer;
+    vertical-align: top;
+    width:350px;
+    margin:8px;
+    display: inline-block;
+    height: 84px;
+}
+
+.CanvasWorldExample {
+    width: 120px;
+    height: 60px;
+    border-radius:16px;
+    background-color: #FFDD88;
+    padding:8px;
+    vertical-align:middle;
+}
+
+
+
+:host:hover {
+    background-color: #DDDDFF;
+}
+
+
+div {
+    padding: 0px;
+    margin: 0px;
+}
+
+
