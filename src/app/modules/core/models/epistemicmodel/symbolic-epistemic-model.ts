@@ -7,6 +7,10 @@ import { SymbolicRelation, Obs } from './symbolic-relation';
 
 
 export class SymbolicEpistemicModel implements EpistemicModel{
+    
+    getAgents(): string[] {
+        throw new Error("Method not implemented.");
+    }
     /**
      * Implementation d'un Modele Epistemique Symbolique
      * Ici via des BDD, et Cudd
