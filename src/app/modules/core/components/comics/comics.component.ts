@@ -354,7 +354,7 @@ export class ComicsComponent implements OnInit {
 
       (<any>canvasWorld).draw = () => {
         let context = this.getContext(canvasWorld);
-        this.env.getEpistemicModel().getNode(u).draw(context);
+        u.draw(context);
       };
       canvasWorld.addEventListener('mouseup',
         this.modifyOpenWorldsClick(level, canvasWorld, u), false);
