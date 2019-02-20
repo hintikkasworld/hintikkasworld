@@ -7,12 +7,12 @@
   <table>
     <tr>
       <td id="topbar">
-        <button id="resetButton" title="Reset">
+        <button (click)="bsEnv.value.reset()" title="Reset">
           <img width=24px src="assets/img/reset.png" />
         </button>
-        <button id="chooseExample" onclick="showExamplesScreen()" title="Choose an other example">
+        <a href="menu"><button id="chooseExample" title="Choose an other example">
           <img width=24px src="assets/img/examples.png" />
-        </button>
+        </button></a>
 
         <div id="exampleName"></div>
         <div class="vr"></div>

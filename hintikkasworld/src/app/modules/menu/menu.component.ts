@@ -1,3 +1,4 @@
+import { Belote } from './../core/models/examples/belote';
 import {Router} from '@angular/router';
 import { ConsecutiveNumbers } from './../core/models/examples/consecutive-numbers';
 import { MuddyChildren } from './../core/models/examples/muddy-children';
@@ -14,7 +15,7 @@ import { ExampleService } from 'src/app/services/example.service';
 })
 export class MenuComponent implements OnInit {
 
-  examples = [new MuddyChildren(), new ConsecutiveNumbers()];
+  examples = [new MuddyChildren(), new ConsecutiveNumbers(), new Belote()];
 
   openExampleDescription(exampleDescription: ExampleDescription ) {
     this.exampleService.setExampleDescription(exampleDescription);
