@@ -13,7 +13,7 @@ async function mycode() {
 		getElseOf: Module.cwrap('get_else_of', 'number', ['number']),
 		createFalse: Module.cwrap('create_false', 'number'),
 		createTrue: Module.cwrap('create_true', 'number'),
-		createNewVar: Module.cwrap('create_new_var', 'number'),
+		createAtom: Module.cwrap('create_atom', 'number', ['number']),
 		createValuation: Module.cwrap('create_valuation', 'number', ['array', 'array', 'number']),
 		createAnd: Module.cwrap('create_and', 'number', ['number', 'number']),
 		createAnd: (nodes) => {

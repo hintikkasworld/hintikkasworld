@@ -33,6 +33,10 @@ void die(char *msg, ...)
 
 DdManager *ddm;
 
+void safe_deref(DdNode *node) {
+	if ( ! Cudd_bddIsVar(ddm, node)) Cudd_RecursiveDeref(ddm, node);
+}
+
 enum CuddJS_ErrorType {
 	CUDDJS_NO_ERROR,
 	CUDDJS_UNMET_ASSERTION,
@@ -152,36 +156,42 @@ DdNode *get_else_of(DdNode *node) {
 EMSCRIPTEN_KEEPALIVE
 DdNode *create_false() {
 	DdNode *tmp = Cudd_ReadLogicZero(ddm);
+	Cudd_Ref(tmp);
 	return tmp;
 }
+
 EMSCRIPTEN_KEEPALIVE
 DdNode *create_true() {
 	DdNode *tmp = Cudd_ReadOne(ddm);
+	Cudd_Ref(tmp);
 	return tmp;
 }
 
 EMSCRIPTEN_KEEPALIVE
-DdNode *create_new_var() {
-	return Cudd_bddNewVar(ddm);
+DdNode *create_atom(int var) {
+	DdNode *res = Cudd_bddIthVar(ddm, var);
+	Cudd_Ref(res);
+	return res;
 }
+
 
 EMSCRIPTEN_KEEPALIVE
 DdNode *create_valuation(DdNode **vars, bool *signs, int nb) {
-	return Cudd_bddComputeCube(ddm, vars, (int *)signs, nb);
+	DdNode *res = Cudd_bddComputeCube(ddm, vars, (int *)signs, nb);
+	Cudd_Ref(res);
+	return res;
 }
 EMSCRIPTEN_KEEPALIVE
 DdNode *create_and(DdNode *n1, DdNode *n2) {
-	fprintf(stderr, "debug: %d\n", Cudd_DebugCheck(ddm));
+	fprintf(stderr, "debug and 1: %d\n", Cudd_DebugCheck(ddm));
 	DdNode *res;
-	//Cudd_Ref(n1);
-	//Cudd_Ref(n2);
 	res = Cudd_bddAnd(ddm, n1, n2);
-	//FIXME
-	if (res == NULL) die("Error: blow-up during conjunction\n");
+	if (res == NULL) return NULL;
 	Cudd_Ref(res);
-	//Cudd_Deref(n1);
-	//Cudd_Deref(n2);
-// 	Cudd_Deref(res);
+	fprintf(stderr, "debug and 2: %d\n", Cudd_DebugCheck(ddm));
+	Cudd_RecursiveDeref(ddm, n1);
+	Cudd_RecursiveDeref(ddm, n2);
+	fprintf(stderr, "debug and 3: %d\n", Cudd_DebugCheck(ddm));
 	return res;
 }
 
@@ -216,11 +226,20 @@ DdNode *create_ite(DdNode *f, DdNode *g, DdNode *h) {
 }
 
 DdNode *create_forget(DdNode *f, DdNode **vars, int nb, bool existential) {
+	fprintf(stderr, "debug forget 1: %d\n", Cudd_DebugCheck(ddm));
 	DdNode *cube = Cudd_bddComputeCube(ddm, vars, NULL, nb);
 	if (cube == NULL) return NULL;
-	return existential ?
+	Cudd_Ref(cube);
+	DdNode *res = existential ?
 		Cudd_bddExistAbstract(ddm, f, cube) :
 		Cudd_bddUnivAbstract(ddm, f, cube);
+	fprintf(stderr, "debug forget 2: %d\n", Cudd_DebugCheck(ddm));
+	if (res == NULL) return NULL;
+	Cudd_Ref(res);
+	Cudd_RecursiveDeref(ddm, cube);
+	Cudd_RecursiveDeref(ddm, f);
+	fprintf(stderr, "debug forget 3: %d\n", Cudd_DebugCheck(ddm));
+	return res;
 }
 
 EMSCRIPTEN_KEEPALIVE
@@ -241,7 +260,11 @@ DdNode *create_conditioning(DdNode *f, DdNode *valuation) {
 
 EMSCRIPTEN_KEEPALIVE
 DdNode *create_renaming(DdNode *f, DdNode **oldvars, DdNode **newvars, int nb) {
-	return Cudd_bddSwapVariables(ddm, f, oldvars, newvars, nb);
+	DdNode *res = Cudd_bddSwapVariables(ddm, f, oldvars, newvars, nb);
+	if (res == NULL) return NULL;
+	Cudd_Ref(res);
+	safe_deref(f);
+	return res;
 }
 
 EMSCRIPTEN_KEEPALIVE
@@ -294,7 +317,7 @@ void trash(DdNode *node) {
 	if (index == -1) die("Error: node not stored? %p\n", node);
 	stored[index] = NULL;
 	nb_stored--;
-	Cudd_RecursiveDeref(ddm, node);
+	safe_deref(node);
 }
 
 EMSCRIPTEN_KEEPALIVE
@@ -318,18 +341,16 @@ void dump_dot(DdNode *node) {
 	if (node == NULL) puts("nothing to dump");
 	else {
 		fprintf(stderr, "debug dump 1: %d\n", Cudd_DebugCheck(ddm));
-		Cudd_Ref(node);
 		DdNode *tmp = Cudd_BddToAdd(ddm, node);
 		Cudd_Ref(tmp);
 		fprintf(stderr, "debug dump 2: %d\n", Cudd_DebugCheck(ddm));
 		Cudd_ReduceHeap(ddm, CUDD_REORDER_SIFT, 0);
+		fprintf(stderr, "debug dump 3: %d\n", Cudd_DebugCheck(ddm));
 		puts("### START ###");
 		Cudd_DumpDot(ddm, 1, &tmp, NULL, NULL, stdout);
 		puts("### -END- ###");
 		//Cudd_Deref(node);
 		Cudd_RecursiveDeref(ddm, tmp);
-		fprintf(stderr, "debug dump 3: %d\n", Cudd_DebugCheck(ddm));
-		Cudd_RecursiveDeref(ddm, node);
 		fprintf(stderr, "debug dump 4: %d\n", Cudd_DebugCheck(ddm));
 	}
 }
@@ -357,18 +378,82 @@ void init()
 	printf("nb=%ld\n", peak_node_count());
 }
 
+void tests() {
+	// for testing things
+	init();
+	DdNode *t = create_true();
+// 	Cudd_Ref(t);
+// 	Cudd_Ref(t);
+// 	printf("refs=%d\n", referenced_count());
+// 	printf("debug: "); Cudd_DebugCheck(ddm);
+// 	Cudd_RecursiveDeref(ddm, t);
+// 	printf("refs=%d\n", referenced_count());
+// 	printf("debug: "); Cudd_DebugCheck(ddm);
+// 	Cudd_RecursiveDeref(ddm, t);
+// 	printf("refs=%d\n", referenced_count());
+// 	printf("debug: "); Cudd_DebugCheck(ddm);
+// 	puts("ssssssssssssssssssssssssss");
+	DdNode *f = create_false();
+	DdNode *i = create_atom(0);
+// 	Cudd_Ref(i);
+// 	Cudd_Ref(i);
+// 	printf("refs=%d\n", referenced_count());
+// 	printf("debug: "); Cudd_DebugCheck(ddm);
+// 	Cudd_RecursiveDeref(ddm, i);
+// 	printf("refs=%d\n", referenced_count());
+// 	printf("debug: "); Cudd_DebugCheck(ddm);
+// 	Cudd_RecursiveDeref(ddm, i);
+// 	printf("refs=%d\n", referenced_count());
+// 	printf("debug: "); Cudd_DebugCheck(ddm);
+// 	puts("ssssssssssssssssssssssssss");
+// 	printf("refs=%d\n", referenced_count());
+	//Cudd_RecursiveDeref(ddm, i);
+	//dump_dot(t);
+	printf("%d (exp 0)\n", is_false(t));
+	printf("%d (exp 1)\n", is_true(t));
+	printf("%d (exp 0)\n", is_internal_node(t));
+
+	printf("%d (exp 1)\n", is_false(f));
+	printf("%d (exp 0)\n", is_true(f));
+	printf("%d (exp 0)\n", is_internal_node(f));
+
+	printf("%d (exp 0)\n", is_false(i));
+	printf("%d (exp 0)\n", is_true(i));
+	printf("%d (exp 1)\n", is_internal_node(i));
+
+	DdNode *j = create_atom(1);
+	printf("refs=%d\n", referenced_count());
+	DdNode *conj = create_and(i, j);
+	printf("refs=%d\n", referenced_count());
+	if (conj == NULL) die("oh oh");
+	//Cudd_Ref(conj);
+	//dump_dot(conj);
+	//safe_deref(conj);
+	printf("refs=%d\n", referenced_count());
+	DdNode *vars[] = { i };
+	DdNode *forg = create_existential_forget(conj, vars, 1);
+	printf("refs=%d\n", referenced_count());
+	//dump_dot(forg);
+	Cudd_RecursiveDeref(ddm, forg);
+	printf("refs=%d\n", referenced_count());
+	//printf("%s\n", get_error());
+}
+
 
 int main() {
 	// for testing things
 	puts("*** THIS IS THE CUDDJS MAIN ***");
-	DdNode *t = create_true();
-	DdNode *f = create_false();
-	dump_dot(t);
-	printf("%d", is_false(t));
-	printf("%d", is_true(t));
-	printf("%d", is_false(f));
-	printf("%d", is_true(f));
-	//init();
-	//printf("%p\n", Cudd_bddIthVar(ddm, INT_MAX/2));
-	//printf("%s\n", get_error());
+	//tests();
+	//
+	//
+	//TODO: decide how refs are handled.
+	// it is not easy to ref args then deref them afterwards,
+	// because it would imply that all operations return an unreferenced node,
+	// which is impossible if we want to keep the dead node count correct in cudd
+	// (this is useful for debugging).
+	// all operations could return a referenced node, and deref their args,
+	// but then the caller must be very cautious.
+	// maybe there should be a debug mode, writing down all current references,
+	// and warning the user when they do forbidden things? and when the app
+	// is OK, all checks are removed. use asserts for this?
 }
