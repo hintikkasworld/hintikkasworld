@@ -12,7 +12,7 @@ import "!!file-loader?name=wasm/cuddjs.wasm2!./../../../cuddjs/release/cuddjs.wa
 @Injectable({
   providedIn: 'root'
 })
- */
+  */
 
 export type BDDNode = number;
 
@@ -30,8 +30,9 @@ export class BddService {
     require('fs');
     this.instantiateWasm("wasm/cuddjs.wasm2");
 
+    let itv = window.setInterval(() => {})
 
-    
+
   }
 
 
