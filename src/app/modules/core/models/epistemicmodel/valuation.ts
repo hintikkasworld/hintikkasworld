@@ -12,7 +12,7 @@ export class Valuation {
     }
 
     
-    modelCheck(p: string) {
+    isPropositionTrue(p: string) {
         return (this.propositions[p] == true);
     }
 

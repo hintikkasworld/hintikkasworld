@@ -22,7 +22,7 @@ export class WorldValuation extends World {
       
 
         modelCheck(p: string) {
-          return this.valuation.modelCheck(p);
+          return this.valuation.isPropositionTrue(p);
         }
         
         

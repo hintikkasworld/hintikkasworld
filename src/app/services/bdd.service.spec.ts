@@ -9,4 +9,14 @@ describe('BddService', () => {
     const service: BddService = TestBed.get(BddService);
     expect(service).toBeTruthy();
   });
+
+  it('should be created', () => {
+    let service: BddService;
+    expect(
+      function test() {
+        let b = service.createIte("p", service.createTrue(), service.createFalse());
+        return service.getVarOf(b) == "p";
+      }
+    ).toBeTruthy();
+  });
 });
