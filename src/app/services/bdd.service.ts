@@ -8,14 +8,15 @@ import * as Module from "./../../../cuddjs/release/cuddjs.js";
 import "!!file-loader?name=wasm/cuddjs.wasm2!./../../../cuddjs/release/cuddjs.wasm2";
 //wasm/cuddjs.wasm is the "virtual" name
 
-/**
-@Injectable({
-  providedIn: 'root'
-})
-  */
+
 
 export type BDDNode = number;
 
+
+@Injectable({
+  providedIn: 'root'
+})
+ 
 export class BddService {
 
   bddModule: any;
