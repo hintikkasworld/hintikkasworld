@@ -242,6 +242,10 @@ export class FormulaFactory{
             else if ((ast[1] == "<->" || ast[1] == "equiv")) {
                 return new EquivFormula(this.installFormula(ast[0]),this.installFormula(ast[2]))
             } 
+            else if ((ast[0] == "exactly") && !(+(ast[1]).isNaN)) {
+                // The operator +ast[1] converts the string ast[1] into an int.
+                return new ExactlyFormula((+ast[1]),ast.slice(2))
+            }
             else {
                 throw "Error while parsing the formula";
             }
