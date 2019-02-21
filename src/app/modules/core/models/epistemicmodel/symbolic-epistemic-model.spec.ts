@@ -21,7 +21,7 @@ describe('SymbolicEpistemicModel', () => {
     console.log(belote.getName());
     console.log(belote.getVarName("a", 1));
     let m = belote.getInitialEpistemicModel();
-    console.log(m.formulaInitial.prettyPrint())
+    console.log(m.formulaInitial)
   });
 
 });
