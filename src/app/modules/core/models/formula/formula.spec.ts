@@ -61,4 +61,32 @@ describe('Formula', () => {
   it('the alternate parsing of xor works.', () => {
     expect((FormulaFactory.createFormula("(xor p q r s)").prettyPrint()) == "(p xor q xor r xor s)").toBeTruthy();
   });  
+
+  it('the pretty printer works on K', () => {
+    expect((FormulaFactory.createFormula("(K a p)").prettyPrint()) == "(K a p)").toBeTruthy();
+  });
+
+  it('the pretty printer works on Kpos', () => {
+    expect((FormulaFactory.createFormula("(Kpos a p)").prettyPrint()) == "(Kpos a p)").toBeTruthy();
+  });
+
+  it('the pretty printer works on Kw', () => {
+    expect((FormulaFactory.createFormula("(Kw a p)").prettyPrint()) == "(Kw a p)").toBeTruthy();
+  });
+
+  it('the pretty printer works on ->', () => {
+    expect((FormulaFactory.createFormula("(p -> q)").prettyPrint()) == "(p -> q)").toBeTruthy();
+  });
+
+  it('the pretty printer works on <->', () => {
+    expect((FormulaFactory.createFormula("(p <-> q)").prettyPrint()) == "(p <-> q)").toBeTruthy();
+  });
+
+  it('the pretty printer works on exactly with 2 elements', () => {
+    expect((FormulaFactory.createFormula("(exactly 1 p q)").prettyPrint()) == "(exactly 1 p q)").toBeTruthy();
+  });
+
+  it('the pretty printer works on exactly with 4 elements', () => {
+    expect((FormulaFactory.createFormula("(exactly 2 p q r s)").prettyPrint()) == "(exactly 2 p q r s)").toBeTruthy();
+  });
 });

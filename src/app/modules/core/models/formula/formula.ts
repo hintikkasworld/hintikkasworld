@@ -69,7 +69,7 @@ export class AndFormula implements Formula {
 
 export class KFormula implements Formula {
     prettyPrint(): String {
-        throw new Error("Method not implemented.");
+        return "(K "+this._agent+" "+this._formula.prettyPrint()+")"
     }
     private _agent: string;
     private _formula: Formula;
@@ -87,7 +87,7 @@ export class KFormula implements Formula {
 
 export class KposFormula implements Formula {
     prettyPrint(): String {
-        throw new Error("Method not implemented.");
+        return "(Kpos "+this._agent+" "+this._formula.prettyPrint()+")"
     }
     private _agent: string;
     private _formula: Formula;
@@ -105,7 +105,7 @@ export class KposFormula implements Formula {
 
 export class KwFormula implements Formula {
     prettyPrint(): String {
-        throw new Error("Method not implemented.");
+        return "(Kw "+this._agent+" "+this._formula.prettyPrint()+")"
     }
     private _agent: string;
     private _formula: Formula;
@@ -157,7 +157,7 @@ export class XorFormula implements Formula {
 
 export class ImplyFormula implements Formula {
     prettyPrint(): String {
-        throw new Error("Method not implemented.");
+        return "("+this._formula1.prettyPrint() +" -> "+this._formula2.prettyPrint()+")"
     }
     private _formula1: Formula;
     private _formula2: Formula;
@@ -176,7 +176,7 @@ export class ImplyFormula implements Formula {
 
 export class EquivFormula implements Formula {
     prettyPrint(): String {
-        throw new Error("Method not implemented.");
+        return "("+this._formula1.prettyPrint() +" <-> "+this._formula2.prettyPrint()+")"
     }
     private _formula1: Formula;
     private _formula2: Formula;
@@ -194,7 +194,12 @@ export class EquivFormula implements Formula {
 
 export class ExactlyFormula implements Formula {
     prettyPrint(): String {
-        throw new Error("Method not implemented");
+        var s = "(exactly "+(this._count.toString());
+        for (var i = 0; i < this._variables.length; i += 1) {
+            s += " "+this._variables[i];
+        }        
+        s += ")"
+        return s;
     }
     private _count: number;
     private _variables: Array<string>;
@@ -284,7 +289,7 @@ export class FormulaFactory{
             } 
             else if ((ast[0] == "exactly") && !(+(ast[1]).isNaN)) {
                 // The operator +ast[1] converts the string ast[1] into an int.
-                return new ExactlyFormula((+ast[1]),ast.slice(2))
+                return new ExactlyFormula((+ast[1]),ast.slice(2).map(s => s))
             }
             else {
                 throw "Error while parsing the formula";
