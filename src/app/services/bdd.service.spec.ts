@@ -10,7 +10,17 @@ describe('BddService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should be created', () => {
+  it('true should work', () => {
+    let service: BddService;
+    expect(
+      function test() {
+        let b = service.createTrue();
+        return service.isTrue(b);
+      }
+    ).toBeTruthy();
+  });
+
+  it('ite should work', () => {
     let service: BddService;
     expect(
       function test() {
