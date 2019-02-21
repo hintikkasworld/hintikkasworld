@@ -29,6 +29,7 @@ describe('BddService', () => {
           console.log(service.isFalse(bFalse));
 
           let bP = service.createIte("p", bTrue, bFalse);
+          console.log("the node for p is: " + bP);
 
           console.log("END OF BDD SERVICE TESTS");
         });
