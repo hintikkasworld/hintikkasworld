@@ -140,7 +140,7 @@ export class BddService {
 
   getVarOf(b: BDDNode): string {
     let i = this.bddModule._get_var_of(b);
-    return this.getAtomFromIndex(i):
+    return this.getAtomFromIndex(i);
   }
 
   getThenOf(b: BDDNode): BDDNode {
@@ -157,4 +157,4 @@ export class BddService {
 }
 
 
-}
+
