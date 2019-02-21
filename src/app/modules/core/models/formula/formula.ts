@@ -176,6 +176,25 @@ export class EquivFormula implements Formula {
         return this._formula2;
     }
 }
+
+export class ExactlyFormula implements Formula {
+    prettyPrint(): String {
+        throw new Error("Method not implemented");
+    }
+    private _count: number;
+    private _variables: Array<string>;
+    constructor(c: number, v: Array<string>) {
+        this._count = c;
+        this._variables = v;
+    }
+    get count() {
+        return this._count;
+    }
+    get variables() {
+        return this._variables;
+    }
+
+}
 /* export enum FormulaType {
     Atomic, Or, And, K, Kpos, Kw, Not, Xor, Imply, Equiv, True, False
 } */
