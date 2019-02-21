@@ -24,7 +24,9 @@ export class ExampleComponent implements OnInit {
     canvas.width= 128;
     canvas.height = 64;
     let ctx = canvas.getContext('2d');
-    this.exampleDescription.getWorldExample().draw(ctx);
+    let world =  this.exampleDescription.getWorldExample();
+    setTimeout(() => world.draw(ctx), 500);
+    
   }
 
 }

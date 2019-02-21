@@ -1,8 +1,20 @@
 #examplesscreen {
     text-align: center;
+    min-height:100vh;
     background-color: #CCCCFF;
+    margin: 0px;
+    padding: 0px;
+
 }
 
 #examplesscreen div  {
     padding: 32px;
 }
+
+
+#examples {
+    display: inline-block;
+}
+
+
+
