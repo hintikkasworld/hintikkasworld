@@ -446,12 +446,15 @@ export class ComicsComponent implements OnInit {
             let worlds = M.getSuccessors(M.getPointedWorld(), comics.env.agentPerspective);
             world = getRandomElementInArray(worlds);
             world.draw(context);
-            if (comics.env.agentPerspective != undefined)
+            if ((comics.env.agentPerspective != undefined)) {
               setTimeout(loop, 500);
+            }
+
           }
           loop();
         }
         else
+
           world.draw(context);
 
       }
