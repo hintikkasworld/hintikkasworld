@@ -8,12 +8,18 @@ export class BDD {
     bddNode: BDDNode;
     static bddService: BddService = new BddService(() => {});
 
-    constructor(formula: Formula) {
-        this.bddNode = BDD.getBDDNode(formula);
-        BDD.bddService.save(this.bddNode);
+    constructor(b:BDDNode) {
+       
+        BDD.bddService.save(b); 
+        
+
     }
-
-
+    get thisbddNode() {
+        return this.bddNode;
+    }
+    static buildFromFormula(f:Formula):BDD {
+        return new BDD(BDD.getBDDNode(f))
+    }
     pickRandomSolution(): Valuation {
         return BDD.bddService.pickRandomSolution(this.bddNode);
     }
@@ -76,6 +82,28 @@ export class BDD {
         }
 
         return getExactlyBDD(0, n);
+    }
+
+    and(lb:BDD[]):BDD {
+        return new BDD(BDD.bddService.createAnd(lb.map(b => (b.thisbddNode))))
+    }
+    or(lb:BDD[]):BDD {
+        return new BDD(BDD.bddService.createOr(lb.map(b => (b.thisbddNode))))
+    }
+    not(b:BDD):BDD {
+        return new BDD(BDD.bddService.createNot(b.thisbddNode))
+    }
+    imply(b1:BDD,b2:BDD):BDD {
+        return new BDD(BDD.bddService.createImply(b1.thisbddNode,b2.thisbddNode))
+    }
+    equiv(b1:BDD,b2:BDD):BDD {
+        return new BDD(BDD.bddService.createEquiv(b1.thisbddNode,b2.thisbddNode))
+    }
+    universalforget(b:BDD,vars:string[]) {
+        return new BDD(BDD.bddService.createUniversalForget(b.thisbddNode,vars))
+    }
+    existentialforget(b:BDD,vars:string[]) {
+        return new BDD(BDD.bddService.createExistentialForget(b.thisbddNode,vars))
     }
 
 }
