@@ -5,7 +5,7 @@ import { isPlatformWorkerUi } from '@angular/common';
 import { Valuation } from '../modules/core/models/epistemicmodel/valuation';
 
 import * as Module from "./../../../cuddjs/release/cuddjs.js";
-import "!!file-loader?name=wasm/cuddjs.wasm!./../../../cuddjs/release/cuddjs.wasm";
+import "!!file-loader?name=wasm/cuddjs.wasm2!./../../../cuddjs/release/cuddjs.wasm2";
 //wasm/cuddjs.wasm is the "virtual" name
 
 /**
@@ -14,10 +14,10 @@ import "!!file-loader?name=wasm/cuddjs.wasm!./../../../cuddjs/release/cuddjs.was
 })
  */
 
- export type BDDNode = number;
+export type BDDNode = number;
 
 export class BddService {
- 
+
   bddModule: any;
 
   atomIndex: Map<string, number> = new Map();
@@ -27,7 +27,11 @@ export class BddService {
 
 
   constructor() {
-     this.instantiateWasm("wasm/cuddjs.wasm");
+    require('fs');
+    this.instantiateWasm("wasm/cuddjs.wasm2");
+
+
+    
   }
 
 
@@ -50,7 +54,7 @@ export class BddService {
     };
 
     // instantiate the module
-     this.bddModule = Module(moduleArgs);
+    this.bddModule = Module(moduleArgs);
 
   }
 
@@ -158,13 +162,13 @@ export class BddService {
     return this.bddModule._get_else_of(b);
   }
 
-  save(b: BDDNode): void {
+  save(b: BDDNode): void {
     this.bddModule._save();
   }
 
   pickRandomSolution(bddNode: number): Valuation {
     throw new Error("Method not implemented.");
-}
+  }
 }
 
 
