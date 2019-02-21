@@ -56,14 +56,14 @@ export class SymbolicEpistemicModel implements EpistemicModel{
         this.initialFormula = f;
 
         this.propositionalAtoms = [];
-        let SEM = this;
-        atoms.forEach(function (value) {
-            SEM.propositionalAtoms.push(value);
-            SEM.propositionalAtoms.push(SymbolicEpistemicModel.getPrimedVarName(value));
+        atoms.forEach( (value) => {
+            this.propositionalAtoms.push(value);
+            this.propositionalAtoms.push(SymbolicEpistemicModel.getPrimedVarName(value));
         });
-        constratoms.forEach(function (value) {
-            SEM.constructionAtoms.push(value);
-            SEM.constructionAtoms.push(SymbolicEpistemicModel.getPrimedVarName(value));
+        this.constructionAtoms = [];
+        constratoms.forEach( (value) => {
+            this.constructionAtoms.push(value);
+            this.constructionAtoms.push(SymbolicEpistemicModel.getPrimedVarName(value));
         });
         this.agents = [];
         relations.forEach((value: SymbolicRelation, key: string) => {
@@ -136,36 +136,38 @@ export class BeloteTest extends ExampleDescription {
             var lv:Array<string> = new Array(); 
             for(var i = 0; i<this.nbCards; i++) {
                 lv.push(this.getVarName(agent,i));
-            }
-            lf.push(new ExactlyFormula((this.nbCards/(this.agents.length)),lv))
-            if (agent == "a") {
-                lf.push(FormulaFactory.createFormula("("+this.getVarName(agent,i)+ "<-> (!"+this.getxName(i)+ " and !"+this.getyName(i)+"))"))
-            }
-            if (agent == "b") {
-                lf.push(FormulaFactory.createFormula("("+this.getVarName(agent,i)+ "<-> (!"+this.getxName(i)+ " and "+this.getyName(i)+"))"))
-            }
-            if (agent == "c") {
-                lf.push(FormulaFactory.createFormula("("+this.getVarName(agent,i)+ "<-> ("+this.getxName(i)+ " and !"+this.getyName(i)+"))"))
-            }
-            if (agent == "d") {
-                lf.push(FormulaFactory.createFormula("("+this.getVarName(agent,i)+ "<-> ("+this.getxName(i)+ " and "+this.getyName(i)+"))"))
-            }                                    
+                if (agent == "a") {
+                    console.log("("+this.getVarName(agent,i)+ " <-> ((not "+this.getxName(i)+ ") and (not "+this.getyName(i)+")))") 
+                    lf.push(FormulaFactory.createFormula("("+this.getVarName(agent,i)+ " <-> ((not "+this.getxName(i)+ ") and (not "+this.getyName(i)+")))")) 
+                }
+                if (agent == "b") {
+                    lf.push(FormulaFactory.createFormula("("+this.getVarName(agent,i)+ " <-> ((not "+this.getxName(i)+ ") and "+this.getyName(i)+"))") )
+                }
+                if (agent == "c") {
+                    lf.push(FormulaFactory.createFormula("("+this.getVarName(agent,i)+ " <-> ("+this.getxName(i)+ " and (not "+this.getyName(i)+")))") )
+                }
+                if (agent == "d") {
+                    lf.push(FormulaFactory.createFormula("("+this.getVarName(agent,i)+ " <-> ("+this.getxName(i)+ " and "+this.getyName(i)+"))"))
+                } 
+            }           
+            lf.push(new ExactlyFormula((this.nbCards/(this.agents.length)),lv))                        
         });   
+
         let formulaInitial = new AndFormula(lf);
         /* Cree l'Obs <<SymbolicRelation>> qui represente 
         les relations pour chaque agent var_a_c <-> var_a_c_p */
         var relationsSymboliques:Map<string, SymbolicRelation> = new Map(); 
         
-        this.agents.forEach(function (agent) {
+        this.agents.forEach( (agent) => {
             let agentVariables= [];
             for(var i = 0; i<this.nbCards; i++) {
                 agentVariables.push(this.getVarName(agent, i))
             }
             relationsSymboliques[agent] = new Obs(agentVariables);
         });
+
         
         let M = new SymbolicEpistemicModel(variables,  constructionVariables, formulaInitial, relationsSymboliques);
-
         M.setPointedWorld(null);
 
         return M;
