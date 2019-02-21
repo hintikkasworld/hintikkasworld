@@ -5,6 +5,7 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { World } from './world';
 import { SymbolicRelation, Obs } from './symbolic-relation';
 import { Formula, AndFormula, ExactlyFormula, NotFormula, EquivFormula, AtomicFormula, FormulaFactory } from '../formula/formula';
+import { BDD } from '../formula/bdd';
 
 
 export class SymbolicEpistemicModel implements EpistemicModel{
@@ -37,14 +38,14 @@ export class SymbolicEpistemicModel implements EpistemicModel{
         return "_p";
     }
 
-    protected pointed: any;
+    protected pointed: Valuation;
     protected propositionalAtoms:string[];
     protected constructionAtoms:string[];
-    protected initialFormula:Formula;
+    protected initialFormula:BDD;
     protected agents:string[];
     protected mapAtomDDNode:Map<string, number>;
 
-    protected graphe: number;
+    protected graphe: Map<string, number>;
 
     /**
      * 
@@ -53,7 +54,6 @@ export class SymbolicEpistemicModel implements EpistemicModel{
      */
     constructor(atoms:string[], constratoms:string[], f: Formula, relations:Map<string, SymbolicRelation>){
         this.pointed = null;
-        this.initialFormula = f;
 
         this.propositionalAtoms = [];
         atoms.forEach( (value) => {
@@ -65,13 +65,17 @@ export class SymbolicEpistemicModel implements EpistemicModel{
             this.constructionAtoms.push(value);
             this.constructionAtoms.push(SymbolicEpistemicModel.getPrimedVarName(value));
         });
+
+        this.graphe = new Map();
         this.agents = [];
         relations.forEach((value: SymbolicRelation, key: string) => {
             this.agents.push(key);
+            this.graphe[key] = value.toBDD();
         });
 
-        
-        
+        this.initialFormula = BDD.buildFromFormula(f);
+        this.initialFormula = BDD.existentialforget(this.initialFormula, this.constructionAtoms);
+
     }
     
     /**
@@ -88,7 +92,9 @@ export class SymbolicEpistemicModel implements EpistemicModel{
         this.pointed = newPointedWorld;
     }
 
+
     getSuccessors(w: World, a: string){
+
         /**
          * 
          */

@@ -1,5 +1,7 @@
 import { Formula, FormulaFactory } from '../formula/formula';
 import { SymbolicEpistemicModel } from './symbolic-epistemic-model';
+import { BddService } from '../../../../services/bdd.service';
+import { BDD } from '../formula/bdd';
 
 export interface SymbolicRelation {
     toFormula():Formula;
@@ -15,13 +17,12 @@ export class Obs implements SymbolicRelation{
     }
     toFormula(){
         let strFormula:string = "";
-       /* this.variables.forEach(var => {
-            strFormula += "(" + var + "<->" + SymbolicEpistemicModel.getPrimedVarName(var) + ")";
-        }); */
-        return null;
+        this.variables.forEach(atom => {
+            strFormula += "(" + atom + "<->" + SymbolicEpistemicModel.getPrimedVarName(atom) + ")";
+        });
+        return FormulaFactory.createFormula(strFormula);
     };
     toBDD(){
-        /* TO DO */
-        return null;
+        return BDD.buildFromFormula(this.toFormula());
     };
 }
