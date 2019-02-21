@@ -16,11 +16,11 @@ import { Valuation } from '../modules/core/models/epistemicmodel/valuation';
  export type BDDNode = number;
 
 export class BddService {
+ 
   bddModule: any;
 
   atomIndex: Map<string, number> = new Map();
   indexAtom: Map<number, string> = new Map();
-  newIndexForAtoms: number;
 
   wasmReady = new BehaviorSubject<boolean>(false);
 
@@ -56,9 +56,9 @@ export class BddService {
 
   private getIndexFromAtom(p: string) {
     if (!this.atomIndex.has(p)) {
-      this.atomIndex.set(p, this.newIndexForAtoms);
-      this.indexAtom.set(this.newIndexForAtoms, p);
-      this.newIndexForAtoms++;
+      let i = this.bddModule._create_new_var();
+      this.atomIndex.set(p, i);
+      this.indexAtom.set(i, p);
     }
     return this.atomIndex.get(p);
   }
@@ -73,6 +73,10 @@ export class BddService {
 
   isFalse(b: BDDNode): boolean {
     return this.bddModule._is_false(b);
+  }
+
+  isInternalNode(b: BDDNode): boolean {
+    return this.bddModule._is_internal_node(b);
   }
 
   createTrue(): BDDNode {
@@ -156,6 +160,10 @@ export class BddService {
   save(b: BDDNode): void {
     this.bddModule._save();
   }
+
+  pickRandomSolution(bddNode: number): Valuation {
+    throw new Error("Method not implemented.");
+}
 }
 
 
