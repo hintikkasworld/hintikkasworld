@@ -127,6 +127,15 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
                 }
                 else return false;
             }
+            case (phi instanceof types.ExactlyFormula): {
+                let c = 0;
+                for (let s of (<types.ExactlyFormula>phi).variables) {
+                    if ((<World>this.nodes[w]).modelCheck(s)) {
+                        c += 1
+                    }
+                }
+                return (c == (<types.ExactlyFormula>phi).count)
+            }
         }
     }
 

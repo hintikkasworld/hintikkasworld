@@ -79,5 +79,33 @@ describe('ExplicitEpistemicModel', () => {
   it('Kw 4', () => {
     expect((m.modelCheck("t", new types.KwFormula("a", new types.AtomicFormula("ma"))) == false)).toBeTruthy();
 
-  });            
+  });   
+  it('Exactly 1', () => {
+    expect((m.modelCheck("t", new types.ExactlyFormula(1,["ma","mb"]))) == false).toBeTruthy();
+
+  });    
+  it('Exactly 2', () => {
+    expect((m.modelCheck("t", new types.ExactlyFormula(0,["ma","mb"]))) == true).toBeTruthy();
+
+  });   
+  it('Exactly 3', () => {
+    expect((m.modelCheck("w", new types.ExactlyFormula(0,["ma","mb"]))) == false).toBeTruthy();
+
+  });    
+  it('Exactly 4', () => {
+    expect((m.modelCheck("w", new types.ExactlyFormula(1,["ma","mb"]))) == false).toBeTruthy();
+
+  }); 
+  it('Exactly 5', () => {
+    expect((m.modelCheck("w", new types.ExactlyFormula(2,["ma","mb"]))) == true).toBeTruthy();
+
+  });    
+  it('Exactly 6', () => {
+    expect((m.modelCheck("w", new types.ExactlyFormula(3,["ma","mb"]))) == false).toBeTruthy();
+
+  });   
+  it('Exactly 7', () => {
+    expect((m.modelCheck("w", new types.ExactlyFormula(2,["ma","mb","p"]))) == true).toBeTruthy();
+
+  });   
 });
