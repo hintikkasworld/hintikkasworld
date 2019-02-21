@@ -17,7 +17,7 @@ export class BDD {
     get thisbddNode() {
         return this.bddNode;
     }
-    buildFromFormula(f:Formula):BDD {
+    static buildFromFormula(f:Formula):BDD {
         return new BDD(BDD.getBDDNode(f))
     }
     pickRandomSolution(): Valuation {
@@ -104,5 +104,5 @@ export class BDD {
     existentialforget(b:BDD,vars:string[]) {
         return new BDD(BDD.bddService.createExistentialForget(b.thisbddNode,vars))
     }
-    
+
 }
