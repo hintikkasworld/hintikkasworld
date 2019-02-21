@@ -4,8 +4,9 @@ import { filter, map } from "rxjs/operators";
 import { isPlatformWorkerUi } from '@angular/common';
 import { Valuation } from '../modules/core/models/epistemicmodel/valuation';
 
-//import * as Module from "./../../wasm/fibonacci.js";  <=== là on importe le JS d'Alexandre
-//import "!!file-loader?name=wasm/fibonacci.wasm!../../wasm/fibonacci.wasm";  // <==== là où on important le WASM d'Alexandre
+import * as Module from "./../../../cuddjs/release/cuddjs.js";
+import "!!file-loader?name=wasm/cuddjs.wasm!./../../../cuddjs/release/cuddjs.wasm";
+//wasm/cuddjs.wasm is the "virtual" name
 
 /**
 @Injectable({
@@ -26,7 +27,7 @@ export class BddService {
 
 
   constructor() {
-    // this.instantiateWasm("wasm/fibonacci.wasm"); <=============on load ici
+     this.instantiateWasm("wasm/cuddjs.wasm");
   }
 
 
@@ -49,7 +50,7 @@ export class BddService {
     };
 
     // instantiate the module
-    // this.module = BDDModule(moduleArgs); <==== là on instancie
+     this.bddModule = Module(moduleArgs);
 
   }
 
