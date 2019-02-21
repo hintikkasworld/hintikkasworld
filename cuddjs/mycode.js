@@ -4,12 +4,20 @@ async function mycode() {
 	const viz = new Viz();
 
 	const api = {
+		getError: Module.cwrap('get_error', 'string'),
+		isTrue: Module.cwrap('is_true', 'boolean', ['number']),
+		isFalse: Module.cwrap('is_false', 'boolean', ['number']),
+		isInternalNode: Module.cwrap('is_internal_node', 'boolean', ['number']),
+		getVarOf: Module.cwrap('get_var_of', 'number', ['number']),
+		getThenOf: Module.cwrap('get_then_of', 'number', ['number']),
+		getElseOf: Module.cwrap('get_else_of', 'number', ['number']),
+		createFalse: Module.cwrap('create_false', 'number'),
+		createTrue: Module.cwrap('create_true', 'number'),
+		createNewVar: Module.cwrap('create_new_var', 'number'),
 		init: Module.cwrap('init'),
 		print_info: Module.cwrap('print_info'),
 		count: Module.cwrap('peak_node_count', 'number'),
 		literal: Module.cwrap('get_literal_as_bdd', 'number', ['number']),
-		get_true: Module.cwrap('get_true', 'number'),
-		get_false: Module.cwrap('get_false', 'number'),
 		referenced_count: Module.cwrap('referenced_count', 'number'),
 
 		index_stored: Module.cwrap('index_stored', 'number', ['number']),

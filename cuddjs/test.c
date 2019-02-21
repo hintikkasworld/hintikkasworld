@@ -150,12 +150,12 @@ DdNode *get_else_of(DdNode *node) {
 }
 
 EMSCRIPTEN_KEEPALIVE
-DdNode *get_false() {
+DdNode *create_false() {
 	DdNode *tmp = Cudd_ReadLogicZero(ddm);
 	return tmp;
 }
 EMSCRIPTEN_KEEPALIVE
-DdNode *get_true() {
+DdNode *create_true() {
 	DdNode *tmp = Cudd_ReadOne(ddm);
 	return tmp;
 }
@@ -239,6 +239,10 @@ DdNode *create_conditioning(DdNode *f, DdNode *valuation) {
 	return NULL;
 }
 
+EMSCRIPTEN_KEEPALIVE
+DdNode *create_renaming(DdNode *f, DdNode **oldvars, DdNode **newvars, int nb) {
+	return Cudd_bddSwapVariables(ddm, f, oldvars, newvars, nb);
+}
 
 EMSCRIPTEN_KEEPALIVE
 DdNode *pick_random_solution(DdNode *f) {
@@ -345,6 +349,7 @@ long peak_node_count() {
 EMSCRIPTEN_KEEPALIVE
 void init()
 {
+	puts("*** CuddJS init ***");
 	ddm = Cudd_Init(100, 100, CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS, 100);
 	Cudd_ClearErrorCode(ddm);
 // 	printf("p=%p\n", get_literal_as_bdd(3));
@@ -355,7 +360,8 @@ void init()
 
 int main() {
 	// for testing things
-	init();
+	puts("*** THIS IS THE CUDDJS MAIN ***");
+	//init();
 	//printf("%p\n", Cudd_bddIthVar(ddm, INT_MAX/2));
 	//printf("%s\n", get_error());
 }
