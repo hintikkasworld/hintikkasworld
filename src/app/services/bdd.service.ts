@@ -7,9 +7,11 @@ import { Valuation } from '../modules/core/models/epistemicmodel/valuation';
 //import * as Module from "./../../wasm/fibonacci.js";  <=== là on importe le JS d'Alexandre
 //import "!!file-loader?name=wasm/fibonacci.wasm!../../wasm/fibonacci.wasm";  // <==== là où on important le WASM d'Alexandre
 
+/**
 @Injectable({
   providedIn: 'root'
 })
+ */
 
  export type BDDNode = number;
 
