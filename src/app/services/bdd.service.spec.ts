@@ -15,8 +15,22 @@ describe('BddService', () => {
     expect(
       function test() {
         let service: BddService = new BddService(() => {
-          let b = service.createTrue();
-          console.log(service.isTrue(b));
+          console.log("BEGINNING OF BDD SERVICE TESTS");
+          
+          
+          let bTrue = service.createTrue();
+
+          console.log("is true true ?");
+          console.log(service.isTrue(bTrue));
+
+          let bFalse = service.createFalse();
+
+          console.log("is false false ?");
+          console.log(service.isFalse(bFalse));
+
+          let bP = service.createIte("p", bTrue, bFalse);
+
+          console.log("END OF BDD SERVICE TESTS");
         });
       }()      
     ).toBeTruthy();

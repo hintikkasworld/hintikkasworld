@@ -49,9 +49,6 @@ export class BddService {
     const moduleArgs = {
       wasmBinary: binary,
       onRuntimeInitialized: () => {
-        console.log(f);
-
-        console.log(this.bddModule.is_true);
         f();
         this.wasmReady.next(true);
         
