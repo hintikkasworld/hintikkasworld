@@ -14,57 +14,67 @@ async function mycode() {
 		createFalse: Module.cwrap('create_false', 'number'),
 		createTrue: Module.cwrap('create_true', 'number'),
 		createNewVar: Module.cwrap('create_new_var', 'number'),
-		init: Module.cwrap('init'),
-		print_info: Module.cwrap('print_info'),
-		count: Module.cwrap('peak_node_count', 'number'),
-		literal: Module.cwrap('get_literal_as_bdd', 'number', ['number']),
-		referenced_count: Module.cwrap('referenced_count', 'number'),
-
-		index_stored: Module.cwrap('index_stored', 'number', ['number']),
-		is_stored: (node) => (api.index_stored(node) >= 0),
-		trash: Module.cwrap('trash', '', ['number']),
-		store: Module.cwrap('store', '', ['number']),
-		get_nb_stored: Module.cwrap('get_nb_stored', 'number'),
-
-		get_conjunction: (nodes) => {
-			const gc = Module.cwrap('get_conjunction', 'number', ['number', 'number']);
+		createValuation: Module.cwrap('create_valuation', 'number', ['array', 'array', 'number']),
+		createAnd: Module.cwrap('create_and', 'number', ['number', 'number']),
+		createAnd: (nodes) => {
+			const binary_and = Module.cwrap('create_and', 'number', ['number', 'number']);
 			if (arguments.length > 1) nodes = arguments;
-			let res = api.get_true();
+			let res = api.createTrue();
 			for (const n of nodes) {
-				res = gc(res, n);
+				res = binary_and(res, n);
 			}
 			return res;
 		},
+		createOr: Module.cwrap('create_or', 'number', ['number', 'number']),
+		createNot: Module.cwrap('create_not', 'number', ['number']),
+		createImplies: Module.cwrap('create_implies', 'number', ['number', 'number']),
+		createEquiv: Module.cwrap('create_equiv', 'number', ['number', 'number']),
+		createIte: Module.cwrap('create_ite', 'number', ['number', 'number', 'number']),
+		createExistentialForget: Module.cwrap('create_existential_forget', 'number', ['number', 'array', 'number']),
+		createUniversalForget: Module.cwrap('create_universal_forget', 'number', ['number', 'array', 'number']),
+		createConditioning: Module.cwrap('create_conditioning', 'number', ['number']),
+		createRenaming: Module.cwrap('create_renaming', 'number', ['array', 'array', 'number']),
+		pickRandomSolution: Module.cwrap('pick_random_solution', 'number', ['number']),
 
-		get_dot: (node) => {
+		indexStored: Module.cwrap('index_stored', 'number', ['number']),
+		isStored: (node) => (api.indexStored(node) >= 0),
+		trash: Module.cwrap('trash', '', ['number']),
+		save: Module.cwrap('save', '', ['number']),
+		getNbStored: Module.cwrap('get_nb_stored', 'number'),
+
+		printInfo: Module.cwrap('print_info'),
+		referencedCount: Module.cwrap('referenced_count', 'number'),
+		peakNodeCount: Module.cwrap('peak_node_count', 'number'),
+		getDot: (node) => {
 			const dump = Module.cwrap('dump_dot', '', ['number']);
 			dump(node);
 			const res = Module.capturedOutput;
 			Module.capturedOutput = null;
 			return res;
 		},
+
+		init: Module.cwrap('init'),
+
 	};
 
 	api.init();
-	console.log('peak = ', api.count());
-	console.log('refs = ', api.referenced_count());
+	console.log('peak = ', api.peakNodeCount());
+	console.log('refs = ', api.referencedCount());
 	const bdds = [];
-	let sign = 1;
 	for (let i = 0; i < 30; i++) {
-		bdds.push(api.literal(sign * i));
-		sign *= -1;
+		bdds.push(api.createNewVar(i));
 	}
-	console.log('refs = ', api.referenced_count());
-	console.log('peak = ', api.count());
+	console.log('refs = ', api.referencedCount());
+	console.log('peak = ', api.peakNodeCount());
 	//api.print_info();
 	console.log(bdds[0]);
-	const conj = api.get_conjunction(bdds);
+	const conj = api.createAnd(bdds);
 	console.log('conj: ', conj);
-	api.store(conj);
-	console.log('refs = ', api.referenced_count());
-	console.log('nb stored = ', api.get_nb_stored());
+	api.save(conj);
+	console.log('refs = ', api.referencedCount());
+	console.log('nb stored = ', api.getNbStored());
 	//api.print_info();
-	viz.renderSVGElement(api.get_dot(conj))
+	viz.renderSVGElement(api.getDot(conj))
 		.then(function(element) {
 			document.body.appendChild(element);
 		})

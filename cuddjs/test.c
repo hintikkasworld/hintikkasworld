@@ -95,12 +95,12 @@ char *get_error() {
 
 EMSCRIPTEN_KEEPALIVE
 bool is_true(DdNode *node) {
-	return Cudd_IsConstant(node) && Cudd_V(node) == CUDD_TRUE;
+	return Cudd_IsConstant(node) && ! Cudd_IsComplement(node);
 }
 
 EMSCRIPTEN_KEEPALIVE
 bool is_false(DdNode *node) {
-	return Cudd_IsConstant(node) && Cudd_V(node) == CUDD_FALSE;
+	return Cudd_IsConstant(node) && Cudd_IsComplement(node);
 }
 
 EMSCRIPTEN_KEEPALIVE
@@ -361,6 +361,13 @@ void init()
 int main() {
 	// for testing things
 	puts("*** THIS IS THE CUDDJS MAIN ***");
+	DdNode *t = create_true();
+	DdNode *f = create_false();
+	dump_dot(t);
+	printf("%d", is_false(t));
+	printf("%d", is_true(t));
+	printf("%d", is_false(f));
+	printf("%d", is_true(f));
 	//init();
 	//printf("%p\n", Cudd_bddIthVar(ddm, INT_MAX/2));
 	//printf("%s\n", get_error());

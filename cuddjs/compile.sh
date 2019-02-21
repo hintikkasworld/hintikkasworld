@@ -22,6 +22,7 @@ case "$1" in
 		;;
 	module)
 		compile_wasm -s MODULARIZE=1 -o release/cuddjs.js
+		cp release/cuddjs.wasm release/cuddjs.wasm2
 		;;
 	*)
 		echo >&2 "unknown mode: '$1'"
