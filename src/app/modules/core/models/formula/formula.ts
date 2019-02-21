@@ -36,7 +36,7 @@ export class AtomicFormula implements Formula {
         this._atomicstring = name;
     }
 
-    getAtomicstring(): string {
+    getAtomicString(): string {
         return this._atomicstring;
     }
 }
