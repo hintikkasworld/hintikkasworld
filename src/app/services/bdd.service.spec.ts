@@ -11,22 +11,24 @@ describe('BddService', () => {
   });
 
   it('true should work', () => {
-    let service: BddService = TestBed.get(BddService);
-    expect(
-      function test() {
-        let b = service.createTrue();
-        return service.isTrue(b);
-      }()
-    ).toBeTruthy();
-  });
 
-  it('ite should work', () => {
-    let service: BddService = TestBed.get(BddService);
     expect(
       function test() {
-        let b = service.createIte("p", service.createTrue(), service.createFalse());
-        return service.getVarOf(b) == "p";
-      }()
+        let service: BddService = new BddService(() => {
+          let b = service.createTrue();
+          console.log(service.isTrue(b));
+        });
+      }()      
     ).toBeTruthy();
-  });
+});
+
+it('ite should work', () => {
+  let service: BddService = TestBed.get(BddService);
+  expect(
+    function test() {
+      let b = service.createIte("p", service.createTrue(), service.createFalse());
+      return service.getVarOf(b) == "p";
+    }()
+  ).toBeTruthy();
+});
 });

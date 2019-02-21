@@ -27,18 +27,16 @@ export class BddService {
   wasmReady = new BehaviorSubject<boolean>(false);
 
 
-  constructor() {
-    require('fs');
-    this.instantiateWasm("wasm/cuddjs.wasm2");
+  constructor(f: ()=>void) {
+    this.instantiateWasm("wasm/cuddjs.wasm2", f);
 
-    let itv = window.setInterval(() => {})
 
 
   }
 
 
 
-  private async instantiateWasm(url: string) {
+  private async instantiateWasm(url: string, f:()=>void) {
     // fetch the wasm file
     const wasmFile = await fetch(url);
 
@@ -51,7 +49,12 @@ export class BddService {
     const moduleArgs = {
       wasmBinary: binary,
       onRuntimeInitialized: () => {
+        console.log(f);
+
+        console.log(this.bddModule.is_true);
+        f();
         this.wasmReady.next(true);
+        
       }
     };
 

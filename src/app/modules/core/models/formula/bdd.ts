@@ -6,7 +6,7 @@ import * as types from './../formula/formula';
 export class BDD {
 
     bddNode: BDDNode;
-    static bddService: BddService = new BddService();
+    static bddService: BddService = new BddService(() => {});
 
     constructor(formula: Formula) {
         this.bddNode = BDD.getBDDNode(formula);
@@ -18,6 +18,7 @@ export class BDD {
         return BDD.bddService.pickRandomSolution(this.bddNode);
     }
     private static getBDDNode(phi: Formula): BDDNode {
+
         switch (true) {
             case (phi instanceof types.TrueFormula): return BDD.bddService.createTrue();
             case (phi instanceof types.FalseFormula): return BDD.bddService.createFalse();
