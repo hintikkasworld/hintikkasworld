@@ -7,19 +7,19 @@ export interface Formula {
 
 export class TrueFormula implements Formula {
     prettyPrint(): String {
-        throw new Error("Method not implemented.");
+        return "true";
     }
 
 }
 export class FalseFormula implements Formula {
     prettyPrint(): String {
-        throw new Error("Method not implemented.");
+        return "false"
     }
 
 }
 export class AtomicFormula implements Formula {
     prettyPrint(): String {
-        throw new Error("Method not implemented.");
+        return this._atomicString;
     }
     private _atomicString: string;
     constructor(name: string) {
@@ -33,7 +33,12 @@ export class AtomicFormula implements Formula {
 
 export class OrFormula implements Formula {
     prettyPrint(): String {
-        throw new Error("Method not implemented.");
+        var s: String = "("+this._formulas[0].prettyPrint();
+        for (var i = 1; i < this._formulas.length; i += 1) {
+            s += " or "+this._formulas[i].prettyPrint();
+        }
+        s += ")"
+        return s;
     }
     private _formulas: Array<Formula>;
     constructor(f: Array<Formula>) {
@@ -46,7 +51,12 @@ export class OrFormula implements Formula {
 
 export class AndFormula implements Formula {
     prettyPrint(): String {
-        throw new Error("Method not implemented.");
+        var s: String = "("+this._formulas[0].prettyPrint();
+        for (var i = 1; i < this._formulas.length; i += 1) {
+            s += " and "+this._formulas[i].prettyPrint();
+        }
+        s += ")"
+        return s;
     }
     private _formulas: Array<Formula>;
     constructor(f: Array<Formula>) {
@@ -114,7 +124,7 @@ export class KwFormula implements Formula {
 
 export class NotFormula implements Formula {
     prettyPrint(): String {
-        throw new Error("Method not implemented.");
+        return "(not "+ this._formula.prettyPrint()+")"
     }
     private _formula: Formula;
     constructor(f: Formula) {
@@ -128,7 +138,12 @@ export class NotFormula implements Formula {
 
 export class XorFormula implements Formula {
     prettyPrint(): String {
-        throw new Error("Method not implemented.");
+        var s: String = "("+this._formulas[0].prettyPrint();
+        for (var i = 1; i < this._formulas.length; i += 1) {
+            s += " xor "+this._formulas[i].prettyPrint();
+        }
+        s += ")"
+        return s;
     }
     private _formulas: Array<Formula>;
     constructor(f: Array<Formula>) {
@@ -227,14 +242,39 @@ export class FormulaFactory{
                 if(ast.length != 2) throw "Parsing error: (not phi)";
                 return new NotFormula(this.installFormula(ast[1]))
             }
-            else if (ast[1] == "and") {
+            else if (ast[0] == "and") {
+                // Cas (and p q r s ...)
                 return new AndFormula(ast.slice(1).map(this.installFormula))
             }
-            else if (ast[1] == "or") {
-                return new OrFormula(ast.slice(1).map(this.installFormula))
+            else if (ast[1] == "and") {
+                // Cas (p and q and r and s ...)
+                var formulas:Array<Formula> = new Array();
+                for (var i = 0; i < ast.length; i += 2) {
+                    formulas.push(this.installFormula(ast[i]));
+                }
+                return new AndFormula(formulas)
             }
-            else if (ast[1] == "xor") {
+            else if (ast[0] == "or") {
+                // Cas (and p q r s ...)
+                return new OrFormula(ast.slice(1).map(this.installFormula))
+            }            
+            else if (ast[1] == "or") {
+                var formulas:Array<Formula> = new Array();
+                for (var i = 0; i < ast.length; i += 2) {
+                    formulas.push(this.installFormula(ast[i]));
+                }
+                return new OrFormula(formulas)
+            }
+            else if (ast[0] == "xor") {
+                // Cas (and p q r s ...)
                 return new XorFormula(ast.slice(1).map(this.installFormula))
+            }            
+            else if (ast[1] == "xor") {
+                var formulas:Array<Formula> = new Array();
+                for (var i = 0; i < ast.length; i += 2) {
+                    formulas.push(this.installFormula(ast[i]));
+                }
+                return new XorFormula(formulas)
             }
             else if ((ast[1] == "->" || ast[1] == "imply")) {
                 return new ImplyFormula(this.installFormula(ast[0]),this.installFormula(ast[2]))

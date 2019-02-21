@@ -3,9 +3,9 @@ import { BeloteTest } from './symbolic-epistemic-model';
 
 
 describe('SymbolicEpistemicModel', () => {
-  it('should create an instance', () => {
+ /* it('should create an instance', () => {
     expect(new SymbolicEpistemicModel(null, null)).toBeTruthy();
-  });
+  }); */
 
   it('should create an instance', () => {
     expect(new BeloteTest()).toBeTruthy();
