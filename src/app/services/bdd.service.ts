@@ -23,6 +23,7 @@ export class BddService {
 
   atomIndex: Map<string, number> = new Map();
   indexAtom: Map<number, string> = new Map();
+  newIndexForAtom: number = 0;
 
   wasmReady = new BehaviorSubject<boolean>(false);
 
@@ -64,9 +65,10 @@ export class BddService {
 
   private getIndexFromAtom(p: string) {
     if (!this.atomIndex.has(p)) {
-      let i = this.bddModule._create_new_var();
+      let i = this.newIndexForAtom;
       this.atomIndex.set(p, i);
       this.indexAtom.set(i, p);
+      this.newIndexForAtom++;
     }
     return this.atomIndex.get(p);
   }
