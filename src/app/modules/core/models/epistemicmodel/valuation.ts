@@ -1,7 +1,7 @@
 export class Valuation {
     propositions: { [id: string]: boolean } = {};
 
-    constructor(truePropositions:  { [id: string]: boolean } | [string] ) {
+    constructor(truePropositions:  { [id: string]: boolean } | string[] ) {
         if(truePropositions instanceof Array) {
             this.propositions = {};
             for(let proposition of truePropositions) 

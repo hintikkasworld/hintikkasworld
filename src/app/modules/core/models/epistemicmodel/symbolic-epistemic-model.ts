@@ -182,7 +182,7 @@ export class BeloteTest extends ExampleDescription {
         });
 
         
-        let M = new SymbolicEpistemicModel(variables,  constructionVariables, formulaInitial, relationsSymboliques);
+        let M = new SymbolicEpistemicModel(WorldValuation, variables,  constructionVariables, formulaInitial, relationsSymboliques);
         M.setPointedWorld(null);
 
         return M;

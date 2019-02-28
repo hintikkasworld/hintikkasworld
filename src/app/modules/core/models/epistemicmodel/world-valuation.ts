@@ -4,9 +4,9 @@ import { World } from './world';
 export class WorldValuation extends World {
         valuation: Valuation;
 
-        constructor(propositions: { [id: string]: boolean }) {
+        constructor(valuation: Valuation) {
           super();
-          this.valuation = new Valuation(propositions);
+          this.valuation = valuation;
       
           this.agentPos = {};
           this.agentPos["a"] = {x: 32, y:32, r: 16};

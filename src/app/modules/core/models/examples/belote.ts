@@ -2,6 +2,7 @@ import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-m
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { environment } from 'src/environments/environment';
 import { ExampleDescription } from '../environment/exampledescription';
+import { Valuation } from '../epistemicmodel/valuation';
 /**
  * @param truePropositions an array of true propositions
  * @returns a possible combination of cards
@@ -16,8 +17,8 @@ class BeloteWorld extends WorldValuation {
     static cardHeight = 8;
 
 
-    constructor(propositions) {
-        super(propositions);
+    constructor(valuation: Valuation) {
+        super(valuation);
 
         this.agentPos["a"] = { x: 64, y: 16, r: 8 };
         this.agentPos["b"] = { x: 128 - BeloteWorld.cardWidth - 10, y: 32, r: 8 };
@@ -104,8 +105,8 @@ export class Belote extends ExampleDescription {
             
             
             
-            function beloteArrayToListPropositions(A) {
-                let listPropositions = [];
+            function beloteArrayToListPropositions(A) : string[] {
+                let listPropositions: string[] = [];
                 for (let i = 0; i < 8; i++)
                     listPropositions.push("a" + A[i]);
             
@@ -127,7 +128,7 @@ export class Belote extends ExampleDescription {
             let listPropositions = beloteArrayToListPropositions(A);
 
             let worldName = "w" + listPropositions.join();
-            M.addWorld(worldName, new BeloteWorld(listPropositions));
+            M.addWorld(worldName, new BeloteWorld(new Valuation(listPropositions)));
 
             return worldName;
         }

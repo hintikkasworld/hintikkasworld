@@ -2,6 +2,7 @@ import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-m
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Environment } from '../environment/environment';
+import { Valuation } from '../epistemicmodel/valuation';
 
 class MineSweeperWorld extends WorldValuation {
     xt = 38;
@@ -15,7 +16,7 @@ class MineSweeperWorld extends WorldValuation {
 
 
     constructor(propositions) {
-        super(propositions);
+        super(new Valuation(propositions));
         this.agentPos["a"] = { x: 16, y: 32, r: 16 };
         this.agentPos["b"] = undefined;
         this.agentPos["c"] = undefined;

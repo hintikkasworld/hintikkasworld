@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
+import { Valuation } from '../epistemicmodel/valuation';
 
 
 
@@ -16,7 +17,7 @@ class ConsecutiveNumbersWorld extends WorldValuation {
     static get consequenceNumbersImax() { return 10; }
 
     constructor(propositions) {
-        super(propositions);
+        super(new Valuation(propositions));
         this.agentPos["a"] = { x: 24, y: 24, r: 24 };
         this.agentPos["b"] = { x: 128 - 24, y: 24, r: 24 };
         this.agentPos["c"] = undefined;
