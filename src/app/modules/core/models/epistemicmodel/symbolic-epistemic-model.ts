@@ -7,13 +7,28 @@ import { SymbolicRelation, Obs } from './symbolic-relation';
 import { Formula, AndFormula, ExactlyFormula, NotFormula, EquivFormula, AtomicFormula, FormulaFactory } from '../formula/formula';
 import { BDD } from '../formula/bdd';
 
-
+interface WorldValuationType extends Function { new(val: Valuation): WorldValuation; }
+/**
+ * 
+ */
 export class SymbolicEpistemicModel implements EpistemicModel{
     
+
+    protected pointed: Valuation;
+    protected propositionalAtoms:string[];
+    protected constructionAtoms:string[];
+    protected initialFormula:BDD;
+    protected agents:string[];
+    protected mapAtomDDNode:Map<string, number>;
+    protected worldClass: WorldValuationType;
+
+    protected graphe: Map<string, number>;
+
     getAgents(): string[] {
         return this.agents;
     }
     /**
+     * ATTENTION: COMMENTS SHOULD BE WRITTEN IN ENGLISH
      * Implementation d'un Modele Epistemique Symbolique
      * Ici via des BDD, et Cudd
      */
@@ -38,22 +53,16 @@ export class SymbolicEpistemicModel implements EpistemicModel{
         return "_p";
     }
 
-    protected pointed: Valuation;
-    protected propositionalAtoms:string[];
-    protected constructionAtoms:string[];
-    protected initialFormula:BDD;
-    protected agents:string[];
-    protected mapAtomDDNode:Map<string, number>;
-
-    protected graphe: Map<string, number>;
+    
 
     /**
-     * 
+     * @param worldClass the type of worlds that the symbolic epistemic models returns (e.g. BeloteWorld)
      * @param atoms liste des atomes propositionnels decrivant l'exemple
      * @param relations Map d'un agent vers ses relations d'accessibilite
      */
-    constructor(atoms:string[], constratoms:string[], f: Formula, relations:Map<string, SymbolicRelation>){
+    constructor(worldClass : WorldValuationType, atoms:string[], constratoms:string[], f: Formula, relations:Map<string, SymbolicRelation>){
         this.pointed = null;
+        this.worldClass = worldClass;
 
         this.propositionalAtoms = [];
         atoms.forEach( (value) => {
@@ -82,7 +91,7 @@ export class SymbolicEpistemicModel implements EpistemicModel{
     @returns the pointed world
     **/
    getPointedWorld() {
-        return this.pointed;
+        return new this.worldClass(this.pointed);
    }
 
     /**
@@ -96,7 +105,7 @@ export class SymbolicEpistemicModel implements EpistemicModel{
     getSuccessors(w: World, a: string){
 
         /**
-         * 
+         * in this method, we will use new this.worldClass(val) to instantiate world with valuation val
          */
         return null;
     };
