@@ -5,6 +5,7 @@ import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 import { Formula, FormulaFactory } from '../formula/formula';
+import { Valuation } from '../epistemicmodel/valuation';
 
 
 /**
@@ -21,8 +22,8 @@ class MuddyChildrenWorld extends WorldValuation {
         return mud;
     }
 
-    constructor(propositions) {
-        super(propositions);
+    constructor(valuation: Valuation) {
+        super(valuation);
         this.agentPos["a"] = { x: 32, y: 32, r: 32 };
         this.agentPos["b"] = { x: 64 + 32, y: 32, r: 32 };
         this.agentPos["c"] = undefined;
@@ -49,10 +50,10 @@ export class MuddyChildren extends ExampleDescription {
     getInitialEpistemicModel() {
         let M = new ExplicitEpistemicModel();
 
-        M.addWorld("w", new MuddyChildrenWorld({ "ma": true, "mb": true }));
-        M.addWorld("u", new MuddyChildrenWorld({ "ma": false, "mb": true }));
-        M.addWorld("t", new MuddyChildrenWorld({ "ma": false, "mb": false }));
-        M.addWorld("s", new MuddyChildrenWorld({ "ma": true, "mb": false }));
+        M.addWorld("w", new MuddyChildrenWorld(new Valuation({ "ma": true, "mb": true })));
+        M.addWorld("u", new MuddyChildrenWorld(new Valuation({ "ma": false, "mb": true })));
+        M.addWorld("t", new MuddyChildrenWorld(new Valuation({ "ma": false, "mb": false })));
+        M.addWorld("s", new MuddyChildrenWorld(new Valuation({ "ma": true, "mb": false })));
 
 
         M.setPointedWorld("w");
