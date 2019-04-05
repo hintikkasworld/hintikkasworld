@@ -1,3 +1,6 @@
+import { FormulaFactory } from './../formula/formula';
+import { ExplicitEventModel } from './../eventmodel/explicit-event-model';
+import { EventModelAction } from './../environment/event-model-action';
 import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
 import { EpistemicModel } from './../epistemicmodel/epistemic-model';
 import { environment } from 'src/environments/environment';
@@ -68,9 +71,41 @@ export class ConsecutiveNumbers extends ExampleDescription {
 
         return M;
     }
-    
+
     getActions() {
-        return [];
+        function getConsequenceNumberFormulaAgentKnowOtherNumber(agent) {
+            var other = (agent == "a") ? "b" : "a";
+
+            var s = "(";
+
+            s += "(K " + agent + " " + other + 1 + ")";
+
+            for (var i = 2; i <= ConsecutiveNumbersWorld.consequenceNumbersImax; i++)
+                s += " or " + "(K " + agent + " " + other + i + ")";
+
+            s += ")";
+
+            return s;
+        }
+
+        function getPronom(a) {
+            return (a == "a") ? "she" : "he";
+        }
+        return [{ a: "a", b: "b" }, { a: "b", b: "a" }].map(
+            function (obj) {
+                return new EventModelAction({name: "Agent " + obj.a + " announces that " + getPronom(obj.a) + 
+                           " knows the number of agent " + obj.b + ".",
+                    eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(getConsequenceNumberFormulaAgentKnowOtherNumber(obj.a)))});
+            }
+        ).concat(
+            [{ a: "a", b: "b" }, { a: "b", b: "a" }].map(
+                function (obj) {
+                    return new EventModelAction({name: "Agent " + obj.a + " announces that " + getPronom(obj.a) + 
+                    " does not know the number of agent " + obj.b + ".",
+                        eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("(not " + getConsequenceNumberFormulaAgentKnowOtherNumber(obj.a) + ")"))});
+                })
+        );
+       
     }
 
 }

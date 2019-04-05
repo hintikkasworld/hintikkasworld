@@ -73,9 +73,16 @@ export class ComicsComponent implements OnInit {
   private canvasFromWorld: (Map<World, HTMLCanvasElement>)[] = [];
   private canvasWorldStandardWidth = 128;
   private zoomWorldCanvasInBubble = 1;
-  private levelheight = this.zoomWorldCanvasInBubble * this.canvasWorldStandardWidth + 40; //170
+  private levelheight = 170;//this.zoomWorldCanvasInBubble * this.canvasWorldStandardWidth + 40; //170
   private getMaxLevelWidth = () => 480;
-  private getYLevelBulle = (level) => this.canvasRealWorldTop - level * this.levelheight;
+
+  private getYLevelBulle(level: number): number {
+    if(this.openWorlds.length == 1 && this.env.getEpistemicModel().getAgents().length == 1)  {
+      return this.canvasRealWorldTop - level * this.levelheight * 1.4;
+    }
+    else
+    return  this.canvasRealWorldTop - level * this.levelheight;
+  } 
 
   /**
   @description draw a circle center x, y and radius r

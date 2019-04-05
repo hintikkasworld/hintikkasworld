@@ -1,3 +1,4 @@
+import { Node } from './../services/models/node';
 export class Graph {
 
     protected nodes: { [id: string]: object };
@@ -317,7 +318,7 @@ export class Graph {
     @description Add edges between all nodes of ID in array
     @example G.addEdgesCluster("a", ["w", "u"])
     */
-    addEdgesCluster(agent, idnodes) {
+    addEdgesCluster(agent: string, idnodes) {
         for (let i1 of idnodes)
             for (let i2 of idnodes) {
                 this.addEdge(agent, i1, i2);
@@ -332,7 +333,7 @@ export class Graph {
     @description add edges labelled by agent with respect to the function conditionFunction
     @example G.addEdgeIf("a", function(n1, n2) {return n1.modelCheck("p") == n2.modelCheck("p");})
     */
-    addEdgeIf(agent, conditionFunction) {
+    addEdgeIf(agent: string, conditionFunction: (n1:any, n2:any) => boolean) {
         for (let inode1 in this.nodes)
             for (let inode2 in this.nodes)
                 if (conditionFunction(this.nodes[inode1], this.nodes[inode2]))

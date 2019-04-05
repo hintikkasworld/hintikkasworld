@@ -14,13 +14,9 @@ import { Valuation } from '../epistemicmodel/valuation';
  * @example new MuddyChildrenWorld(["ma", "mb"])
  * */
 class MuddyChildrenWorld extends WorldValuation {
-    static mud = MuddyChildrenWorld.getMudImage();
+    static mud = MuddyChildrenWorld.getImage('mud.png');
 
-    static getMudImage() {
-        let mud = new Image();
-        mud.src = "assets/img/mud.png";
-        return mud;
-    }
+
 
     constructor(valuation: Valuation) {
         super(valuation);
@@ -67,14 +63,14 @@ export class MuddyChildren extends ExampleDescription {
     }
 
     getActions() {
-        return [new EventModelAction("Father says at least one child is muddy.", 
-                ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("(ma or mb)"))),
+        return [new EventModelAction({name: "Father says at least one child is muddy.", 
+                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("(ma or mb)"))}),
                 
-                new EventModelAction("Publicly a is muddy!", 
-                ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("ma"))),
+                new EventModelAction({name: "Publicly a is muddy!", 
+                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("ma"))}),
 
-                new EventModelAction( "Children say they do not know.", 
-                ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("((not (K a ma)) and (not (K b mb)))")))
+                new EventModelAction({name: "Children say they do not know.", 
+                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("((not (K a ma)) and (not (K b mb)))"))})
 
 
                

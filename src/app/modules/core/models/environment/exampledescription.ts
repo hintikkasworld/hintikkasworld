@@ -13,6 +13,6 @@ export abstract class ExampleDescription {
         return <World> (<ExplicitEpistemicModel> M).getPointedWorld();
     }
 
-
+    
     onRealWorldClick(env: Environment, point) {};
 }

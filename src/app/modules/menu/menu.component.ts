@@ -1,3 +1,6 @@
+import { Simple } from './../core/models/examples/simple';
+import { LinesBirthday } from './../core/models/examples/lines-birthday';
+import { Cherylsbirthday } from './../core/models/examples/cherylsbirthday';
 import { MineSweeper } from './../core/models/examples/mine-sweeper';
 import { Belote } from './../core/models/examples/belote';
 import {Router} from '@angular/router';
@@ -16,7 +19,8 @@ import { ExampleService } from 'src/app/services/example.service';
 })
 export class MenuComponent implements OnInit {
 
-  examples = [new MuddyChildren(), new MineSweeper(), new ConsecutiveNumbers(), new Belote()];
+  examples = [new Simple(), new MuddyChildren(), new MineSweeper(), new ConsecutiveNumbers(), new Belote(),
+    new Cherylsbirthday(), new LinesBirthday()];
 
   openExampleDescription(exampleDescription: ExampleDescription ) {
     this.exampleService.setExampleDescription(exampleDescription);

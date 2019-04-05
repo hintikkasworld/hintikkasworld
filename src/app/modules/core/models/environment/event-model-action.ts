@@ -10,9 +10,9 @@ export class EventModelAction implements Action {
     _E: EventModel;
     _name: string;
 
-    constructor(name: string, E: EventModel) {
-        this._name = name;
-        this._E = E;
+    constructor(description: {name: string, eventModel: EventModel}) {
+        this._name = description.name;
+        this._E = description.eventModel;
         
     }
 

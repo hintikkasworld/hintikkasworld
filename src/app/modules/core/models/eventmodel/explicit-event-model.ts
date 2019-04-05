@@ -3,7 +3,7 @@ import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-m
 import { Postcondition } from './postcondition';
 import { PropositionalAssignmentsPostcondition } from './propositional-assignments-postcondition';
 import { TrivialPostcondition } from './trivial-postcondition';
-import { Formula } from './../formula/formula';
+import { Formula, FormulaFactory } from './../formula/formula';
 import { EventModel } from './event-model';
 import { Graph } from './../graph';
 import { Event } from './event';
@@ -156,10 +156,10 @@ export class ExplicitEventModel extends Graph implements EventModel {
                 let we = createWorldActionName(M.getPointedWorldID(), E.getPointedAction());
                 if (ME.hasNode(we))
                     ME.setPointedWorld(we);
-                    else
+                else
                     throw "cannot be applied!"
             }
-            
+
 
             console.log(ME)
             return ME;
@@ -192,6 +192,63 @@ export class ExplicitEventModel extends Graph implements EventModel {
         return E;
 
     }
+
+
+
+
+    static getActionModelPrivateAnnouncement(formula: Formula, agent: string) {
+        var E = new ExplicitEventModel();
+        E.addAction("e", formula, new TrivialPostcondition());
+        E.addAction("t", FormulaFactory.createFormula("top"), new TrivialPostcondition());
+
+
+        E.addEdge(agent, "e", "e");
+        E.addEdge(agent, "t", "t");
+        E.setPointedAction("e");
+
+        for (let a of environment.agents)
+            if (a != agent) {
+                E.addEdge(a, "e", "t");
+                E.addEdge(a, "t", "t");
+
+            }
+
+        return E;
+    }
+
+
+
+    static getActionModelSemiPrivateAnnouncement(formula: Formula, agent: string) {
+
+        var E = new ExplicitEventModel();
+        E.addAction("e", formula, new TrivialPostcondition());
+        E.addAction("t", FormulaFactory.createFormula("top"), new TrivialPostcondition());
+
+
+        E.addEdge(agent, "e", "e");
+        E.addEdge(agent, "t", "t");
+        E.setPointedAction("e");
+
+        for (let a of environment.agents)
+            if (a != agent) {
+                E.addEdge(a, "e", "t");
+                E.addEdge(a, "t", "e");
+                E.addEdge(a, "t", "t");
+                E.addEdge(a, "e", "e");
+
+            }
+
+        return E;
+    }
+
+
+
+
+
+
+
+
+
 }
 
 

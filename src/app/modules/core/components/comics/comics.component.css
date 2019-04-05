@@ -47,7 +47,7 @@
   height:96px;
   border-radius: 25px;
   border: 3px solid black;
-  padding: 8px 4px 4px 4px;
+  padding: 8px;
 }
 
 
@@ -60,16 +60,11 @@
   background-color: white;
 }
 
-.bulle:hover {
-  border-radius:32px;
-  border-width: 4px;
-  padding: 7px 3px 3px 3px;
-}
 
 .worldcontainer    {
   position:absolute;
   max-width:480px;
-  max-height:96px;
+  height:calc(100% - 16px);
   overflow:auto;
 }
 
