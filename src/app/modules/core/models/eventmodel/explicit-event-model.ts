@@ -174,13 +174,7 @@ export class ExplicitEventModel extends Graph implements EventModel {
 
 
 
-
-
-
-
-
     static getEventModelPublicAnnouncement(formula: Formula): ExplicitEventModel {
-
         let E = new ExplicitEventModel();
         E.addAction("e", formula, new TrivialPostcondition());
 
@@ -240,12 +234,6 @@ export class ExplicitEventModel extends Graph implements EventModel {
 
         return E;
     }
-
-
-
-
-
-
 
 
 

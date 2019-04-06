@@ -1,3 +1,4 @@
+import { CellularAutomaton } from './../core/models/examples/cellular-automaton';
 import { Simple } from './../core/models/examples/simple';
 import { LinesBirthday } from './../core/models/examples/lines-birthday';
 import { Cherylsbirthday } from './../core/models/examples/cherylsbirthday';
@@ -20,7 +21,7 @@ import { ExampleService } from 'src/app/services/example.service';
 export class MenuComponent implements OnInit {
 
   examples = [new Simple(), new MuddyChildren(), new MineSweeper(), new ConsecutiveNumbers(), new Belote(),
-    new Cherylsbirthday(), new LinesBirthday()];
+    new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton()];
 
   openExampleDescription(exampleDescription: ExampleDescription ) {
     this.exampleService.setExampleDescription(exampleDescription);

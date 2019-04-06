@@ -3,7 +3,7 @@ import { environment } from 'src/environments/environment';
 
 
 export abstract class World {
-  protected agentPos;
+  protected agentPos = {};
   private static agentImages = World.getAgentImages();
 
   static getAgents() {
@@ -156,13 +156,30 @@ export abstract class World {
 
 
 
+  static drawVisibilityLine(context, x1, y1, x2, y2) {
+    context.beginPath();
+    context.setLineDash([5, 3]);
+    context.strokeStyle = "black";
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.stroke();
+    context.setLineDash([]);
+  }
+
+
+  static drawLine(context, x1, y1, x2, y2) {
+    context.beginPath();
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.stroke();
+  }
 
 
 
 
 
 
-  abstract draw(context: CanvasRenderingContext2D);
-  abstract modelCheck(phi: string);
-  abstract toString();
+  abstract draw(context: CanvasRenderingContext2D): void;
+  abstract modelCheck(phi: string): boolean;
+  abstract toString(): string;
 }
