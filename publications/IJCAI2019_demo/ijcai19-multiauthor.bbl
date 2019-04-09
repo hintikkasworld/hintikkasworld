@@ -1,0 +1,143 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{Arslan \bgroup \em et al.\egroup
+  }{2015}]{DBLP:conf/cogsci/ArslanVTH15}
+Burcu Arslan, Rineke Verbrugge, Niels Taatgen, and Bart Hollebrandse.
+\newblock Teaching children to attribute second-order false beliefs: {A}
+  training study with feedback.
+\newblock In {\em Proceedings of the 37th Annual Meeting of the Cognitive
+  Science Society, CogSci 2015, Pasadena, California, USA, July 22-25, 2015},
+  2015.
+
+\bibitem[\protect\citeauthoryear{Aucher and
+  Bolander}{2013}]{DBLP:conf/ijcai/AucherB13}
+Guillaume Aucher and Thomas Bolander.
+\newblock Undecidability in epistemic planning.
+\newblock In {\em {IJCAI} 2013, Proceedings of the 23rd International Joint
+  Conference on Artificial Intelligence, Beijing, China, August 3-9, 2013},
+  pages 27--33, 2013.
+
+\bibitem[\protect\citeauthoryear{Aumann}{1999}]{DBLP:journals/ijgt/Aumann99}
+Robert~J. Aumann.
+\newblock Interactive epistemology {I:} knowledge.
+\newblock {\em Int. J. Game Theory}, 28(3):263--300, 1999.
+
+\bibitem[\protect\citeauthoryear{Baltag \bgroup \em et al.\egroup
+  }{1998}]{baltag1998logic}
+Alexandru Baltag, Lawrence~S Moss, and Slawomir Solecki.
+\newblock The logic of public announcements, common knowledge, and private
+  suspicions.
+\newblock In {\em Proceedings of the 7th conference on Theoretical aspects of
+  rationality and knowledge}, pages 43--56. Morgan Kaufmann Publishers Inc.,
+  1998.
+
+\bibitem[\protect\citeauthoryear{Bolander and
+  Andersen}{2011}]{DBLP:journals/jancl/BolanderA11}
+Thomas Bolander and Mikkel~Birkegaard Andersen.
+\newblock Epistemic planning for single and multi-agent systems.
+\newblock {\em Journal of Applied Non-Classical Logics}, 21(1):9--34, 2011.
+
+\bibitem[\protect\citeauthoryear{Charrier and
+  Schwarzentruber}{2015}]{DBLP:conf/atal/CharrierS15}
+Tristan Charrier and Fran{\c{c}}ois Schwarzentruber.
+\newblock Arbitrary public announcement logic with mental programs.
+\newblock In {\em Proceedings of the 2015 International Conference on
+  Autonomous Agents and Multiagent Systems, {AAMAS} 2015, Istanbul, Turkey, May
+  4-8, 2015}, pages 1471--1479, 2015.
+
+\bibitem[\protect\citeauthoryear{Devin and
+  Alami}{2016}]{DBLP:conf/hri/DevinA16}
+Sandra Devin and Rachid Alami.
+\newblock An implemented theory of mind to improve human-robot shared plans
+  execution.
+\newblock In {\em The Eleventh {ACM/IEEE} International Conference on Human
+  Robot Interation, {HRI} 2016, Christchurch, New Zealand, March 7-10, 2016},
+  pages 319--326, 2016.
+
+\bibitem[\protect\citeauthoryear{Halpern and
+  Fagin}{1989}]{DBLP:journals/dc/HalpernF89}
+Joseph~Y. Halpern and Ronald Fagin.
+\newblock Modelling knowledge and action in distributed systems.
+\newblock {\em Distributed Computing}, 3(4):159--177, 1989.
+
+\bibitem[\protect\citeauthoryear{Halpern and
+  Vardi}{1991}]{DBLP:conf/kr/HalpernV91}
+Joseph~Y. Halpern and Moshe~Y. Vardi.
+\newblock Model checking vs. theorem proving: {A} manifesto.
+\newblock In {\em Proceedings of the 2nd International Conference on Principles
+  of Knowledge Representation and Reasoning (KR'91). Cambridge, MA, USA, April
+  22-25, 1991.}, 1991.
+
+\bibitem[\protect\citeauthoryear{Knight \bgroup \em et al.\egroup
+  }{2017}]{knight_maubert_schwarzentruber_2017}
+Sophia Knight, Bastien Maubert, and François Schwarzentruber.
+\newblock Reasoning about knowledge and messages in asynchronous multi-agent
+  systems.
+\newblock {\em Mathematical Structures in Computer Science}, page 1–42, 2017.
+
+\bibitem[\protect\citeauthoryear{Saffidine \bgroup \em et al.\egroup
+  }{2018}]{AAAI2018kbps}
+Abdallah Saffidine, Fran\c{c}ois Schwarzentruber, and Bruno Zanuttini.
+\newblock Knowledge-based policies for qualitative decentralized pomdps.
+\newblock In {\em In Sheila McIlraith and Kilian Weinberger, editors, Proc.
+  32nd AAAI Conference on Artificial Intelligence (AAAI 2018)}, 2018.
+
+\bibitem[\protect\citeauthoryear{Scassellati}{2002}]{DBLP:journals/arobots/Scassellati02}
+Brian Scassellati.
+\newblock Theory of mind for a humanoid robot.
+\newblock {\em Auton. Robots}, 12(1):13--24, 2002.
+
+\bibitem[\protect\citeauthoryear{S\'ebastien
+  L\^e~Cong}{2018}]{ijcai2018SmallUndecidableEpistemicPlanning}
+Fran{\c{c}}ois~Schwarzentruber S\'ebastien L\^e~Cong, Sophie~Pinchinat.
+\newblock Small undecidable problems in epistemic planning.
+\newblock In {\em Proceedings of the 27th International Joint Conference on
+  Artificial Intelligence (IJCAI) and the 23rd European Conference on
+  Artificial Intelligence (ECAI), Stockholm, 13-19 July 2018}, 2018.
+
+\bibitem[\protect\citeauthoryear{van Benthem \bgroup \em et al.\egroup
+  }{2015}]{DBLP:conf/lori/BenthemEGS15}
+Johan van Benthem, Jan van Eijck, Malvin Gattinger, and Kaile Su.
+\newblock Symbolic model checking for dynamic epistemic logic.
+\newblock In {\em Logic, Rationality, and Interaction - 5th International
+  Workshop, {LORI} 2015 Taipei, Taiwan}, pages 366--378, 2015.
+
+\bibitem[\protect\citeauthoryear{van Ditmarsch and Kooi}{2015}]{van2015one}
+Hans van Ditmarsch and Barteld Kooi.
+\newblock {\em One Hundred Prisoners and a Light Bulb}.
+\newblock Springer, 2015.
+
+\bibitem[\protect\citeauthoryear{{van Ditmarsch} \bgroup \em et al.\egroup
+  }{2008}]{DitmarschvdHoekKooi}
+Hans {van Ditmarsch}, Wiebe {van der Hoek}, and Barteld {Kooi}.
+\newblock {\em Dynamic Epistemic Logic}.
+\newblock Springer, Dordecht, 2008.
+
+\bibitem[\protect\citeauthoryear{van Ditmarsch \bgroup \em et al.\egroup
+  }{2012}]{DBLP:conf/paams/DitmarschEHSSS12}
+Hans van Ditmarsch, Jan van Eijck, Ignacio Hern{\'{a}}ndez{-}Ant{\'{o}}n, Floor
+  Sietsma, Sunil Simon, and Fernando Soler{-}Toscano.
+\newblock Modelling cryptographic keys in dynamic epistemic logic with {DEMO}.
+\newblock In {\em Highlights on Practical Applications of Agents and
+  Multi-Agent Systems, {PAAMS} 2012 Special Sessions, Salamanca, Spain, 28-30
+  March, 2012}, pages 155--162, 2012.
+
+\bibitem[\protect\citeauthoryear{van
+  Ditmarsch}{2003}]{DBLP:journals/sLogica/Ditmarsch03}
+Hans~P. van Ditmarsch.
+\newblock The russian cards problem.
+\newblock {\em Studia Logica}, 75(1):31--62, 2003.
+
+\bibitem[\protect\citeauthoryear{van Eijck}{2007}]{van2007demo}
+Jan van Eijck.
+\newblock Demo—a demo of epistemic modelling.
+\newblock In {\em Interactive Logic. Selected Papers from the 7th Augustus de
+  Morgan Workshop, London}, volume~1, pages 303--362, 2007.
+
+\bibitem[\protect\citeauthoryear{Wimmer and Perner}{1983}]{wimmer1983beliefs}
+Heinz Wimmer and Josef Perner.
+\newblock Beliefs about beliefs: Representation and constraining function of
+  wrong beliefs in young children's understanding of deception.
+\newblock {\em Cognition}, 13(1):103--128, 1983.
+
+\end{thebibliography}
