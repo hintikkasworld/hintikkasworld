@@ -91,7 +91,7 @@ export class Birthday implements ExampleDescription {
     date;
     person: string;
 
-    constructor(person, dates: Date[], date: Date) {
+    constructor(person: string, dates: Date[], date: Date) {
         this.dates = dates;
         this.date = date;
         this.person = person;

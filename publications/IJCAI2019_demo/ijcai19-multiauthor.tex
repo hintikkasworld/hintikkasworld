@@ -48,13 +48,13 @@
 % page charge instructions.
 % Put where the files are available in the appropriate places.
 
-\title{IJCAI--19 Example on typesetting multiple authors}
+\title{Symbolic models in Hintikka's World}
 
 \author{
-First Author$^1$\footnote{Contact Author}\and
-Second Author$^2$\and
-Third Author$^{2,3}$\And
-Fourth Author$^4$\\
+Tristan Charrier$^1$\footnote{Contact Author}\and
+Sébastien Gamblin$^2$\and
+Alexandre Niveau$^{2,3}$\And
+François Schwarzentruber$^4$\\
 \affiliations
 $^1$First Affiliation\\
 $^2$Second Affiliation\\
@@ -73,12 +73,13 @@ fourth@example.com
 
 \begin{abstract}
 This short example shows a contrived example on how to format the authors' information for {\it IJCAI--19 Proceedings} using \LaTeX{}.
+TODO
 \end{abstract}
 
 
 
 \section{Introduction}
-
+TODO
 Higher-order knowledge of agents is relevant in many applications: game theory \cite{DBLP:journals/ijgt/Aumann99}, robotics (\cite{DBLP:journals/arobots/Scassellati02}, \cite{DBLP:conf/hri/DevinA16}), specifications of distributed systems \cite{DBLP:journals/dc/HalpernF89}, etc. Dynamic epistemic logic (DEL) (\cite{baltag1998logic}, \cite{DitmarschvdHoekKooi})
 % j'ai supprimé \cite{DBLP:journals/iandc/BenthemEK06}
 extends epistemic logic % (\cite{kripke1963semantical}, \cite{DBLP:conf/tark/Hintikka86}))
@@ -105,7 +106,18 @@ Another application is to provide a tool for psychiatrists to test ability of ch
 Finally, the tool has a pedagogical aim. It illustrates the concepts of Kripke models, modal formulas, model checking and satisfiability problem in a modal logic course. It also enables to explain easily 
 how to model higher-order knowledge to other scientists.
 
+First, the user can run AI examples that illustrate important concepts:
 
+\begin{itemize}
+	\item Agents can learn information from messages of the form `an agent does not know...': Muddy children puzzle, Consecutive numbers \cite{van2015one}
+	\item False beliefs of agents: Sally and Anne \cite{wimmer1983beliefs}
+	\item Public announcements that are secure in the sense that intruders of a system do not not learn relevant information: Russian cards \cite{DBLP:journals/sLogica/Ditmarsch03}
+	\item Evolution of knowledge in asynchronous systems \cite{knight_maubert_schwarzentruber_2017}
+	\item Evolution of knowledge in agents that run knowledge-based programs over a QdecPOMDP \cite{AAAI2018kbps}.
+	\item Simulation of cellular automata, for proving undecidability of epistemic planning \cite{ijcai2018SmallUndecidableEpistemicPlanning}.
+\end{itemize} 
+
+TODO motiver symbolic models
 
 %Section \ref{section:demonstration} presents the demonstration outline. Section \ref{section:architecture} explains the architecture of the software. Section \ref{section:perspectives} discusses the perspectives.
 
@@ -120,22 +132,19 @@ how to model higher-order knowledge to other scientists.
 	\caption{Graphical user interface of \emph{Hintikka's world}\label{figure:gui}}
 \end{figure}
 
+\section{Symbolic models}
+
+TODO symbolic models sur Hanabi
+
 
 \section{Demonstration Outline}
 \label{section:demonstration}
 
+TODO expliquer Hanabi et comment on peut y jouer
+
+
 \subsection{Already Implemented Examples}
 
-First, the user can run AI examples that illustrate important concepts:
-
-\begin{itemize}
-	\item Agents can learn information from messages of the form `an agent does not know...': Muddy children puzzle, Consecutive numbers \cite{van2015one}
-	\item False beliefs of agents: Sally and Anne \cite{wimmer1983beliefs}
-	\item Public announcements that are secure in the sense that intruders of a system do not not learn relevant information: Russian cards \cite{DBLP:journals/sLogica/Ditmarsch03}
-	\item Evolution of knowledge in asynchronous systems \cite{knight_maubert_schwarzentruber_2017}
-	\item Evolution of knowledge in agents that run knowledge-based programs over a QdecPOMDP \cite{AAAI2018kbps}.
-	\item Simulation of cellular automata, for proving undecidability of epistemic planning \cite{ijcai2018SmallUndecidableEpistemicPlanning}.
-\end{itemize} 
 %Figure \ref{figure:gui} shows the graphical user interface of \emph{Hintikka's world}. Thought bubbles The example taken here is the muddy children where two agents $a$ and $b$ are muddy and it is common knowledge one sees the state of the other agent while not knowing its own state.
 
 
@@ -189,6 +198,8 @@ Then the system solves the satisfiability problem and generates a pointed episte
 
 \section{System Description}
 \label{section:architecture}
+
+TODO Expliquer comment c'est FAIT
 
 \subsection{Class Architecture}
 
@@ -255,12 +266,12 @@ The tool highly rely on model checking. Indeed, for instance, performing the pub
 \section{Future Work}
 \label{section:perspectives}
 
-\paragraph{Reasoning tool. }
-The model checking is in P but actions correspond to a product update in DEL  \cite{baltag1998logic} and the size of the Kripke model is exponential in the number of performed actions in worst case. That is why we plan to extend the tool with succinct Kripke models (\cite{DBLP:conf/lori/BenthemEGS15}, \cite{DBLP:conf/atal/CharrierS15}). We also want to extend the tool by implementing algorithms for epistemic planning (even bounded epistemic planning because epistemic planning is undecidable in the general case (\cite{DBLP:journals/jancl/BolanderA11}, \cite{DBLP:conf/ijcai/AucherB13}, \cite{ijcai2018SmallUndecidableEpistemicPlanning})) and arbitrary public announcements (\cite{DBLP:conf/atal/CharrierS15}).
+
+TODO implémzenter d'autres exemples etc.
 
 
 
-\paragraph{Graphical user interface. }  By clicking on agents, the interface shows some posible worlds. We want to implement heuristics for displaying the most relevant epistemic worlds when there are too many possible worlds for a given agent.
+
 
 
 

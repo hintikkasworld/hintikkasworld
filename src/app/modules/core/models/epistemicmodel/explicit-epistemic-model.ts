@@ -66,6 +66,11 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
 
     }
 
+
+
+    check(phi: types.Formula): boolean {
+        return this.modelCheck(this.getPointedWorldID(), phi);
+    }
     /**
      * @param w world identifier
      * @param phi a formula (internal representation of a formula)

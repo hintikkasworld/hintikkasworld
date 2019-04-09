@@ -4,7 +4,7 @@ import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 
 export class Environment {
     private _epistemicModel: EpistemicModel;
-    private _exampleDescription: ExampleDescription;
+    private readonly _exampleDescription: ExampleDescription;
     private _agentPerspective: string;
 
     constructor(exampleDescription: ExampleDescription) {
@@ -23,8 +23,14 @@ export class Environment {
     getExampleDescription(): ExampleDescription {
         return this._exampleDescription;
     }
+
     getActions() {
         return this._exampleDescription.getActions();
+    }
+
+    getExecutableActions() {
+        let M = this._epistemicModel;
+        return this._exampleDescription.getActions().filter((action) => M.check(action.getPrecondition()) );
     }
 
     set agentPerspective(a: string) {

@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
 import { ExampleDescription } from '../environment/exampledescription';
-'use strict';
+
 
 /**
  * @param truePropositions an array of true propositions
@@ -118,7 +118,7 @@ class SallyAndAnneWorld extends WorldValuation {
 
 
 export class SallyAndAnn extends ExampleDescription {
-    getName() {  return "Sally and Ann"; }
+    getName() { return "Sally and Ann"; }
 
     getInitialEpistemicModel(): EpistemicModel {
         let M = new ExplicitEpistemicModel();
@@ -187,12 +187,12 @@ export class SallyAndAnn extends ExampleDescription {
         function actionSallyMarbleSallyToMarbleBasket() {
             var E = new ExplicitEventModel();
 
-       /*     if (M.getNode(M.getPointedWorld()).modelCheck("bhere"))
-       /*         if (M.getNode(M.getPointedWorld()).modelCheck("marbleb"))*/
-                    E.addAction("e", FormulaFactory.createFormula("(bhere and marbleb)"), new PropositionalAssignmentsPostcondition({ "marbleBasket": FormulaFactory.createTrue(), "marbleb": "bottom" }));
-       /*         else
-      /*              throw "Agent b is outside";*/
-      
+            /*     if (M.getNode(M.getPointedWorld()).modelCheck("bhere"))
+            /*         if (M.getNode(M.getPointedWorld()).modelCheck("marbleb"))*/
+            E.addAction("e", FormulaFactory.createFormula("(bhere and marbleb)"), new PropositionalAssignmentsPostcondition({ "marbleBasket": FormulaFactory.createTrue(), "marbleb": "bottom" }));
+            /*         else
+           /*              throw "Agent b is outside";*/
+
             E.makeReflexiveRelation("a");
             E.makeReflexiveRelation("b");
             E.setPointedAction("e");
@@ -204,7 +204,7 @@ export class SallyAndAnn extends ExampleDescription {
 
         function actionAnneTransfersMarbleFromBasketToBoxWhenBHere() {
             var E = new ExplicitEventModel();
-            E.addAction("e", FormulaFactory.createFormula("bhere"), new PropositionalAssignmentsPostcondition({ "marbleBasket": "bottom", "marbleBox": FormulaFactory.createTrue() }));
+            E.addAction("e", FormulaFactory.createFormula("(bhere and marbleBasket)"), new PropositionalAssignmentsPostcondition({ "marbleBasket": "bottom", "marbleBox": FormulaFactory.createTrue() }));
 
             E.makeReflexiveRelation("a");
             E.makeReflexiveRelation("b");
@@ -219,7 +219,7 @@ export class SallyAndAnn extends ExampleDescription {
             var E = new ExplicitEventModel();
 
             var assignmentTransfer = new PropositionalAssignmentsPostcondition({ "marbleBasket": "bottom", "marbleBox": FormulaFactory.createTrue() });
-            E.addAction("e", FormulaFactory.createFormula("((not bhere) and bspying)"), assignmentTransfer);
+            E.addAction("e", FormulaFactory.createFormula("((not bhere) and marbleBasket and bspying)"), assignmentTransfer);
             E.addAction("f", FormulaFactory.createTrue(), assignmentTransfer);
             E.addAction("t", FormulaFactory.createTrue());
 
@@ -240,17 +240,19 @@ export class SallyAndAnn extends ExampleDescription {
         function actionAnneTransfersMarbleFromBasketToBoxWhenBOutsideNotSpying() {
             var E = new ExplicitEventModel();
 
-            E.addAction("e", FormulaFactory.createFormula("((not bhere) and (not bspying))"), new PropositionalAssignmentsPostcondition({ "marbleBasket": "bottom", "marbleBox": FormulaFactory.createTrue() }));
+            E.addAction("e", FormulaFactory.createFormula("((not bhere) and marbleBasket and (not bspying))"),
+                new PropositionalAssignmentsPostcondition({ "marbleBasket": "bottom", "marbleBox": FormulaFactory.createTrue() }));
             E.addAction("t", FormulaFactory.createTrue());
             E.addEdge("a", "e", "e");
 
             E.addEdge("b", "e", "t");
             E.addEdge("a", "t", "t");
             E.addEdge("b", "t", "t");
+            E.setPointedAction("e");
 
             return E;
         }
-      
+
 
 
         return [
@@ -258,15 +260,15 @@ export class SallyAndAnn extends ExampleDescription {
             new EventModelAction({
                 name: "Agent b goes out.",
                 eventModel: getExampleSallyAndAnneSallyOut(),
-              /*  message: "Bye. I go for a walk.",
-                saidby: "b"*/
+                /*  message: "Bye. I go for a walk.",
+                  saidby: "b"*/
             }),
 
             new EventModelAction({
                 name: "Agent b goes in.",
                 eventModel: getExampleSallyAndAnneSallyIn(),
-            /*    message: "Hi ! I am home.",
-                saidby: "b"*/
+                /*    message: "Hi ! I am home.",
+                    saidby: "b"*/
             }),
 
             new EventModelAction({
@@ -282,15 +284,15 @@ export class SallyAndAnn extends ExampleDescription {
             new EventModelAction({
                 name: "Agent b puts the marble in the basket.",
                 eventModel: actionSallyMarbleSallyToMarbleBasket(),
-              /*  message: "Let us put this marble in the basket.",
-                saidby: "b"*/
+                /*  message: "Let us put this marble in the basket.",
+                  saidby: "b"*/
             }),
-        
+
             new EventModelAction({
                 name: "Agent a transfers the marble from the basket to the box and b is here.",
                 eventModel: actionAnneTransfersMarbleFromBasketToBoxWhenBHere(),
             }),
-        
+
             new EventModelAction({
                 name: "Agent a transfers the marble from the basket to the box and b is outside.",
                 eventModel: actionAnneTransfersMarbleFromBasketToBoxWhenBOutsideNotSpying()
@@ -300,9 +302,9 @@ export class SallyAndAnn extends ExampleDescription {
                 name: "Agent a transfers the marble from the basket to the box and b is outside and spying.",
                 eventModel: actionAnneTransfersMarbleFromBasketToBoxWhenBOutsideSpying()
             }),
-            ];
+        ];
 
-        
+
     }
 
 

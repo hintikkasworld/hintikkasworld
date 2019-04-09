@@ -12,6 +12,9 @@ interface WorldValuationType extends Function { new(val: Valuation): WorldValuat
  * 
  */
 export class SymbolicEpistemicModel implements EpistemicModel{
+    check(phi: Formula): boolean {
+        throw new Error("Method not implemented.");
+    }
     
 
     protected pointed: Valuation;
