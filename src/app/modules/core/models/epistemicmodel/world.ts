@@ -3,14 +3,14 @@ import { environment } from 'src/environments/environment';
 
 
 export abstract class World {
-  protected agentPos = {};
-  private static agentImages = World.getAgentImages();
+  protected agentPos: any[string] = {};
+  protected static agentImages = World.getAgentImages();
 
   static getAgents() {
     return environment.agents;
   }
 
-  static getImage(fileName) {
+  static getImage(fileName: string) {
     let mud = new Image();
     mud.src = "assets/img/" + fileName;
     return mud;

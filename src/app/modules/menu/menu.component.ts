@@ -10,6 +10,7 @@ import { MuddyChildren } from './../core/models/examples/muddy-children';
 import { ExampleDescription } from './../core/models/environment/exampledescription';
 import { Component, OnInit, Input } from '@angular/core';
 import { ExampleService } from 'src/app/services/example.service';
+import { SallyAndAnn } from '../core/models/examples/sally-and-ann';
 
 
 
@@ -20,7 +21,7 @@ import { ExampleService } from 'src/app/services/example.service';
 })
 export class MenuComponent implements OnInit {
 
-  examples = [new Simple(), new MuddyChildren(), new MineSweeper(), new ConsecutiveNumbers(), new Belote(),
+  examples = [new Simple(), new MuddyChildren(), new SallyAndAnn(), new MineSweeper(), new ConsecutiveNumbers(), new Belote(),
     new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton()];
 
   openExampleDescription(exampleDescription: ExampleDescription ) {

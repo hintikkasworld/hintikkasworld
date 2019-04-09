@@ -16,7 +16,7 @@ export class EventModelAction implements Action {
         
     }
 
-    getPrecondition(): Formula {
+    getPrecondition(M: EpistemicModel): Formula {
         if(this._E instanceof ExplicitEventModel) 
          return (<any> this._E.getNode(this._E.getPointedAction())).pre;
          else

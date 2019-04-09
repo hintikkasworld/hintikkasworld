@@ -261,6 +261,11 @@ export class ExactlyFormula implements Formula {
 
 
 export class FormulaFactory{
+    static createTrue() {
+        return new TrueFormula();
+    }
+
+
     static createFormula(schemeExpression: string | Array<any>) {
         let ast;
         if (typeof schemeExpression == "string")
