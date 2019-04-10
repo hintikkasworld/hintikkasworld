@@ -11,10 +11,10 @@ import { Valuation } from '../epistemicmodel/valuation';
 
 class BeloteWorld extends WorldValuation {
 
-    static cardSuits = ["♦", "♣", "♥", "♠"];
-    static cardValues = ["1", "7", "8", "9", "10", "J", "Q", "K"];
-    static cardWidth = 9;
-    static cardHeight = 8;
+    static readonly cardSuits = ["♦", "♣", "♥", "♠"];
+    static readonly cardValues = ["1", "7", "8", "9", "10", "J", "Q", "K"];
+    static readonly cardWidth = 9;
+    static readonly cardHeight = 8;
 
 
     constructor(valuation: Valuation) {
@@ -27,7 +27,7 @@ class BeloteWorld extends WorldValuation {
     }
 
 
-    drawBeloteCard(context, agent, i, cardSuit, cardValue) {
+    drawBeloteCard(context: CanvasRenderingContext2D, agent: string, i: number, cardSuit: string, cardValue: string) {
         let x, y, dx, dy;
         if (agent == "a") { x = 64 - 4 * BeloteWorld.cardWidth; y = 0; dx = BeloteWorld.cardWidth; dy = 0; }
         if (agent == "b") { x = 128 - BeloteWorld.cardWidth; y = 0; dx = 0; dy = BeloteWorld.cardHeight; }
@@ -45,7 +45,7 @@ class BeloteWorld extends WorldValuation {
 
     }
 
-    draw(context) {
+    draw(context: CanvasRenderingContext2D) {
         for (let agent of environment.agents) {
             let i = 0;
             for (let cardSuit of BeloteWorld.cardSuits)
@@ -78,7 +78,7 @@ export class Belote extends ExampleDescription {
     getInitialEpistemicModel() {
 
 
-        function addRandomBeloteWorld(M) {
+        function addRandomBeloteWorld(M: ExplicitEpistemicModel) {
 
 
             function getBeloteWorldCardNames() {

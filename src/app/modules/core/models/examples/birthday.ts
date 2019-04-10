@@ -81,24 +81,21 @@ class BirthdayWorld extends WorldValuation {
 
 
 
-
-
-
-
 export class Birthday implements ExampleDescription {
 
-    dates;
-    date;
-    person: string;
+    private readonly dates: Date[];
+    private readonly date: Date;
+    private readonly personName: string;
 
-    constructor(person: string, dates: Date[], date: Date) {
+
+    constructor(personName: string, dates: Date[], date: Date) {
         this.dates = dates;
         this.date = date;
-        this.person = person;
+        this.personName = personName;
     }
 
     getName() {
-        return this.person + "'s birthday";
+        return this.personName + "'s birthday";
     }
     
     
