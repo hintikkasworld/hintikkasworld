@@ -4,16 +4,17 @@ import { environment } from 'src/environments/environment';
 
 export abstract class World {
   protected agentPos;
-  private static agentImages = World.getAgentImages();
+  protected static readonly agentImages = World.getAgentImages();
 
   static getAgents() {
     return environment.agents;
   }
 
 
-  static getImage(filename) {
+  static getImage(filename: string): HTMLImageElement {
     let image = new Image();
     image.src = "assets/img/" + filename;
+    return image;
   }
 
 
@@ -128,7 +129,7 @@ export abstract class World {
 
 
 
-  drawCard(context: CanvasRenderingContext2D, card: any) {
+  protected static drawCard(context: CanvasRenderingContext2D, card: any) {
     if (card.fontSize == undefined)
       card.fontSize = 16;
 
@@ -148,7 +149,7 @@ export abstract class World {
     context.strokeStyle = "#000000";
     let ROUNDRECT_RADIUS = 2;
     let YLINEBASIS = 5;
-    this.roundRect(context, card.x, card.y, card.w, card.h, ROUNDRECT_RADIUS, true, true);
+    World.roundRect(context, card.x, card.y, card.w, card.h, ROUNDRECT_RADIUS, true, true);
 
     context.fillStyle = card.color;
     context.fillText(card.text, card.x + card.w / 2 - context.measureText(card.text).width / 2, card.y + card.h / 2 + card.h / 3);
@@ -157,7 +158,23 @@ export abstract class World {
 
 
 
+  static drawVisibilityLine(context, x1, y1, x2, y2) {
+    context.beginPath();
+    context.setLineDash([5, 3]);
+    context.strokeStyle = "black";
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.stroke();
+    context.setLineDash([]);
+  }
 
+
+  static drawLine(context, x1, y1, x2, y2) {
+    context.beginPath();
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.stroke();
+  }
 
 
 
