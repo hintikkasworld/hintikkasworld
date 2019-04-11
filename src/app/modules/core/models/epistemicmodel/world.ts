@@ -158,7 +158,7 @@ export abstract class World {
 
 
 
-  static drawVisibilityLine(context, x1, y1, x2, y2) {
+  static drawVisibilityLine(context: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number): void {
     context.beginPath();
     context.setLineDash([5, 3]);
     context.strokeStyle = "black";
@@ -169,7 +169,7 @@ export abstract class World {
   }
 
 
-  static drawLine(context, x1, y1, x2, y2) {
+  static drawLine(context: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number): void {
     context.beginPath();
     context.moveTo(x1, y1);
     context.lineTo(x2, y2);
