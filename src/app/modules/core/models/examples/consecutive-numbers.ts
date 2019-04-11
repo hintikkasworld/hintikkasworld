@@ -31,7 +31,7 @@ class ConsecutiveNumbersWorld extends WorldValuation {
         for (let a of environment.agents)
             for (var i = 1; i <= ConsecutiveNumbersWorld.consequenceNumbersImax; i++)
                 if (this.modelCheck(a + i))
-                    this.drawCard(context, { x: this.agentPos[a].x, y: 48, w: 16, text: i });
+                    ConsecutiveNumbersWorld.drawCard(context, { x: this.agentPos[a].x, y: 48, w: 16, text: i });
 
     }
 }
@@ -93,19 +93,23 @@ export class ConsecutiveNumbers extends ExampleDescription {
         }
         return [{ a: "a", b: "b" }, { a: "b", b: "a" }].map(
             function (obj) {
-                return new EventModelAction({name: "Agent " + obj.a + " announces that " + getPronom(obj.a) + 
-                           " knows the number of agent " + obj.b + ".",
-                    eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(getConsequenceNumberFormulaAgentKnowOtherNumber(obj.a)))});
+                return new EventModelAction({
+                    name: "Agent " + obj.a + " announces that " + getPronom(obj.a) +
+                        " knows the number of agent " + obj.b + ".",
+                    eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(getConsequenceNumberFormulaAgentKnowOtherNumber(obj.a)))
+                });
             }
         ).concat(
             [{ a: "a", b: "b" }, { a: "b", b: "a" }].map(
                 function (obj) {
-                    return new EventModelAction({name: "Agent " + obj.a + " announces that " + getPronom(obj.a) + 
-                    " does not know the number of agent " + obj.b + ".",
-                        eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("(not " + getConsequenceNumberFormulaAgentKnowOtherNumber(obj.a) + ")"))});
+                    return new EventModelAction({
+                        name: "Agent " + obj.a + " announces that " + getPronom(obj.a) +
+                            " does not know the number of agent " + obj.b + ".",
+                        eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("(not " + getConsequenceNumberFormulaAgentKnowOtherNumber(obj.a) + ")"))
+                    });
                 })
         );
-       
+
     }
 
 }

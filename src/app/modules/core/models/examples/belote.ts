@@ -41,7 +41,7 @@ class BeloteWorld extends WorldValuation {
         else
             color = "#000000";
 
-        this.drawCard(context, { x: x + i * dx, y: y + i * dy, w: BeloteWorld.cardWidth, h: BeloteWorld.cardHeight, fontSize: 5, color: color, text: cardValue + cardSuit });
+        BeloteWorld.drawCard(context, { x: x + i * dx, y: y + i * dy, w: BeloteWorld.cardWidth, h: BeloteWorld.cardHeight, fontSize: 5, color: color, text: cardValue + cardSuit });
 
     }
 
@@ -88,8 +88,8 @@ export class Belote extends ExampleDescription {
                         A.push(cardValue + cardSuit);
                 return A;
             }
-            
-            
+
+
             function arrayShuffle(rsort) {
                 for (var idx = 0; idx < rsort.length; idx++) {
                     var swpIdx = idx + Math.floor(Math.random() * (rsort.length - idx));
@@ -100,25 +100,25 @@ export class Belote extends ExampleDescription {
                 }
                 return rsort;
             }
-            
-            
-            
-            
-            
-            function beloteArrayToListPropositions(A) : string[] {
+
+
+
+
+
+            function beloteArrayToListPropositions(A): string[] {
                 let listPropositions: string[] = [];
                 for (let i = 0; i < 8; i++)
                     listPropositions.push("a" + A[i]);
-            
+
                 for (let i = 8; i < 16; i++)
                     listPropositions.push("b" + A[i]);
-            
+
                 for (let i = 16; i < 24; i++)
                     listPropositions.push("c" + A[i]);
-            
+
                 for (let i = 24; i < 32; i++)
                     listPropositions.push("d" + A[i]);
-            
+
                 return listPropositions;
             }
 

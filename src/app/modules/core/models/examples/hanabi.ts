@@ -3,19 +3,17 @@ import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { environment } from 'src/environments/environment';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
+import { World } from '../epistemicmodel/world';
 /**
- * @param truePropositions an array of true propositions
- * @returns a possible combination of cards
- * @example new CluedoWorld(["aWhite","bKnife","cLibrary","Hall","Pink","Gun"])
+ * @param valuation a valuation
  * */
-
 class HanabiWorld extends WorldValuation {
 
-    static readonly cardSuits = ["♦", "♣", "♥", "♠"];
-    static readonly cardValues = ["1", "7", "8", "9", "10", "J", "Q", "K"];
+    static readonly cardSuits = ["green", "blue", "orange", "red"];
+    static readonly cardValues = ["1", "2", "3", "4", "5"];
     static readonly cardWidth = 9;
     static readonly cardHeight = 8;
-
+    static readonly cardNumber = 5;
 
     constructor(valuation: Valuation) {
         super(valuation);
@@ -24,24 +22,20 @@ class HanabiWorld extends WorldValuation {
         this.agentPos["b"] = { x: 128 - HanabiWorld.cardWidth - 10, y: 32, r: 8 };
         this.agentPos["c"] = { x: 64, y: 48, r: 8 };
         this.agentPos["d"] = { x: 20, y: 32, r: 8 };
+
+
+
     }
 
 
-    drawBeloteCard(context: CanvasRenderingContext2D, agent: string, i: number, cardSuit: string, cardValue: string) {
+    static drawHanabiCard(context: CanvasRenderingContext2D, agent: string, i: number, cardSuit: string, cardValue: string) {
         let x, y, dx, dy;
-        if (agent == "a") { x = 64 - 4 * HanabiWorld.cardWidth; y = 0; dx = HanabiWorld.cardWidth; dy = 0; }
-        if (agent == "b") { x = 128 - HanabiWorld.cardWidth; y = 0; dx = 0; dy = HanabiWorld.cardHeight; }
-        if (agent == "c") { x = 64 - 4 * HanabiWorld.cardWidth; y = 56; dx = HanabiWorld.cardWidth; dy = 0; }
-        if (agent == "d") { x = 0; y = 0; dx = 0; dy = HanabiWorld.cardHeight; }
+        if (agent == "a") { x = 64 - HanabiWorld.cardNumber / 2 * HanabiWorld.cardWidth; y = 0; dx = HanabiWorld.cardWidth; dy = 0; }
+        if (agent == "b") { x = 128 - HanabiWorld.cardWidth; y = 10; dx = 0; dy = HanabiWorld.cardHeight; }
+        if (agent == "c") { x = 64 - HanabiWorld.cardNumber / 2 * HanabiWorld.cardWidth; y = 56; dx = HanabiWorld.cardWidth; dy = 0; }
+        if (agent == "d") { x = 0; y = 10; dx = 0; dy = HanabiWorld.cardHeight; }
 
-        let color;
-
-        if ((cardSuit == "♥") || (cardSuit == "♦"))
-            color = "#FF0000";
-        else
-            color = "#000000";
-
-        this.drawCard(context, { x: x + i * dx, y: y + i * dy, w: HanabiWorld.cardWidth, h: HanabiWorld.cardHeight, fontSize: 5, color: color, text: cardValue + cardSuit });
+        HanabiWorld.drawCard(context, { x: x + i * dx, y: y + i * dy, w: HanabiWorld.cardWidth, h: HanabiWorld.cardHeight, fontSize: 5, color: cardSuit, text: cardValue });
 
     }
 
@@ -51,7 +45,7 @@ class HanabiWorld extends WorldValuation {
             for (let cardSuit of HanabiWorld.cardSuits)
                 for (let cardValue of HanabiWorld.cardValues)
                     if (this.modelCheck(agent + cardValue + cardSuit)) {
-                        this.drawBeloteCard(context, agent, i, cardSuit, cardValue);
+                        HanabiWorld.drawHanabiCard(context, agent, i, cardSuit, cardValue);
                         i++;
                     }
             this.drawAgents(context);
@@ -59,6 +53,7 @@ class HanabiWorld extends WorldValuation {
     }
 
 }
+
 
 
 
@@ -88,8 +83,8 @@ export class Hanabi extends ExampleDescription {
                         A.push(cardValue + cardSuit);
                 return A;
             }
-            
-            
+
+
             function arrayShuffle(rsort) {
                 for (var idx = 0; idx < rsort.length; idx++) {
                     var swpIdx = idx + Math.floor(Math.random() * (rsort.length - idx));
@@ -100,25 +95,25 @@ export class Hanabi extends ExampleDescription {
                 }
                 return rsort;
             }
-            
-            
-            
-            
-            
-            function hanabiArrayToListPropositions(A) : string[] {
-                let listPropositions: string[] = [];
-                for (let i = 0; i < 8; i++)
+
+
+
+
+
+            function hanabiArrayToListPropositions(A): string[] {
+                let listPropositions = [];
+                for (let i = 0; i < HanabiWorld.cardNumber; i++)
                     listPropositions.push("a" + A[i]);
-            
-                for (let i = 8; i < 16; i++)
+
+                for (let i = HanabiWorld.cardNumber; i < 2 * HanabiWorld.cardNumber; i++)
                     listPropositions.push("b" + A[i]);
-            
-                for (let i = 16; i < 24; i++)
+
+                for (let i = 2 * HanabiWorld.cardNumber; i < 3 * HanabiWorld.cardNumber; i++)
                     listPropositions.push("c" + A[i]);
-            
-                for (let i = 24; i < 32; i++)
+
+                for (let i = 3 * HanabiWorld.cardNumber; i < 4 * HanabiWorld.cardNumber; i++)
                     listPropositions.push("d" + A[i]);
-            
+
                 return listPropositions;
             }
 

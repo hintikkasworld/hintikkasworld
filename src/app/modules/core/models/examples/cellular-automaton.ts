@@ -1,3 +1,4 @@
+import { EpistemicModel } from './../epistemicmodel/epistemic-model';
 import { Environment } from './../environment/environment';
 import { FormulaFactory } from './../formula/formula';
 import { ExplicitEventModel } from './../eventmodel/explicit-event-model';
@@ -171,11 +172,9 @@ class CellularAutomatonPostcondition extends Postcondition {
 
 
 export class CellularAutomaton implements ExampleDescription {
-    getName() {
-        return "Simulation of rule 110 cellular automaton"
-    }
+    getName() { return "Simulation of rule 110 cellular automaton"; }
 
-    getInitialEpistemicModel(): import("../epistemicmodel/epistemic-model").EpistemicModel {
+    getInitialEpistemicModel(): EpistemicModel {
         function getCellularAutomataInitialEpistemicModel(inputWord: string) {
             let M = new ExplicitEpistemicModel();
 
