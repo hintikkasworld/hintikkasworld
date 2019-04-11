@@ -3,7 +3,7 @@ import { environment } from 'src/environments/environment';
 
 
 export abstract class World {
-  protected agentPos : {[id: string]: {x: number, y:number, r:number}};
+  protected agentPos;// : {[id: string]: {x: number, y:number, r:number}};
   protected static readonly agentImages: {[id: string]: HTMLImageElement} = World.getAgentImages();
 
   static getAgents() {
