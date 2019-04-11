@@ -6,20 +6,19 @@ import { World } from './world';
 import { SymbolicRelation, Obs } from './symbolic-relation';
 import { Formula, AndFormula, ExactlyFormula, NotFormula, EquivFormula, AtomicFormula, FormulaFactory } from '../formula/formula';
 import { BDD } from '../formula/bdd';
+import { NONE_TYPE } from '@angular/compiler/src/output/output_ast';
 
 interface WorldValuationType extends Function { new(val: Valuation): WorldValuation; }
 /**
  * 
  */
 export class SymbolicEpistemicModel implements EpistemicModel{
-    check(phi: Formula): boolean {
-        throw new Error("Method not implemented.");
-    }
     
 
     protected pointed: Valuation;
     protected propositionalAtoms:string[];
-    protected constructionAtoms:string[];
+    protected propositionalPrimes:string[];
+    
     protected initialFormula:BDD;
     protected agents:string[];
     protected mapAtomDDNode:Map<string, number>;
@@ -31,9 +30,8 @@ export class SymbolicEpistemicModel implements EpistemicModel{
         return this.agents;
     }
     /**
-     * ATTENTION: COMMENTS SHOULD BE WRITTEN IN ENGLISH
-     * Implementation d'un Modele Epistemique Symbolique
-     * Ici via des BDD, et Cudd
+     * Implementation of Symbolic Epistemique Model
+     * Here, with BDD and Cudd
      */
 
      /*********
@@ -41,7 +39,7 @@ export class SymbolicEpistemicModel implements EpistemicModel{
       *********/
      
     /**
-     * Retourne la nom d'une variable en le nom prime
+     * Return the name of the primed variable 
      * @param varName
      */
      static getPrimedVarName(varName:string){
@@ -49,7 +47,7 @@ export class SymbolicEpistemicModel implements EpistemicModel{
     }
 
     /**
-     * Retourne la nom d'une variable en le nom prime
+     * Return the primed symbol
      * @param varName
      */
     static getPrimedString(){
@@ -60,33 +58,36 @@ export class SymbolicEpistemicModel implements EpistemicModel{
 
     /**
      * @param worldClass the type of worlds that the symbolic epistemic models returns (e.g. BeloteWorld)
-     * @param atoms liste des atomes propositionnels decrivant l'exemple
-     * @param relations Map d'un agent vers ses relations d'accessibilite
+     * @param atoms list of propositional atoms describing the example
+     * @param relations Map of agent : accessibility relations
      */
-    constructor(worldClass : WorldValuationType, atoms:string[], constratoms:string[], f: Formula, relations:Map<string, SymbolicRelation>){
+    constructor(worldClass : WorldValuationType, agents: string[], atoms:string[], relations:Map<string, SymbolicRelation>, rules: Formula){
+        
+        this.agents = agents;
         this.pointed = null;
         this.worldClass = worldClass;
 
         this.propositionalAtoms = [];
+        this.propositionalPrimes = []
+
+        let to_prime = new Map();
+
         atoms.forEach( (value) => {
+            let prime = SymbolicEpistemicModel.getPrimedVarName(value);
             this.propositionalAtoms.push(value);
-            this.propositionalAtoms.push(SymbolicEpistemicModel.getPrimedVarName(value));
+            this.propositionalPrimes.push(prime);
+            to_prime[value] = prime;
         });
-        this.constructionAtoms = [];
-        constratoms.forEach( (value) => {
-            this.constructionAtoms.push(value);
-            this.constructionAtoms.push(SymbolicEpistemicModel.getPrimedVarName(value));
-        });
+
+        let rename = rules.renameAtoms( (name) => { return SymbolicEpistemicModel.getPrimedVarName(name); } );
+        let and_rules = new AndFormula([rename, rules]);
+
+        this.initialFormula = BDD.buildFromFormula(and_rules);
 
         this.graphe = new Map();
-        this.agents = [];
         relations.forEach((value: SymbolicRelation, key: string) => {
-            this.agents.push(key);
-            this.graphe[key] = value.toBDD();
+            this.graphe[key] = BDD.and([and_rules, value.toBDD()]);
         });
-
-        this.initialFormula = BDD.buildFromFormula(f);
-        this.initialFormula = BDD.existentialforget(this.initialFormula, this.constructionAtoms);
 
     }
     
@@ -119,74 +120,99 @@ export class SymbolicEpistemicModel implements EpistemicModel{
 }
 
 
-export class BeloteTest extends ExampleDescription {
+export class SimpleSymbolicHanabi extends ExampleDescription {
 
-    /* On suppose 8 coeurs, 8 piques, 8 carreaux, et 8 trefles */
-    private nbCards:number = 32;
-    private agents = ["a", "b", "c", "d"]
+    private nbCards:number = 10;
+    private agents = ["a", "b", "c", "d"];
+    private owners = this.agents.concat(["t", "p", "e"]);  /* agents + t:table, p:draw, e:exil*/ 
 
     getName() { 
-        return "Belote"; 
+        return "SimpleSymbolicHanabi"; 
     }
 
     getVarName(agent:string, card:number){
         return "var_" + agent + "_" + card;
     }
-    getxName(card:number){
-        return "x" + "_" + card;
-    }
-    getyName(card:number){
-        return "y" + "_" + card;
-    }    
+
     getInitialEpistemicModel() {
-        /* Creation de toutes les variables getVarName */
+        /* Creation of all variables getVarName */
         let variables:string[] = [];
         let constructionVariables:string[] = [];
         this.agents.forEach( (agent) => {
             for(var i = 0; i<this.nbCards; i++) {
                 variables.push(this.getVarName(agent, i));
-                constructionVariables.push(this.getxName(i));
-                constructionVariables.push(this.getyName(i));
             }
         });
-        var lf:Array<Formula> = new Array();
-        this.agents.forEach((agent) => {
-            var lv:Array<string> = new Array(); 
-            for(var i = 0; i<this.nbCards; i++) {
-                lv.push(this.getVarName(agent,i));
-                if (agent == "a") {
-                    console.log("("+this.getVarName(agent,i)+ " <-> ((not "+this.getxName(i)+ ") and (not "+this.getyName(i)+")))") 
-                    lf.push(FormulaFactory.createFormula("("+this.getVarName(agent,i)+ " <-> ((not "+this.getxName(i)+ ") and (not "+this.getyName(i)+")))")) 
-                }
-                if (agent == "b") {
-                    lf.push(FormulaFactory.createFormula("("+this.getVarName(agent,i)+ " <-> ((not "+this.getxName(i)+ ") and "+this.getyName(i)+"))") )
-                }
-                if (agent == "c") {
-                    lf.push(FormulaFactory.createFormula("("+this.getVarName(agent,i)+ " <-> ("+this.getxName(i)+ " and (not "+this.getyName(i)+")))") )
-                }
-                if (agent == "d") {
-                    lf.push(FormulaFactory.createFormula("("+this.getVarName(agent,i)+ " <-> ("+this.getxName(i)+ " and "+this.getyName(i)+"))"))
-                } 
-            }           
-            lf.push(new ExactlyFormula((this.nbCards/(this.agents.length)),lv))                        
-        });   
-
-        let formulaInitial = new AndFormula(lf);
-        /* Cree l'Obs <<SymbolicRelation>> qui represente 
-        les relations pour chaque agent var_a_c <-> var_a_c_p */
+        
+        /* Create Obs <<SymbolicRelation>> which represent relations of each agent like var_a_c <-> var_a_c_p */
         var relationsSymboliques:Map<string, SymbolicRelation> = new Map(); 
         
-        this.agents.forEach( (agent) => {
-            let agentVariables= [];
-            for(var i = 0; i<this.nbCards; i++) {
-                agentVariables.push(this.getVarName(agent, i))
+        this.agents.forEach( (current_agent) => {
+            let liste_rel = [];
+            
+            /* Reciprocity of cards : agent does'nt see all variables of himself and draw */
+            this.owners.forEach( (agent) => {
+                for(var c = 0; c<this.nbCards; c++) {
+                    if(current_agent != agent && current_agent != "p"){
+                        liste_rel.push(this.getVarName(agent, c));
+                    };
+                };
+            });
+            
+            /* Enumeration of agent's card : : agent see the number of his cards : 0 <-> 0p and 1 <-> 1p and ... */
+
+            for(var c = 0; c<this.nbCards; c++) {
+                for(var i = 1; i<6; i++) {
+                    liste_rel.push(new ExactlyFormula(i, [this.getVarName(current_agent, c)]));
+                };
+            };
+            console.log("ListeRel", liste_rel);
+            relationsSymboliques[current_agent] = new Obs(liste_rel);
+
+        });
+        
+        console.log("RelationsSymboliques", relationsSymboliques);
+        
+        /* Unicity of cards : a card is here only once : a:1 but no b:1 ... */
+        let liste_rules = [];
+        for(var c = 0; c<this.nbCards; c++) {
+            let cards = []
+            this.owners.forEach( (agent) => {
+                cards.push(this.getVarName(agent, c));
+            });
+            liste_rules.push(new ExactlyFormula(1, cards));
+        }
+        let rules = new AndFormula(liste_rules);
+
+        console.log(rules);
+
+        let M = new SymbolicEpistemicModel(WorldValuation, this.agents, variables, relationsSymboliques, rules);
+
+        let cardInHand_Begin = 4;
+        let count = 0;
+
+        let propositions: { [id: string]: boolean } = {};
+        this.agents.forEach( (current_agent) => {
+            for(var c = 0; c<cardInHand_Begin; c++) {
+                propositions[this.getVarName(current_agent, c)] = true;
+                count += 1;
+            };
+        });
+        for(var c = count; c<count+cardInHand_Begin; c++) {
+            propositions[this.getVarName("p", c)] = true;
+        };
+
+        console.log("MapVal", propositions);
+
+        variables.forEach( (variable) => {
+            if(!(variable in propositions)){
+                propositions[variable] = false;
             }
-            relationsSymboliques[agent] = new Obs(agentVariables);
         });
 
-        
-        let M = new SymbolicEpistemicModel(WorldValuation, variables,  constructionVariables, formulaInitial, relationsSymboliques);
-        M.setPointedWorld(null);
+        console.log("Valuation", propositions);
+
+        M.setPointedWorld(new WorldValuation(new Valuation(propositions)));
 
         return M;
     }

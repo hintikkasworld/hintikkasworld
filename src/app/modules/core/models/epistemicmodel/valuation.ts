@@ -1,5 +1,5 @@
 export class Valuation {
-    readonly propositions: { [id: string]: boolean } = {};
+    propositions: { [id: string]: boolean } = {};
 
     constructor(truePropositions:  { [id: string]: boolean } | string[] ) {
         if(truePropositions instanceof Array) {
