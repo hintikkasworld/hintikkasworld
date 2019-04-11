@@ -79,88 +79,15 @@ fourth@example.com
 
 
 \section{Introduction}
-
-The current trend is to construct programs that play games with imperfect information, for instance Hanabi \cite{DBLP:journals/corr/abs-1902-00506}, but also video games such as Starcraft 2 \cite{DBLP:conf/ijcai/HuLLPX18} An important ingredient is to reason about higher-order knowledge (an agent knows that another agents knows that...). That is why we claim that epistemic logic and its dynamic extension, Dynamic epistemic logic (\cite{baltag1998logic}, \cite{DitmarschvdHoekKooi}), may offer a formal tool to provide explanation in such AI programs. needs to be understood is relevant in AI, especially in strategic reasoning \cite{DBLP:journals/ijgt/Aumann99}.
-
-The only tool we are aware of that enables to see and explore mental states of agents is \emph{Hintikka's world} and was presented at ECAI-IJCAI 2018 \cite{DBLP:conf/ijcai/Schwarzentruber18}. 
-\emph{Hintikka's world} is a proof of concept of a graphical user interface that represent Kripke models by  comic strips, as shown in Figure \ref{figure:gui}. The tool is available at the following address:
-\url{http://hintikkasworld.irisa.fr/}. 
-
-
-Kripke models are graphs and they were represented explicitly in memory in the first version of the tool. Explicit models are useful to learn how dynamic epistemic logic works by means of toy examples: muddy children, Sally and Anne  \cite{wimmer1983beliefs}, etc.  However, in real card games, such as Hanabi, there are .... possible configurations of cards. Thus, it is impossible to represent the full graph in memory:  the first version of Hintikka's world does not \emph{scale}. 
-
-That is why, we proposed to represent Kripke models symbolically by means of Binary Decision Diagrams as it was done in the tool DEMO\footnote{The current implementation does not rely on DEMO since their work is not well-suited for a web application.}  \cite{DBLP:conf/lori/BenthemEGS15}. 
-
-
-
-
-
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=4cm]{screenshot.png}
-	\end{center}
-	\caption{Graphical user interface of \emph{Hintikka's world}\label{figure:gui}}
-\end{figure}
+\input{section_introduction.tex}
 
 \section{Symbolic models}
-
-TODO TIRSTAN
-
+\label{section:symbolicmodels}
+\input{section_symbolicmodels}
 
 \section{Demonstration Outline}
 \label{section:demonstration}
-
-TODO expliquer Hanabi et comment on peut y jouer
-
-
-\subsection{Already Implemented Examples}
-
-%Figure \ref{figure:gui} shows the graphical user interface of \emph{Hintikka's world}. Thought bubbles The example taken here is the muddy children where two agents $a$ and $b$ are muddy and it is common knowledge one sees the state of the other agent while not knowing its own state.
-
-
-
-\subsection{User Interaction}
-
-The tool adopts the point of view of Halpern and Vardi for modeling an epistemic situation: model checking is more suitable than theorem proving \cite{DBLP:conf/kr/HalpernV91}. In other words, the current situation is modeled as a pointed Kripke model.
-By clicking on a given agent $a$, the interface opens a thought bubble that displays the possible worlds for agent $a$. Actually, the comic strips shows the unfolding of the current pointed Kripke model that represents the current situation.
-
-On the left, the software shows buttons for possible actions (public announcement, public actions, private actions, etc.). Actions are modeled by pointed event models of Dynamic epistemic logic \cite{baltag1998logic}. By clicking on a button, the corresponding action is executed: the product of the pointed Kripke model and the pointed event model becomes the current pointed Kripke model.
-
-
-
-\subsection{Building New Examples}
-
-The tool also allows the final user to building their own examples. They are two ways to specify a new epistemic situation. First, the user can describe the initial pointed Kripke model in JavaScript, by giving the list of worlds, their valuations and the epistemic relations. Second, the user can specify the initial situation by a formula $\phi$ epistemic logic. The BNF is:
-%
-%	
-$$\begin{array}{ll}\phi := & p \mid (\mathtt{not~} \phi) \mid (\phi \mathtt {~and~} \phi) \mid (\phi \mathtt {~or~} \phi)  \\ & \mid \mathtt{(K~a~\phi)} \mid \mathtt{(Kpos~a~\phi)} \mid \mathtt{(CK~G~\phi)}\mid \mathtt{(CKpos~G~\phi)}\end{array}$$
-%
-where $p$ is an atomic proposition, $a$ is an agent and $G$ is a group of agents. E.g. `$p$ does not holds but agent $a$ imagines that it is possible that $p$ holds' (\texttt{((Kpos a p) and (not p))}), agent $a$ and $b$ commonly know that agent $c$ does not know the value of $p$ (\texttt{(CK (a b) ((not (K b p)) and (not (K b (not p))))}), etc. The user writes a set of formulas, one formula per line.
-%
-%	\begin{verbatim}
-%	(not p)
-%	(Kpos a p)
-%	\end{verbatim}
-%	
-Then the system solves the satisfiability problem and generates a pointed epistemic model.
-
-
-
-%	{\scriptsize
-%	\begin{verbatim}
-%	//javascript
-%	M = new EpistemicModel();
-%	M.addWorld("w", ["p"]);
-%	M.addWorld("u", ["q"]);
-%	M.makeReflexiveRelation("a");
-%	M.makeReflexiveRelation("b");
-%	M.addEdge("b", "w", "u");
-%	M.addEdge("b", "u", "w");
-%	M.addEdge("b", "w", "v");
-%	M.addEdge("b", "v", "w");
-%	M.setPointedWorld("w");
-%	\end{verbatim}}
-
+\input{section_demonstrationoutline}
 
 
 
@@ -168,76 +95,11 @@ Then the system solves the satisfiability problem and generates a pointed episte
 
 \section{System Description}
 \label{section:architecture}
-
-TODO Expliquer comment c'est FAIT
-
-\subsection{Class Architecture}
-
-Figure \ref{figure:architecture} shows the main part of the architecture of \emph{Hintikka's world}. The interesting part is the fact that the graphical user interface (GUI) is independent from the current example that is running (muddy children, Sally and Anne, etc.). In particular, adding a new example only requires to add a new class that inherits from \texttt{World} and to implement the method for drawing the scene from data (valuations, numbers, etc.) that are members of the class.
-
-\subsection{Model Checking}
-
-The tool highly rely on model checking. Indeed, for instance, performing the public announcement of $\phi$ requires to compute the subset of worlds in which $\phi$ holds and to prune the current Kripke model. We chose to write the  model checking procedure in Javascript. Since model checking is in PTIME -- thus is an easy task -- and is used intensively, it suitable to run run it on the client-side  for performance reasons.
-
-\subsection{Satisfiability Problem}
-
-
-
-\begin{figure}
-	\begin{center}
-		\scalebox{0.8}{
-			\begin{tikzpicture}[scale=0.75]
-			
-			\umlclass[x=0,y=2]{Graph}{
-				
-			}{}
-			
-			\umlclass[x=-7,y=-0]{GUI}{
-			}{
-			}
-			
-			\umlclass[x=-2,y=-2.5]{World}{
-			}{
-			}
-			
-			\umlclass[x=-2,y=-0]{EpistemicModel}{
-			}{
-			}
-			
-			\umlclass[x=-6.5,y=-2.5]{MuddyChildrenWorld}{
-			}{
-			}
-			
-			\umlclass[x=2,y=-2.5]{SallyAndAnneWorld}{
-			}{
-			}
-			
-			\umlclass[x=2,y=-0]{EventModel}{
-			}{
-			}
-			
-			
-			\umlassoc[geometry=--, arg1=, mult1=1, align1=right, arg2=, mult2=*, align2=left]{GUI}{EpistemicModel}
-			\umlassoc[geometry=--, arg1=, mult1=*, arg2=, mult2=1]{EpistemicModel}{World}
-			
-			\umlinherit[geometry=|-]{EpistemicModel}{Graph}
-			\umlinherit[geometry=|-]{EventModel}{Graph}
-			\umlinherit[geometry=|-]{SallyAndAnneWorld}{World}
-			\umlinherit[geometry=|-]{MuddyChildrenWorld}{World}
-			
-			%\umlunicompo[geometry=-|, arg=titi, mult=*, pos=1.7, stereo=vector]{D}{C}
-			%\umlaggreg[arg=tutu, mult=1, pos=0.8, angle1=30, angle2=60, loopsize=2cm]{D}{D}
-			
-			\end{tikzpicture}}
-	\end{center}
-	\caption{Architecture for the symbolic approach in \emph{Hintikka's world}\label{figure:architecture}}
-\end{figure}
+\input{section_systemdescription}
 
 \section{Future Work}
 \label{section:perspectives}
-
-
-TODO implémzenter d'autres exemples etc.
+\input{section_conclusion}
 
 
 

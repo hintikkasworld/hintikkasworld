@@ -1,0 +1,64 @@
+
+TODO Expliquer comment c'est FAIT
+
+\subsection{Class Architecture}
+
+Figure \ref{figure:architecture} shows the main part of the architecture of \emph{Hintikka's world}. The interesting part is the fact that the graphical user interface (GUI) is independent from the current example that is running (muddy children, Sally and Anne, etc.). In particular, adding a new example only requires to add a new class that inherits from \texttt{World} and to implement the method for drawing the scene from data (valuations, numbers, etc.) that are members of the class.
+
+\subsection{Model Checking}
+
+The tool highly rely on model checking. Indeed, for instance, performing the public announcement of $\phi$ requires to compute the subset of worlds in which $\phi$ holds and to prune the current Kripke model. We chose to write the  model checking procedure in Javascript. Since model checking is in PTIME -- thus is an easy task -- and is used intensively, it suitable to run run it on the client-side  for performance reasons.
+
+\subsection{Satisfiability Problem}
+
+
+
+\begin{figure}
+	\begin{center}
+		\scalebox{0.8}{
+			\begin{tikzpicture}[scale=0.75]
+			
+			\umlclass[x=0,y=2]{Graph}{
+				
+			}{}
+			
+			\umlclass[x=-7,y=-0]{GUI}{
+			}{
+			}
+			
+			\umlclass[x=-2,y=-2.5]{World}{
+			}{
+			}
+			
+			\umlclass[x=-2,y=-0]{EpistemicModel}{
+			}{
+			}
+			
+			\umlclass[x=-6.5,y=-2.5]{MuddyChildrenWorld}{
+			}{
+			}
+			
+			\umlclass[x=2,y=-2.5]{SallyAndAnneWorld}{
+			}{
+			}
+			
+			\umlclass[x=2,y=-0]{EventModel}{
+			}{
+			}
+			
+			
+			\umlassoc[geometry=--, arg1=, mult1=1, align1=right, arg2=, mult2=*, align2=left]{GUI}{EpistemicModel}
+			\umlassoc[geometry=--, arg1=, mult1=*, arg2=, mult2=1]{EpistemicModel}{World}
+			
+			\umlinherit[geometry=|-]{EpistemicModel}{Graph}
+			\umlinherit[geometry=|-]{EventModel}{Graph}
+			\umlinherit[geometry=|-]{SallyAndAnneWorld}{World}
+			\umlinherit[geometry=|-]{MuddyChildrenWorld}{World}
+			
+			%\umlunicompo[geometry=-|, arg=titi, mult=*, pos=1.7, stereo=vector]{D}{C}
+			%\umlaggreg[arg=tutu, mult=1, pos=0.8, angle1=30, angle2=60, loopsize=2cm]{D}{D}
+			
+			\end{tikzpicture}}
+	\end{center}
+	\caption{Architecture for the symbolic approach in \emph{Hintikka's world}\label{figure:architecture}}
+\end{figure}
