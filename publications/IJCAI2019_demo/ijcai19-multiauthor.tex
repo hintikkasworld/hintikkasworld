@@ -48,7 +48,7 @@
 % page charge instructions.
 % Put where the files are available in the appropriate places.
 
-\title{Symbolic models in Hintikka's World}
+\title{Hintikka's World: scalable higher-order knowledge}
 
 \author{
 Tristan Charrier$^1$\footnote{Contact Author}\and
@@ -80,44 +80,16 @@ fourth@example.com
 
 \section{Introduction}
 
-The current trend is to construct programs that play games with imperfect information, for instance Hanabi \cite{}, but also video games such as Starcraft 2 \cite{} An important ingredient is to reason about higher-order knowledge (an agent knows that another agents knows that...). That is why we claim that epistemic logic and its dynamic extension, Dynamic epistemic logic (\cite{baltag1998logic}, \cite{DitmarschvdHoekKooi}), may offer a formal tool to provide explanation in such AI programs. needs to be understood is relevant in AI, especially in strategic reasoning \cite{DBLP:journals/ijgt/Aumann99}.
+The current trend is to construct programs that play games with imperfect information, for instance Hanabi \cite{DBLP:journals/corr/abs-1902-00506}, but also video games such as Starcraft 2 \cite{DBLP:conf/ijcai/HuLLPX18} An important ingredient is to reason about higher-order knowledge (an agent knows that another agents knows that...). That is why we claim that epistemic logic and its dynamic extension, Dynamic epistemic logic (\cite{baltag1998logic}, \cite{DitmarschvdHoekKooi}), may offer a formal tool to provide explanation in such AI programs. needs to be understood is relevant in AI, especially in strategic reasoning \cite{DBLP:journals/ijgt/Aumann99}.
 
-The only tool we are aware of that enables to see and explore mental states of agents is \emph{Hintikka's world} and was presented at ECAI-IJCAI 2018 \cite{}. 
-\emph{Hintikka's world} is a proof of concept of a graphical user interface that shows artificial agents mental states. It could be used in debugging contexts and for explaining behaviors of the agents that takes their decisions with respect to their beliefs. In other words, it takes part in Explainable Artificial Intelligence.
-
-The famous tool in the community is called DEMO \cite{van2007demo} and is a model checker for DEL, that has been used in practice \cite{DBLP:conf/paams/DitmarschEHSSS12}.
-It also provides symbolic techniques \cite{DBLP:conf/lori/BenthemEGS15}.
-
-
-Nevertheless, there are no tools with an intuitive graphical user interface that may be used by roboticians, game theorists, psychologists, etc. In this paper, we present such a tool called .% along the lines of \emph{Tarski's world} \cite{barker2007tarski}
-% and \emph{Kripke's worlds} \cite{DBLP:books/daglib/0032750}.
-
-
-The idea of tool we propose, called \emph{Hintikka's world} is simple: represent Kripke models by comic strips, as shown in Figure \ref{figure:gui}. The tool is available at the following address:
+The only tool we are aware of that enables to see and explore mental states of agents is \emph{Hintikka's world} and was presented at ECAI-IJCAI 2018 \cite{DBLP:conf/ijcai/Schwarzentruber18}. 
+\emph{Hintikka's world} is a proof of concept of a graphical user interface that represent Kripke models by  comic strips, as shown in Figure \ref{figure:gui}. The tool is available at the following address:
 \url{http://hintikkasworld.irisa.fr/}. 
 
-The artificial agent could be a humanoid robot that interact with humans (\cite{DBLP:journals/arobots/Scassellati02}, \cite{DBLP:conf/hri/DevinA16}) or several autonomous agents that have imperfect information \cite{AAAI2018kbps}.
 
+Kripke models are graphs and they were represented explicitly in memory in the first version of the tool. Explicit models are useful to learn how dynamic epistemic logic works by means of toy examples: muddy children, Sally and Anne  \cite{wimmer1983beliefs}, etc.  However, in real card games, such as Hanabi, there are .... possible configurations of cards. Thus, it is impossible to represent the full graph in memory:  the first version of Hintikka's world does not \emph{scale}. 
 
-Another application is to provide a tool for psychiatrists to test ability of children to reason about higher-order knowledge (see \cite{DBLP:conf/cogsci/ArslanVTH15}, \cite{wimmer1983beliefs}).
-
-Finally, the tool has a pedagogical aim. It illustrates the concepts of Kripke models, modal formulas, model checking and satisfiability problem in a modal logic course. It also enables to explain easily 
-how to model higher-order knowledge to other scientists.
-
-First, the user can run AI examples that illustrate important concepts:
-
-\begin{itemize}
-	\item Agents can learn information from messages of the form `an agent does not know...': Muddy children puzzle, Consecutive numbers \cite{van2015one}
-	\item False beliefs of agents: Sally and Anne \cite{wimmer1983beliefs}
-	\item Public announcements that are secure in the sense that intruders of a system do not not learn relevant information: Russian cards \cite{DBLP:journals/sLogica/Ditmarsch03}
-	\item Evolution of knowledge in asynchronous systems \cite{knight_maubert_schwarzentruber_2017}
-	\item Evolution of knowledge in agents that run knowledge-based programs over a QdecPOMDP \cite{AAAI2018kbps}.
-	\item Simulation of cellular automata, for proving undecidability of epistemic planning \cite{ijcai2018SmallUndecidableEpistemicPlanning}.
-\end{itemize} 
-
-TODO motiver symbolic models
-
-%Section \ref{section:demonstration} presents the demonstration outline. Section \ref{section:architecture} explains the architecture of the software. Section \ref{section:perspectives} discusses the perspectives.
+That is why, we proposed to represent Kripke models symbolically by means of Binary Decision Diagrams as it was done in the tool DEMO\footnote{The current implementation does not rely on DEMO since their work is not well-suited for a web application.}  \cite{DBLP:conf/lori/BenthemEGS15}. 
 
 
 
@@ -132,7 +104,7 @@ TODO motiver symbolic models
 
 \section{Symbolic models}
 
-TODO symbolic models sur Hanabi
+TODO TIRSTAN
 
 
 \section{Demonstration Outline}

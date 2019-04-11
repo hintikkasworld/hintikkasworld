@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.6.20)  11 APR 2019 17:49
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.6.20)  11 APR 2019 18:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1216,114 +1216,61 @@ File: omsptm.fd
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 73.
 \actualheight=\skip76
-LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 112.
 
-Underfull \hbox (badness 4048) in paragraph at lines 115--116
-[]\OT1/ptm/m/n/10 Evolution of knowl-edge in asyn-chronous sys-tems
- []
-
-<screenshot.png, id=97, 474.77374pt x 502.87875pt>
+<screenshot.png, id=86, 474.77374pt x 502.87875pt>
 File: screenshot.png Graphic file (type png)
  <use screenshot.png>
-Package pdftex.def Info: screenshot.png used on input line 130.
+Package pdftex.def Info: screenshot.png used on input line 100.
 (pdftex.def)             Requested size: 113.81102pt x 120.54756pt.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 116.
 
 [1{/usr/share/texlive/texmf-dist/fonts/map/pdftex/updmap/pdftex.map}
 
 
 
  <./screenshot.png>]
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 146.
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 168.
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 138.
 
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 261.
- [2]
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 231.
+
 (./ijcai19-multiauthor.bbl
-Underfull \hbox (badness 10000) in paragraph at lines 14--19
-[]\OT1/ptm/m/n/10 Guillaume Aucher and
+Underfull \hbox (badness 1082) in paragraph at lines 36--42
+\OT1/ptm/m/n/10 Min-gliang Xu.  Knowledge-guided agent-tactic-aware
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 36--39
-[]\OT1/ptm/m/n/10 Thomas Bolan-der and
- []
-
-
-Underfull \hbox (badness 1152) in paragraph at lines 36--39
-\OT1/ptm/m/n/10 sin-gle and multi-agent sys-tems.  \OT1/ptm/m/it/10 Jour-nal of
- Ap-plied
- []
-
-
-Underfull \hbox (badness 1014) in paragraph at lines 42--47
-[]\OT1/ptm/m/n/10 Tristan Char-rier and
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 80--84
-[]\OT1/ptm/m/n/10 Abdallah Saf-fi-dine, Fran[]ois
- []
-
-
-Underfull \hbox (badness 1448) in paragraph at lines 80--84
-\OT1/ptm/m/n/10 Schwarzen-tru-ber, and Bruno Zanut-tini.  Knowledge-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 92--97
-[]\OT1/ptm/m/n/10 Fran[]ois Schwarzen-tru-ber
- []
-
-
-Underfull \hbox (badness 1400) in paragraph at lines 92--97
-\OT1/ptm/m/n/10 prob-lems in epis-temic plan-ning.  In \OT1/ptm/m/it/10 Pro-cee
-d-ings of
- []
-
-
-Underfull \hbox (badness 1762) in paragraph at lines 92--97
-\OT1/ptm/m/it/10 the 27th In-ter-na-tional Joint Con-fer-ence on Ar-ti-fi-cial
- []
-
-
-Underfull \hbox (badness 1655) in paragraph at lines 106--109
-[]\OT1/ptm/m/n/10 Hans van Dit-marsch and
- []
-
-
-Underfull \hbox (badness 2521) in paragraph at lines 112--115
+Underfull \hbox (badness 2521) in paragraph at lines 59--62
 []\OT1/ptm/m/n/10 Hans van Dit-marsch, Wiebe
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 138--142
+Underfull \hbox (badness 10000) in paragraph at lines 64--68
 []\OT1/ptm/m/n/10 Heinz Wim-mer and Josef
  []
 
-) [3]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 291.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 291.
+) [2]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 261.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 261.
  (./ijcai19-multiauthor.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 291.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 291.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 261.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 261.
 Package rerunfilecheck Info: File `ijcai19-multiauthor.out' has not changed.
 (rerunfilecheck)             Checksum: 3484D14F716E62EB3E363C5F406DEA39;667.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 291.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 261.
  ) 
 Here is how much of TeX's memory you used:
- 22316 strings out of 494871
- 452718 string characters out of 6178634
- 616002 words of memory out of 5000000
- 25197 multiletter control sequences out of 15000+600000
- 25949 words of font info for 60 fonts, out of 8000000 for 9000
+ 22293 strings out of 494871
+ 452074 string characters out of 6178634
+ 612350 words of memory out of 5000000
+ 25183 multiletter control sequences out of 15000+600000
+ 29119 words of font info for 64 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 55i,12n,84p,539b,999s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,12n,84p,728b,999s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/
@@ -1336,10 +1283,10 @@ cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt
 share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/t
 exmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts
 /type1/urw/times/utmri8a.pfb>
-Output written on ijcai19-multiauthor.pdf (3 pages, 177144 bytes).
+Output written on ijcai19-multiauthor.pdf (2 pages, 171444 bytes).
 PDF statistics:
- 209 PDF objects out of 1000 (max. 8388607)
- 172 compressed objects within 2 object streams
- 38 named destinations out of 1000 (max. 500000)
+ 178 PDF objects out of 1000 (max. 8388607)
+ 142 compressed objects within 2 object streams
+ 27 named destinations out of 1000 (max. 500000)
  202 words of extra memory for PDF output out of 10000 (max. 10000000)
 

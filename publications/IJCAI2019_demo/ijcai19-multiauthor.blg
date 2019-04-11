@@ -3,44 +3,44 @@ Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: ijcai19-multiauthor.aux
 The style file: named.bst
 Database file #1: biblio.bib
-You've used 20 entries,
+You've used 9 entries,
             2439 wiz_defined-function locations,
-            684 strings with 9283 characters,
-and the built_in function-call counts, 8388 in all, are:
-= -- 869
-> -- 290
-< -- 9
-+ -- 97
-- -- 94
-* -- 613
-:= -- 1271
-add.period$ -- 61
-call.type$ -- 20
-change.case$ -- 125
-chr.to.int$ -- 20
-cite$ -- 20
-duplicate$ -- 389
-empty$ -- 682
-format.name$ -- 122
-if$ -- 1806
+            613 strings with 6743 characters,
+and the built_in function-call counts, 4369 in all, are:
+= -- 440
+> -- 205
+< -- 4
++ -- 74
+- -- 72
+* -- 341
+:= -- 681
+add.period$ -- 28
+call.type$ -- 9
+change.case$ -- 71
+chr.to.int$ -- 9
+cite$ -- 9
+duplicate$ -- 179
+empty$ -- 316
+format.name$ -- 83
+if$ -- 920
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 22
-newline$ -- 103
-num.names$ -- 60
-pop$ -- 139
+missing$ -- 10
+newline$ -- 48
+num.names$ -- 27
+pop$ -- 76
 preamble$ -- 1
-purify$ -- 147
+purify$ -- 81
 quote$ -- 0
-skip$ -- 329
+skip$ -- 154
 stack$ -- 0
-substring$ -- 456
-swap$ -- 126
-text.length$ -- 9
+substring$ -- 233
+swap$ -- 61
+text.length$ -- 4
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 152
+type$ -- 68
 warning$ -- 0
-while$ -- 73
-width$ -- 23
-write$ -- 259
+while$ -- 34
+width$ -- 11
+write$ -- 119
