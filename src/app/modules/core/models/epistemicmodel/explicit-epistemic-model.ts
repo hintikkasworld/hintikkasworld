@@ -7,6 +7,9 @@ import { World } from './world';
 import { getNodeInjectable } from '@angular/core/src/render3/di';
 
 export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
+    check(formula: types.Formula) {
+        return this.modelCheck(this.getPointedWorldID(), formula);
+    }
 
     nodeToID: Map<World, string> = new Map();
     getSuccessors(w: World, a: string): Array<World> {
