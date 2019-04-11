@@ -92,7 +92,7 @@ export abstract class World {
    * @param {Boolean} [fill = false] Whether to fill the rectangle.
    * @param {Boolean} [stroke = true] Whether to stroke the rectangle.
    */
-  protected static roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number, fill: boolean, stroke: boolean) {
+  protected static roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: any, fill: boolean, stroke: boolean) {
     if (typeof stroke == 'undefined') {
       stroke = true;
     }
@@ -180,6 +180,11 @@ export abstract class World {
 
 
   abstract draw(context: CanvasRenderingContext2D);
+
+  /**
+   * @param phi 
+   * @returns true if the proposition phi is true in the world
+   */
   abstract modelCheck(phi: string);
   abstract toString();
 }
