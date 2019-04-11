@@ -72,32 +72,30 @@ fourth@example.com
 \maketitle
 
 \begin{abstract}
-This short example shows a contrived example on how to format the authors' information for {\it IJCAI--19 Proceedings} using \LaTeX{}.
-TODO
+	\emph{Hintikka's World} is a tool that shows how artificial agents can reason about higher-order knowledge (agent $a$ knows that agent $b$ knows that...).
+	In this demonstration paper, we present symbolic models  that enables to implement in  \emph{Hintikka's World} large examples such as real card games. 
 \end{abstract}
 
 
 
 \section{Introduction}
-TODO
-Higher-order knowledge of agents is relevant in many applications: game theory \cite{DBLP:journals/ijgt/Aumann99}, robotics (\cite{DBLP:journals/arobots/Scassellati02}, \cite{DBLP:conf/hri/DevinA16}), specifications of distributed systems \cite{DBLP:journals/dc/HalpernF89}, etc. Dynamic epistemic logic (DEL) (\cite{baltag1998logic}, \cite{DitmarschvdHoekKooi})
-% j'ai supprimé \cite{DBLP:journals/iandc/BenthemEK06}
-extends epistemic logic % (\cite{kripke1963semantical}, \cite{DBLP:conf/tark/Hintikka86}))
-for describing and reasoning about epistemic properties and information change.
-%
-%
+
+The current trend is to construct programs that play games with imperfect information, for instance Hanabi \cite{}, but also video games such as Starcraft 2 \cite{} An important ingredient is to reason about higher-order knowledge (an agent knows that another agents knows that...). That is why we claim that epistemic logic and its dynamic extension, Dynamic epistemic logic (\cite{baltag1998logic}, \cite{DitmarschvdHoekKooi}), may offer a formal tool to provide explanation in such AI programs. needs to be understood is relevant in AI, especially in strategic reasoning \cite{DBLP:journals/ijgt/Aumann99}.
+
+The only tool we are aware of that enables to see and explore mental states of agents is \emph{Hintikka's world} and was presented at ECAI-IJCAI 2018 \cite{}. 
+\emph{Hintikka's world} is a proof of concept of a graphical user interface that shows artificial agents mental states. It could be used in debugging contexts and for explaining behaviors of the agents that takes their decisions with respect to their beliefs. In other words, it takes part in Explainable Artificial Intelligence.
+
 The famous tool in the community is called DEMO \cite{van2007demo} and is a model checker for DEL, that has been used in practice \cite{DBLP:conf/paams/DitmarschEHSSS12}.
-It also provide symbolic techniques \cite{DBLP:conf/lori/BenthemEGS15}.
+It also provides symbolic techniques \cite{DBLP:conf/lori/BenthemEGS15}.
 
 
-Nevertheless, there are no tools with an intuitive graphical user interface that may be used by roboticians, game theorists, psychologists, etc. In this paper, we present such a tool called \emph{Hintikka's world}.% along the lines of \emph{Tarski's world} \cite{barker2007tarski}
+Nevertheless, there are no tools with an intuitive graphical user interface that may be used by roboticians, game theorists, psychologists, etc. In this paper, we present such a tool called .% along the lines of \emph{Tarski's world} \cite{barker2007tarski}
 % and \emph{Kripke's worlds} \cite{DBLP:books/daglib/0032750}.
 
 
 The idea of tool we propose, called \emph{Hintikka's world} is simple: represent Kripke models by comic strips, as shown in Figure \ref{figure:gui}. The tool is available at the following address:
 \url{http://hintikkasworld.irisa.fr/}. 
 
-\emph{Hintikka's world} is a proof of concept of a graphical user interface that shows artificial agents mental states. It could be used in debugging contexts and for explaining behaviors of the agents that takes their decisions with respect to their beliefs. In other words, it takes part in Explainable Artificial Intelligence.
 The artificial agent could be a humanoid robot that interact with humans (\cite{DBLP:journals/arobots/Scassellati02}, \cite{DBLP:conf/hri/DevinA16}) or several autonomous agents that have imperfect information \cite{AAAI2018kbps}.
 
 
