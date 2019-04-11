@@ -3,8 +3,8 @@ import { environment } from 'src/environments/environment';
 
 
 export abstract class World {
-  protected agentPos;
-  protected static readonly agentImages = World.getAgentImages();
+  protected agentPos : {[id: string]: {x: number, y:number, r:number}};
+  protected static readonly agentImages: {[id: string]: HTMLImageElement} = World.getAgentImages();
 
   static getAgents() {
     return environment.agents;
@@ -18,7 +18,7 @@ export abstract class World {
   }
 
 
-  static getAgentImages() {
+  static getAgentImages(): {[id: string]: HTMLImageElement } {
     let agentImages = {};
     for (let agent of this.getAgents()) {
       agentImages[agent] = new Image();
@@ -33,7 +33,7 @@ export abstract class World {
 
 
 
-  drawAgents(context: CanvasRenderingContext2D) {
+  drawAgents(context: CanvasRenderingContext2D): void {
     for (let a of World.getAgents())
       if (this.agentPos[a] != undefined)
         context.drawImage(World.agentImages[a], this.agentPos[a].x - this.agentPos[a].r,
@@ -43,7 +43,7 @@ export abstract class World {
 
 
 
-  getAgentRectangle(agentName: string) {
+  getAgentRectangle(agentName: string): Rectangle {
     if (this.agentPos[agentName] == undefined)
       return new Rectangle(1000, 1000, -1, -1);
     else
@@ -53,7 +53,7 @@ export abstract class World {
   }
 
 
-  drawAgentSelection(context: CanvasRenderingContext2D, agentName: string) {
+  drawAgentSelection(context: CanvasRenderingContext2D, agentName: string): void {
     context.beginPath();
 
     let rectangle = this.getAgentRectangle(agentName);
@@ -92,7 +92,7 @@ export abstract class World {
    * @param {Boolean} [fill = false] Whether to fill the rectangle.
    * @param {Boolean} [stroke = true] Whether to stroke the rectangle.
    */
-  protected static roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+  protected static roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number, fill: boolean, stroke: boolean) {
     if (typeof stroke == 'undefined') {
       stroke = true;
     }
