@@ -10,6 +10,13 @@ export abstract class World {
     return environment.agents;
   }
 
+  
+  static getImage(filename) {
+    let image = new Image();
+    image.src = "assets/img/" + filename;
+  }
+
+
   static getAgentImages() {
     let agentImages = {};
     for (let agent of this.getAgents()) {
