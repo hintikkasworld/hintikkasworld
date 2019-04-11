@@ -1,0 +1,5 @@
+A symbolic model consists in a description of the model in a more succinct language. Such representations already exist for other formalisms, such as boolean circuits for searching for Hamiltonian paths in graphs \cite{papadimitriou2003computational}, or BDDs for temporal logics \cite{DBLP:conf/lics/BurchCMDH90}.
+
+In the demonstration we use the symbolic description of \cite{DBLP:conf/aiml/CharrierS18} for dynamic epistemic logic \footnote{Which is actually a rewriting of the description of \cite{DBLP:conf/atal/CharrierS17}}, and use the reduction to first-order logic of \cite{DBLP:conf/tableaux/CharrierPS17} to implement this approach with BDDs.
+
+Take for instance any card game. The initial model is described by BDDs for the following boolean formulas: formula $\chi_W$  whose valuations are the possible configurations and formula $\chi_R$ to describe which configurations agents do not distinguish. The formula $\chi_W$ actually describes legal configurations according to the rules of the game, and $\chi_W$ reflect the fact that agents do not see the hand of other agents, so they may imagine as possible any possible dealing.
