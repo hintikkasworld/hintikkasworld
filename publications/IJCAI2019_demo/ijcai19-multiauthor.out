@@ -2,7 +2,8 @@
 \BOOKMARK [1][-]{section.2}{Demonstration Outline}{}% 2
 \BOOKMARK [1][-]{section.3}{Symbolic models}{}% 3
 \BOOKMARK [1][-]{section.4}{System Description}{}% 4
-\BOOKMARK [2][-]{subsection.4.1}{Class Architecture}{section.4}% 5
-\BOOKMARK [2][-]{subsection.4.2}{Model Checking}{section.4}% 6
-\BOOKMARK [2][-]{subsection.4.3}{Satisfiability Problem}{section.4}% 7
-\BOOKMARK [1][-]{section.5}{Future Work}{}% 8
+\BOOKMARK [2][-]{subsection.4.1}{Binary decision diagrams}{section.4}% 5
+\BOOKMARK [2][-]{subsection.4.2}{Class Architecture}{section.4}% 6
+\BOOKMARK [2][-]{subsection.4.3}{Model Checking}{section.4}% 7
+\BOOKMARK [2][-]{subsection.4.4}{Satisfiability Problem}{section.4}% 8
+\BOOKMARK [1][-]{section.5}{Future Work}{}% 9

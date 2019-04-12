@@ -1,5 +1,9 @@
 
-TODO Expliquer comment c'est FAIT
+Whereas the first version was written in Javascript, the new version is written in TypeScript and Angular 7.
+
+\subsection{Binary decision diagrams}
+
+The symbolic model checking of DEL is PSPACE-complete. Thus, the use of BDD is critical. That is why, for manipulating the binary decision diagrams, we wrote a wrapup in C of the library CUDD \cite{}, that produces a Web Assembly library.
 
 \subsection{Class Architecture}
 
@@ -9,7 +13,6 @@ Figure \ref{figure:architecture} shows the main part of the architecture of \emp
 
 The tool highly rely on model checking. Indeed, for instance, performing the public announcement of $\phi$ requires to compute the subset of worlds in which $\phi$ holds and to prune the current Kripke model. We chose to write the  model checking procedure in Javascript. Since model checking is in PTIME -- thus is an easy task -- and is used intensively, it suitable to run run it on the client-side  for performance reasons.
 
-\subsection{Satisfiability Problem}
 
 
 
