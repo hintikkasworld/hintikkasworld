@@ -34,6 +34,7 @@ class SallyAndAnneWorld extends WorldValuation {
     */
     constructor(valuation: Valuation) {
         super(valuation);
+        this.agentPos["a"] = {};
     }
 
 
