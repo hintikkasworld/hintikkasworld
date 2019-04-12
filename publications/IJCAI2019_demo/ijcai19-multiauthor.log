@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.6.20)  12 APR 2019 17:07
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.6.20)  12 APR 2019 21:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1217,19 +1217,19 @@ LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 73.
 \actualheight=\skip76
 
-(./section_introduction.tex <screenshot.png, id=76, 474.77374pt x 502.87875pt>
+(./section_introduction.tex <screenshot.png, id=77, 474.77374pt x 502.87875pt>
 File: screenshot.png Graphic file (type png)
 
 <use screenshot.png>
 Package pdftex.def Info: screenshot.png used on input line 19.
 (pdftex.def)             Requested size: 113.81102pt x 120.54756pt.
-) (./section_symbolicmodels.tex [1{/usr/share/texlive/texmf-dist/fonts/map/pdft
-ex/updmap/pdftex.map}
+) (./section_demonstrationoutline.tex)
+(./section_symbolicmodels.tex [1{/usr/share/texlive/texmf-dist/fonts/map/pdftex
+/updmap/pdftex.map}
 
 
 
- <./screenshot.png>])
-(./section_demonstrationoutline.tex) (./section_systemdescription.tex
+ <./screenshot.png>]) (./section_systemdescription.tex
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 4.
 LaTeX Font Info:    Try loading font information for OT1+pcr on input line 6.
@@ -1241,61 +1241,61 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 61.
 )
 (./section_conclusion.tex) (./ijcai19-multiauthor.bbl
-Underfull \hbox (badness 1072) in paragraph at lines 28--34
+Underfull \hbox (badness 1072) in paragraph at lines 33--39
 []\OT1/ptm/m/n/10 Jerry R. Burch, Ed-mund M. Clarke,
  []
 
 
-Underfull \hbox (badness 1014) in paragraph at lines 37--42
+Underfull \hbox (badness 1014) in paragraph at lines 42--47
 []\OT1/ptm/m/n/10 Tristan Char-rier and
  []
 
 
-Underfull \hbox (badness 1014) in paragraph at lines 45--50
+Underfull \hbox (badness 1014) in paragraph at lines 50--55
 []\OT1/ptm/m/n/10 Tristan Char-rier and
  []
 
 
-Underfull \hbox (badness 1668) in paragraph at lines 53--59
+Underfull \hbox (badness 1668) in paragraph at lines 58--64
 []\OT1/ptm/m/n/10 Tristan Char-rier, So-phie Pinchi-nat,
  []
 
-
-Underfull \hbox (badness 1082) in paragraph at lines 62--68
+[2]
+Underfull \hbox (badness 1082) in paragraph at lines 75--81
 \OT1/ptm/m/n/10 Min-gliang Xu.  Knowledge-guided agent-tactic-aware
  []
 
-[2]
-Underfull \hbox (badness 2521) in paragraph at lines 90--93
+
+Underfull \hbox (badness 2521) in paragraph at lines 103--106
 []\OT1/ptm/m/n/10 Hans van Dit-marsch, Wiebe
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 95--99
+Underfull \hbox (badness 10000) in paragraph at lines 108--112
 []\OT1/ptm/m/n/10 Heinz Wim-mer and Josef
  []
 
 )
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 123.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 126.
  [3
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 123.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 126.
  (./ijcai19-multiauthor.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 123.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 123.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 126.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 126.
 Package rerunfilecheck Info: File `ijcai19-multiauthor.out' has not changed.
-(rerunfilecheck)             Checksum: 5BD9E15E15B8B7081231E0B97DCDB1BE;453.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 123.
+(rerunfilecheck)             Checksum: A3B06C32909C5EF7B9F8789BB88ACEF2;453.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 126.
  ) 
 Here is how much of TeX's memory you used:
- 22309 strings out of 494871
- 452642 string characters out of 6178634
- 613951 words of memory out of 5000000
- 25184 multiletter control sequences out of 15000+600000
+ 22312 strings out of 494871
+ 452741 string characters out of 6178634
+ 613922 words of memory out of 5000000
+ 25186 multiletter control sequences out of 15000+600000
  28280 words of font info for 59 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 55i,12n,84p,842b,999s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,12n,84p,1076b,999s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/
@@ -1304,15 +1304,16 @@ ype1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
 blic/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
 fonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
 /cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6
-.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></
-usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/tex
-live/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/ur
-w/times/utmri8a.pfb>
-Output written on ijcai19-multiauthor.pdf (3 pages, 178042 bytes).
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times
+/utmri8a.pfb>
+Output written on ijcai19-multiauthor.pdf (3 pages, 186045 bytes).
 PDF statistics:
- 193 PDF objects out of 1000 (max. 8388607)
- 155 compressed objects within 2 object streams
- 30 named destinations out of 1000 (max. 500000)
+ 197 PDF objects out of 1000 (max. 8388607)
+ 158 compressed objects within 2 object streams
+ 31 named destinations out of 1000 (max. 500000)
  178 words of extra memory for PDF output out of 10000 (max. 10000000)
 
