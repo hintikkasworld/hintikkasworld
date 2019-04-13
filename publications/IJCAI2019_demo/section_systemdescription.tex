@@ -3,65 +3,69 @@ Whereas the first version was written in Javascript, the new version is written 
 
 \subsection{Binary decision diagrams}
 
-The symbolic model checking of DEL is PSPACE-complete. Thus, the use of BDD is critical. That is why, for manipulating the binary decision diagrams, we wrote a wrapup in C of the library CUDD \cite{}, that produces a Web Assembly library.
+The symbolic model checking of DEL is PSPACE-complete, thus is critical. We manipulate set of worlds, and relations by means of Binary decision diagrams. That is why, for manipulating the binary decision diagrams, we wrote a wrapup in C of the library CUDD \cite{}, that produces a Web Assembly library.
 
 \subsection{Class Architecture}
 
-Figure \ref{figure:architecture} shows the main part of the architecture of \emph{Hintikka's world}. The interesting part is the fact that the graphical user interface (GUI) is independent from the current example that is running (muddy children, Sally and Anne, etc.). In particular, adding a new example only requires to add a new class that inherits from \texttt{World} and to implement the method for drawing the scene from data (valuations, numbers, etc.) that are members of the class.
-
-\subsection{Model Checking}
-
-The tool highly rely on model checking. Indeed, for instance, performing the public announcement of $\phi$ requires to compute the subset of worlds in which $\phi$ holds and to prune the current Kripke model. We chose to write the  model checking procedure in Javascript. Since model checking is in PTIME -- thus is an easy task -- and is used intensively, it suitable to run run it on the client-side  for performance reasons.
+Figure \ref{figure:architecture} shows the new architecture of \emph{Hintikka's world}. \texttt{EpistemicModel} is an abstract class used by the graphical user interface (GUI), that is independent from the current runnin example (muddy children, Sally and Anne, Hanabi, etc.) but more interestingly independent from the representation of the epistemic model itself. In particular, an epistemic model can be an \texttt{ExplicitEpistemicModel} (a graph) or a \texttt{SymbolicEpistemicModel} that relies on BDDs, depending on the examples.
 
 
+\subsection{Adding new examples}
 
+The system is easy to use to provide new examples. Explicit epistemic models are directly described (set of nodes and of edges). Symbolic epistemic models are described by a Boolean formula $\succinctsetworlds$, or Boolean formulas for $\succinctrelation{a}$. The system provides a way to easily describe how worlds are displayed in the comic strips.
 
 \begin{figure}
 	\begin{center}
 		\scalebox{0.8}{
 			\begin{tikzpicture}[scale=0.75]
 			
-			\umlclass[x=0,y=2]{Graph}{
+			\umlclass[x=0,y=2]{EpistemicModel}{
 				
 			}{}
 			
-			\umlclass[x=-7,y=-0]{GUI}{
+			\umlclass[x=-6,y=2]{Graph}{
 			}{
 			}
 			
-			\umlclass[x=-2,y=-2.5]{World}{
+%			\umlclass[x=-2,y=-2.5]{World}{
+%			}{
+%			}
+
+	\umlclass[x=7,y=2.5]{BDD}{
+}{
+}
+			
+			\umlclass[x=-3,y=-0]{ExplicitEpistemicModel}{
 			}{
 			}
 			
-			\umlclass[x=-2,y=-0]{EpistemicModel}{
+			\umlclass[x=4,y=-2.5]{Hanabi}{
 			}{
 			}
 			
-			\umlclass[x=-6.5,y=-2.5]{MuddyChildrenWorld}{
+			\umlclass[x=-3,y=-2.5]{SallyAndAnne}{
 			}{
 			}
 			
-			\umlclass[x=2,y=-2.5]{SallyAndAnneWorld}{
-			}{
-			}
-			
-			\umlclass[x=2,y=-0]{EventModel}{
+			\umlclass[x=4,y=-0]{SymbolicEpistemicModel}{
 			}{
 			}
 			
 			
-			\umlassoc[geometry=--, arg1=, mult1=1, align1=right, arg2=, mult2=*, align2=left]{GUI}{EpistemicModel}
-			\umlassoc[geometry=--, arg1=, mult1=*, arg2=, mult2=1]{EpistemicModel}{World}
-			
-			\umlinherit[geometry=|-]{EpistemicModel}{Graph}
-			\umlinherit[geometry=|-]{EventModel}{Graph}
-			\umlinherit[geometry=|-]{SallyAndAnneWorld}{World}
-			\umlinherit[geometry=|-]{MuddyChildrenWorld}{World}
+		%	\umlassoc[geometry=--, arg1=, mult1=1, align1=right, arg2=, mult2=*, align2=left]{GUI}{EpistemicModel}
+		%	\umlassoc[geometry=--, arg1=, mult1=*, arg2=, mult2=1]{EpistemicModel}{World}
+			\umlassoc[geometry=--, arg1=, mult1=, arg2=, mult2=1]{ExplicitEpistemicModel}{SallyAndAnne}
+			\umlassoc[geometry=--, arg1=, mult1=, arg2=, mult2=1]{SymbolicEpistemicModel}{Hanabi}
+			\umlinherit[geometry=|-]{ExplicitEpistemicModel}{Graph}
+			\umlinherit[geometry=|-]{SymbolicEpistemicModel}{EpistemicModel}
+			\umlinherit[geometry=|-]{ExplicitEpistemicModel}{EpistemicModel}
+			\umlassoc[geometry=--, arg1=, mult1=, arg2=, mult2=*]{SymbolicEpistemicModel}{BDD}			
+
 			
 			%\umlunicompo[geometry=-|, arg=titi, mult=*, pos=1.7, stereo=vector]{D}{C}
 			%\umlaggreg[arg=tutu, mult=1, pos=0.8, angle1=30, angle2=60, loopsize=2cm]{D}{D}
 			
 			\end{tikzpicture}}
 	\end{center}
-	\caption{Architecture for the symbolic approach in \emph{Hintikka's world}\label{figure:architecture}}
+	\caption{New architecture of \emph{Hintikka's world}.\label{figure:architecture}}
 \end{figure}
