@@ -7,7 +7,7 @@ import {SimpleSymbolicHanabi} from './symbolic-hanabi';
 
 describe('SymbolicEpistemicModel', () => {
 
-  it('Test creation BeloteTest', () => {
+  it('Test creation SimpleSymbolicHanabi', () => {
     let hanabi = new SimpleSymbolicHanabi();
     expect(hanabi).toBeTruthy();
     console.log("Name", hanabi.getName());

@@ -5,6 +5,7 @@ import { Valuation } from '../epistemicmodel/valuation';
 import {SymbolicRelation, Obs} from '../epistemicmodel/symbolic-relation';
 import {SymbolicEpistemicModel} from '../epistemicmodel/symbolic-epistemic-model';
 import {ExactlyFormula, AndFormula} from '../formula/formula';
+import { BDD } from '../formula/bdd';
 
 
 export class SimpleSymbolicHanabi extends ExampleDescription {
@@ -24,7 +25,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     getInitialEpistemicModel() {
         /* Creation of all variables getVarName */
         let variables:string[] = [];
-        let constructionVariables:string[] = [];
+
         this.agents.forEach( (agent) => {
             for(var i = 0; i<this.nbCards; i++) {
                 variables.push(this.getVarName(agent, i));

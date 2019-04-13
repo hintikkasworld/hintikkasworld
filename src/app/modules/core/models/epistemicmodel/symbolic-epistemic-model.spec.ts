@@ -5,7 +5,7 @@ import { AtomicFormula } from '../formula/formula';
 
 
 describe('SymbolicEpistemicModel', () => {
-  it('should create an instance, with good copy of agents', () => {
+  it('should create an instance of SymbolicEpistemicModel', () => {
     let relationsSymboliques:Map<string, SymbolicRelation> = new Map(); 
     relationsSymboliques["a"] = new Obs(["var1"]);
     console.log(relationsSymboliques);
