@@ -6,6 +6,10 @@ import {SymbolicRelation, Obs} from '../epistemicmodel/symbolic-relation';
 import {SymbolicEpistemicModel} from '../epistemicmodel/symbolic-epistemic-model';
 import {ExactlyFormula, AndFormula} from '../formula/formula';
 import { BDD } from '../formula/bdd';
+import { SymbolicEventModel } from './../eventmodel/symbolic-event-model';
+import { EventModelAction } from './../environment/event-model-action';
+import { EventModel } from './../eventmodel/event-model';
+import { Formula, FormulaFactory } from '../formula/formula';
 
 
 export class SimpleSymbolicHanabi extends ExampleDescription {
@@ -106,6 +110,16 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     }
 
 
-    getActions() { return []; }
+    getActions() { 
+        
+        let liste = [];
+        
+        liste.push(
+            new EventModelAction({name: "Action 1", 
+                eventModel: SymbolicEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("(ma or mb)"))}));
+        
+        return liste; 
+    
+    }
 
 }
