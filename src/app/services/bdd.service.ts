@@ -174,6 +174,10 @@ export class BddService {
   pickRandomSolution(bddNode: number): Valuation {
     throw new Error("Method not implemented.");
   }
+
+  support(bddNode: BDDNode): [string] {
+    throw new Error("to be implemented");
+  }
 }
 
 

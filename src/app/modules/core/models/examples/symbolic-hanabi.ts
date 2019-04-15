@@ -4,19 +4,35 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 import {SymbolicRelation, Obs} from '../epistemicmodel/symbolic-relation';
 import {SymbolicEpistemicModel} from '../epistemicmodel/symbolic-epistemic-model';
-import {ExactlyFormula, AndFormula} from '../formula/formula';
+import {ExactlyFormula, AndFormula, AtomicFormula, NotFormula} from '../formula/formula';
+import { ExplicitToSymbolic } from '../eventmodel/explicit-to-symbolic';
 import { BDD } from '../formula/bdd';
 import { SymbolicEventModel } from './../eventmodel/symbolic-event-model';
 import { EventModelAction } from './../environment/event-model-action';
 import { EventModel } from './../eventmodel/event-model';
 import { Formula, FormulaFactory } from '../formula/formula';
+import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
+import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositional-assignments-postcondition';
+import { ScaleContinuousNumeric } from 'd3';
+
+
 
 
 export class SimpleSymbolicHanabi extends ExampleDescription {
 
-    private nbCards:number = 10;
+    private nbCards:number = 20;
+    /* 
+    var_a_3 : agent a has card 3 = card with value 1
+    nb : 1 2 3 4 5 6 7 8 9 10
+    val: 1 1 1 2 2 3 3 4 4 5
+
+    ["white", "red", "blue", "yellow", "green"]
+    0..9     10..19  20..29   30..39   40..49 
+    */
     private agents = ["a", "b", "c", "d"];
     private owners = this.agents.concat(["t", "p", "e"]);  /* agents + t:table, p:draw, e:exil*/ 
+
+    private variables: string[];
 
     getName() { 
         return "SimpleSymbolicHanabi"; 
@@ -35,6 +51,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 variables.push(this.getVarName(agent, i));
             }
         });
+
+        this.variables = variables;
         
         /* Create Obs <<SymbolicRelation>> which represent relations of each agent like var_a_c <-> var_a_c_p */
         var relationsSymboliques:Map<string, SymbolicRelation> = new Map(); 
@@ -111,15 +129,178 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
 
     getActions() { 
-        
-        let liste = [];
-        
-        liste.push(
-            new EventModelAction({name: "Action 1", 
-                eventModel: SymbolicEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("(ma or mb)"))}));
-        
-        return liste; 
-    
-    }
 
+        function draw(current_agent){
+
+            var E = new ExplicitEventModel();
+            
+            let events = [];
+            
+            for(var c = 0; c<this.nbCards; c++) {
+                let post  = {};
+                post[this.getVarName(current_agent, c)] = true;
+                post[this.getVarName("p", c)] = false;
+                
+                let pre   = new AndFormula([ 
+                    new AtomicFormula(this.getVarName("p", c)), 
+                    new NotFormula(
+                        new AtomicFormula(this.getVarName(current_agent, c))
+                    )]
+                );
+
+                let name  = current_agent + " pioche " + c;
+
+                E.addAction(name, pre, new PropositionalAssignmentsPostcondition(post));
+            }
+            
+            for(let agent in this.agents){
+                E.makeReflexiveRelation(agent);
+            }
+
+            for(let event in events){
+                for(let event2 in events){
+                    E.addEdge(current_agent, event, event2);
+                }
+            }
+            E.setPointedAction(current_agent + " draws " + (this.nbCards-1));
+            return E;
+            
+        }
+
+        function play(agent, card, destination){
+            var E = new ExplicitEventModel();
+
+            let post  = {};
+
+            post[this.getVarName(agent, card)] = false;
+            post[this.getVarName(destination, card)] = true;
+            
+            let pre   = new AndFormula([ 
+                new AtomicFormula(this.getVarName(agent, card)), 
+                new NotFormula(
+                    new AtomicFormula(this.getVarName(destination, card))
+                )]
+            );
+
+            let name  = agent + " play " + c;
+
+            E.addAction(name, pre, new PropositionalAssignmentsPostcondition(post));
+
+            for(let agent in this.agents){
+                E.makeReflexiveRelation(agent);
+            }
+
+            return E;
+        }
+
+        function valueAnnoucement(agent, nbCards, value){
+            var E = new ExplicitEventModel();
+
+            let liste_var = [];
+
+            let nbcolors = this.nbCards / 10; 
+            let nbcardsbyvalue = [3, 2, 2, 2, 1]
+            let sum = [0, 4, 6, 8, 9]
+
+            for(var color = 0; color<nbcolors; color++) {
+                for(var c = 0; c<nbcardsbyvalue[value-1]; c++) {
+                    liste_var.push(this.getVarName(agent, c+(10*nbcolors) + sum[value]));
+                };
+            }
+            
+            let pre = new ExactlyFormula(nbCards, liste_var);
+            let post = null;
+            let name = nbCards + " out of " + value;
+            E.addAction(name, pre, new PropositionalAssignmentsPostcondition(post));
+
+            for(let agent in this.agents){
+                E.makeReflexiveRelation(agent);
+            }
+            return E;
+        }
+
+        function colorAnnoucement(agent, nbCards, color){
+            var E = new ExplicitEventModel();
+
+            let liste_var = [];
+
+            let nbcolors = this.nbCards / 10; 
+
+            for(var c = (nbcolors-1)*10; c<((nbcolors-1)*10)+10; c++) {
+                liste_var.push(this.getVarName(agent, c));
+            };
+            
+            let pre = new ExactlyFormula(nbCards, liste_var);
+            let post = null;
+            let name = nbCards + " out of " + color;
+            E.addAction(name, pre, new PropositionalAssignmentsPostcondition(post));
+
+            for(let agent in this.agents){
+                E.makeReflexiveRelation(agent);
+            }
+            return E;
+        }
+
+        let liste = [];
+        /* DRAWS */
+        for(let agent in this.agents){
+            let ema = new EventModelAction(
+                {
+                name: "Agent " + agent + " draws a card.",
+                eventModel: <EventModel> draw(agent)
+                }
+            );
+            liste.push(ema);
+        }
+        
+
+        for(let agent in this.agents){
+            for(var c = 0; c<this.nbCards; c++) {
+                /* PLAY */
+                let ema = new EventModelAction(
+                    {
+                    name: "Agent " + agent + " plays card " + c + ".",
+                    eventModel: <EventModel> play(agent, c, "t")
+                    }
+                );
+                liste.push(ema);
+
+                let ema2 = new EventModelAction(
+                    {
+                    name: "Agent " + agent + " discards card " + c + ".",
+                    eventModel: <EventModel> play(agent, c, "e")
+                    }
+                );
+                liste.push(ema2);
+            }
+        }
+
+        for(let agent in this.agents){
+            for(var c = 1; c<this.nbCards+1; c++) {
+                for(var val = 1; val<9; val++) {
+                    let ema2 = new EventModelAction(
+                        {
+                        name: "Agent " + agent + " has " + c + " cards of value " + val +".",
+                        eventModel: <EventModel> valueAnnoucement(agent, c, val)
+                        }
+                    );
+                    liste.push(ema2);
+                }
+            }
+        }
+
+        for(let agent in this.agents){
+            for(var color in ["white", "red", "blue", "yellow", "green"]) {
+                let ema2 = new EventModelAction(
+                    {
+                    name: "Agent " + agent + " has " + c + " cards of color " + color +".",
+                    eventModel: <EventModel> valueAnnoucement(agent, c, color)
+                    }
+                );
+                liste.push(ema2);
+            }
+        }
+
+        return liste; 
+    }
 }

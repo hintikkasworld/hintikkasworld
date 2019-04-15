@@ -5,7 +5,7 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { World } from './world';
 import { SymbolicRelation, Obs } from './symbolic-relation';
 import { Formula, AndFormula, ExactlyFormula, NotFormula, EquivFormula, AtomicFormula, FormulaFactory, TrueFormula, KposFormula } from '../formula/formula';
-import { BDD } from '../formula/bdd';
+import { BDD} from '../formula/bdd';
 import * as types from './../formula/formula';
 import { BddService } from '../../../../services/bdd.service';
 
@@ -57,6 +57,10 @@ export class SymbolicEpistemicModel implements EpistemicModel{
      */
     static getPrimedString(){
         return "_p";
+    }
+
+    static isPrimed(str: string){
+        return str.includes(SymbolicEpistemicModel.getPrimedString());
     }
 
     
