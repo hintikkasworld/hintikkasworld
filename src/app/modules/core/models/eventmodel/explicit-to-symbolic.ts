@@ -35,7 +35,7 @@ export class ExplicitToSymbolic {
                     }
                 }
                 
-                let action_frame = BDD.bddService.createAnd([action, ExplicitToSymbolic._frame(liste, false)]);
+                let action_frame = BDD.bddService.applyAnd([action, ExplicitToSymbolic._frame(liste, false)]);
                 let pointeur = action_frame;
 
                 let or_others = BDD.bddService.createFalse();
@@ -51,10 +51,10 @@ export class ExplicitToSymbolic {
                             liste.slice( liste.indexOf(var1), 1);
                         }
                     }
-                    let action_prime_frame = BDD.bddService.createAnd([action_prime, ExplicitToSymbolic._frame(liste, true)]);
-                    or_others = BDD.bddService.createOr([or_others, action_prime_frame]);
+                    let action_prime_frame = BDD.bddService.applyAnd([action_prime, ExplicitToSymbolic._frame(liste, true)]);
+                    or_others = BDD.bddService.applyOr([or_others, action_prime_frame]);
                 }
-                symb_em.addPlayerEvent(event, agent, BDD.bddService.createAnd([pointeur, or_others]))
+                symb_em.addPlayerEvent(event, agent, BDD.bddService.applyAnd([pointeur, or_others]))
             }
         }
 
@@ -76,7 +76,7 @@ export class ExplicitToSymbolic {
             }
             bdd_post = null; /* BDD.bddService.cube(transform); */
         }
-        return BDD.bddService.createAnd([bdd_prec, bdd_post]);
+        return BDD.bddService.applyAnd([bdd_prec, bdd_post]);
     }
 
     static _frame(vars: string[], prime: boolean): BDDNode {
@@ -92,11 +92,11 @@ export class ExplicitToSymbolic {
                 var2 = SymbolicEpistemicModel.getPrimedVarName(var2);
             }
 
-            let equiv = BDD.bddService.createEquiv(
-                BDD.bddService.createAtom(var1),
-                BDD.bddService.createAtom(var2));
+            let equiv = BDD.bddService.applyEquiv(
+                BDD.bddService.createLiteral(var1),
+                BDD.bddService.createLiteral(var2));
 
-            pointeur = BDD.bddService.createAnd([pointeur, equiv]);
+            pointeur = BDD.bddService.applyAnd([pointeur, equiv]);
         }
         return pointeur;
     }

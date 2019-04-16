@@ -29,4 +29,5 @@ export class Valuation {
         return truePropositions.join();
 
     }
+
 }

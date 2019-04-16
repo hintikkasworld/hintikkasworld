@@ -76,7 +76,7 @@ export class BddService {
     return this.atomIndex.get(p);
   }
 
-  private getAtomFromIndex(i: BDDatom): string {
+  private getAtomFromIndex(i: BDDAtom): string {
     return this.indexAtom.get(i);
   }
 
@@ -113,6 +113,7 @@ export class BddService {
     for (let i = 0; i < b.length; i++) {
       result = this.bddModule._apply_or(result, b[i]);
     }
+    return result;
   }
 
   applyNot(b: BDDNode): BDDNode {
@@ -128,7 +129,7 @@ export class BddService {
   }
 
   createLiteral(a: string): BDDNode {
-    let i = this.getIndexFromAtom(p);
+    let i = this.getIndexFromAtom(a);
     return this.bddModule._create_literal(i);
   }
 
@@ -138,7 +139,7 @@ export class BddService {
 
   applyExistentialForget(b: BDDNode, atoms: string[]): BDDNode {
     // build a typedarray of bdd atoms
-    const data = new Int32Array(atoms.map(a => this.atomToIndex(a)));
+    const data = new Int32Array(atoms.map(a => this.getIndexFromAtom(a)));
 
     // copy it in the module heap
     const nDataBytes = data.length * data.BYTES_PER_ELEMENT;
@@ -150,11 +151,11 @@ export class BddService {
     this.bddModule._free(dataHeap.byteOffset);
   }
 
-  createUniversalForget(b: BDDNode, atoms: string[]): BDDNode {
+  applyUniversalForget(b: BDDNode, atoms: string[]): BDDNode {
     throw new Error("to be implemented");
   }
 
-  createConditioning(b: BDDNode, v: Valuation) {
+  applyConditioning(b: BDDNode, v: Valuation) {
     throw new Error("to be implemented");
   }
 

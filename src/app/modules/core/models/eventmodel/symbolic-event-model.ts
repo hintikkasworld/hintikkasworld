@@ -120,7 +120,7 @@ export class SymbolicEventModel implements EventModel  {
         /* Find the new true world */
 
         var bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation)).bddNode;
-        var w = BDD.bddService.createAnd([bdd_valuation, bdd_single_event.bddNode]);
+        var w = BDD.bddService.applyAnd([bdd_valuation, bdd_single_event.bddNode]);
 
         if(BDD.bddService.isFalse(w)){
             throw new Error("An error has occured in the application of SymbolicEventModel on SymbolicEpistemicModel.");
@@ -133,7 +133,7 @@ export class SymbolicEventModel implements EventModel  {
             transfert2[SymbolicEventModel.getPostedVarName(vari)] = vari;
         }
         
-        let res = BDD.bddService.createExistentialForget(BDD.bddService.let(transfert2, w), plus)  //  Oublie des Post
+        let res = BDD.bddService.applyExistentialForget(BDD.bddService.let(transfert2, w), plus)  //  Oublie des Post
         
         M.setPointedWorld(BDD.bddService.toValuation(res));
         

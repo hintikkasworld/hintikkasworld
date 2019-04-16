@@ -28,11 +28,11 @@ describe('BddService', () => {
           console.log("is false false ?");
           console.log(service.isFalse(bFalse));
 
-	  let bAtom = service.createAtom("p");
+	  let bAtom = service.createLiteral("p");
           console.log("is the atom an atom ?");
           console.log(service.getVarOf(bAtom));
 
-          let bP = service.createIte(bAtom, bTrue, bFalse);
+          let bP = service.applyIte(bAtom, bTrue, bFalse);
           console.log("the node for p is: " + bP);
 
           console.log("END OF BDD SERVICE TESTS");

@@ -29,7 +29,10 @@ export class SymbolicEpistemicModel implements EpistemicModel{
 
     protected worldClass: WorldValuationType;
 
-    protected graphe: Map<string, BDDNode>;
+    /**
+     * Store for each agent the correspondant BDDNode
+     */
+    protected graphe: Map<string, BDD>;
 
     getAgents(): string[] {
         return this.agents;
@@ -59,35 +62,41 @@ export class SymbolicEpistemicModel implements EpistemicModel{
         return "_p";
     }
 
+    /**
+     * Return if the variable is a prime variable
+     * @param str 
+     */
     static isPrimed(str: string){
         return str.includes(SymbolicEpistemicModel.getPrimedString());
     }
 
-    
-
     /**
      * @param worldClass the type of worlds that the symbolic epistemic models returns (e.g. BeloteWorld)
+     * @param agents list of agents as string
      * @param atoms list of propositional atoms describing the example
      * @param relations Map of agent : accessibility relations
+     * @param rules specific rules of the game as Formula
      */
     constructor(worldClass : WorldValuationType, agents: string[], atoms:string[], relations:Map<string, SymbolicRelation>, rules: Formula){
         
         this.agents = agents;
         this.pointed = null;
         this.worldClass = worldClass;
-
         this.propositionalAtoms = [];
         this.propositionalPrimes = []
 
         let to_prime = new Map();
-
+        let not_to_prime = new Map();
         atoms.forEach( (value) => {
             let prime = SymbolicEpistemicModel.getPrimedVarName(value);
             this.propositionalAtoms.push(value);
             this.propositionalPrimes.push(prime);
             to_prime[value] = prime;
+            not_to_prime[prime] = to_prime;
+
         });
         this.notPrimetoPrime = to_prime;
+        this.primeToNotPrime = not_to_prime;
 
         let rename = rules.renameAtoms( (name) => { return SymbolicEpistemicModel.getPrimedVarName(name); } );
         let and_rules = new AndFormula([rename, rules]);
@@ -145,21 +154,21 @@ export class SymbolicEpistemicModel implements EpistemicModel{
 
     check(formula: Formula): boolean {
 
-        let pointeur = this.query_worlds(formula);
+        let pointeur = this._query_worlds(formula);
         let res = null;
-        /* res = BDD.let([this.pointed, pointeur])*/
+        res = BDD.bddService.let(this.pointed, pointeur)
         return BDD.bddService.isTrue(res)
     }
 
-    private query_worlds(phi: Formula): BDDNode {
+    private _query_worlds(phi: Formula): BDDNode {
 
         let f = new BDD(BDD.bddService.createFalse());
 
         let pointeur = null;
-        /* pointeur = this.cube(this.pointed); */
+        /*pointeur = BDD.bddService.cube(this.pointed.propositions); */
 
-        this.graphe.forEach((value: BDDNode, key: string) => {
-            let f2 = new BDD(BDD.bddService.createUniversalForget(pointeur, this.propositionalPrimes));
+        this.graphe.forEach((value: BDD, key: string) => {
+            let f2 = new BDD(BDD.bddService.applyUniversalForget(pointeur, this.propositionalPrimes));
             f = BDD.or([f, f2]);
         });
 
@@ -170,15 +179,15 @@ export class SymbolicEpistemicModel implements EpistemicModel{
 
         if (phi instanceof types.TrueFormula){return BDD.bddService.createTrue();}
         if (phi instanceof types.FalseFormula){return BDD.bddService.createFalse();}
-        if (phi instanceof types.AtomicFormula){return BDD.bddService.createAtom((<types.AtomicFormula>phi).getAtomicString());}
+        if (phi instanceof types.AtomicFormula){return BDD.bddService.createLiteral((<types.AtomicFormula>phi).getAtomicString());}
         if (phi instanceof types.AndFormula){
-            return BDD.bddService.createAnd((<types.AndFormula>phi).formulas.map((f) => this._query(bdd, f)));
+            return BDD.bddService.applyAnd((<types.AndFormula>phi).formulas.map((f) => this._query(bdd, f)));
         }
         if (phi instanceof types.OrFormula){
-            return BDD.bddService.createOr((<types.OrFormula>phi).formulas.map((f) => this._query(bdd, f)));
+            return BDD.bddService.applyOr((<types.OrFormula>phi).formulas.map((f) => this._query(bdd, f)));
         }
         if (phi instanceof types.NotFormula){
-            return BDD.bddService.createNot(this._query(bdd, (<types.NotFormula>phi).formula));
+            return BDD.bddService.applyNot(this._query(bdd, (<types.NotFormula>phi).formula));
         }
         if (phi instanceof types.KFormula){
             /* Kpos == K_hat ? */
@@ -188,8 +197,8 @@ export class SymbolicEpistemicModel implements EpistemicModel{
             let mp = null;
             /* mp = BDD.let(this.primeToNotPrime, this._query(bdd, phi.formula)) */
             let bdd_a = this.graphe[phi.agent];
-            let bdd_and = BDD.bddService.createAnd([bdd_a, mp]);
-            return BDD.bddService.createUniversalForget(bdd_and, this.propositionalPrimes);
+            let bdd_and = BDD.bddService.applyAnd([bdd_a, mp]);
+            return BDD.bddService.applyUniversalForget(bdd_and, this.propositionalPrimes);
         }
         if (phi instanceof types.KwFormula){
             /* What is this ? */

@@ -9,30 +9,43 @@ import { ExplicitToSymbolic } from '../eventmodel/explicit-to-symbolic';
 import { BDD } from '../formula/bdd';
 import { SymbolicEventModel } from './../eventmodel/symbolic-event-model';
 import { EventModelAction } from './../environment/event-model-action';
-import { EventModel } from './../eventmodel/event-model';
-import { Formula, FormulaFactory } from '../formula/formula';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
 import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositional-assignments-postcondition';
-import { ScaleContinuousNumeric } from 'd3';
-import { SymbolicWorldValuation } from '../epistemicmodel/symbolic-world-valuation';
 
 
 
-
+/**
+ * Description of atomic variables :
+ * 
+ * var_a_c : agent a has card c
+ *
+ * Values of cards, with the (c modulo 10) result :
+ *  c % 10 : 1 2 3 4 5 6 7 8 9 10
+ *  value  : 1 1 1 2 2 3 3 4 4 5
+ *
+ * Colors : 
+ *   ["white", "red", "blue", "yellow", "green"]
+ *   0..9     10..19  20..29   30..39   40..49 
+ * 
+ * Caution : This Hanabi doesn't use the position of cards.
+ */
 export class SimpleSymbolicHanabi extends ExampleDescription {
 
+    /**
+     * Number of cards in the game Hanabi
+     */
     private nbCards:number = 20;
-    /* 
-    var_a_3 : agent a has card 3 = card with value 1
-    nb : 1 2 3 4 5 6 7 8 9 10
-    val: 1 1 1 2 2 3 3 4 4 5
-
-    ["white", "red", "blue", "yellow", "green"]
-    0..9     10..19  20..29   30..39   40..49 
-    */
+    /**
+     * List of agents
+     */
     private agents = ["a", "b", "c", "d"];
-    private owners = this.agents.concat(["t", "p", "e"]);  /* agents + t:table, p:draw, e:exil*/ 
-
+    /**
+     * List of cards owners : agents + t:table, p:draw, e:exil (or discarding like 'd' ?)
+     */
+    private owners = this.agents.concat(["t", "p", "e"]);  /* agents */ 
+    /**
+     * List of propositional variables
+     */
     private variables: string[];
 
     getName() { 
@@ -45,22 +58,18 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
     getInitialEpistemicModel() {
         /* Creation of all variables getVarName */
-        let variables:string[] = [];
-
+        var variables:string[] = [];
         this.agents.forEach( (agent) => {
             for(var i = 0; i<this.nbCards; i++) {
                 variables.push(this.getVarName(agent, i));
             }
         });
-
         this.variables = variables;
         
         /* Create Obs <<SymbolicRelation>> which represent relations of each agent like var_a_c <-> var_a_c_p */
         var relationsSymboliques:Map<string, SymbolicRelation> = new Map(); 
-        
         this.agents.forEach( (current_agent) => {
             let liste_rel = [];
-            
             /* Reciprocity of cards : agent does'nt see all variables of himself and draw */
             this.owners.forEach( (agent) => {
                 for(var c = 0; c<this.nbCards; c++) {
@@ -71,7 +80,6 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             });
             
             /* Enumeration of agent's card : : agent see the number of his cards : 0 <-> 0p and 1 <-> 1p and ... */
-
             for(var c = 0; c<this.nbCards; c++) {
                 for(var i = 1; i<6; i++) {
                     liste_rel.push(new ExactlyFormula(i, [this.getVarName(current_agent, c)]));
@@ -132,11 +140,9 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     getActions() { 
 
         function draw(current_agent){
-
             var E = new ExplicitEventModel();
             
             let events = [];
-            
             for(var c = 0; c<this.nbCards; c++) {
                 let post  = {};
                 post[this.getVarName(current_agent, c)] = true;
@@ -148,10 +154,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                         new AtomicFormula(this.getVarName(current_agent, c))
                     )]
                 );
-
-                let name  = current_agent + " pioche " + c;
-
-                E.addAction(name, pre, new PropositionalAssignmentsPostcondition(post));
+                E.addAction(current_agent + " pioche " + c, pre, new PropositionalAssignmentsPostcondition(post));
             }
             
             for(let agent in this.agents){
@@ -265,7 +268,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                     }
                 );
                 liste.push(ema);
-
+                /* DISCARD */
                 let ema2 = new EventModelAction(
                     {
                     name: "Agent " + agent + " discards card " + c + ".",
@@ -295,7 +298,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 let ema2 = new EventModelAction(
                     {
                     name: "Agent " + agent + " has " + c + " cards of color " + color +".",
-                    eventModel: ExplicitToSymbolic.translate(valueAnnoucement(agent, c, color), this.variables)
+                    eventModel: ExplicitToSymbolic.translate(colorAnnoucement(agent, c, color), this.variables)
                     }
                 );
                 liste.push(ema2);
