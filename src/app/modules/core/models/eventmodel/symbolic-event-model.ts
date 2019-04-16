@@ -1,13 +1,8 @@
 import { EventModel } from "./event-model";
 import { EpistemicModel } from "../epistemicmodel/epistemic-model";
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
-import { TrivialPostcondition } from './trivial-postcondition';
-import { Formula } from '../formula/formula';
-import { Postcondition } from './postcondition';
-import { environment } from 'src/environments/environment';
-import { Graph } from './../graph';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
-import { ExplicitToSymbolic } from './explicit-to-symbolic';
+import { BDD } from '../formula/bdd';
 
 export class SymbolicEventModel implements EventModel  {
 
@@ -48,8 +43,6 @@ export class SymbolicEventModel implements EventModel  {
         return liste;
     }
 
-
-
     private agents: string[];
     private variables: string[];
     private uniqueEvents: {};
@@ -68,45 +61,62 @@ export class SymbolicEventModel implements EventModel  {
 
     }
 
-    apply(M: EpistemicModel): EpistemicModel{
+    apply(M1: EpistemicModel): EpistemicModel{
 
-        if(M instanceof ExplicitEpistemicModel) {
-            throw new Error("Need to have an SymbolicEpistemicModel to go with SymbolicEventModel");
+        /* OK but... */
+        if(M1 instanceof ExplicitEpistemicModel) {
+            throw new Error("Need to have an SymbolicEpistemicModel to go with SymbolicEventModel, not a ExplicitEpistemicModel");
         }
 
-        var bdd_single_event = this.getPointedAction();
+        if(!(M1 instanceof SymbolicEpistemicModel)) {
+            throw new Error("Need to have an SymbolicEpistemicModel to go with SymbolicEventModel");
+        }
+        
+        var M = <SymbolicEpistemicModel> M1;
+
+        var bdd_single_event: BDD = this.getPointedActionBDD();
 
         for(var agent in this.agents){
             var ev_for_agent = this.getPlayerEvent(this.pointed, agent);
+            
+            let support = BDD.bddService.support(ev_for_agent);
+
+            /* Get the minus variables */
+            var var_minus = [];
+            for(let variable in support){
+                /* remove the _+ */
+                let var1 = variable.replace("/" + SymbolicEventModel.getPostedString() +"/g",'');
+                if(var1 in var_minus){
+                    var_minus.slice( var_minus.indexOf(var1), 1);
+                }
+                var_minus.push(var1);
+            }
+            
+            /* Get the posted variables */
+            var var_plus = [];
+            for(var vari in var_minus){
+                var_plus.push(SymbolicEventModel.getPostedVarName(vari));
+            }
+            
+            /* transistion var_plus to var_minus */
+            var transfert = {};
+            for(var i=0; i<var_plus.length; i++){
+                transfert[var_plus[i]] = var_minus;
+            }
+
+            var pointeur = M.getAgentGraphe(agent);
+            pointeur = BDD.and([pointeur, ev_for_agent]);
+            pointeur = BDD.existentialforget(pointeur, var_minus);
+            /* pointeur = BDD.let(pointeur, transfert); */
+
+            M.setAgentGraphe(agent, pointeur);
         }
-        /* 
-        
+        /* Find the new true world */
 
-        
+        var bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation));
+        var w = BDD.and([bdd_valuation, bdd_single_event]);
 
-        for agent in self.agents:
-
-            ev_for_agent = event_model.getPlayerEvent(ev_pointe, agent)
-
-            vars_moins = set()
-            for var in self.manager.support(ev_for_agent):
-                var2 = var.replace("+", "")
-                vars_moins.add(var2)
-            vars_moins = list(vars_moins)
-
-            vars_plus = [SymbolicEventModel.getPosted(var) for var in vars_moins]
-
-            transfert = {vars_plus[i]: vars_moins[i] for i in range(0, len(vars_moins))}
-
-            # actual pointer
-            pointeur = self.agent_graph[agent].pointeur
-            pointeur = self.manager.apply("and", pointeur, ev_for_agent)
-            pointeur = self.manager.exist(vars_moins, pointeur)
-            pointeur = self.manager.let(transfert, pointeur)
-
-            self.agent_graph[agent].setPointed(pointeur)
-
-        # Find the new true world
+        /*
         res = self.manager.apply("and", self.pointed, bdd_single_pointe)
         sols = self.get_valuation(res)
         if sols == None:
@@ -128,6 +138,10 @@ export class SymbolicEventModel implements EventModel  {
 
     getPointedAction(): string{
         return this.pointed;
+    }
+
+    getPointedActionBDD(): BDD {
+        return this.getUniqueEvent(this.getPointedAction());
     }
 
     addUniqueEvent(key, event){

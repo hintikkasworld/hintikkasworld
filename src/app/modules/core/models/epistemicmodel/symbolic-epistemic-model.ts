@@ -111,10 +111,12 @@ export class SymbolicEpistemicModel implements EpistemicModel{
     /**
     @returns the pointed world
     **/
-   setPointedWorld(newPointedWorld: any) {
+   setPointedWorld(newPointedWorld: Valuation) {
+        if(newPointedWorld instanceof WorldValuation) {
+            this.pointed = newPointedWorld.valuation;
+        }
         this.pointed = newPointedWorld;
     }
-
 
     getSuccessors(w: World, a: string){
 
@@ -124,11 +126,18 @@ export class SymbolicEpistemicModel implements EpistemicModel{
         /* Caution : w must be a BDD, need rename function
         
         BDD.rename(BDD.universalforget(BDD.and([this.graphe[a], BDD.cube(w.valuation())]), this.propositionalAtoms), this.notPrimetoPrime); 
-        
         */
         
         return null;
     };
+
+    getAgentGraphe(agent: string): BDD {
+        return this.graphe[agent];
+    }
+
+    setAgentGraphe(agent: string, pointeur: BDD): void {
+        this.graphe[agent] = pointeur;
+    }
 
     get formulaInitial() {
         return this.initialFormula
@@ -193,7 +202,7 @@ export class SymbolicEpistemicModel implements EpistemicModel{
 
         
 
-    valuationToFormula(valuation: Valuation): Formula{
+    static valuationToFormula(valuation: Valuation): Formula{
         let liste = [];
         for (var element in valuation.propositions) {
             if(valuation[element]){

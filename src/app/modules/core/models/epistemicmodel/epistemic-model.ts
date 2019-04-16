@@ -7,4 +7,5 @@ export interface EpistemicModel {
     getSuccessors(w: World, a: string);
     
     check(formula: Formula);
+
 }

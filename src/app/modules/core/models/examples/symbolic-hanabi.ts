@@ -122,7 +122,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         console.log("Valuation", propositions);
 
-        M.setPointedWorld(new WorldValuation(new Valuation(propositions)));
+        M.setPointedWorld(new Valuation(propositions));
 
         return M;
     }
