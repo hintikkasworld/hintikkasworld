@@ -13,34 +13,44 @@ async function mycode() {
 		getElseOf: Module.cwrap('get_else_of', 'number', ['number']),
 		createFalse: Module.cwrap('create_false', 'number'),
 		createTrue: Module.cwrap('create_true', 'number'),
-		createAtom: Module.cwrap('create_atom', 'number', ['number']),
-		createValuation: Module.cwrap('create_valuation', 'number', ['array', 'array', 'number']),
-		createAnd: Module.cwrap('create_and', 'number', ['number', 'number']),
-		createAnd: (nodes) => {
-			const binary_and = Module.cwrap('create_and', 'number', ['number', 'number']);
-			if (arguments.length > 1) nodes = arguments;
-			let res = api.createTrue();
-			for (const n of nodes) {
-				res = binary_and(res, n);
+		makeNewVar: Module.cwrap('make_new_var', 'number'),
+		getVar: (() => {
+			const varMap = new Map();
+			return (name) => {
+				if (varMap.has(name)) return varMap.get(name);
+				const v = api.makeNewVar();
+				varMap.set(name, v);
+				return v;
 			}
-			return res;
-		},
-		createOr: Module.cwrap('create_or', 'number', ['number', 'number']),
-		createNot: Module.cwrap('create_not', 'number', ['number']),
-		createImplies: Module.cwrap('create_implies', 'number', ['number', 'number']),
-		createEquiv: Module.cwrap('create_equiv', 'number', ['number', 'number']),
-		createIte: Module.cwrap('create_ite', 'number', ['number', 'number', 'number']),
-		createExistentialForget: Module.cwrap('create_existential_forget', 'number', ['number', 'array', 'number']),
-		createUniversalForget: Module.cwrap('create_universal_forget', 'number', ['number', 'array', 'number']),
-		createConditioning: Module.cwrap('create_conditioning', 'number', ['number']),
-		createRenaming: Module.cwrap('create_renaming', 'number', ['array', 'array', 'number']),
+		})(),
+		createLiteral: Module.cwrap('create_literal', 'number', ['number']),
+		//createValuation: Module.cwrap('create_valuation', 'number', ['array', 'array', 'number']),
+		applyAnd: Module.cwrap('apply_and', 'number', ['number', 'number']),
+// 		createAnd: (nodes) => {
+// 			const binary_and = Module.cwrap('create_and', 'number', ['number', 'number']);
+// 			if (arguments.length > 1) nodes = arguments;
+// 			let res = api.createTrue();
+// 			for (const n of nodes) {
+// 				res = binary_and(res, n);
+// 			}
+// 			return res;
+// 		},
+		applyOr: Module.cwrap('apply_or', 'number', ['number', 'number']),
+		applyNot: Module.cwrap('apply_not', 'number', ['number']),
+		apply_implies: Module.cwrap('apply_implies', 'number', ['number', 'number']),
+		applyEquiv: Module.cwrap('apply_equiv', 'number', ['number', 'number']),
+		applyIte: Module.cwrap('apply_ite', 'number', ['number', 'number', 'number']),
+		applyExistentialForget: Module.cwrap('apply_existential_forget', 'number', ['number', 'array', 'number']),
+		applyUniversalForget: Module.cwrap('apply_universal_forget', 'number', ['number', 'array', 'number']),
+		applyConditioning: Module.cwrap('apply_conditioning', 'number', ['number', 'array', 'array', 'number']),
+		applyRenaming: Module.cwrap('apply_renaming', 'number', ['array', 'array', 'number']),
 		pickRandomSolution: Module.cwrap('pick_random_solution', 'number', ['number']),
 
-		indexStored: Module.cwrap('index_stored', 'number', ['number']),
-		isStored: (node) => (api.indexStored(node) >= 0),
-		trash: Module.cwrap('trash', '', ['number']),
-		save: Module.cwrap('save', '', ['number']),
-		getNbStored: Module.cwrap('get_nb_stored', 'number'),
+// 		indexStored: Module.cwrap('index_stored', 'number', ['number']),
+// 		isStored: (node) => (api.indexStored(node) >= 0),
+// 		trash: Module.cwrap('trash', '', ['number']),
+// 		save: Module.cwrap('save', '', ['number']),
+// 		getNbStored: Module.cwrap('get_nb_stored', 'number'),
 
 		printInfo: Module.cwrap('print_info'),
 		referencedCount: Module.cwrap('referenced_count', 'number'),
@@ -60,19 +70,20 @@ async function mycode() {
 	api.init();
 	console.log('peak = ', api.peakNodeCount());
 	console.log('refs = ', api.referencedCount());
-	const bdds = [];
+	const vars = [];
 	for (let i = 0; i < 30; i++) {
-		bdds.push(api.createNewVar(i));
+		vars.push(api.makeNewVar());
 	}
+	const bdds = vars.map(v => api.createLiteral(v));
 	console.log('refs = ', api.referencedCount());
 	console.log('peak = ', api.peakNodeCount());
 	//api.print_info();
 	console.log(bdds[0]);
-	const conj = api.createAnd(bdds);
+	const conj = api.applyAnd(bdds[0], bdds[1]);
 	console.log('conj: ', conj);
-	api.save(conj);
+	//api.save(conj);
 	console.log('refs = ', api.referencedCount());
-	console.log('nb stored = ', api.getNbStored());
+	//console.log('nb stored = ', api.getNbStored());
 	//api.print_info();
 	viz.renderSVGElement(api.getDot(conj))
 		.then(function(element) {
