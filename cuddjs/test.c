@@ -12,7 +12,7 @@
 
 #include "emscripten.h"
 
-typedef DdNode *Variable;
+typedef DdNode *Atom;
 typedef DdNode *Bdd;
 
 // Useless, pedantic check to ensure that MAX_ATOM is correctly usable
@@ -158,7 +158,7 @@ DdNode *get_internal_characteristic(DdNode *node, enum CuddJS_internal_character
  * TODO check what happens if not an internal node
  */
 EMSCRIPTEN_KEEPALIVE
-Variable get_var_of(DdNode *node) {
+Atom get_var_of(DdNode *node) {
 	return get_internal_characteristic(node, CUDDJS_VAR);
 }
 
@@ -185,7 +185,7 @@ DdNode *get_else_of(DdNode *node) {
  * Declare a new variable.
  */
 EMSCRIPTEN_KEEPALIVE
-Variable make_new_var() {
+Atom make_new_atom() {
 	DdNode *tmp = Cudd_bddNewVar(ddm);
 	return tmp;
 }
@@ -215,7 +215,7 @@ Bdd create_true() {
  * of the given number.
  */
 EMSCRIPTEN_KEEPALIVE
-Bdd create_literal(Variable var) {
+Bdd create_literal(Atom var) {
 	//DdNode *res = Cudd_bddIthVar(ddm, var);
 	Cudd_Ref(var);
 	return var;
@@ -317,7 +317,7 @@ Bdd apply_ite(Bdd f, Bdd g, Bdd h) {
  * NB: the variables are given as nodes that are special, they do not
  * need to be deref'ed.
  */
-Bdd apply_forget(Bdd f, Variable vars[], int nb, bool existential) {
+Bdd apply_forget(Bdd f, Atom vars[], int nb, bool existential) {
 	//fprintf(stderr, "debug forget 1: %d\n", Cudd_DebugCheck(ddm));
 	DdNode *cube = Cudd_bddComputeCube(ddm, vars, NULL, nb);
 	if (cube == NULL) return NULL;
@@ -340,7 +340,7 @@ Bdd apply_forget(Bdd f, Variable vars[], int nb, bool existential) {
  * if it is still needed, it must be copied first.
  */
 EMSCRIPTEN_KEEPALIVE
-Bdd apply_existential_forget(Bdd f, Variable vars[], int nb) {
+Bdd apply_existential_forget(Bdd f, Atom vars[], int nb) {
 	return apply_forget(f, vars, nb, true);
 }
 
@@ -350,7 +350,7 @@ Bdd apply_existential_forget(Bdd f, Variable vars[], int nb) {
  * if it is still needed, it must be copied first.
  */
 EMSCRIPTEN_KEEPALIVE
-Bdd apply_universal_forget(Bdd f, Variable vars[], int nb) {
+Bdd apply_universal_forget(Bdd f, Atom vars[], int nb) {
 	return apply_forget(f, vars, nb, false);
 }
 
@@ -360,7 +360,7 @@ Bdd apply_universal_forget(Bdd f, Variable vars[], int nb) {
  * if it is still needed, it must be copied first.
  */
 EMSCRIPTEN_KEEPALIVE
-Bdd apply_conditioning(Bdd f, Variable vars[], bool values[], int nb) {
+Bdd apply_conditioning(Bdd f, Atom vars[], bool values[], int nb) {
 	DdNode *valuation = Cudd_bddComputeCube(ddm, vars, (int *)values, nb);
 	Cudd_Ref(valuation);
 	/* conditioning is implemented via bddAndAbstract, which makes a
@@ -379,7 +379,7 @@ Bdd apply_conditioning(Bdd f, Variable vars[], bool values[], int nb) {
  * if it is still needed, it must be copied first.
  */
 EMSCRIPTEN_KEEPALIVE
-Bdd apply_renaming(Bdd f, Variable oldvars[], Variable newvars[], int nb) {
+Bdd apply_renaming(Bdd f, Atom oldvars[], Atom newvars[], int nb) {
 	DdNode *res = Cudd_bddSwapVariables(ddm, f, oldvars, newvars, nb);
 	if (res == NULL) return NULL;
 	Cudd_Ref(res);
@@ -545,7 +545,7 @@ void tests() {
 // 	printf("debug: "); Cudd_DebugCheck(ddm);
 // 	puts("ssssssssssssssssssssssssss");
 	DdNode *f = create_false();
-	DdNode *vx = make_new_var();
+	DdNode *vx = make_new_atom();
 	DdNode *i = create_literal(vx);
 	//dump_dot(t);
 	printf("%d (exp 0)\n", is_false(t));
@@ -560,7 +560,7 @@ void tests() {
 	printf("%d (exp 0)\n", is_true(i));
 	printf("%d (exp 1)\n", is_internal_node(i));
 
-	DdNode *vy = make_new_var();
+	DdNode *vy = make_new_atom();
 	DdNode *j = create_literal(vy);
 	print_stats();
 	DdNode *conj = apply_and(i, j);
