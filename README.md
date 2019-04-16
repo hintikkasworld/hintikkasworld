@@ -15,6 +15,18 @@ Please install:
 
 The project also uses a wrapper of CUDD, a library for manipulating Binary Decision Diagrams. It is in the folder cuddjs. The code is in C and is compiled in wasm (but the file is a .asm2 file for the Angular project being able to load it).
 
+
+If you have the error
+ERROR in ./cuddjs/release/cuddjs.js
+Module not found: Error: Can't resolve 'fs' in '/home/fschwarz/HW/hintikkasworld/cuddjs/release'
+ERROR in ./cuddjs/release/cuddjs.js
+Module not found: Error: Can't resolve 'path' in '/home/fschwarz/HW/hintikkasworld/cuddjs/release'
+please run:
+- npm install fs
+- npm install crypto
+- npm install path
+
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.

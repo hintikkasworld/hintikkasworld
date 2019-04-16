@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.6.20)  13 APR 2019 18:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.6.20)  16 APR 2019 14:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1217,65 +1217,95 @@ LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 73.
 \actualheight=\skip76
 
-(./section_introduction.tex <screenshot.png, id=77, 474.77374pt x 502.87875pt>
-File: screenshot.png Graphic file (type png)
+(./section_introduction.tex
+<images/screenshot.png, id=77, 474.77374pt x 502.87875pt>
+File: images/screenshot.png Graphic file (type png)
 
-<use screenshot.png>
-Package pdftex.def Info: screenshot.png used on input line 19.
+<use images/screenshot.png>
+Package pdftex.def Info: images/screenshot.png used on input line 19.
 (pdftex.def)             Requested size: 113.81102pt x 120.54756pt.
-) (./section_demonstrationoutline.tex)
-(./section_symbolicmodels.tex [1{/usr/share/texlive/texmf-dist/fonts/map/pdftex
-/updmap/pdftex.map}
+
+<images/hintikkas_world_epistemicmodel.png, id=79, 178.6675pt x 108.405pt>
+File: images/hintikkas_world_epistemicmodel.png Graphic file (type png)
+
+<use images/hintikkas_world_epistemicmodel.png>
+Package pdftex.def Info: images/hintikkas_world_epistemicmodel.png used on inpu
+t line 20.
+(pdftex.def)             Requested size: 85.35826pt x 51.79063pt.
+)
+(./section_demonstrationoutline.tex) (./section_symbolicmodels.tex [1{/usr/shar
+e/texlive/texmf-dist/fonts/map/pdftex/updmap/pdftex.map}
 
 
 
- <./screenshot.png>]) (./section_systemdescription.tex
+ <./images/screenshot.png> <./images/hintikkas_world_epistemicmodel.png>])
+(./section_systemdescription.tex
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 4.
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 10.
 
+Underfull \hbox (badness 1571) in paragraph at lines 8--9
+[]\OT1/ptm/m/n/10 In or-der to show pos-si-ble worlds for a given agent
+ []
+
+
+Underfull \hbox (badness 2680) in paragraph at lines 8--9
+\OML/cmm/m/it/10 a$ \OT1/ptm/m/n/10 in some world $\OML/cmm/m/it/10 w$\OT1/ptm/
+m/n/10 , we first con-struct the BDD of
+ []
+
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 12.
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 68.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 70.
 
-Overfull \hbox (16.34099pt too wide) in paragraph at lines 68--69
+Overfull \hbox (16.34099pt too wide) in paragraph at lines 70--71
  [] 
  []
 
 ) (./section_conclusion.tex) [2] (./ijcai19-multiauthor.bbl
-Underfull \hbox (badness 1072) in paragraph at lines 33--39
+Underfull \hbox (badness 10000) in paragraph at lines 10--14
+[]\OT1/ptm/m/n/10 R. Iris Ba-har, Er-ica A. Frohm,
+ []
+
+
+Underfull \hbox (badness 1609) in paragraph at lines 10--14
+\OT1/ptm/m/n/10 Charles M. Gaona, Gary D. Hachtel, En-rico Macii,
+ []
+
+
+Underfull \hbox (badness 1072) in paragraph at lines 40--46
 []\OT1/ptm/m/n/10 Jerry R. Burch, Ed-mund M. Clarke,
  []
 
 
-Underfull \hbox (badness 1014) in paragraph at lines 42--47
+Underfull \hbox (badness 1014) in paragraph at lines 49--54
 []\OT1/ptm/m/n/10 Tristan Char-rier and
  []
 
 
-Underfull \hbox (badness 1014) in paragraph at lines 50--55
+Underfull \hbox (badness 1014) in paragraph at lines 57--62
 []\OT1/ptm/m/n/10 Tristan Char-rier and
  []
 
 
-Underfull \hbox (badness 1668) in paragraph at lines 58--64
-[]\OT1/ptm/m/n/10 Tristan Char-rier, So-phie Pinchi-nat,
- []
-
-
-Underfull \hbox (badness 1082) in paragraph at lines 75--81
+Underfull \hbox (badness 1082) in paragraph at lines 73--79
 \OT1/ptm/m/n/10 Min-gliang Xu.  Knowledge-guided agent-tactic-aware
  []
 
 
-Underfull \hbox (badness 2521) in paragraph at lines 103--106
+Underfull \hbox (badness 4048) in paragraph at lines 82--88
+[]\OT1/ptm/m/n/10 Kuldeep S. Meel, Moshe Y. Vardi,
+ []
+
+
+Underfull \hbox (badness 2521) in paragraph at lines 105--108
 []\OT1/ptm/m/n/10 Hans van Dit-marsch, Wiebe
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 108--112
+Underfull \hbox (badness 10000) in paragraph at lines 110--114
 []\OT1/ptm/m/n/10 Heinz Wim-mer and Josef
  []
 
@@ -1290,13 +1320,13 @@ Package rerunfilecheck Info: File `ijcai19-multiauthor.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 126.
  ) 
 Here is how much of TeX's memory you used:
- 22301 strings out of 494871
- 452584 string characters out of 6178634
- 616803 words of memory out of 5000000
- 25175 multiletter control sequences out of 15000+600000
+ 22308 strings out of 494871
+ 452860 string characters out of 6178634
+ 620281 words of memory out of 5000000
+ 25179 multiletter control sequences out of 15000+600000
  28280 words of font info for 59 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 55i,12n,84p,1076b,995s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,12n,84p,1037b,995s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/
@@ -1311,10 +1341,10 @@ re/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/te
 xmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/
 type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times
 /utmri8a.pfb>
-Output written on ijcai19-multiauthor.pdf (3 pages, 189300 bytes).
+Output written on ijcai19-multiauthor.pdf (3 pages, 196222 bytes).
 PDF statistics:
- 197 PDF objects out of 1000 (max. 8388607)
- 158 compressed objects within 2 object streams
- 31 named destinations out of 1000 (max. 500000)
- 178 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 204 PDF objects out of 1000 (max. 8388607)
+ 163 compressed objects within 2 object streams
+ 32 named destinations out of 1000 (max. 500000)
+ 183 words of extra memory for PDF output out of 10000 (max. 10000000)
 

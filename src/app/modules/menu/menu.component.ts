@@ -1,3 +1,4 @@
+import { SimpleSymbolicHanabi } from './../core/models/examples/symbolic-hanabi';
 import { Hanabi } from './../core/models/examples/hanabi';
 import { CellularAutomaton } from './../core/models/examples/cellular-automaton';
 import { Simple } from './../core/models/examples/simple';
@@ -23,7 +24,7 @@ import { SallyAndAnn } from '../core/models/examples/sally-and-ann';
 export class MenuComponent implements OnInit {
 
   examples = [new Simple(), new MuddyChildren(), new SallyAndAnn(), new MineSweeper(), new ConsecutiveNumbers(), new Hanabi(), new Belote(),
-    new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton()];
+    new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton(), new SimpleSymbolicHanabi()];
 
   openExampleDescription(exampleDescription: ExampleDescription ) {
     this.exampleService.setExampleDescription(exampleDescription);

@@ -8,43 +8,43 @@ refers to entry "DBLP:conf/aiml/2018", which doesn't exist
 Warning--I didn't find a database entry for "DBLP:conf/aiml/2018"
 You've used 15 entries,
             2439 wiz_defined-function locations,
-            654 strings with 8350 characters,
-and the built_in function-call counts, 7141 in all, are:
-= -- 731
-> -- 291
-< -- 8
-+ -- 103
-- -- 100
-* -- 535
-:= -- 1078
+            658 strings with 8500 characters,
+and the built_in function-call counts, 7398 in all, are:
+= -- 746
+> -- 347
+< -- 7
++ -- 125
+- -- 122
+* -- 583
+:= -- 1139
 add.period$ -- 46
 call.type$ -- 15
-change.case$ -- 108
+change.case$ -- 120
 chr.to.int$ -- 15
 cite$ -- 15
-duplicate$ -- 312
-empty$ -- 547
-format.name$ -- 119
-if$ -- 1533
+duplicate$ -- 302
+empty$ -- 539
+format.name$ -- 141
+if$ -- 1561
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 17
+missing$ -- 16
 newline$ -- 78
 num.names$ -- 45
-pop$ -- 122
+pop$ -- 128
 preamble$ -- 1
-purify$ -- 125
+purify$ -- 136
 quote$ -- 0
-skip$ -- 273
+skip$ -- 261
 stack$ -- 0
-substring$ -- 417
-swap$ -- 113
-text.length$ -- 8
+substring$ -- 410
+swap$ -- 104
+text.length$ -- 7
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 112
+type$ -- 116
 warning$ -- 0
-while$ -- 60
+while$ -- 59
 width$ -- 17
 write$ -- 196
 (There was 1 error message)
