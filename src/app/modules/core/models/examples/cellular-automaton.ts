@@ -29,6 +29,7 @@ class CellularAutomataWorld extends World {
         super();
         this.value = value;
         this.propositionRightTrue = propositionRightTrue;
+        this.setAgentPositions();
     }
 
     modelCheck(phi: string) { return (phi == "r") ? this.propositionRightTrue : (this.value == phi); }
@@ -76,7 +77,6 @@ class CellularAutomataWorld extends World {
         context.fillStyle = "black";
         context.fillText(this.value, 58 - 8, 32 + 16);
 
-        this.setAgentPositions();
         this.drawAgents(context);
     }
 
