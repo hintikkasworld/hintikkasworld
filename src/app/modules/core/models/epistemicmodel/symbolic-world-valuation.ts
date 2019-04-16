@@ -3,6 +3,7 @@ import { World } from './world';
 import { BDD } from '../formula/bdd';
 
 export class SymbolicWorldValuation extends World {
+
         valuation: BDD;
 
         constructor(valuation: BDD) {
@@ -27,4 +28,5 @@ export class SymbolicWorldValuation extends World {
       toString() {
         return this.valuation.toString();
       }
+      
 }

@@ -14,6 +14,7 @@ import { Formula, FormulaFactory } from '../formula/formula';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
 import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositional-assignments-postcondition';
 import { ScaleContinuousNumeric } from 'd3';
+import { SymbolicWorldValuation } from '../epistemicmodel/symbolic-world-valuation';
 
 
 

@@ -3,6 +3,7 @@ import { EpistemicModel } from "../epistemicmodel/epistemic-model";
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 import { BDD } from '../formula/bdd';
+import { WorldValuation } from '../epistemicmodel/world-valuation';
 
 export class SymbolicEventModel implements EventModel  {
 
@@ -61,7 +62,12 @@ export class SymbolicEventModel implements EventModel  {
 
     }
 
-    apply(M1: EpistemicModel): EpistemicModel{
+    /**
+     * Apply the SymbolicEventModel (this) to the SymbolicEpistemicModel
+     * Caution: The parameter is changed in the method, then returned.
+     * @param M1 SymbolicEpistemicModel
+     */
+    apply(M1: EpistemicModel): SymbolicEpistemicModel{
 
         /* OK but... */
         if(M1 instanceof ExplicitEpistemicModel) {
@@ -113,23 +119,25 @@ export class SymbolicEventModel implements EventModel  {
         }
         /* Find the new true world */
 
-        var bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation));
-        var w = BDD.and([bdd_valuation, bdd_single_event]);
+        var bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation)).bddNode;
+        var w = BDD.bddService.createAnd([bdd_valuation, bdd_single_event.bddNode]);
 
-        /*
-        res = self.manager.apply("and", self.pointed, bdd_single_pointe)
-        sols = self.get_valuation(res)
-        if sols == None:
-            raise Exception("Pas de solution a cette requete. L'action {} est impossible.".format(ev_pointe))
+        if(BDD.bddService.isFalse(w)){
+            throw new Error("An error has occured in the application of SymbolicEventModel on SymbolicEpistemicModel.");
+        }
 
-        res = self.manager.exist([s for s, v in sols.items() if s+"+" in sols.keys()], res)  # Oublie - des +
-        res = self.manager.apply("and", res, self.manager.cube({s[:-1]: v for s, v in sols.items() if "+" in s}))  # And Post
-        res = self.manager.exist({s: v for s, v in sols.items() if SymbolicEventModel.getPostedSymbol() in s}, res)  #  Oublie des Post
-        self.pointed = res
-        return res
-        */
-
-        return null;
+        let transfert2 = {};
+        let plus = [];
+        for(var vari in this.variables){
+            plus.push(SymbolicEventModel.getPostedVarName(vari));
+            transfert2[SymbolicEventModel.getPostedVarName(vari)] = vari;
+        }
+        
+        let res = BDD.bddService.createExistentialForget(BDD.bddService.let(transfert2, w), plus)  //  Oublie des Post
+        
+        M.setPointedWorld(BDD.bddService.toValuation(res));
+        
+        return M;
     };
 
     setPointedAction(e: string): void {
@@ -158,7 +166,5 @@ export class SymbolicEventModel implements EventModel  {
 
     getPlayerEvent(key, agent){
         return this.agentsEvents[agent][key];
-    }
-
-    
+    }    
 }

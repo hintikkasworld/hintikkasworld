@@ -178,6 +178,18 @@ export class BddService {
   support(bddNode: BDDNode): [string] {
     throw new Error("to be implemented");
   }
+
+  cube({id: string, value:boolean}): BDDNode{
+    throw new Error("to be implemented");
+  }
+
+  let({}, bddNode: BDDNode): BDDNode {
+    throw new Error("to be implemented");
+  }
+
+  toValuation(bddNode: BDDNode): Valuation{
+    throw new Error("to be implemented. MUST HAVE ONE UNIQUE SOLUTION. CAN THROW ERROR ?");
+  }
 }
 
 
