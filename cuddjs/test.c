@@ -1,4 +1,6 @@
 
+//TODO: use typedef?
+
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -33,9 +35,9 @@ void die(char *msg, ...)
 
 DdManager *ddm;
 
-void safe_deref(DdNode *node) {
-	if ( ! Cudd_bddIsVar(ddm, node)) Cudd_RecursiveDeref(ddm, node);
-}
+// void safe_deref(DdNode *node) {
+// 	if ( ! Cudd_bddIsVar(ddm, node)) Cudd_RecursiveDeref(ddm, node);
+// }
 
 enum CuddJS_ErrorType {
 	CUDDJS_NO_ERROR,
@@ -97,20 +99,30 @@ char *get_error() {
 	return msg;
 }
 
+/**
+ * Indicate whether the given node is a TRUE leaf.
+ */
 EMSCRIPTEN_KEEPALIVE
 bool is_true(DdNode *node) {
 	return Cudd_IsConstant(node) && ! Cudd_IsComplement(node);
 }
 
+/**
+ * Indicate whether the given node is a FALSE leaf.
+ */
 EMSCRIPTEN_KEEPALIVE
 bool is_false(DdNode *node) {
 	return Cudd_IsConstant(node) && Cudd_IsComplement(node);
 }
 
+/**
+ * Indicate whether the given node is an internal node.
+ */
 EMSCRIPTEN_KEEPALIVE
 bool is_internal_node(DdNode *node) {
 	return Cudd_IsNonConstant(node);
 }
+
 enum CuddJS_internal_characteristic {
 	CUDDJS_VAR, CUDDJS_THEN, CUDDJS_ELSE,
 };
@@ -138,21 +150,47 @@ DdNode *get_internal_characteristic(DdNode *node, enum CuddJS_internal_character
 			return NULL;
 	}
 }
+
+/**
+ * Return the variable of the given node.
+ * TODO check what happens if not an internal node
+ */
 EMSCRIPTEN_KEEPALIVE
 DdNode *get_var_of(DdNode *node) {
 	return get_internal_characteristic(node, CUDDJS_VAR);
 }
 
+/**
+ * Return the THEN child of the given node.
+ * TODO check what happens if not an internal node
+ */
 EMSCRIPTEN_KEEPALIVE
 DdNode *get_then_of(DdNode *node) {
 	return get_internal_characteristic(node, CUDDJS_THEN);
 }
 
+/**
+ * Return the ELSE child of the given node.
+ * TODO check what happens if not an internal node
+ */
 EMSCRIPTEN_KEEPALIVE
 DdNode *get_else_of(DdNode *node) {
 	return get_internal_characteristic(node, CUDDJS_ELSE);
 }
 
+
+/**
+ * Declare a new variable.
+ */
+EMSCRIPTEN_KEEPALIVE
+DdNode *add_var() {
+	DdNode *tmp = Cudd_bddNewVar(ddm);
+	return tmp;
+}
+
+/**
+ * Create a new BDD equivalent to FALSE.
+ */
 EMSCRIPTEN_KEEPALIVE
 DdNode *create_false() {
 	DdNode *tmp = Cudd_ReadLogicZero(ddm);
@@ -160,6 +198,9 @@ DdNode *create_false() {
 	return tmp;
 }
 
+/**
+ * Create a new BDD equivalent to TRUE.
+ */
 EMSCRIPTEN_KEEPALIVE
 DdNode *create_true() {
 	DdNode *tmp = Cudd_ReadOne(ddm);
@@ -167,22 +208,34 @@ DdNode *create_true() {
 	return tmp;
 }
 
+/**
+ * Create a new BDD equivalent to the literal x, where is x the atom
+ * of the given number.
+ */
 EMSCRIPTEN_KEEPALIVE
-DdNode *create_atom(int var) {
-	DdNode *res = Cudd_bddIthVar(ddm, var);
-	Cudd_Ref(res);
-	return res;
+DdNode *create_atom(DdNode *var) {
+	//DdNode *res = Cudd_bddIthVar(ddm, var);
+	Cudd_Ref(var);
+	return var;
 }
 
+// /**
+//  * Create a new valuation of the given variables with the given polarities.
+//  */
+// EMSCRIPTEN_KEEPALIVE
+// DdNode *create_valuation(DdNode **vars, bool *polarities, int nb) {
+// 	DdNode *res = Cudd_bddComputeCube(ddm, vars, (int *)polarities, nb);
+// 	Cudd_Ref(res);
+// 	return res;
+// }
 
+/**
+ * Combine two given BDDs by applying a conjunction.
+ * Be careful that the two BDDs should not be reused afterwards:
+ * if they are still needed, they must be copied first.
+ */
 EMSCRIPTEN_KEEPALIVE
-DdNode *create_valuation(DdNode **vars, bool *signs, int nb) {
-	DdNode *res = Cudd_bddComputeCube(ddm, vars, (int *)signs, nb);
-	Cudd_Ref(res);
-	return res;
-}
-EMSCRIPTEN_KEEPALIVE
-DdNode *create_and(DdNode *n1, DdNode *n2) {
+DdNode *apply_and(DdNode *n1, DdNode *n2) {
 	fprintf(stderr, "debug and 1: %d\n", Cudd_DebugCheck(ddm));
 	DdNode *res;
 	res = Cudd_bddAnd(ddm, n1, n2);
@@ -195,37 +248,74 @@ DdNode *create_and(DdNode *n1, DdNode *n2) {
 	return res;
 }
 
+/**
+ * Combine two given BDDs by applying a disjunction.
+ * Be careful that the two BDDs should not be reused afterwards:
+ * if they are still needed, they must be copied first.
+ */
 EMSCRIPTEN_KEEPALIVE
-DdNode *create_or(DdNode *n1, DdNode *n2) {
+DdNode *apply_or(DdNode *n1, DdNode *n2) {
+	//TODO
 	die("TO BE IMPLEMENTED");
 	return NULL;
 }
 
+/**
+ * Modify the given BDD by applying a negation.
+ * Be careful that the former BDD should not be reused afterwards:
+ * if it is still needed, it must be copied first.
+ */
 EMSCRIPTEN_KEEPALIVE
-DdNode *create_not(DdNode *n) {
+DdNode *apply_not(DdNode *n) {
+	//TODO
 	die("TO BE IMPLEMENTED");
 	return NULL;
 }
 
+/**
+ * Combine two given BDDs by applying a implication (f → g).
+ * Be careful that the two BDDs should not be reused afterwards:
+ * if they are still needed, they must be copied first.
+ */
 EMSCRIPTEN_KEEPALIVE
-DdNode *create_implies(DdNode *f, DdNode *g) {
+DdNode *apply_implies(DdNode *f, DdNode *g) {
+	//TODO
 	die("TO BE IMPLEMENTED");
 	return NULL;
 }
 
+/**
+ * Combine two given BDDs by applying an equivalence (f ↔ g).
+ * Be careful that the two BDDs should not be reused afterwards:
+ * if they are still needed, they must be copied first.
+ */
 EMSCRIPTEN_KEEPALIVE
-DdNode *create_equiv(DdNode *f, DdNode *g) {
+DdNode *apply_equiv(DdNode *f, DdNode *g) {
+	//TODO
 	die("TO BE IMPLEMENTED");
 	return NULL;
 }
 
+/**
+ * Combine three given BDDs by applying an if-then-else ((f∧g)∨(¬f∧h)).
+ * Be careful that the three BDDs should not be reused afterwards:
+ * if they are still needed, they must be copied first.
+ */
 EMSCRIPTEN_KEEPALIVE
-DdNode *create_ite(DdNode *f, DdNode *g, DdNode *h) {
+DdNode *apply_ite(DdNode *f, DdNode *g, DdNode *h) {
+	//TODO
 	die("TO BE IMPLEMENTED");
 	return NULL;
 }
 
-DdNode *create_forget(DdNode *f, DdNode **vars, int nb, bool existential) {
+/**
+ * Modify the given BDD by forgetting the given variables.
+ * Be careful that the former BDD should not be reused afterwards:
+ * if it is still needed, it must be copied first.
+ * NB: the variables are given as nodes that are special, they do not
+ * need to be deref'ed.
+ */
+DdNode *apply_forget(DdNode *f, DdNode **vars, int nb, bool existential) {
 	fprintf(stderr, "debug forget 1: %d\n", Cudd_DebugCheck(ddm));
 	DdNode *cube = Cudd_bddComputeCube(ddm, vars, NULL, nb);
 	if (cube == NULL) return NULL;
@@ -242,31 +332,82 @@ DdNode *create_forget(DdNode *f, DdNode **vars, int nb, bool existential) {
 	return res;
 }
 
+/**
+ * Modify the given BDD by existentially forgetting the given variables.
+ * Be careful that the former BDD should not be reused afterwards:
+ * if it is still needed, it must be copied first.
+ */
 EMSCRIPTEN_KEEPALIVE
-DdNode *create_existential_forget(DdNode *f, DdNode **vars, int nb) {
-	return create_forget(f, vars, nb, true);
+DdNode *apply_existential_forget(DdNode *f, DdNode **vars, int nb) {
+	return apply_forget(f, vars, nb, true);
 }
 
+/**
+ * Modify the given BDD by universally forgetting the given variables.
+ * Be careful that the former BDD should not be reused afterwards:
+ * if it is still needed, it must be copied first.
+ */
 EMSCRIPTEN_KEEPALIVE
-DdNode *create_universal_forget(DdNode *f, DdNode **vars, int nb) {
-	return create_forget(f, vars, nb, false);
+DdNode *apply_universal_forget(DdNode *f, DdNode **vars, int nb) {
+	return apply_forget(f, vars, nb, false);
 }
 
+/**
+ * Modify the given BDD by conditioning it with the given values for the given variables.
+ * Be careful that the former BDD should not be reused afterwards:
+ * if it is still needed, it must be copied first.
+ */
 EMSCRIPTEN_KEEPALIVE
-DdNode *create_conditioning(DdNode *f, DdNode *valuation) {
-	die("TO BE IMPLEMENTED");
+DdNode *apply_conditioning(DdNode *f, DdNode **vars, bool *values, int nb) {
+	DdNode *valuation = Cudd_bddComputeCube(ddm, vars, (int *)values, nb);
+	Cudd_Ref(valuation);
+	/* conditioning is implemented via bddAndAbstract, which makes a
+	 * conjunction and forgets the variables in a cube at the same time */
+	DdNode *res = Cudd_bddAndAbstract(ddm, f, valuation, valuation);
+	if (res == NULL) return NULL;
+	Cudd_Ref(res);
+	Cudd_RecursiveDeref(ddm, valuation);
+	Cudd_RecursiveDeref(ddm, f);
 	return NULL;
 }
 
+/**
+ * Modify the given BDD by replacing the given "old" variables by the given "new" variables.
+ * Be careful that the former BDD should not be reused afterwards:
+ * if it is still needed, it must be copied first.
+ */
 EMSCRIPTEN_KEEPALIVE
-DdNode *create_renaming(DdNode *f, DdNode **oldvars, DdNode **newvars, int nb) {
+DdNode *apply_renaming(DdNode *f, DdNode **oldvars, DdNode **newvars, int nb) {
 	DdNode *res = Cudd_bddSwapVariables(ddm, f, oldvars, newvars, nb);
 	if (res == NULL) return NULL;
 	Cudd_Ref(res);
-	safe_deref(f);
+	Cudd_RecursiveDeref(ddm, f);
 	return res;
 }
 
+/**
+ * Create a copy of the given BDD.
+ * This is useful when one needs to combine a BDD with another, while still
+ * keeping the original BDD.
+ */
+EMSCRIPTEN_KEEPALIVE
+DdNode *create_copy(DdNode *f) {
+	Cudd_Ref(f);
+	return f;
+}
+
+/**
+ * Destroy the given BDD. It should not be used afterwards.
+ */
+EMSCRIPTEN_KEEPALIVE
+void destroy(DdNode *f) {
+	Cudd_RecursiveDeref(ddm, f);
+}
+
+/**
+ * Return a random solution of a given BDD.
+ * TODO: in what form??
+ */
 EMSCRIPTEN_KEEPALIVE
 DdNode *pick_random_solution(DdNode *f) {
 	die("TO BE IMPLEMENTED");
@@ -277,6 +418,7 @@ DdNode *pick_random_solution(DdNode *f) {
 /******************************************************************************/
 /******************************************************************************/
 
+/*
 #define MAX_STORED 100
 
 int nb_stored = 0;
@@ -317,13 +459,15 @@ void trash(DdNode *node) {
 	if (index == -1) die("Error: node not stored? %p\n", node);
 	stored[index] = NULL;
 	nb_stored--;
-	safe_deref(node);
+	//safe_deref(node);
+	Cudd_RecursiveDeref(ddm, node);
 }
 
 EMSCRIPTEN_KEEPALIVE
 int get_nb_stored() {
 	return nb_stored;
 }
+*/
 
 /******************************************************************************/
 /******************************************************************************/
@@ -382,11 +526,18 @@ void tests() {
 	// for testing things
 	init();
 	DdNode *t = create_true();
+//	Cudd_Ref(t);
 // 	Cudd_Ref(t);
-// 	Cudd_Ref(t);
-// 	printf("refs=%d\n", referenced_count());
-// 	printf("debug: "); Cudd_DebugCheck(ddm);
-// 	Cudd_RecursiveDeref(ddm, t);
+ 	printf("refs=%d\n", referenced_count());
+ 	printf("debug: "); Cudd_DebugCheck(ddm);
+ 	puts("");puts("");
+	Cudd_RecursiveDeref(ddm, t);
+	Cudd_RecursiveDeref(ddm, t);
+	//Cudd_RecursiveDeref(ddm, t);
+ 	printf("refs=%d\n", referenced_count());
+ 	printf("debug: "); Cudd_DebugCheck(ddm);
+ 	puts("");puts("");
+ 	exit(0);
 // 	printf("refs=%d\n", referenced_count());
 // 	printf("debug: "); Cudd_DebugCheck(ddm);
 // 	Cudd_RecursiveDeref(ddm, t);
@@ -443,10 +594,10 @@ void tests() {
 int main() {
 	// for testing things
 	puts("*** THIS IS THE CUDDJS MAIN ***");
-	//tests();
+	tests();
 	//
 	//
-	//TODO: decide how refs are handled.
+	// DONE: decide how refs are handled.
 	// it is not easy to ref args then deref them afterwards,
 	// because it would imply that all operations return an unreferenced node,
 	// which is impossible if we want to keep the dead node count correct in cudd
@@ -456,4 +607,10 @@ int main() {
 	// maybe there should be a debug mode, writing down all current references,
 	// and warning the user when they do forbidden things? and when the app
 	// is OK, all checks are removed. use asserts for this?
+	//
+	// DECISION: operations deref their args and returned a reffed node.
+	// the caller must be cautious by create_copy'ing args if necessary,
+	// and destroying unused BDDs. A debug mode can be implemented on
+	// the JS side: wrap the nodes and throw exception if node is used
+	// in operation two times or something.
 }
