@@ -10,6 +10,7 @@ import "!!file-loader?name=wasm/cuddjs.wasm2!./../../../cuddjs/release/cuddjs.wa
 
 
 export type BDDNode = number;
+type BDDAtom = number;
 
 
 @Injectable({
@@ -20,9 +21,8 @@ export class BddService {
 
   bddModule: any;
 
-  atomIndex: Map<string, number> = new Map();
-  indexAtom: Map<number, string> = new Map();
-  newIndexForAtom: number = 0;
+  atomIndex: Map<string, BDDAtom> = new Map();
+  indexAtom: Map<BDDAtom, string> = new Map();
 
   wasmReady = new BehaviorSubject<boolean>(false);
 
@@ -62,17 +62,20 @@ export class BddService {
   }
 
 
-  private getIndexFromAtom(p: string) {
+  private makeNewAtom(): BDDAtom {
+    return this.bddModule._make_new_atom();
+  }
+
+  private getIndexFromAtom(p: string): BDDAtom {
     if (!this.atomIndex.has(p)) {
-      let i = this.newIndexForAtom;
+      let i = this.makeNewAtom();
       this.atomIndex.set(p, i);
       this.indexAtom.set(i, p);
-      this.newIndexForAtom++;
     }
     return this.atomIndex.get(p);
   }
 
-  private getAtomFromIndex(i: number): string {
+  private getAtomFromIndex(i: BDDatom): string {
     return this.indexAtom.get(i);
   }
 
@@ -96,56 +99,57 @@ export class BddService {
     return this.bddModule._create_false();
   }
 
-  createAnd(b: BDDNode[]): BDDNode {
-    if (b.length == 0)
-      return this.createTrue();
-    else {
-      let result = b[0];
-      for (let i = 1; i < b.length; i++) {
-        result = this.bddModule.create_and(result, b[i]);
-      }
-      return result;
+  applyAnd(b: BDDNode[]): BDDNode {
+    let result = this.createTrue();
+    for (let i = 0; i < b.length; i++) {
+      result = this.bddModule._apply_and(result, b[i]);
+    }
+    return result;
+  }
+
+  applyOr(b: BDDNode[]): BDDNode {
+    let result = this.createFalse();
+    for (let i = 0; i < b.length; i++) {
+      result = this.bddModule._apply_or(result, b[i]);
     }
   }
 
-  createOr(b: BDDNode[]): BDDNode {
-    if (b.length == 0)
-      return this.createTrue();
-    else {
-      let result = b[0];
-      for (let i = 1; i < b.length; i++) {
-        result = this.bddModule.create_or(result, b[i]);
-      }
-      return result;
-    }
+  applyNot(b: BDDNode): BDDNode {
+    return this.bddModule._apply_not(b);
   }
 
-  createNot(b: BDDNode): BDDNode {
-    return this.bddModule._create_not(b);
+  applyImplies(b1: BDDNode, b2: BDDNode): BDDNode {
+    return this.bddModule._apply_implies(b1, b2);
   }
 
-  createImply(b1: BDDNode, b2: BDDNode): BDDNode {
-    return this.bddModule._create_imply(b1, b2);
+  applyEquiv(b1: BDDNode, b2: BDDNode): BDDNode {
+    return this.bddModule._apply_equiv(b1, b2);
   }
 
-  createEquiv(b1: BDDNode, b2: BDDNode): BDDNode {
-    return this.bddModule._create_equiv(b1, b2);
-  }
-
-  createAtom(p: string): BDDNode {
+  createLiteral(a: string): BDDNode {
     let i = this.getIndexFromAtom(p);
-    return this.bddModule._create_atom(i);
+    return this.bddModule._create_literal(i);
   }
 
-  createIte(p: string, bThen: BDDNode, bElse: BDDNode): BDDNode {
-    return this.bddModule._create_ite(this.getIndexFromAtom(p), bThen, bElse);
+  applyIte(bIf: BDDNode, bThen: BDDNode, bElse: BDDNode): BDDNode {
+    return this.bddModule._create_ite(bIf, bThen, bElse);
   }
 
-  createExistentialForget(b: BDDNode, props: string[]): BDDNode {
-    throw new Error("to be implemented");
+  applyExistentialForget(b: BDDNode, atoms: string[]): BDDNode {
+    // build a typedarray of bdd atoms
+    const data = new Int32Array(atoms.map(a => this.atomToIndex(a)));
+
+    // copy it in the module heap
+    const nDataBytes = data.length * data.BYTES_PER_ELEMENT;
+    const dataPtr = this.bddModule._malloc(nDataBytes);
+    const dataHeap = new Uint8Array(this.bddModule.HEAPU8.buffer, dataPtr, nDataBytes);
+    dataHeap.set(new Uint8Array(data.buffer));
+
+    return this.bddModule._apply_existential_forget(b, dataHeap.byteOffset, data.length);
+    this.bddModule._free(dataHeap.byteOffset);
   }
 
-  createUniversalForget(b: BDDNode, props: string[]): BDDNode {
+  createUniversalForget(b: BDDNode, atoms: string[]): BDDNode {
     throw new Error("to be implemented");
   }
 
@@ -166,9 +170,9 @@ export class BddService {
     return this.bddModule._get_else_of(b);
   }
 
-  save(b: BDDNode): void {
-    this.bddModule._save();
-  }
+  //   save(b: BDDNode): void {
+  //     this.bddModule._save();
+  //   }
 
   pickRandomSolution(bddNode: number): Valuation {
     throw new Error("Method not implemented.");

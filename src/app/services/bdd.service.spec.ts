@@ -28,7 +28,11 @@ describe('BddService', () => {
           console.log("is false false ?");
           console.log(service.isFalse(bFalse));
 
-          let bP = service.createIte("p", bTrue, bFalse);
+	  let bAtom = service.createAtom("p");
+          console.log("is the atom an atom ?");
+          console.log(service.getVarOf(bAtom));
+
+          let bP = service.createIte(bAtom, bTrue, bFalse);
           console.log("the node for p is: " + bP);
 
           console.log("END OF BDD SERVICE TESTS");
@@ -37,11 +41,11 @@ describe('BddService', () => {
     ).toBeTruthy();
 });
 
-it('ite should work', () => {
+it('literal should work', () => {
   let service: BddService = TestBed.get(BddService);
   expect(
     function test() {
-      let b = service.createIte("p", service.createTrue(), service.createFalse());
+      let b = service.createLiteral("p");
       return service.getVarOf(b) == "p";
     }()
   ).toBeTruthy();
