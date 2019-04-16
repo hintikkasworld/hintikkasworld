@@ -247,7 +247,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             let ema = new EventModelAction(
                 {
                 name: "Agent " + agent + " draws a card.",
-                eventModel: <EventModel> draw(agent)
+                eventModel: ExplicitToSymbolic.translate(draw(agent), this.variables)
                 }
             );
             liste.push(ema);
@@ -260,7 +260,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 let ema = new EventModelAction(
                     {
                     name: "Agent " + agent + " plays card " + c + ".",
-                    eventModel: <EventModel> play(agent, c, "t")
+                    eventModel: ExplicitToSymbolic.translate(play(agent, c, "t"), this.variables)
                     }
                 );
                 liste.push(ema);
@@ -268,7 +268,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 let ema2 = new EventModelAction(
                     {
                     name: "Agent " + agent + " discards card " + c + ".",
-                    eventModel: <EventModel> play(agent, c, "e")
+                    eventModel: ExplicitToSymbolic.translate(play(agent, c, "e"), this.variables)
                     }
                 );
                 liste.push(ema2);
@@ -281,7 +281,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                     let ema2 = new EventModelAction(
                         {
                         name: "Agent " + agent + " has " + c + " cards of value " + val +".",
-                        eventModel: <EventModel> valueAnnoucement(agent, c, val)
+                        eventModel: ExplicitToSymbolic.translate(valueAnnoucement(agent, c, val), this.variables)
                         }
                     );
                     liste.push(ema2);
@@ -294,7 +294,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 let ema2 = new EventModelAction(
                     {
                     name: "Agent " + agent + " has " + c + " cards of color " + color +".",
-                    eventModel: <EventModel> valueAnnoucement(agent, c, color)
+                    eventModel: ExplicitToSymbolic.translate(valueAnnoucement(agent, c, color), this.variables)
                     }
                 );
                 liste.push(ema2);

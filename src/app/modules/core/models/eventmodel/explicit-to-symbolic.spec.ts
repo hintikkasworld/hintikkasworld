@@ -14,7 +14,7 @@ describe('ExplicitToSymbolic', () => {
     expl_em.addAction("e", FormulaFactory.createFormula("a"), new PropositionalAssignmentsPostcondition({ "a": "bottom" }));
     expl_em.makeReflexiveRelation("a");
     expl_em.setPointedAction("e");
-    expect(ExplicitToSymbolic.translate(expl_em)).toBeTruthy();
+    expect(ExplicitToSymbolic.translate(expl_em, ["a"])).toBeTruthy();
   });
 
 });

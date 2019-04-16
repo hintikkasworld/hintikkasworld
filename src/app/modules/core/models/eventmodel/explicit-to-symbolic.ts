@@ -10,8 +10,8 @@ export type BDDNode = number;
 
 export class ExplicitToSymbolic {
     
-    static translate(explicit_em: ExplicitEventModel, variables: [string]): SymbolicEventModel{
-         
+    static translate(explicit_em: ExplicitEventModel, variables: string[]): SymbolicEventModel{
+                 
         let symb_em = new SymbolicEventModel(["a"], ["var1"]);
         
         let event_bdd = {};
