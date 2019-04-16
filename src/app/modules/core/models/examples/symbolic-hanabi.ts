@@ -38,7 +38,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         return "SimpleSymbolicHanabi"; 
     }
 
-    getVarName(agent:string, card:number){
+    getVarName(agent:string, card:number) {
         return "var_" + agent + "_" + card;
     }
 

@@ -10,12 +10,11 @@ import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
 import { ExampleDescription } from '../environment/exampledescription';
 
-
 /**
  * @param truePropositions an array of true propositions
  * @returns a state where the public channel is empty and truePropositions give the valuation
  * @example new AsynchronousPublicChannelState(["p", "q"])
- * */
+ **/
 class SallyAndAnneWorld extends WorldValuation {
     agentAnnex = 96;
     agentSallyx = 32;
