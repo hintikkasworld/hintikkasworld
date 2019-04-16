@@ -9,7 +9,6 @@ import "!!file-loader?name=wasm/cuddjs.wasm2!./../../../cuddjs/release/cuddjs.wa
 //wasm/cuddjs.wasm is the "virtual" name
 
 
-
 export type BDDNode = number;
 type BDDAtom = number;
 
