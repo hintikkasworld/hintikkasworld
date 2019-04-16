@@ -194,6 +194,16 @@ export class BddService {
   toValuation(bddNode: BDDNode): Valuation{
     throw new Error("to be implemented. MUST HAVE ONE UNIQUE SOLUTION. CAN THROW ERROR ?");
   }
+
+  destroy(bddNode: BDDNode): void{
+    this.bddModule._destroy(bddNode);
+  }
+
+  copy(bddNode: BDDNode): BDDNode{
+    return this.bddModule._createCopy(bddNode)
+  }
+
+
 }
 
 
