@@ -1,3 +1,4 @@
+import { getTestBed } from '@angular/core/testing';
 import { environment } from './../../../../../environments/environment';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
@@ -103,6 +104,12 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         return "var_" + agent + "_" + card;
     }
 
+
+    getWorldExample() {
+        return new SimpleHanabiWorld(new Valuation([SimpleSymbolicHanabi.getVarName("a", 2)]));
+    }
+
+    
     getInitialEpistemicModel() {
         /* Creation of all variables getVarName */
         var variables: string[] = [];
