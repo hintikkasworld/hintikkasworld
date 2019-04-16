@@ -109,7 +109,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         return new SimpleHanabiWorld(new Valuation([SimpleSymbolicHanabi.getVarName("a", 2)]));
     }
 
-    
+
     getInitialEpistemicModel() {
         /* Creation of all variables getVarName */
         var variables: string[] = [];
@@ -159,7 +159,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         console.log(rules);
 
-        let M = new SymbolicEpistemicModel(WorldValuation, this.agents, variables, relationsSymboliques, rules);
+        let M = new SymbolicEpistemicModel(SimpleHanabiWorld, this.agents, variables, relationsSymboliques, rules);
 
         let cardInHand_Begin = 4;
         let count = 0;
