@@ -61,8 +61,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     static getPrimedString() { return "_p"; }
 
     /**
-     * Return if the variable is a prime variable
      * @param str 
+     * @returns true if the variable is a prime variable
+     * TODO: François says: only containing "_p" is not correct. It should finish by "_p" no?
      */
     static isPrimed(str: string) {
         return str.includes(SymbolicEpistemicModel.getPrimedString());
@@ -128,12 +129,11 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     /**
     @returns the pointed world
     **/
-    getPointedWorld() {
-        return new this.worldClass(this.pointed);
-    }
+    getPointedWorld() { return new this.worldClass(this.pointed); }
 
     /**
     @returns the pointed world
+    TODO François says: newPointedWorld instanceof WorldValuation should never be the case
     **/
     setPointedWorld(newPointedWorld: Valuation) {
         if (newPointedWorld instanceof WorldValuation) {
@@ -147,7 +147,8 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         /**
          * in this method, we will use new this.worldClass(val) to instantiate world with valuation val
          */
-        /* Caution : w must be a BDD, need rename function
+        /* Caution : w must be a BDD, need rename function.
+        // François says: w is a World, more precisely a ValuationWorld. You should extract a BDD from it.
         
         BDD.rename(BDD.universalforget(BDD.and([this.graphe[a], BDD.cube(w.valuation())]), this.propositionalAtoms), this.notPrimetoPrime); 
         */
@@ -187,6 +188,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return this.worldClass;
     }
 
+    /**
+     * 
+     * @param formula a modal formula
+     */
     check(formula: Formula): boolean {
 
         let pointeur = this._query_worlds(formula);
@@ -245,7 +250,12 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
 
-
+/**
+ * 
+ * @param valuation 
+ * @returns a Boolean formula, actually a conjunction of litterals that 
+ * describes that valuation.
+ */
     static valuationToFormula(valuation: Valuation): Formula {
         let liste = [];
         for (var element in valuation.propositions) {
