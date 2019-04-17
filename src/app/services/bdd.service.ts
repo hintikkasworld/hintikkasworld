@@ -133,7 +133,7 @@ export class BddService {
   }
 
   applyIte(bIf: BDDNode, bThen: BDDNode, bElse: BDDNode): BDDNode {
-    return this.bddModule._create_ite(bIf, bThen, bElse);
+    return this.bddModule._apply_ite(bIf, bThen, bElse);
   }
 
   applyExistentialForget(b: BDDNode, atoms: string[]): BDDNode {

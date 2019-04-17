@@ -11,7 +11,7 @@ describe('SymbolicEpistemicModel', () => {
     let hanabi = new SimpleSymbolicHanabi();
     expect(hanabi).toBeTruthy();
     console.log("Name", hanabi.getName());
-    console.log("Variable", hanabi.getVarName("a", 1));
+    console.log("Variable", SimpleSymbolicHanabi.getVarName("a", 1));
     let m = hanabi.getInitialEpistemicModel();
     console.log("FormulaInitiale", m.formulaInitial)
   });

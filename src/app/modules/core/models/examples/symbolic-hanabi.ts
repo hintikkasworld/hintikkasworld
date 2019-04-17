@@ -1,4 +1,4 @@
-import { getTestBed } from '@angular/core/testing';
+
 import { environment } from './../../../../../environments/environment';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
@@ -7,11 +7,13 @@ import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { ExactlyFormula, AndFormula, AtomicFormula, NotFormula } from '../formula/formula';
 import { ExplicitToSymbolic } from '../eventmodel/explicit-to-symbolic';
-import { BDD } from '../formula/bdd';
-import { SymbolicEventModel } from './../eventmodel/symbolic-event-model';
 import { EventModelAction } from './../environment/event-model-action';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
 import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositional-assignments-postcondition';
+
+
+import { BddService } from './../../../../../app/services/bdd.service';
+import { BDD } from './../formula/bdd';
 
 /**
  * @param valuation a valuation
@@ -31,8 +33,6 @@ class SimpleHanabiWorld extends WorldValuation {
         this.agentPos["b"] = { x: 128 - SimpleHanabiWorld.cardWidth - 10, y: 32, r: 8 };
         this.agentPos["c"] = { x: 64, y: 48, r: 8 };
         this.agentPos["d"] = { x: 20, y: 32, r: 8 };
-
-
 
     }
 
@@ -60,6 +60,43 @@ class SimpleHanabiWorld extends WorldValuation {
         }
     }
 
+}
+
+class MyTestForBDD {
+
+    static run(): void{
+        console.log(" === Run tests ===")
+        MyTestForBDD.testInitialisation();
+        console.log(" === End tests ===")
+    }
+
+    private static assert(condition, message){
+        if(!condition){
+            message = message || "Assertion failed";
+            if (typeof Error !== "undefined"){
+                throw new Error(message);
+            }
+            throw message; //fallback
+        }else{
+            console.log("No error on : '" + message + "'")
+        }
+    }
+
+    private static testInitialisation(){
+        let service = BDD.bddService;
+        MyTestForBDD.assert(service != null, "BDD.bddService is null.");
+
+        let bTrue = service.createTrue();
+        MyTestForBDD.assert(service.isTrue(bTrue), "True is true.");
+
+        let bFalse = service.createFalse();
+        MyTestForBDD.assert(service.isFalse(bFalse), "False is false.");
+        
+        let bAtomP = service.createLiteral("p");
+        MyTestForBDD.assert(service.getAtomOf(bAtomP) == "p", "p is p.");
+        
+        MyTestForBDD.assert(typeof service.applyIte(bAtomP, bTrue, bFalse) === "string", "applyIte(p, top, bot) is a number.");
+    }
 }
 
 /**
@@ -111,6 +148,11 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
 
     getInitialEpistemicModel() {
+
+        /* DIRTY TESTS HERE.... */
+        MyTestForBDD.run();
+
+
         /* Creation of all variables getVarName */
         var variables: string[] = [];
         this.agents.forEach((agent) => {
@@ -193,25 +235,27 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
     getActions() {
 
+        const that = this;
+
         function draw(current_agent) {
             var E = new ExplicitEventModel();
 
             let events = [];
-            for (var c = 0; c < this.nbCards; c++) {
+            for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                 let post = {};
-                post[this.getVarName(current_agent, c)] = true;
-                post[this.getVarName("p", c)] = false;
+                post[SimpleSymbolicHanabi.getVarName(current_agent, c)] = true;
+                post[SimpleSymbolicHanabi.getVarName("p", c)] = false;
 
                 let pre = new AndFormula([
-                    new AtomicFormula(this.getVarName("p", c)),
+                    new AtomicFormula(SimpleSymbolicHanabi.getVarName("p", c)),
                     new NotFormula(
-                        new AtomicFormula(this.getVarName(current_agent, c))
+                        new AtomicFormula(SimpleSymbolicHanabi.getVarName(current_agent, c))
                     )]
                 );
-                E.addAction(current_agent + " pioche " + c, pre, new PropositionalAssignmentsPostcondition(post));
+                E.addAction(current_agent + " draws " + c, pre, new PropositionalAssignmentsPostcondition(post));
             }
 
-            for (let agent in this.agents) {
+            for (let agent in that.agents) {
                 E.makeReflexiveRelation(agent);
             }
 
@@ -220,7 +264,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                     E.addEdge(current_agent, event, event2);
                 }
             }
-            E.setPointedAction(current_agent + " draws " + (this.nbCards - 1));
+            E.setPointedAction(current_agent + " draws " + (SimpleSymbolicHanabi.nbCards - 1));
             return E;
 
         }
@@ -230,13 +274,13 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
             let post = {};
 
-            post[this.getVarName(agent, card)] = false;
-            post[this.getVarName(destination, card)] = true;
+            post[SimpleSymbolicHanabi.getVarName(agent, card)] = false;
+            post[SimpleSymbolicHanabi.getVarName(destination, card)] = true;
 
             let pre = new AndFormula([
-                new AtomicFormula(this.getVarName(agent, card)),
+                new AtomicFormula(SimpleSymbolicHanabi.getVarName(agent, card)),
                 new NotFormula(
-                    new AtomicFormula(this.getVarName(destination, card))
+                    new AtomicFormula(SimpleSymbolicHanabi.getVarName(destination, card))
                 )]
             );
 
@@ -244,7 +288,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
             E.addAction(name, pre, new PropositionalAssignmentsPostcondition(post));
 
-            for (let agent in this.agents) {
+            for (let agent in that.agents) {
                 E.makeReflexiveRelation(agent);
             }
 
@@ -256,13 +300,13 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
             let liste_var = [];
 
-            let nbcolors = this.nbCards / 10;
+            let nbcolors = SimpleSymbolicHanabi.nbCards / 10;
             let nbcardsbyvalue = [3, 2, 2, 2, 1]
             let sum = [0, 4, 6, 8, 9]
 
             for (var color = 0; color < nbcolors; color++) {
                 for (var c = 0; c < nbcardsbyvalue[value - 1]; c++) {
-                    liste_var.push(this.getVarName(agent, c + (10 * nbcolors) + sum[value]));
+                    liste_var.push(SimpleSymbolicHanabi.getVarName(agent, c + (10 * nbcolors) + sum[value]));
                 };
             }
 
@@ -271,7 +315,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             let name = nbCards + " out of " + value;
             E.addAction(name, pre, new PropositionalAssignmentsPostcondition(post));
 
-            for (let agent in this.agents) {
+            for (let agent in that.agents) {
                 E.makeReflexiveRelation(agent);
             }
             return E;
@@ -282,10 +326,10 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
             let liste_var = [];
 
-            let nbcolors = this.nbCards / 10;
+            let nbcolors = SimpleSymbolicHanabi.nbCards / 10;
 
             for (var c = (nbcolors - 1) * 10; c < ((nbcolors - 1) * 10) + 10; c++) {
-                liste_var.push(this.getVarName(agent, c));
+                liste_var.push(SimpleSymbolicHanabi.getVarName(agent, c));
             };
 
             let pre = new ExactlyFormula(nbCards, liste_var);
@@ -293,7 +337,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             let name = nbCards + " out of " + color;
             E.addAction(name, pre, new PropositionalAssignmentsPostcondition(post));
 
-            for (let agent in this.agents) {
+            for (let agent in that.agents) {
                 E.makeReflexiveRelation(agent);
             }
             return E;

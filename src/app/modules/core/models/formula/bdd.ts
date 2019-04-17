@@ -58,7 +58,7 @@ export class BDD {
 
 
     private static createExactlyBDD(n: number, vars: string[]) {
-        let dic: BDDNode[];
+        let dic: BDDNode[] = [];
 
         function store(kVar: number, i: number, b: BDDNode) {
             dic[kVar * n + i] = b;
