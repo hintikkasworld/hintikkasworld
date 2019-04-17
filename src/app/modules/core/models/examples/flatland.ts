@@ -5,16 +5,23 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { World } from '../epistemicmodel/world';
 import { Environment } from '../environment/environment';
 
+
+/**
+ * A point in the plane
+ */
 interface Point {
     x: number;
     y: number;
 }
 
 
-
+/**
+ * A FlatlandWorld is a world in which agents are located in the plane. They have positions and a direction
+ * of view.
+ */
 class FlatlandWorld extends World {
-    pos: { [agent: string]: Point };
-    dir: { [agent: string]: number };
+    readonly pos: { [agent: string]: Point };
+    readonly dir: { [agent: string]: number };// to each agent we associate an angle
     static readonly angleCone = 0.5;
 
     constructor(pos: { [agent: string]: Point }, dir: { [agent: string]: number }) {
@@ -22,6 +29,7 @@ class FlatlandWorld extends World {
         this.pos = pos;
         this.dir = dir;
 
+        //restore the position of agents for drawing purposes
         for (let agent in pos) {
             this.agentPos[agent] = { x: this.pos[agent].x, y: this.pos[agent].y, r: 8 };
         }
@@ -30,31 +38,32 @@ class FlatlandWorld extends World {
 
     draw(context: CanvasRenderingContext2D) {
         function drawVisionCone(agent: string, p: Point, d: number) {
-            let l = 200;
+            let coneLength = 200;
 
             context.beginPath();
             context.strokeStyle = environment.agentColor[agent];
             context.moveTo(p.x, p.y);
-            context.lineTo(p.x + l * Math.cos(d + FlatlandWorld.angleCone), p.y + l * Math.sin(d + FlatlandWorld.angleCone));
+            context.lineTo(p.x + coneLength * Math.cos(d + FlatlandWorld.angleCone), p.y + coneLength * Math.sin(d + FlatlandWorld.angleCone));
             context.stroke();
             context.moveTo(p.x, p.y);
-            context.lineTo(p.x + l * Math.cos(d - FlatlandWorld.angleCone), p.y + l * Math.sin(d - FlatlandWorld.angleCone));
+            context.lineTo(p.x + coneLength * Math.cos(d - FlatlandWorld.angleCone), p.y + coneLength * Math.sin(d - FlatlandWorld.angleCone));
             context.stroke();
         }
 
         context.clearRect(0, 0, 128, 64);
-
-        for (let agent in this.pos) {
+        for (let agent in this.pos)
             drawVisionCone(agent, this.pos[agent], this.dir[agent]);
-        }
-
-
-
         this.drawAgents(context);
     }
 
 
-    isSee(agent: string, agentb: string) {
+    /**
+     * 
+     * @param agent 
+     * @param agentb
+     * @returns true if agent sees agentb (agentb is in the cone of vision of agent) 
+     */
+    isSee(agent: string, agentb: string): boolean {
         let dist = Math.sqrt((this.pos[agentb].x - this.pos[agent].x) ^ 2 + (this.pos[agentb].y - this.pos[agent].y) ^ 2);
         let scalarProduct = (this.pos[agentb].x - this.pos[agent].x) * Math.cos(this.dir[agent]) +
             (this.pos[agentb].y - this.pos[agent].y) * Math.sin(this.dir[agent]) / dist;
@@ -99,7 +108,13 @@ class FlatlandEpistemicModel implements EpistemicModel {
 
 
     getSuccessors(w: FlatlandWorld, a: string) {
-        function getSuccessor(w: FlatlandWorld, a: string) {
+        /**
+         * 
+         * @param w 
+         * @param a 
+         * @returns a possible world of w for agent a, or undefined (if it fails)
+         */
+        function getSuccessor(w: FlatlandWorld, a: string): FlatlandWorld {
             function testIfSuccessor(w: FlatlandWorld, u: FlatlandWorld) {
                 for (let agent of ["a", "b", "c"]) {
                     if (!w.isSee(a, agent) && u.isSee(a, agent))
@@ -149,31 +164,15 @@ class FlatlandEpistemicModel implements EpistemicModel {
     check(formula: Formula) {
         throw new Error("Method not implemented.");
     }
-
-
 }
 
 
 
 
 export class Flatland implements ExampleDescription {
-    getName() {
-        return "Flatland";
-    }
-
-    getInitialEpistemicModel(): EpistemicModel {
-        return new FlatlandEpistemicModel();
-    }
-    getActions() {
-        return [];
-    }
-    getWorldExample(): World {
-        return FlatlandEpistemicModel.pointedWorld;
-    }
-    onRealWorldClick(env: Environment, point: any): void {
-
-    }
-
-
-
+    getName() { return "Flatland"; }
+    getInitialEpistemicModel(): EpistemicModel { return new FlatlandEpistemicModel(); }
+    getActions() { return []; }
+    getWorldExample(): World { return FlatlandEpistemicModel.pointedWorld; }
+    onRealWorldClick(env: Environment, point: any): void { }
 }
