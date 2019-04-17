@@ -7,10 +7,10 @@
 }
 
 compile_wasm () {
-		#-s NO_EXIT_RUNTIME=1 
+		# 
 		#-s EXPORTED_FUNCTIONS='["_get_literal_as_bdd", "_peak_node_count"]' 
 		#-s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]'
-		emcc test.c --emrun -O3 -s ASSERTIONS=1 -s ALLOW_MEMORY_GROWTH=1 -s WASM=1 -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' --shell-file template.html -I ./vendor/cudd/ -L ./vendor/cudd/.libs/ -lm -lcudd "$@"
+		emcc test.c --emrun -O3 -s NO_EXIT_RUNTIME=1 -s ASSERTIONS=1 -s ALLOW_MEMORY_GROWTH=1 -s WASM=1 -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap"]' --shell-file template.html -I ./vendor/cudd/ -L ./vendor/cudd/.libs/ -lm -lcudd "$@"
 }
 
 case "$1" in
