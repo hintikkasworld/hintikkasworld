@@ -98,7 +98,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
         let graphe = new Map();
         relations.forEach((value: SymbolicRelation, key: string) => {
-            //graphe[key] = BDD.and([and_rules, value.toBDD()]);
+            graphe[key] = BDD.bddService.applyAnd([BDD.bddService.createCopy(initialFormula), value.toBDD()]);
         });
 
         console.log("Graphe", graphe);
