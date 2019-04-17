@@ -201,11 +201,11 @@ export class BddService {
   }
 
   applyRenaming(b: BDDNode, renaming: Map<string, string>) {
-    const oldvars: BDDAtom[] = [];
-    const newvars: BDDAtom[] = [];
+    const oldvars: string[] = [];
+    const newvars: string[] = [];
     for (const [o,n] of Array.from(renaming.entries())) {
-      oldvars.push(this.getIndexFromAtom(o));
-      newvars.push(this.getIndexFromAtom(n));
+      oldvars.push(o);
+      newvars.push(n);
     }
 
     const oldvarsPtr = this.mallocAtomArray(oldvars);
