@@ -44,7 +44,7 @@ class FlatlandWorld extends World {
 
 
     toString() {
-        return this.pos.toString() + this.dir.toString();
+        return JSON.stringify(this.pos) + JSON.stringify(this.dir);
     }
 
 
@@ -117,7 +117,7 @@ export class Flatland implements ExampleDescription {
         return [];
     }
     getWorldExample(): World {
-        throw new FlatlandWorld({a: {x:10, y:10}, b: {x:30, y:10}, c: {x:10, y:40}}, {a: 0, b: 0, c: 0});
+        return new FlatlandWorld({a: {x:10, y:10}, b: {x:30, y:10}, c: {x:10, y:40}, d: {x:10, y:40}}, {a: 0, b: 0, c: 0, d: 0});
     }
     onRealWorldClick(env: Environment, point: any): void {
 
