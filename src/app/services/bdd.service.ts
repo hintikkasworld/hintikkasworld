@@ -282,7 +282,7 @@ export class BddService {
       if (this.isFalse(thenNode)) {
         current = elseNode;
       } else {
-        if ( ! this.isFalse(elseNode))) {
+        if ( ! this.isFalse(elseNode)) {
           throw new Error("No child is FALSE: the BDD is not a cube, cannot be a valuation");
         }
         trueAtoms.push(this.getAtomOf(current));
