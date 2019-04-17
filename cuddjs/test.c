@@ -1,6 +1,4 @@
 
-//TODO: use typedef?
-
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -15,14 +13,6 @@
 typedef DdNode *Atom;
 typedef DdNode *Bdd;
 
-// Useless, pedantic check to ensure that MAX_ATOM is correctly usable
-// -- see https://stackoverflow.com/a/29809849
-#if (INT_MAX+INT_MIN > 0)
-#  error "Nonconforming implementation: INT_MAX is greater than the negation of INT_MIN"
-#endif
-
-#define MAX_ATOM INT_MAX
-#define MAX_LIT_PER_TERM 1000
 
 void die(char *msg, ...)
 {
@@ -125,23 +115,23 @@ bool is_internal_node(DdNode *node) {
 	return Cudd_IsNonConstant(node);
 }
 
-enum CuddJS_internal_characteristic {
-	CUDDJS_VAR, CUDDJS_THEN, CUDDJS_ELSE,
+enum CuddJS_InternalCharacteristic {
+	CUDDJS_ATOM, CUDDJS_THEN, CUDDJS_ELSE,
 };
-DdNode *get_internal_characteristic(DdNode *node, enum CuddJS_internal_characteristic ic) {
+DdNode *get_internal_characteristic(DdNode *node, enum CuddJS_InternalCharacteristic ic) {
 	if (Cudd_IsConstant(node)) {
 		error_code = CUDDJS_NOT_INTERNAL_NODE;
 		return NULL;
 	}
 	switch (ic) {
-		case CUDDJS_VAR:
+		case CUDDJS_ATOM:
 			{
-				unsigned int var = Cudd_NodeReadIndex(node);
-				if (var > (unsigned int)INT_MAX) {
+				unsigned int index = Cudd_NodeReadIndex(node);
+				if (index > (unsigned int)INT_MAX) {
 					error_code = CUDDJS_UNMET_ASSERTION;
 					return NULL;
 				}
-				return Cudd_bddIthVar(ddm, (int)var);
+				return Cudd_bddIthVar(ddm, (int)index);
 			}
 		case CUDDJS_THEN:
 			return Cudd_T(node);
@@ -154,12 +144,12 @@ DdNode *get_internal_characteristic(DdNode *node, enum CuddJS_internal_character
 }
 
 /**
- * Return the variable of the given node.
+ * Return the atom of the given node.
  * TODO check what happens if not an internal node
  */
 EMSCRIPTEN_KEEPALIVE
-Atom get_var_of(DdNode *node) {
-	return get_internal_characteristic(node, CUDDJS_VAR);
+Atom get_atom_of(DdNode *node) {
+	return get_internal_characteristic(node, CUDDJS_ATOM);
 }
 
 /**
@@ -182,7 +172,9 @@ DdNode *get_else_of(DdNode *node) {
 
 
 /**
- * Declare a new variable.
+ * Ask a new atom to be declared.
+ *
+ * @return the new atom
  */
 EMSCRIPTEN_KEEPALIVE
 Atom make_new_atom() {
@@ -216,20 +208,39 @@ Bdd create_true() {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd create_literal(Atom var) {
-	//DdNode *res = Cudd_bddIthVar(ddm, var);
 	Cudd_Ref(var);
 	return var;
 }
 
-// /**
-//  * Create a new valuation of the given variables with the given polarities.
-//  */
-// EMSCRIPTEN_KEEPALIVE
-// DdNode *create_valuation(DdNode **vars, bool *polarities, int nb) {
-// 	DdNode *res = Cudd_bddComputeCube(ddm, vars, (int *)polarities, nb);
-// 	Cudd_Ref(res);
-// 	return res;
-// }
+enum CuddJS_BinaryOperator {
+	CUDDJS_AND, CUDDJS_OR, CUDDJS_IMPLIES, CUDDJS_EQUIV
+};
+
+Bdd apply_binary_op(Bdd n1, Bdd n2, enum CuddJS_BinaryOperator op) {
+	//fprintf(stderr, "debug op 1: %d\n", Cudd_DebugCheck(ddm));
+	DdNode *res;
+	switch (op) {
+		case CUDDJS_AND:
+			res = Cudd_bddAnd(ddm, n1, n2);
+			break;
+		case CUDDJS_OR:
+			res = Cudd_bddOr(ddm, n1, n2);
+			break;
+		case CUDDJS_IMPLIES:
+			res = Cudd_bddIte(ddm, n1, n2, Cudd_ReadOne(ddm));
+			break;
+		case CUDDJS_EQUIV:
+			res = Cudd_bddXnor(ddm, n1, n2);
+			break;
+	}
+	if (res == NULL) return NULL;
+	Cudd_Ref(res);
+	//fprintf(stderr, "debug op 2: %d\n", Cudd_DebugCheck(ddm));
+	Cudd_RecursiveDeref(ddm, n1);
+	Cudd_RecursiveDeref(ddm, n2);
+	//fprintf(stderr, "debug op 3: %d\n", Cudd_DebugCheck(ddm));
+	return res;
+}
 
 /**
  * Combine two given BDDs by applying a conjunction.
@@ -238,16 +249,7 @@ Bdd create_literal(Atom var) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd apply_and(Bdd n1, Bdd n2) {
-	//fprintf(stderr, "debug and 1: %d\n", Cudd_DebugCheck(ddm));
-	DdNode *res;
-	res = Cudd_bddAnd(ddm, n1, n2);
-	if (res == NULL) return NULL;
-	Cudd_Ref(res);
-	//fprintf(stderr, "debug and 2: %d\n", Cudd_DebugCheck(ddm));
-	Cudd_RecursiveDeref(ddm, n1);
-	Cudd_RecursiveDeref(ddm, n2);
-	//fprintf(stderr, "debug and 3: %d\n", Cudd_DebugCheck(ddm));
-	return res;
+	return apply_binary_op(n1, n2, CUDDJS_AND);
 }
 
 /**
@@ -257,9 +259,7 @@ Bdd apply_and(Bdd n1, Bdd n2) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd apply_or(Bdd n1, Bdd n2) {
-	//TODO
-	die("TO BE IMPLEMENTED");
-	return NULL;
+	return apply_binary_op(n1, n2, CUDDJS_OR);
 }
 
 /**
@@ -269,9 +269,11 @@ Bdd apply_or(Bdd n1, Bdd n2) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd apply_not(Bdd n) {
-	//TODO
-	die("TO BE IMPLEMENTED");
-	return NULL;
+	DdNode *res = Cudd_Not(n);
+	if (res == NULL) return NULL;
+	Cudd_Ref(res);
+	Cudd_RecursiveDeref(ddm, n);
+	return res;
 }
 
 /**
@@ -281,9 +283,7 @@ Bdd apply_not(Bdd n) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd apply_implies(Bdd f, Bdd g) {
-	//TODO
-	die("TO BE IMPLEMENTED");
-	return NULL;
+	return apply_binary_op(f, g, CUDDJS_IMPLIES);
 }
 
 /**
@@ -293,9 +293,7 @@ Bdd apply_implies(Bdd f, Bdd g) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd apply_equiv(Bdd f, Bdd g) {
-	//TODO
-	die("TO BE IMPLEMENTED");
-	return NULL;
+	return apply_binary_op(f, g, CUDDJS_EQUIV);
 }
 
 /**
@@ -305,9 +303,13 @@ Bdd apply_equiv(Bdd f, Bdd g) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd apply_ite(Bdd f, Bdd g, Bdd h) {
-	//TODO
-	die("TO BE IMPLEMENTED");
-	return NULL;
+	DdNode *res = Cudd_bddIte(ddm, f, g, h);
+	if (res == NULL) return NULL;
+	Cudd_Ref(res);
+	Cudd_RecursiveDeref(ddm, f);
+	Cudd_RecursiveDeref(ddm, g);
+	Cudd_RecursiveDeref(ddm, h);
+	return res;
 }
 
 /**
