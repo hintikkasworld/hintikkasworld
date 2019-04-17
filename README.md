@@ -22,10 +22,8 @@ Module not found: Error: Can't resolve 'fs' in '/home/fschwarz/HW/hintikkasworld
 ERROR in ./cuddjs/release/cuddjs.js
 Module not found: Error: Can't resolve 'path' in '/home/fschwarz/HW/hintikkasworld/cuddjs/release'
 please run:
-- npm install fs
-- npm install crypto
 - npm install path
-
+- add "browser": {"fs": false, "crypto": false} to the file package.json.
 
 ## Development server
 
