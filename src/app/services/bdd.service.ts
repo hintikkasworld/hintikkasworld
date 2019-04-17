@@ -204,7 +204,7 @@ export class BddService {
     throw new Error("Method not implemented.");
   }
 
-  support(bddNode: BDDNode): [string] {
+  support(bddNode: BDDNode): string[] {
     throw new Error("to be implemented");
   }
 

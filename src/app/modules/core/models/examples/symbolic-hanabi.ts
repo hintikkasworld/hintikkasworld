@@ -64,13 +64,17 @@ class SimpleHanabiWorld extends WorldValuation {
 
 class MyTestForBDD {
 
+    private static n: number = 0;
+
     static run(): void{
         console.log(" === Run tests ===")
         MyTestForBDD.testInitialisation();
+        console.log(" ==> " + MyTestForBDD.n + " success.")
         console.log(" === End tests ===")
     }
 
     private static assert(condition, message){
+        MyTestForBDD.n = MyTestForBDD.n + 1;
         if(!condition){
             message = message || "Assertion failed";
             if (typeof Error !== "undefined"){
@@ -78,8 +82,13 @@ class MyTestForBDD {
             }
             throw message; //fallback
         }else{
-            console.log("No error on : '" + message + "'")
+            console.log("OK : '" + message + "'")
         }
+    }
+
+    private static printThenElse(variable: number): void{
+        let service = BDD.bddService;
+        console.log(service.getAtomOf(variable), ":", variable, "|", "Then", service.getThenOf(variable), "Else", service.getElseOf(variable), "True :", service.createTrue(), "False:", service.createFalse());
     }
 
     private static testInitialisation(){
@@ -95,7 +104,59 @@ class MyTestForBDD {
         let bAtomP = service.createLiteral("p");
         MyTestForBDD.assert(service.getAtomOf(bAtomP) == "p", "p is p.");
         
-        MyTestForBDD.assert(typeof service.applyIte(bAtomP, bTrue, bFalse) === "string", "applyIte(p, top, bot) is a number.");
+        MyTestForBDD.assert(typeof service.applyIte(bAtomP, bTrue, bFalse) === "number", "applyIte(p, top, bot) is a number.");
+    
+        MyTestForBDD.assert(!service.isInternalNode(bTrue), "True is not an InternalNode");
+        MyTestForBDD.assert(service.isInternalNode(bAtomP), "p is an InternalNode");
+
+        MyTestForBDD.assert(service.getAtomOf(service.applyAnd([bAtomP, bTrue])) == "p", "service.getAtomOf(service.applyAnd([bAtomP, bTrue]) == p")
+        
+        MyTestForBDD.assert(service.isFalse(service.applyAnd([service.createCopy(bAtomP), service.createCopy(bFalse)])), "(p and false) is false");
+        MyTestForBDD.assert(service.isTrue(service.applyOr([service.createCopy(bAtomP), service.createCopy(bTrue)])), "(p or true) is true");
+
+        let notP = service.applyNot(service.createCopy(bAtomP));
+
+        MyTestForBDD.assert(service.isFalse(service.applyAnd([service.createCopy(bAtomP), service.createCopy(notP)])), "(p and not p) is false");
+        MyTestForBDD.assert(service.isTrue(service.applyOr([service.createCopy(bAtomP), service.createCopy(notP)])), "(p or not p) is true");
+
+        MyTestForBDD.assert(service.isFalse(service.applyNot(service.createTrue())), "not true is false");
+        MyTestForBDD.assert(service.isTrue(service.applyNot(service.createFalse())), "not false is true");
+
+        let bAtomQ = service.createLiteral("q");
+        let notQ = service.applyNot(service.createCopy(bAtomQ));
+        let implies1 = service.applyImplies(service.createCopy(bAtomP), service.createCopy(bAtomQ));
+        let implies2 = service.applyImplies(service.createCopy(bAtomQ), service.createCopy(bAtomP));
+        let nporq = service.applyOr([service.createCopy(notP), service.createCopy(bAtomQ)]);
+        let nqorp = service.applyOr([service.createCopy(bAtomP), service.createCopy(notQ)]);
+        MyTestForBDD.assert(implies1 == nporq, "p -> q == not p or q");
+        MyTestForBDD.assert(implies2 == nqorp, "q -> p == not q or p");
+
+        MyTestForBDD.assert(
+            service.applyEquiv(service.createCopy(bAtomP), service.createCopy(bAtomQ)) 
+            == 
+            service.applyAnd([service.createCopy(implies1), service.createCopy(implies2)]),
+            "p <-> q == (p->q) and (q->p).");
+
+        MyTestForBDD.printThenElse(bAtomP);
+        MyTestForBDD.printThenElse(notP);
+
+        MyTestForBDD.assert(service.isTrue(service.getThenOf(bAtomP)), "IF of p is true");
+        MyTestForBDD.assert(service.isFalse(service.getElseOf(bAtomP)), "Else of p is false");
+        MyTestForBDD.assert(service.isFalse(service.getThenOf(notP)), "IF of not p is false");
+        MyTestForBDD.assert(service.isTrue(service.getElseOf(notP)), "Else of not p is true");
+
+        MyTestForBDD.assert(service.isTrue(service.applyExistentialForget(service.createCopy(bAtomP), ["p"])), "EForget(p, ['p']) == True")
+        
+        let phi = service.applyOr([
+            service.applyAnd([service.createCopy(bAtomP), service.createCopy(bAtomQ)]), 
+            service.applyAnd([service.createCopy(notP), service.createCopy(notQ)])]
+        )
+
+        MyTestForBDD.assert(service.isTrue(service.applyExistentialForget(service.createCopy(phi), ["p"])), "EForget( (p&q)|(np&nq) , ['p']) == True")
+        MyTestForBDD.assert(service.isFalse(service.applyUniversalForget(service.createCopy(phi), ["p"])), "UForget( (p&q)|(np&nq) , ['p']) == False")
+
+
+
     }
 }
 
