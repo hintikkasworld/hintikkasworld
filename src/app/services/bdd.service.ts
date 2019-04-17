@@ -221,10 +221,10 @@ export class BddService {
   }
 
   support(bddNode: BDDNode): string[] {
-    const cube = this.bddModule._support(bddNode);
+    const cube: BDDNode = this.bddModule._support(bddNode);
     const support: string[] = [];
-    for (let n = cube; this.isInternalNode(n); n = this.getThenOf(n)) {
-      support.push(this.getAtomFromIndex(this.getAtomOf(n)));
+    for (let n: BDDNode = cube; this.isInternalNode(n); n = this.getThenOf(n)) {
+      support.push(this.getAtomOf(n));
     }
     return support;
   }
