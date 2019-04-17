@@ -27,6 +27,8 @@ export class BddService {
 
   wasmReady = new BehaviorSubject<boolean>(false);
 
+  aliveBdds: Map<BDDNode, number>= new Map(); 
+
 
   constructor(f: ()=>void) {
     this.instantiateWasm("wasm/cuddjs.wasm2", f).catch(e=>{
@@ -38,6 +40,20 @@ export class BddService {
 
   }
 
+  private isAlive(bdd: BDDNode): boolean {
+    if (this.aliveBdds.has(bdd)) {
+      if (this.aliveBdds.get(bdd) > 0) {
+        return true;
+      }
+      this.aliveBdds.remove(bdd);
+    }
+    return false;
+  }
+  private killArgs(bdds: BDDNode[]): void {
+    for (const bdd of bdds) {
+      //TODO unfinished
+    }
+  }
 
 
   private async instantiateWasm(url: string, f:()=>void) {
@@ -205,14 +221,15 @@ export class BddService {
   }
 
   support(bddNode: BDDNode): string[] {
-    throw new Error("to be implemented");
+    const cube = this.bddModule._support(bddNode);
+    const support: string[] = [];
+    for (let n = cube; this.isInternalNode(n); n = this.getThenOf(n)) {
+      support.push(this.getAtomFromIndex(this.getAtomOf(n)));
+    }
+    return support;
   }
 
   cube({id: string, value:boolean}): BDDNode{
-    throw new Error("to be implemented");
-  }
-
-  let({}, bddNode: BDDNode): BDDNode {
     throw new Error("to be implemented");
   }
 

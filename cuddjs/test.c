@@ -124,6 +124,18 @@ bool are_equivalent(Bdd f, Bdd g) {
 }
 
 /**
+ * Return a cube of the variables of which the given BDD depends.
+ * Do not forget to destroy it!
+ */
+EMSCRIPTEN_KEEPALIVE
+Bdd support(Bdd f) {
+	DdNode *res = Cudd_Support(ddm, f);
+	if (res == NULL) return NULL;
+	Cudd_Ref(res);
+	return res;
+}
+
+/**
  * Indicate whether the given node is an internal node.
  */
 EMSCRIPTEN_KEEPALIVE
