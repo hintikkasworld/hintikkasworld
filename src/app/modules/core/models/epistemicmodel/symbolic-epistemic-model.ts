@@ -100,7 +100,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
         let graphe = new Map();
         relations.forEach((value: SymbolicRelation, key: string) => {
-            graphe[key] = BDD.and([and_rules, value.toBDD()]);
+            //graphe[key] = BDD.and([and_rules, value.toBDD()]);
         });
 
         return new SymbolicEpistemicModel(graphe, worldClass, agents, propositionalAtoms, propositionalPrimes, to_prime, not_to_prime, initialFormula);
