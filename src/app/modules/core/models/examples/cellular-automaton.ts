@@ -9,6 +9,14 @@ import { EventModelAction } from '../environment/event-model-action';
 import { Postcondition } from '../eventmodel/postcondition';
 import { World } from '../epistemicmodel/world';
 
+
+/**
+ * This file implements an example that illustrate the embedding of cellular automaton Rule 110 in DEL.
+ * See IJCAI 2018 - Small undecidable problems in epistemic planning from Sébastien Lê Cong, Sophie Pinchinat and
+ * François Schwarzentruber
+ */
+
+
 /**
  * @param truePropositions an array of true propositions
  * @returns a state where two agents have consecutive numbers
@@ -17,50 +25,43 @@ import { World } from '../epistemicmodel/world';
 class CellularAutomataWorld extends World {
 
 
-    value: string;
-    propositionRightTrue: boolean;
+    readonly cellState: string;
+    readonly propositionRightTrue: boolean;
 
-    static cellsImg = {
+    static readonly cellsImg = {
         '0': CellularAutomataWorld.getImage("cell0.png"),
         '1': CellularAutomataWorld.getImage("cell1.png")
     };
 
-    constructor(value: string, propositionRightTrue: boolean) {
+    constructor(cellState: string, propositionRightTrue: boolean) {
+        function setAgentPositions() {
+            let posleft = { x: 24, y: 32, r: 24 };
+            let posright = { x: 128 - 24, y: 32, r: 24 };
+            this.agentPos["a"] = this.isPropositinoRightTrue() ? posleft : posright;
+            this.agentPos["b"] = this.isPropositinoRightTrue() ? posright : posleft;
+            this.agentPos["c"] = undefined;
+        }
+
         super();
-        this.value = value;
+        this.cellState = cellState;
         this.propositionRightTrue = propositionRightTrue;
-        this.setAgentPositions();
+        setAgentPositions();
     }
 
-    modelCheck(phi: string) { return (phi == "r") ? this.propositionRightTrue : (this.value == phi); }
+    modelCheck(phi: string) { return (phi == "r") ? this.propositionRightTrue : (this.cellState == phi); }
 
     isPropositinoRightTrue() { return this.propositionRightTrue; }
 
-    setAgentPositions() {
-        let posleft = { x: 24, y: 32, r: 24 };
-        let posright = { x: 128 - 24, y: 32, r: 24 };
-        if (this.isPropositinoRightTrue()) {
-            this.agentPos["a"] = posleft;
-            this.agentPos["b"] = posright;
-        }
-        else {
-            this.agentPos["a"] = posright;
-            this.agentPos["b"] = posleft;
-        }
 
-        this.agentPos["c"] = undefined;
-    }
 
     draw(context) {
         let ytop = 32 - 8;
         let height = 32;
         /*background of the cell depending on r*/
-        if (this.isPropositinoRightTrue())
-            context.fillStyle = "gray";
-        else
-            context.fillStyle = "white";
+
+        context.fillStyle = this.isPropositinoRightTrue() ? "gray" : "white";
         context.fillRect(58 - 16, ytop, 32, height);
-        context.drawImage(CellularAutomataWorld.cellsImg[this.value], 58 - 16, ytop, 32, height);
+        context.drawImage(CellularAutomataWorld.cellsImg[this.cellState], 58 - 16, ytop, 32, height);
         context.strokeStyle = "#000000";
 
         for (let y of [ytop, ytop + height]) {
@@ -75,18 +76,12 @@ class CellularAutomataWorld extends World {
 
 
         context.fillStyle = "black";
-        context.fillText(this.value, 58 - 8, 32 + 16);
+        context.fillText(this.cellState, 58 - 8, 32 + 16);
 
         this.drawAgents(context);
     }
 
-    toString() {
-        let suppl = "";
-
-        if (this.isPropositinoRightTrue())
-            suppl = " (r)";
-        return this.value + suppl;
-    }
+    toString() { return this.cellState + (this.isPropositinoRightTrue() ? " (r)" : ""); }
 }
 
 
@@ -108,8 +103,8 @@ class CellularAutomataWorld extends World {
 * @example new CellularAutomatonPostcondition()
 * */
 class CellularAutomatonPostcondition extends Postcondition {
-    f: (l: string, m: string, r: string) => string;
-    putrtrue: boolean;
+    private readonly f: (l: string, m: string, r: string) => string;
+    private readonly putrtrue: boolean;
 
     constructor(f: (l: string, m: string, r: string) => string, putrtrue: boolean) {
         super();
@@ -123,41 +118,27 @@ class CellularAutomatonPostcondition extends Postcondition {
     @returns a world object that is the update of the world of id w by the postcondition
     */
     perform(M: ExplicitEpistemicModel, w: string) {
-        var world = <CellularAutomataWorld> M.getNode(w);
+        var world = <CellularAutomataWorld>M.getNode(w);
 
-        let leftAgent;
-        let rightAgent;
-
-        if (world.isPropositinoRightTrue) {
-            leftAgent = "a";
-            rightAgent = "b";
-        }
-        else {
-            leftAgent = "b";
-            rightAgent = "a";
-        }
+        let leftAgent = world.isPropositinoRightTrue ? "a" : "b";
+        let rightAgent = world.isPropositinoRightTrue ? "b" : "a";
 
         let leftSuccs = M.getSuccessorsID(w, leftAgent);
         let rightSuccs = M.getSuccessorsID(w, rightAgent);
-        let leftWorld : CellularAutomataWorld = undefined;
-        let rightWorld : CellularAutomataWorld = undefined;
+        let leftWorld: CellularAutomataWorld = undefined;
+        let rightWorld: CellularAutomataWorld = undefined;
         for (let u of leftSuccs)
             if (u != w)
-                leftWorld = <CellularAutomataWorld> M.getNode(u);
+                leftWorld = <CellularAutomataWorld>M.getNode(u);
 
         for (let u of rightSuccs)
             if (u != w)
-                rightWorld = <CellularAutomataWorld> M.getNode(u);
+                rightWorld = <CellularAutomataWorld>M.getNode(u);
 
-        let l: string;
-        let r: string;
+        let l: string = (leftWorld == undefined) ? "0" : leftWorld.cellState;
+        let r: string = (rightWorld == undefined) ? "0" : rightWorld.cellState;
 
-        if (leftWorld == undefined) l = "0"; else l = leftWorld.value;
-        if (rightWorld == undefined) r = "0"; else r = rightWorld.value;
-
-
-
-        return new CellularAutomataWorld( this.f(l, world.value, r), this.putrtrue || world.isPropositinoRightTrue());
+        return new CellularAutomataWorld(this.f(l, world.cellState, r), this.putrtrue || world.isPropositinoRightTrue());
     }
 
     toString() {
@@ -214,7 +195,7 @@ export class CellularAutomaton implements ExampleDescription {
     }
     getActions() {
 
-        function getRule110CellularAutomataTransitionFunctionText() : string {
+        function getRule110CellularAutomataTransitionFunctionText(): string {
             return "000 0" + "\n" +
                 "001 1" + "\n" +
                 "010 1" + "\n" +
@@ -285,13 +266,7 @@ export class CellularAutomaton implements ExampleDescription {
         })];
     }
 
-    getWorldExample(): World {
-        return new CellularAutomataWorld('1', false);
-    }
-
-    onRealWorldClick(env: Environment, point: any): void {
-
-    }
-
+    getWorldExample(): World { return new CellularAutomataWorld('1', false); }
+    onRealWorldClick(env: Environment, point: any): void { }
 
 }
