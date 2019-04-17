@@ -195,8 +195,27 @@ export class BddService {
     return res;
   }
 
-  applyConditioning(b: BDDNode, v: Valuation) {
-    throw new Error("to be implemented");
+  applyConditioning(b: BDDNode, assignment: {atom: string, value:boolean}): BDDNode {
+    const cube = this.createCube(assignment);
+    return this.bddModule._apply_conditioning(b, cube);
+  }
+
+  applyRenaming(b: BDDNode, renaming: Map<string, string>) {
+    const oldvars: string[] = [];
+    const newvars: string[] = [];
+    for (const [o, n] of renaming.entries()) {
+      oldvars.push(this.getIndexFromAtom(o));
+      newvars.push(this.getIndexFromAtom(n));
+    }
+
+    const oldvarsPtr = this.mallocAtomArray(oldvars);
+    const newvarsPtr = this.mallocAtomArray(newvars);
+
+    const res = this.bddModule._apply_renaming(b, oldvarsPtr, newvarsPtr, oldvars.length);
+
+    this.free(oldvarsPtr);
+    this.free(newvarsPtr);
+    return res;
   }
 
   getAtomOf(b: BDDNode): string {
@@ -216,8 +235,19 @@ export class BddService {
   //     this.bddModule._save();
   //   }
 
-  pickRandomSolution(bddNode: number): Valuation {
-    throw new Error("Method not implemented.");
+  pickRandomSolution(bddNode: BDDNode): Valuation {
+    if (this.isFalse(bddNode)) {
+      throw new Error("Cannot pick a solution from FALSE");
+    }
+    const trueAtoms = [];
+    let current = bddNode;
+    while ( ! this.isTrue(current)) {
+      const then = this.getThenOf(current);
+      if (this.isFalse(then)) then = this.getElseOf(current);
+      else trueAtoms.push(this.getAtomOf(current));
+      current = then;
+    }
+    return new Valuation(trueAtoms);
   }
 
   support(bddNode: BDDNode): string[] {
@@ -226,11 +256,18 @@ export class BddService {
     for (let n: BDDNode = cube; this.isInternalNode(n); n = this.getThenOf(n)) {
       support.push(this.getAtomOf(n));
     }
+    this.destroy(cube);
     return support;
   }
 
-  cube({id: string, value:boolean}): BDDNode{
-    throw new Error("to be implemented");
+  createCube(assignment: {atom: string, value:boolean}): BDDNode{
+    const literals = []
+    for (const [atom, value] of Object.entries(assignment) {
+      let lit = this.createLiteral(atom);
+      if (value) lit = this.applyNot(lit);
+      literals.push(lit);
+    }
+    return this.applyAnd(literals);
   }
 
   toValuation(bddNode: BDDNode): Valuation{

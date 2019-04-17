@@ -384,21 +384,32 @@ Bdd apply_universal_forget(Bdd f, Atom vars[], int nb) {
 	return apply_forget(f, vars, nb, false);
 }
 
+
+//
+// removed: from JS, it's probably more work to malloc and copy 
+// than to compute the cube.
+//
+// EMSCRIPTEN_KEEPALIVE
+// Bdd create_cube(Atom vars[], bool values[], int nb) {
+// 	DdNode *res = Cudd_bddComputeCube(ddm, vars, (int *)values, nb);
+// 	if (res == NULL) return NULL;
+// 	Cudd_Ref(res);
+// 	return res;
+// }
+
 /**
- * Modify the given BDD by conditioning it with the given values for the given variables.
- * Be careful that the former BDD should not be reused afterwards:
- * if it is still needed, it must be copied first.
+ * Modify the given BDD by conditioning it with the given cube.
+ * Be careful that neither the former BDD nor the cube should not be reused afterwards:
+ * if they are still needed, they must be copied first.
  */
 EMSCRIPTEN_KEEPALIVE
-Bdd apply_conditioning(Bdd f, Atom vars[], bool values[], int nb) {
-	DdNode *valuation = Cudd_bddComputeCube(ddm, vars, (int *)values, nb);
-	Cudd_Ref(valuation);
+Bdd apply_conditioning(Bdd f, Bdd cube) {
 	/* conditioning is implemented via bddAndAbstract, which makes a
 	 * conjunction and forgets the variables in a cube at the same time */
-	DdNode *res = Cudd_bddAndAbstract(ddm, f, valuation, valuation);
+	DdNode *res = Cudd_bddAndAbstract(ddm, f, cube, cube);
 	if (res == NULL) return NULL;
 	Cudd_Ref(res);
-	Cudd_RecursiveDeref(ddm, valuation);
+	Cudd_RecursiveDeref(ddm, cube);
 	Cudd_RecursiveDeref(ddm, f);
 	return NULL;
 }
