@@ -1,7 +1,7 @@
-import { Belote } from './belote';
+import { Hanabi } from './hanabi';
 
-describe('Belote', () => {
+describe('Hanabi', () => {
   it('should create an instance', () => {
-    expect(new Belote()).toBeTruthy();
+    expect(new Hanabi()).toBeTruthy();
   });
 });

@@ -5,24 +5,29 @@ import { BDD } from '../formula/bdd';
 
 export interface SymbolicRelation {
     toFormula(): Formula;
-    toBDD();
+    toBDD(): BDD;
 }
 
+/**
+ * this class implements a SymbolicRelation for an agent that observes
+ * the truth values of some propositional variables.
+ */
 export class Obs implements SymbolicRelation {
 
-    protected variables: string[];
+    protected observedVariables: string[];
 
-    constructor(atoms: string[]) {
-        this.variables = atoms;
+    constructor(observedVariables: string[]) {
+        this.observedVariables = observedVariables;
     }
-    toFormula() {
+    toFormula() : Formula {
         let strFormula: string = "";
-        this.variables.forEach(atom => {
+        this.observedVariables.forEach(atom => {
             strFormula += "(" + atom + "<->" + SymbolicEpistemicModel.getPrimedVarName(atom) + ")";
         });
         return FormulaFactory.createFormula(strFormula);
-    };
-    toBDD() {
+    }
+
+    toBDD() : BDD {
         return BDD.buildFromFormula(this.toFormula());
-    };
+    }
 }
