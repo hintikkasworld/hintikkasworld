@@ -146,8 +146,9 @@ export class BddService {
     const dataHeap = new Uint8Array(this.bddModule.HEAPU8.buffer, dataPtr, nDataBytes);
     dataHeap.set(new Uint8Array(data.buffer));
 
-    return this.bddModule._apply_existential_forget(b, dataHeap.byteOffset, data.length);
+    let res = this.bddModule._apply_existential_forget(b, dataHeap.byteOffset, data.length);
     this.bddModule._free(dataHeap.byteOffset);
+    return res;
   }
 
   applyUniversalForget(b: BDDNode, atoms: string[]): BDDNode {
@@ -202,7 +203,6 @@ export class BddService {
   copy(bddNode: BDDNode): BDDNode{
     return this.bddModule._createCopy(bddNode)
   }
-
 
 }
 
