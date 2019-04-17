@@ -11,6 +11,7 @@ import "!!file-loader?name=wasm/cuddjs.wasm2!./../../../cuddjs/release/cuddjs.wa
 
 export type BDDNode = number;
 type BDDAtom = number;
+type pointer = number;
 
 
 @Injectable({
@@ -28,7 +29,10 @@ export class BddService {
 
 
   constructor(f: ()=>void) {
-    this.instantiateWasm("wasm/cuddjs.wasm2", f);
+    this.instantiateWasm("wasm/cuddjs.wasm2", f).catch(e=>{
+      alert("Problem initializing WASM module, maybe the browser does not have enough memory?");
+      throw e;
+    });
 
 
 
@@ -61,6 +65,31 @@ export class BddService {
 
   }
 
+  private mallocPointerArray(array: number[]): pointer {
+    /* build a typed array */
+    const data = new Int32Array(array);
+
+    /* copy it in the module heap */
+    const nDataBytes = data.length * data.BYTES_PER_ELEMENT;
+    const dataPtr = this.bddModule._malloc(nDataBytes);
+    // TODO find a way to check that the malloc has succeeded…
+    const dataHeap = new Uint8Array(this.bddModule.HEAPU8.buffer, dataPtr, nDataBytes);
+    dataHeap.set(new Uint8Array(data.buffer));
+
+    return dataHeap.byteOffset;
+  }
+
+  private mallocAtomArray(atomArray: BDDAtom[]): pointer {
+    return this.mallocPointerArray(<number[]>atomArray);
+  }
+
+  private mallocNodeArray(nodeArray: BDDNode[]): pointer {
+    return this.mallocPointerArray(<number[]>nodeArray);
+  }
+
+  private free(p: pointer) {
+    this.bddModule._free(p);
+  }
 
   private makeNewAtom(): BDDAtom {
     return this.bddModule._make_new_atom();
@@ -137,22 +166,17 @@ export class BddService {
   }
 
   applyExistentialForget(b: BDDNode, atoms: string[]): BDDNode {
-    // build a typedarray of bdd atoms
-    const data = new Int32Array(atoms.map(a => this.getIndexFromAtom(a)));
-
-    // copy it in the module heap
-    const nDataBytes = data.length * data.BYTES_PER_ELEMENT;
-    const dataPtr = this.bddModule._malloc(nDataBytes);
-    const dataHeap = new Uint8Array(this.bddModule.HEAPU8.buffer, dataPtr, nDataBytes);
-    dataHeap.set(new Uint8Array(data.buffer));
-
-    let res = this.bddModule._apply_existential_forget(b, dataHeap.byteOffset, data.length);
-    this.bddModule._free(dataHeap.byteOffset);
+    let ptr = this.mallocAtomArray(atoms);
+    let res = this.bddModule._apply_existential_forget(b, ptr, atoms.length);
+    this.free(ptr);
     return res;
   }
 
   applyUniversalForget(b: BDDNode, atoms: string[]): BDDNode {
-    throw new Error("to be implemented");
+    let ptr = this.mallocAtomArray(atoms);
+    let res = this.bddModule._apply_universal_forget(b, ptr, atoms.length);
+    this.free(ptr);
+    return res;
   }
 
   applyConditioning(b: BDDNode, v: Valuation) {

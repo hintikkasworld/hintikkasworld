@@ -20,12 +20,12 @@ async function mycode() {
 		getElseOf: Module.cwrap('get_else_of', 'number', ['number']),
 		createFalse: Module.cwrap('create_false', 'number'),
 		createTrue: Module.cwrap('create_true', 'number'),
-		makeNewVar: Module.cwrap('make_new_var', 'number'),
+		makeNewAtom: Module.cwrap('make_new_atom', 'number'),
 		getVar: (() => {
 			const varMap = new Map();
 			return (name) => {
 				if (varMap.has(name)) return varMap.get(name);
-				const v = api.makeNewVar();
+				const v = api.makeNewAtom();
 				varMap.set(name, v);
 				return v;
 			}
@@ -72,14 +72,43 @@ async function mycode() {
 
 		init: Module.cwrap('init'),
 
+		mallocArray: (array) => {
+    	/* build a typed array */
+    	const data = new Int32Array(array);
+
+    	/* copy it in the module heap */
+    	const nDataBytes = data.length * data.BYTES_PER_ELEMENT;
+    	const dataPtr = Module._malloc(nDataBytes);
+    	const dataHeap = new Uint8Array(Module.HEAPU8.buffer, dataPtr, nDataBytes);
+    	dataHeap.set(new Uint8Array(data.buffer));
+    	return dataHeap.byteOffset
+		},
+
 	};
 
 	api.init();
+
+	console.log("test malloc: ", Module._malloc(1024*1024*1024*1024));
+	console.log(Module.HEAPU8);
+	let arr = [];
+	for (let i = 0; i < 1024*1024; i++) arr[i] = i;
+	for (let k = 0; k < 1100; k++) {
+		//console.log("tt", 
+		Module.print("test malloc");
+		Module.print(api.mallocArray(arr));
+		//console.log(Module.HEAPU8);
+	}
+// 	console.log("test malloc: ", Module._malloc(1024**5));
+// 	console.log(Module.HEAPU8);
+// 	console.log("test malloc: ", Module._malloc(1024**6));
+// 	console.log(Module.HEAPU8);
+// 	console.log("test malloc: ", Module._malloc(1024**7));
+// 	console.log(Module.HEAPU8);
 	console.log('peak = ', api.peakNodeCount());
 	console.log('refs = ', api.referencedCount());
 	const vars = [];
 	for (let i = 0; i < 30; i++) {
-		vars.push(api.makeNewVar());
+		vars.push(api.makeNewAtom());
 	}
 	const bdds = vars.map(v => api.createLiteral(v));
 	console.log('refs = ', api.referencedCount());
