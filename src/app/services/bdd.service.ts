@@ -45,7 +45,7 @@ export class BddService {
       if (this.aliveBdds.get(bdd) > 0) {
         return true;
       }
-      this.aliveBdds.remove(bdd);
+      this.aliveBdds.delete(bdd);
     }
     return false;
   }
@@ -271,7 +271,25 @@ export class BddService {
   }
 
   toValuation(bddNode: BDDNode): Valuation{
-    throw new Error("to be implemented. MUST HAVE ONE UNIQUE SOLUTION. CAN THROW ERROR ?");
+    if (this.isFalse(bddNode)) {
+      throw new Error("FALSE is not a valuation");
+    }
+    const trueAtoms = [];
+    let current = bddNode;
+    while ( ! this.isTrue(current)) {
+      const thenNode = this.getThenOf(current);
+      const elseNode = this.getElseOf(current);
+      if (this.isFalse(thenNode)) {
+        current = elseNode;
+      } else {
+        if ( ! this.isFalse(elseNode))) {
+          throw new Error("No child is FALSE: the BDD is not a cube, cannot be a valuation");
+        }
+        trueAtoms.push(this.getAtomOf(current));
+        current = thenNode;
+      }
+    }
+    return new Valuation(trueAtoms);
   }
 
   destroy(bddNode: BDDNode): void{
