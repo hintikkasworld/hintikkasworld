@@ -2,28 +2,34 @@ import { Formula } from './../formula/formula';
 import { ExplicitEventModel } from './explicit-event-model';
 import { SymbolicEventModel } from './symbolic-event-model';
 import { Event } from './event';
-import { environment } from 'src/environments/environment';
 import { BDD } from '../formula/bdd';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
+import { Postcondition } from './postcondition';
 
 export type BDDNode = number;
 
 export class ExplicitToSymbolic {
     
     static translate(explicit_em: ExplicitEventModel, variables: string[]): SymbolicEventModel{
-                 
+
+        console.log("ExplicitToSymbolic.translate");
+
         let symb_em = new SymbolicEventModel(["a"], ["var1"]);
         
         let event_bdd = {};
         
-        for (let event in explicit_em.getNodes()){
-            let node = explicit_em.getNodes()[event]; 
-            event_bdd[event] = ExplicitToSymbolic._event_to_bdd(<Event> node);
+        for(const [event, value] of <[string, {pre: Formula, post: Postcondition}][]>Object.entries(explicit_em.getNodes())){
+            console.log(event, value);
+            event_bdd[event] = ExplicitToSymbolic._event_to_bdd(value);
+            console.log(event_bdd[event]);
             symb_em.addUniqueEvent(event, event_bdd[event]);
         }
 
-        for (let agent in environment.agents){
-            for (let event in explicit_em.getNodes()){
+        console.log("Unique Event");
+
+        for (let agent of explicit_em.getAgents()){
+            
+            for(const [event, value] of Object.entries(explicit_em.getNodes())){
 
                 let action = event_bdd[event];
 
@@ -63,18 +69,19 @@ export class ExplicitToSymbolic {
         return symb_em;
     }
 
-    static _event_to_bdd(event: Event): BDDNode{
+    static _event_to_bdd(event: {pre: Formula, post: Postcondition}): BDDNode{
+        console.log("event_to_bdd", event.pre, event.post.toString());
         let bdd_prec = BDD.buildFromFormula(event.pre);
         let bdd_post = null;
         if(event.post == null){
             let posted = {}
-            bdd_post = null; /* BDD.BddService.let(SymbolicEventModel.varsToPosted(BDD.BddService.support(bdd_prec), bdd_prec) */
+            bdd_post = null; //BDD.bddService.let(SymbolicEventModel.varsToPosted(BDD.bddService.support(bdd_prec)), bdd_prec);
         }else{
             let transform = {};
             for(let vari in event.post){
                 transform[SymbolicEventModel.getPostedVarName(vari)] = event.post[vari];
             }
-            bdd_post = null; /* BDD.bddService.cube(transform); */
+            bdd_post = null; // BDD.bddService.cube(transform);
         }
         return BDD.bddService.applyAnd([bdd_prec, bdd_post]);
     }

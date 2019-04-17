@@ -136,7 +136,8 @@ export class SymbolicEventModel implements EventModel  {
             transfert2[SymbolicEventModel.getPostedVarName(vari)] = vari;
         }
         
-        let res = BDD.bddService.applyExistentialForget(BDD.bddService.let(transfert2, w), plus)  //  Oublie des Post
+        let res = null;
+        // BDD.bddService.applyExistentialForget(BDD.bddService.let(transfert2, w), plus)  //  Oublie des Post
         
         let newSEM = new SymbolicEpistemicModel(agentMap, M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getPrimeToNotPrime(), M.getNotPrimeToPrime(), M.getInitialFormula())
         newSEM.setPointedWorld(BDD.bddService.toValuation(res));

@@ -193,7 +193,7 @@ export class SymbolicEpistemicModel implements EpistemicModel{
 
         let pointeur = this._query_worlds(formula);
         let res = null;
-        res = BDD.bddService.let(this.pointed, pointeur)
+        // res = BDD.bddService.let(this.pointed, pointeur)
         return BDD.bddService.isTrue(res)
     }
 

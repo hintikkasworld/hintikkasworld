@@ -299,6 +299,9 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         const that = this;
 
         function draw(current_agent) {
+
+            console.log(current_agent + " draws.");
+
             var E = new ExplicitEventModel();
 
             let events = [];
@@ -313,6 +316,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                         new AtomicFormula(SimpleSymbolicHanabi.getVarName(current_agent, c))
                     )]
                 );
+                console.log(pre, post);
                 E.addAction(current_agent + " draws " + c, pre, new PropositionalAssignmentsPostcondition(post));
             }
 
@@ -326,11 +330,15 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 }
             }
             E.setPointedAction(current_agent + " draws " + (SimpleSymbolicHanabi.nbCards - 1));
+            console.log("end draw");
             return E;
 
         }
 
         function play(agent, card, destination) {
+
+            console.log(agent + " " + destination + " " + card);
+
             var E = new ExplicitEventModel();
 
             let post = {};
@@ -357,6 +365,9 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         }
 
         function valueAnnoucement(agent, nbCards, value) {
+
+            console.log(agent + " " + nbCards + " " + value)
+
             var E = new ExplicitEventModel();
 
             let liste_var = [];
@@ -383,6 +394,9 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         }
 
         function colorAnnoucement(agent, nbCards, color) {
+
+            console.log(agent + " " + nbCards + " " + color)
+
             var E = new ExplicitEventModel();
 
             let liste_var = [];
@@ -405,8 +419,10 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         }
 
         let list = [];
+        console.log(this.agents);
         /* DRAWS */
-        for (let agent in this.agents) {
+        for (let agent of this.agents) {
+            console.log(agent);
             let ema = new EventModelAction(
                 {
                     name: "Agent " + agent + " draws a card.",
@@ -417,7 +433,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         }
 
 
-        for (let agent in this.agents) {
+        for (let agent of this.agents) {
             for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                 /* PLAY */
                 let ema = new EventModelAction(
@@ -438,7 +454,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             }
         }
 
-        for (let agent in this.agents) {
+        for (let agent of this.agents) {
             for (var c = 1; c < SimpleSymbolicHanabi.nbCards + 1; c++) {
                 for (var val = 1; val < 9; val++) {
                     let ema2 = new EventModelAction(
@@ -452,7 +468,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             }
         }
 
-        for (let agent in this.agents) {
+        for (let agent of this.agents) {
             for (var color in ["white", "red", "blue", "yellow", "green"]) {
                 let ema2 = new EventModelAction(
                     {

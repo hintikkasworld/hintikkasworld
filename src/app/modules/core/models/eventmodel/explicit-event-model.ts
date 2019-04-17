@@ -42,6 +42,7 @@ export class ExplicitEventModel extends Graph implements EventModel {
      * @example E.addAction("e1", "(K a p)", {"p": "(K a q)", "q": "(not p)"})
      * */
     addAction(e: string, pre: Formula, post: Postcondition = new TrivialPostcondition()) {
+        console.log("ICI", pre, post.toString());
         this.addNode(e, {
             pre: pre,
             post: post,
