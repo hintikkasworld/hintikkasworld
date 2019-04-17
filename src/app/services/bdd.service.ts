@@ -203,7 +203,7 @@ export class BddService {
   applyRenaming(b: BDDNode, renaming: Map<string, string>) {
     const oldvars: string[] = [];
     const newvars: string[] = [];
-    for (const [o, n] of renaming.entries()) {
+    for (const [o,n] of Array.from(renaming.entries())) {
       oldvars.push(this.getIndexFromAtom(o));
       newvars.push(this.getIndexFromAtom(n));
     }
@@ -242,10 +242,10 @@ export class BddService {
     const trueAtoms = [];
     let current = bddNode;
     while ( ! this.isTrue(current)) {
-      const then = this.getThenOf(current);
-      if (this.isFalse(then)) then = this.getElseOf(current);
+      let next = this.getThenOf(current);
+      if (this.isFalse(then)) next = this.getElseOf(current);
       else trueAtoms.push(this.getAtomOf(current));
-      current = then;
+      current = next;
     }
     return new Valuation(trueAtoms);
   }
@@ -262,7 +262,7 @@ export class BddService {
 
   createCube(assignment: {atom: string, value:boolean}): BDDNode{
     const literals = []
-    for (const [atom, value] of Object.entries(assignment) {
+    for (const [atom, value] of Object.entries(assignment)) {
       let lit = this.createLiteral(atom);
       if (value) lit = this.applyNot(lit);
       literals.push(lit);
