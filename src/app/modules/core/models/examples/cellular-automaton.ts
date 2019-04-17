@@ -23,8 +23,6 @@ import { World } from '../epistemicmodel/world';
  * @example new CellularAutomataWorld(["p", "r"])
  * */
 class CellularAutomataWorld extends World {
-
-
     readonly cellState: string;
     readonly propositionRightTrue: boolean;
 
