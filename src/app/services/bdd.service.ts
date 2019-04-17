@@ -200,8 +200,8 @@ export class BddService {
     this.bddModule._destroy(bddNode);
   }
 
-  copy(bddNode: BDDNode): BDDNode{
-    return this.bddModule._createCopy(bddNode)
+  createCopy(bddNode: BDDNode): BDDNode{
+    return this.bddModule._create_copy(bddNode)
   }
 
 }
