@@ -92,20 +92,8 @@ class FlatlandEpistemicModel implements EpistemicModel {
         { a: { x: 10, y: 30 }, b: { x: 50, y: 30 }, c: { x: 70, y: 50 } },
         { a: 0, b: Math.PI / 4, c: Math.PI / 2 });
 
-    constructor() {
-
-    }
-
-
-    getPointedWorld(): World {
-        return FlatlandEpistemicModel.pointedWorld;
-    }
-
-
-    getAgents(): string[] {
-        return ["a", "b", "c"];
-    }
-
+    getPointedWorld(): World { return FlatlandEpistemicModel.pointedWorld; }
+    getAgents(): string[] { return ["a", "b", "c"]; }
 
     getSuccessors(w: FlatlandWorld, a: string) {
         /**
@@ -116,7 +104,7 @@ class FlatlandEpistemicModel implements EpistemicModel {
          */
         function getSuccessor(w: FlatlandWorld, a: string): FlatlandWorld {
             function testIfSuccessor(w: FlatlandWorld, u: FlatlandWorld) {
-                for (let agent of ["a", "b", "c"]) {
+                for (let agent in w.pos) {
                     if (!w.isSee(a, agent) && u.isSee(a, agent))
                         return false;
                 }
