@@ -42,6 +42,7 @@ class FlatlandWorld extends World {
             context.stroke();
         }
 
+        context.clearRect(0, 0, 128, 64);
 
         for (let agent in this.pos) {
             drawVisionCone(agent, this.pos[agent], this.dir[agent]);
@@ -79,8 +80,8 @@ class FlatlandWorld extends World {
 
 class FlatlandEpistemicModel implements EpistemicModel {
     static pointedWorld = new FlatlandWorld(
-        { a: { x: 10, y: 10 }, b: { x: 30, y: 10 }, c: { x: 10, y: 40 } },
-         { a: 0, b: 0, c: 0 });
+        { a: { x: 10, y: 30 }, b: { x: 50, y: 30 }, c: { x: 70, y: 50 } },
+        { a: 0, b: Math.PI / 4, c: Math.PI / 2 });
 
     constructor() {
 
@@ -129,13 +130,20 @@ class FlatlandEpistemicModel implements EpistemicModel {
 
         }
 
-        let succs = [];
-        for (let i = 0; i < 50; i++) {
-            let u = getSuccessor(w, a);
-            if (u != undefined)
-                succs.push(u);
+
+        if (w.isSee(a, "a") && w.isSee(a, "b") && w.isSee(a, "c"))
+            return [w];
+        else {
+            let succs = [];
+            for (let i = 0; i < 50; i++) {
+                let u = getSuccessor(w, a);
+                if (u != undefined)
+                    succs.push(u);
+            }
+            return succs;
         }
-        return succs;
+
+
     }
 
     check(formula: Formula) {
