@@ -201,8 +201,8 @@ export class BddService {
   }
 
   applyRenaming(b: BDDNode, renaming: Map<string, string>) {
-    const oldvars: string[] = [];
-    const newvars: string[] = [];
+    const oldvars: BDDAtom[] = [];
+    const newvars: BDDAtom[] = [];
     for (const [o,n] of Array.from(renaming.entries())) {
       oldvars.push(this.getIndexFromAtom(o));
       newvars.push(this.getIndexFromAtom(n));
@@ -243,7 +243,7 @@ export class BddService {
     let current = bddNode;
     while ( ! this.isTrue(current)) {
       let next = this.getThenOf(current);
-      if (this.isFalse(then)) next = this.getElseOf(current);
+      if (this.isFalse(next)) next = this.getElseOf(current);
       else trueAtoms.push(this.getAtomOf(current));
       current = next;
     }
