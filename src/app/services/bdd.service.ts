@@ -66,13 +66,13 @@ export class BddService {
     return this.bddModule._make_new_atom();
   }
 
-  private getIndexFromAtom(p: string): BDDAtom {
-    if (!this.atomIndex.has(p)) {
+  private getIndexFromAtom(a: string): BDDAtom {
+    if (!this.atomIndex.has(a)) {
       let i = this.makeNewAtom();
-      this.atomIndex.set(p, i);
-      this.indexAtom.set(i, p);
+      this.atomIndex.set(a, i);
+      this.indexAtom.set(i, a);
     }
-    return this.atomIndex.get(p);
+    return this.atomIndex.get(a);
   }
 
   private getAtomFromIndex(i: BDDAtom): string {
@@ -159,8 +159,8 @@ export class BddService {
     throw new Error("to be implemented");
   }
 
-  getVarOf(b: BDDNode): string {
-    let i = this.bddModule._get_var_of(b);
+  getAtomOf(b: BDDNode): string {
+    let i = this.bddModule._get_atom_of(b);
     return this.getAtomFromIndex(i);
   }
 

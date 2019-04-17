@@ -30,7 +30,7 @@ describe('BddService', () => {
 
 	  let bAtom = service.createLiteral("p");
           console.log("is the atom an atom ?");
-          console.log(service.getVarOf(bAtom));
+          console.log(service.getAtomOf(bAtom));
 
           let bP = service.applyIte(bAtom, bTrue, bFalse);
           console.log("the node for p is: " + bP);
@@ -46,7 +46,7 @@ it('literal should work', () => {
   expect(
     function test() {
       let b = service.createLiteral("p");
-      return service.getVarOf(b) == "p";
+      return service.getAtomOf(b) == "p";
     }()
   ).toBeTruthy();
 });
