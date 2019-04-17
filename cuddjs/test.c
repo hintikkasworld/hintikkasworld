@@ -108,6 +108,22 @@ bool is_false(DdNode *node) {
 }
 
 /**
+ * Indicate whether the given BDD is consistent.
+ */
+EMSCRIPTEN_KEEPALIVE
+bool is_consistent(Bdd bdd) {
+	return ! is_false(bdd);
+}
+
+/**
+ * Indicate whether the two given BDDs are equivalent.
+ */
+EMSCRIPTEN_KEEPALIVE
+bool are_equivalent(Bdd f, Bdd g) {
+	return f == g;
+}
+
+/**
  * Indicate whether the given node is an internal node.
  */
 EMSCRIPTEN_KEEPALIVE
@@ -134,9 +150,9 @@ DdNode *get_internal_characteristic(DdNode *node, enum CuddJS_InternalCharacteri
 				return Cudd_bddIthVar(ddm, (int)index);
 			}
 		case CUDDJS_THEN:
-			return Cudd_IsComplement(node) ? Cudd_T(node) : Cudd_E(node);
-		case CUDDJS_ELSE:
 			return Cudd_IsComplement(node) ? Cudd_E(node) : Cudd_T(node);
+		case CUDDJS_ELSE:
+			return Cudd_IsComplement(node) ? Cudd_T(node) : Cudd_E(node);
 		default:
 			error_code = CUDDJS_UNEXPECTED_ERROR;
 			return NULL;
