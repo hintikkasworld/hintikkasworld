@@ -79,8 +79,8 @@ export class BddService {
     return dataHeap.byteOffset;
   }
 
-  private mallocAtomArray(atomArray: BDDAtom[]): pointer {
-    return this.mallocPointerArray(<number[]>atomArray);
+  private mallocAtomArray(atomArray: string[]): pointer {
+    return this.mallocPointerArray(<number[]>atomArray.map(a => this.getIndexFromAtom(a)));
   }
 
   private mallocNodeArray(nodeArray: BDDNode[]): pointer {
