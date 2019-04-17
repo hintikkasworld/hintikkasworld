@@ -13,7 +13,7 @@ describe('SymbolicEpistemicModel', () => {
     console.log("Name", hanabi.getName());
     console.log("Variable", SimpleSymbolicHanabi.getVarName("a", 1));
     let m = hanabi.getInitialEpistemicModel();
-    console.log("FormulaInitiale", m.formulaInitial)
+    console.log("FormulaInitiale", m.getInitialFormula())
   });
 
 });

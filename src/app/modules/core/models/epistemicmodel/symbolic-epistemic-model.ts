@@ -24,7 +24,7 @@ export class SymbolicEpistemicModel implements EpistemicModel{
     protected notPrimetoPrime: Map<string, string>;
     protected primeToNotPrime: Map<string, string>;
     
-    protected initialFormula:BDD;
+    protected initialFormula: BDD;
     protected agents:string[];
 
     protected worldClass: WorldValuationType;
@@ -77,37 +77,54 @@ export class SymbolicEpistemicModel implements EpistemicModel{
      * @param relations Map of agent : accessibility relations
      * @param rules specific rules of the game as Formula
      */
-    constructor(worldClass : WorldValuationType, agents: string[], atoms:string[], relations:Map<string, SymbolicRelation>, rules: Formula){
+    static build(worldClass : WorldValuationType, agents: string[], atoms:string[], relations:Map<string, SymbolicRelation>, rules: Formula){
         
-        this.agents = agents;
-        this.pointed = null;
-        this.worldClass = worldClass;
-        this.propositionalAtoms = [];
-        this.propositionalPrimes = []
+        
+        let propositionalAtoms = [];
+        let propositionalPrimes = []
 
         let to_prime = new Map();
         let not_to_prime = new Map();
         atoms.forEach( (value) => {
             let prime = SymbolicEpistemicModel.getPrimedVarName(value);
-            this.propositionalAtoms.push(value);
-            this.propositionalPrimes.push(prime);
+            propositionalAtoms.push(value);
+            propositionalPrimes.push(prime);
             to_prime[value] = prime;
             not_to_prime[prime] = to_prime;
 
         });
-        this.notPrimetoPrime = to_prime;
-        this.primeToNotPrime = not_to_prime;
 
         let rename = rules.renameAtoms( (name) => { return SymbolicEpistemicModel.getPrimedVarName(name); } );
         let and_rules = new AndFormula([rename, rules]);
 
-        this.initialFormula = BDD.buildFromFormula(and_rules);
+        let initialFormula = BDD.buildFromFormula(and_rules);
 
-        this.graphe = new Map();
+        let graphe = new Map();
         relations.forEach((value: SymbolicRelation, key: string) => {
-            this.graphe[key] = BDD.and([and_rules, value.toBDD()]);
+            graphe[key] = BDD.and([and_rules, value.toBDD()]);
         });
 
+        return new SymbolicEpistemicModel(graphe, worldClass, agents, propositionalAtoms, propositionalPrimes, to_prime, not_to_prime, initialFormula);
+
+    }
+
+    constructor(agentMap: Map<string, BDD>, worldClass : WorldValuationType, agents: string[],
+        propositionalAtoms: string[], propositionalsPrimes: string[], toprime: Map<string, string>,
+        nottoprime: Map<string, string>, formula: BDD){
+
+        this.agents = agents;
+        this.pointed = null;
+        this.worldClass = worldClass;
+        this.propositionalAtoms = propositionalAtoms;
+        this.propositionalPrimes = propositionalsPrimes;
+        this.notPrimetoPrime = toprime;
+        this.primeToNotPrime = nottoprime;
+        this.initialFormula = formula;
+    
+        this.graphe = new Map();
+        agentMap.forEach((value: BDD, key: string) => {
+            this.graphe[key] = value;
+        });
     }
     
     /**
@@ -148,8 +165,28 @@ export class SymbolicEpistemicModel implements EpistemicModel{
         this.graphe[agent] = pointeur;
     }
 
-    get formulaInitial() {
+    getInitialFormula(): BDD {
         return this.initialFormula
+    }
+
+    getNotPrimeToPrime(): Map<string, string> {
+        return this.notPrimetoPrime;
+    }
+
+    getPrimeToNotPrime(): Map<string, string> {
+        return this.primeToNotPrime;
+    }
+
+    getPropositionalAtoms(){
+        return this.propositionalAtoms;
+    }
+
+    getPropositionalPrimes(){
+        return this.propositionalPrimes;
+    }
+
+    getWorldClass(){
+        return this.worldClass;
     }
 
     check(formula: Formula): boolean {

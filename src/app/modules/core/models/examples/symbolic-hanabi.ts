@@ -143,7 +143,7 @@ class MyTestForBDD {
         MyTestForBDD.assert(service.isTrue(service.getThenOf(bAtomP)), "IF of p is true");
         MyTestForBDD.assert(service.isFalse(service.getElseOf(bAtomP)), "Else of p is false");
         MyTestForBDD.assert(service.isFalse(service.getThenOf(notP)), "IF of not p is false");
-        MyTestForBDD.assert(service.isTrue(service.getElseOf(notP)), "Else of not p is true");
+        MyTestForBDD.assert(service.isTrue(service.getElseOf(notP)), "ELSE of not p is true");
 
         MyTestForBDD.assert(service.isTrue(service.applyExistentialForget(service.createCopy(bAtomP), ["p"])), "EForget(p, ['p']) == True")
         
@@ -262,7 +262,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         console.log(rules);
 
-        let M = new SymbolicEpistemicModel(SimpleHanabiWorld, this.agents, variables, relationsSymboliques, rules);
+        let M = SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, variables, relationsSymboliques, rules);
 
         let cardInHand_Begin = 4;
         let count = 0;

@@ -81,6 +81,8 @@ export class SymbolicEventModel implements EventModel  {
         var M = <SymbolicEpistemicModel> M1;
 
         var bdd_single_event: BDD = this.getPointedActionBDD();
+        
+        let agentMap = new Map<string, BDD>();
 
         for(var agent in this.agents){
             var ev_for_agent = this.getPlayerEvent(this.pointed, agent);
@@ -114,13 +116,14 @@ export class SymbolicEventModel implements EventModel  {
             pointeur = BDD.and([pointeur, ev_for_agent]);
             pointeur = BDD.existentialforget(pointeur, var_minus);
             /* pointeur = BDD.let(pointeur, transfert); */
-
-            M.setAgentGraphe(agent, pointeur);
+            
+            agentMap[agent] = pointeur
+            // M.setAgentGraphe(agent, pointeur);
         }
         /* Find the new true world */
 
         var bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation)).bddNode;
-        var w = BDD.bddService.applyAnd([bdd_valuation, bdd_single_event.bddNode]);
+        var w = BDD.bddService.applyAnd([bdd_valuation, BDD.bddService.createCopy(bdd_single_event.bddNode)]);
 
         if(BDD.bddService.isFalse(w)){
             throw new Error("An error has occured in the application of SymbolicEventModel on SymbolicEpistemicModel.");
@@ -135,9 +138,9 @@ export class SymbolicEventModel implements EventModel  {
         
         let res = BDD.bddService.applyExistentialForget(BDD.bddService.let(transfert2, w), plus)  //  Oublie des Post
         
-        M.setPointedWorld(BDD.bddService.toValuation(res));
-        
-        return M;
+        let newSEM = new SymbolicEpistemicModel(agentMap, M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getPrimeToNotPrime(), M.getNotPrimeToPrime(), M.getInitialFormula())
+        newSEM.setPointedWorld(BDD.bddService.toValuation(res));
+        return newSEM;
     };
 
     setPointedAction(e: string): void {
