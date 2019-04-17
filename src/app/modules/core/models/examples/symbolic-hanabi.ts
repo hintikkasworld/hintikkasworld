@@ -11,7 +11,6 @@ import { EventModelAction } from './../environment/event-model-action';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
 import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositional-assignments-postcondition';
 
-
 import { BddService } from './../../../../../app/services/bdd.service';
 import { BDD } from './../formula/bdd';
 
@@ -155,7 +154,7 @@ class MyTestForBDD {
         MyTestForBDD.assert(service.isTrue(service.applyExistentialForget(service.createCopy(phi), ["p"])), "EForget( (p&q)|(np&nq) , ['p']) == True")
         MyTestForBDD.assert(service.isFalse(service.applyUniversalForget(service.createCopy(phi), ["p"])), "UForget( (p&q)|(np&nq) , ['p']) == False")
 
-
+        MyTestForBDD.assert(BDD.buildFromFormula(new AtomicFormula("p")) == bAtomP, "buildFromFormula(p) == p"); 
 
     }
 }
@@ -176,6 +175,8 @@ class MyTestForBDD {
  * Caution : This Hanabi doesn't use the position of cards.
  */
 export class SimpleSymbolicHanabi extends ExampleDescription {
+
+    static ok: boolean = false;
 
     /**
      * Number of cards in the game Hanabi
@@ -260,9 +261,11 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         }
         let rules = new AndFormula(liste_rules);
 
-        console.log(rules);
+        console.log("Rules", rules);
 
         let M = SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, variables, relationsSymboliques, rules);
+
+        console.log("Fin SEM");
 
         let cardInHand_Begin = 4;
         let count = 0;
@@ -353,7 +356,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 )]
             );
 
-            let name = agent + " play " + c;
+            let name = agent + " play " + card;
 
             E.addAction(name, pre, new PropositionalAssignmentsPostcondition(post));
 
@@ -383,9 +386,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             }
 
             let pre = new ExactlyFormula(nbCards, liste_var);
-            let post = null;
             let name = nbCards + " out of " + value;
-            E.addAction(name, pre, new PropositionalAssignmentsPostcondition(post));
+            E.addAction(name, pre);
 
             for (let agent in that.agents) {
                 E.makeReflexiveRelation(agent);
@@ -408,9 +410,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             };
 
             let pre = new ExactlyFormula(nbCards, liste_var);
-            let post = null;
             let name = nbCards + " out of " + color;
-            E.addAction(name, pre, new PropositionalAssignmentsPostcondition(post));
+            E.addAction(name, pre);
 
             for (let agent in that.agents) {
                 E.makeReflexiveRelation(agent);
@@ -419,66 +420,71 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         }
 
         let list = [];
-        console.log(this.agents);
-        /* DRAWS */
-        for (let agent of this.agents) {
-            console.log(agent);
+        if(!SimpleSymbolicHanabi.ok){
+            
+            console.log(this.agents);
+            /* DRAWS */
+            //for (let agent of this.agents) {
+            console.log(this.agents[0]);
             let ema = new EventModelAction(
                 {
-                    name: "Agent " + agent + " draws a card.",
-                    eventModel: ExplicitToSymbolic.translate(draw(agent), this.variables)
+                    name: "Agent " + this.agents[0] + " draws a card.",
+                    eventModel: ExplicitToSymbolic.translate(draw(this.agents[0]), this.variables)
                 }
             );
             list.push(ema);
+            SimpleSymbolicHanabi.ok = true;
         }
+        throw Error("stop!");
+        //}
 
+        
+        // for (let agent of this.agents) {
+        //     for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
+        //         /* PLAY */
+        //         let ema = new EventModelAction(
+        //             {
+        //                 name: "Agent " + agent + " plays card " + c + ".",
+        //                 eventModel: ExplicitToSymbolic.translate(play(agent, c, "t"), this.variables)
+        //             }
+        //         );
+        //         list.push(ema);
+        //         /* DISCARD */
+        //         let ema2 = new EventModelAction(
+        //             {
+        //                 name: "Agent " + agent + " discards card " + c + ".",
+        //                 eventModel: ExplicitToSymbolic.translate(play(agent, c, "e"), this.variables)
+        //             }
+        //         );
+        //         list.push(ema2);
+        //     }
+        // }
 
-        for (let agent of this.agents) {
-            for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                /* PLAY */
-                let ema = new EventModelAction(
-                    {
-                        name: "Agent " + agent + " plays card " + c + ".",
-                        eventModel: ExplicitToSymbolic.translate(play(agent, c, "t"), this.variables)
-                    }
-                );
-                list.push(ema);
-                /* DISCARD */
-                let ema2 = new EventModelAction(
-                    {
-                        name: "Agent " + agent + " discards card " + c + ".",
-                        eventModel: ExplicitToSymbolic.translate(play(agent, c, "e"), this.variables)
-                    }
-                );
-                list.push(ema2);
-            }
-        }
+        // for (let agent of this.agents) {
+        //     for (var c = 1; c < SimpleSymbolicHanabi.nbCards + 1; c++) {
+        //         for (var val = 1; val < 9; val++) {
+        //             let ema2 = new EventModelAction(
+        //                 {
+        //                     name: "Agent " + agent + " has " + c + " cards of value " + val + ".",
+        //                     eventModel: ExplicitToSymbolic.translate(valueAnnoucement(agent, c, val), this.variables)
+        //                 }
+        //             );
+        //             list.push(ema2);
+        //         }
+        //     }
+        // }
 
-        for (let agent of this.agents) {
-            for (var c = 1; c < SimpleSymbolicHanabi.nbCards + 1; c++) {
-                for (var val = 1; val < 9; val++) {
-                    let ema2 = new EventModelAction(
-                        {
-                            name: "Agent " + agent + " has " + c + " cards of value " + val + ".",
-                            eventModel: ExplicitToSymbolic.translate(valueAnnoucement(agent, c, val), this.variables)
-                        }
-                    );
-                    list.push(ema2);
-                }
-            }
-        }
-
-        for (let agent of this.agents) {
-            for (var color in ["white", "red", "blue", "yellow", "green"]) {
-                let ema2 = new EventModelAction(
-                    {
-                        name: "Agent " + agent + " has " + c + " cards of color " + color + ".",
-                        eventModel: ExplicitToSymbolic.translate(colorAnnoucement(agent, c, color), this.variables)
-                    }
-                );
-                list.push(ema2);
-            }
-        }
+        // for (let agent of this.agents) {
+        //     for (var color in ["white", "red", "blue", "yellow", "green"]) {
+        //         let ema2 = new EventModelAction(
+        //             {
+        //                 name: "Agent " + agent + " has " + c + " cards of color " + color + ".",
+        //                 eventModel: ExplicitToSymbolic.translate(colorAnnoucement(agent, c, color), this.variables)
+        //             }
+        //         );
+        //         list.push(ema2);
+        //     }
+        // } 
 
         return list;
     }

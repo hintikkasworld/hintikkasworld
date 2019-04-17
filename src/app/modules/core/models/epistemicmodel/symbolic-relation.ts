@@ -1,11 +1,11 @@
 import { Formula, FormulaFactory } from '../formula/formula';
 import { SymbolicEpistemicModel } from './symbolic-epistemic-model';
-import { BddService } from '../../../../services/bdd.service';
+import { BddService, BDDNode } from '../../../../services/bdd.service';
 import { BDD } from '../formula/bdd';
 
 export interface SymbolicRelation {
     toFormula(): Formula;
-    toBDD(): BDD;
+    toBDD(): BDDNode;
 }
 
 /**
@@ -27,7 +27,7 @@ export class Obs implements SymbolicRelation {
         return FormulaFactory.createFormula(strFormula);
     }
 
-    toBDD() : BDD {
+    toBDD() : BDDNode {
         return BDD.buildFromFormula(this.toFormula());
     }
 }

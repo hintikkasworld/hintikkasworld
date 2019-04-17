@@ -122,7 +122,7 @@ export class SymbolicEventModel implements EventModel  {
         }
         /* Find the new true world */
 
-        var bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation)).bddNode;
+        var bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation));
         var w = BDD.bddService.applyAnd([bdd_valuation, BDD.bddService.createCopy(bdd_single_event.bddNode)]);
 
         if(BDD.bddService.isFalse(w)){

@@ -15,8 +15,8 @@ export class BDD {
     get thisbddNode() {
         return this.bddNode;
     }
-    static buildFromFormula(f:Formula):BDD {
-        return new BDD(BDD.getBDDNode(f))
+    static buildFromFormula(f:Formula):BDDNode {
+        return BDD.getBDDNode(f);
     }
     pickRandomSolution(): Valuation {
         return BDD.bddService.pickRandomSolution(this.bddNode);
@@ -26,7 +26,8 @@ export class BDD {
         switch (true) {
             case (phi instanceof types.TrueFormula): return BDD.bddService.createTrue();
             case (phi instanceof types.FalseFormula): return BDD.bddService.createFalse();
-            case (phi instanceof types.AtomicFormula): return BDD.bddService.createLiteral((<types.AtomicFormula>phi).getAtomicString());
+            case (phi instanceof types.AtomicFormula): 
+                return BDD.bddService.createLiteral((<types.AtomicFormula>phi).getAtomicString());
             case (phi instanceof types.ImplyFormula):
                 return BDD.bddService.applyImplies(this.getBDDNode((<types.ImplyFormula>phi).formula1), this.getBDDNode((<types.ImplyFormula>phi).formula2));
             case (phi instanceof types.EquivFormula):
@@ -52,6 +53,7 @@ export class BDD {
                 return BDD.createExactlyBDD((<types.ExactlyFormula>phi).count, (<types.ExactlyFormula>phi).variables);
             }
         }
+        throw Error("type of phi not found");
     }
 
 

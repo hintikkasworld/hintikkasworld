@@ -142,6 +142,11 @@ class CellularAutomatonPostcondition extends Postcondition {
     toString() {
         return "f";
     }
+
+    // Sorry, need to test with that
+    getValuation(){
+        return null;
+    }
 }
 
 

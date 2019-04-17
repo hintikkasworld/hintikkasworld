@@ -7,11 +7,9 @@ import { SymbolicRelation, Obs } from './symbolic-relation';
 import { Formula, AndFormula, ExactlyFormula, NotFormula, EquivFormula, AtomicFormula, FormulaFactory, TrueFormula, KposFormula } from '../formula/formula';
 import { BDD } from '../formula/bdd';
 import * as types from './../formula/formula';
-import { BddService } from '../../../../services/bdd.service';
+import { BddService, BDDNode } from '../../../../services/bdd.service';
 
 interface WorldValuationType extends Function { new(val: Valuation): WorldValuation; }
-
-export type BDDNode = number;
 
 /**
  * 
@@ -24,7 +22,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     protected notPrimetoPrime: Map<string, string>;
     protected primeToNotPrime: Map<string, string>;
 
-    protected initialFormula: BDD;
+    protected initialFormula: BDDNode;
     protected agents: string[];
 
     protected worldClass: WorldValuationType;
@@ -103,13 +101,15 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             //graphe[key] = BDD.and([and_rules, value.toBDD()]);
         });
 
+        console.log("Graphe", graphe);
+
         return new SymbolicEpistemicModel(graphe, worldClass, agents, propositionalAtoms, propositionalPrimes, to_prime, not_to_prime, initialFormula);
 
     }
 
     constructor(agentMap: Map<string, BDD>, worldClass: WorldValuationType, agents: string[],
         propositionalAtoms: string[], propositionalsPrimes: string[], toprime: Map<string, string>,
-        nottoprime: Map<string, string>, formula: BDD) {
+        nottoprime: Map<string, string>, formula: BDDNode) {
 
         this.agents = agents;
         this.pointed = null;
@@ -123,6 +123,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         this.graphe = new Map();
         agentMap.forEach((value: BDD, key: string) => {
             this.graphe[key] = value;
+            console.log("BDD of", key, value);
         });
     }
 
@@ -164,7 +165,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         this.graphe[agent] = pointeur;
     }
 
-    getInitialFormula(): BDD {
+    getInitialFormula(): BDDNode {
         return this.initialFormula
     }
 

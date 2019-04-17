@@ -43,5 +43,9 @@ export class PropositionalAssignmentsPostcondition extends Postcondition {
             s += p + ":=" + this.post[p] + " ";
         return s;
     }
+
+    getValuation(){
+        return this.post;
+    }
 }
 

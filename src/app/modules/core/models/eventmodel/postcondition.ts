@@ -34,4 +34,5 @@ export abstract class Postcondition {
 
     abstract perform(M: EpistemicModel, w: string);
     abstract toString(): string;
+    abstract getValuation();
 }
