@@ -5,7 +5,7 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
-import { ExactlyFormula, AndFormula, AtomicFormula, NotFormula } from '../formula/formula';
+import { Formula, ExactlyFormula, AndFormula, AtomicFormula, NotFormula } from '../formula/formula';
 import { ExplicitToSymbolic } from '../eventmodel/explicit-to-symbolic';
 import { EventModelAction } from './../environment/event-model-action';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
@@ -13,6 +13,7 @@ import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositi
 
 import { BddService } from './../../../../../app/services/bdd.service';
 import { BDD } from './../formula/bdd';
+import { LCONTAINER_LENGTH } from '@angular/core/src/render3/interfaces/container';
 
 /**
  * @param valuation a valuation
@@ -76,6 +77,7 @@ class MyTestForBDD {
         MyTestForBDD.testInitialisation();
         MyTestForBDD.simpleFormula();
         MyTestForBDD.someBDDMethod();
+        MyTestForBDD.testPick();
         console.log(" ==> " + MyTestForBDD.n + " success.")
         console.log(" === End tests ===")
     }
@@ -107,6 +109,9 @@ class MyTestForBDD {
         console.log(service.getAtomOf(variable), ":", variable, "|", "Then", service.getThenOf(variable), "Else", service.getElseOf(variable), "True :", service.createTrue(), "False:", service.createFalse());
     }
 
+    /**
+     * Basic tests
+     */
     private static testInitialisation(){
 
         let service = BDD.bddService;
@@ -119,6 +124,9 @@ class MyTestForBDD {
         MyTestForBDD.assert(service.isFalse(bFalse), "False is false.");
     }
 
+    /**
+     * Tests on simple formula : And, Or, getAtomOf, isInternal, isFalse, isTrue, Not, Implies, Equiv, getThen, getElse, 
+     */
     private static simpleFormula(){
 
         let service = BDD.bddService;
@@ -147,13 +155,12 @@ class MyTestForBDD {
         MyTestForBDD.assert(service.isTrue(service.applyNot(service.createFalse())), "not false is true");
 
         let bAtomQ = service.createLiteral("q");
-        console.log("q");
 
         let or1 = service.applyAnd([service.createLiteral("q"), service.createLiteral("p")]);
 
         let or2 = service.applyOr([service.createCopy(bAtomQ), service.createCopy(bAtomP)]);
 
-        console.log("PICK", service.pickSolutions(or2));
+        //console.log("PICK", service.pickSolutions(or2));
 
         let notQ = service.applyNot(service.createCopy(bAtomQ));
         let implies1 = service.applyImplies(service.createCopy(bAtomP), service.createCopy(bAtomQ));
@@ -182,12 +189,13 @@ class MyTestForBDD {
         MyTestForBDD.assert(BDD.buildFromFormula(new AtomicFormula("p")) == bAtomP, "buildFromFormula(p) == p"); 
     }
 
-
+    /**
+     * Tests on buildFromFormula, cube
+     */
     private static someBDDMethod(){
 
         let service = BDD.bddService;
 
-        
         let bAtomP = service.createLiteral("p");
         let bAtomQ = service.createLiteral("q");
         let notQ = service.applyNot(service.createCopy(bAtomQ));
@@ -212,10 +220,20 @@ class MyTestForBDD {
         let anbc = service.applyAnd([service.createLiteral("a"), service.applyNot(service.createLiteral("b")), service.createLiteral("c")]);
         let anbc2 = BDD.buildFromFormula(new AndFormula([new AtomicFormula("a"), new NotFormula(new AtomicFormula("b")), new AtomicFormula("c") ]))
         let cube = service.createCube(map);
-        MyTestForBDD.assert(cube == anbc && anbc == anbc2 && cube == anbc2 , "cube([a:t, b:f, c:t]) == a & not b & c == buildFromFormula");
-        
+        MyTestForBDD.assert(cube == anbc && anbc == anbc2 && cube == anbc2 , "cube([a:t, b:f, c:t]) == a & not b & c == buildFromFormula");        
 
     }
+
+    private static testPick(){
+        let service = BDD.bddService;
+        let bAtomP = service.createLiteral("p");
+        let notP = service.applyNot(service.createCopy(bAtomP));
+
+        MyTestForBDD.assert(service.pickSolutions(bAtomP).length == 1, "len(pickSolution(p))==1");
+
+    }
+
+
 }
 
 /**
@@ -240,7 +258,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     /**
      * Number of cards in the game Hanabi
      */
-    static readonly nbCards: number = 20;
+    static readonly nbCards: number = 10;
     /**
      * List of agents
      */
@@ -283,10 +301,12 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         });
         this.variables = variables;
 
+        console.log("Variables", variables);
+
         /* Create Obs <<SymbolicRelation>> which represent relations of each agent like var_a_c <-> var_a_c_p */
-        var relationsSymboliques: Map<string, SymbolicRelation> = new Map();
+        let relationsSymboliques: Map<string, SymbolicRelation> = new Map();
         this.agents.forEach((current_agent) => {
-            let liste_rel = [];
+            let liste_rel: (Formula|string)[] = [];
             /* Reciprocity of cards : agent does'nt see all variables of himself and draw */
             this.owners.forEach((agent) => {
                 for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
@@ -297,13 +317,17 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             });
 
             /* Enumeration of agent's card : : agent see the number of his cards : 0 <-> 0p and 1 <-> 1p and ... */
+            let his_cards = [];
+            for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
+                his_cards.push(SimpleSymbolicHanabi.getVarName(current_agent, c));
+            }
             for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                 for (var i = 1; i < 6; i++) {
-                    liste_rel.push(new ExactlyFormula(i, [SimpleSymbolicHanabi.getVarName(current_agent, c)]));
+                    liste_rel.push(new ExactlyFormula(i, his_cards));
                 };
             };
             console.log("ListeRel", liste_rel);
-            relationsSymboliques[current_agent] = new Obs(liste_rel);
+            relationsSymboliques.set(current_agent, new Obs(liste_rel));
 
         });
 
@@ -326,13 +350,13 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         console.log("Fin SEM");
 
-        let cardInHand_Begin = 4;
+        let cardInHand_Begin = 2;
         let count = 0;
 
         let propositions: { [id: string]: boolean } = {};
         this.agents.forEach((current_agent) => {
             for (var c = 0; c < cardInHand_Begin; c++) {
-                propositions[SimpleSymbolicHanabi.getVarName(current_agent, c)] = true;
+                propositions[SimpleSymbolicHanabi.getVarName(current_agent, count)] = true;
                 count += 1;
             };
         });
@@ -351,6 +375,16 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         console.log("Valuation", propositions, );
 
         M.setPointedWorld(new Valuation(propositions));
+
+        console.log("TEST");
+
+        console.log("InitialWorld", new Valuation(propositions));
+
+        console.log("Graphe a", M.getAgentGraphe("a"));
+
+        console.log("Pick one", BDD.bddService.pickOneSolution(M.getAgentGraphe("a")));
+
+        console.log(BDD.bddService.pickSolutions(M.getAgentGraphe("a"), 10));
 
         return M;
     }

@@ -61,8 +61,7 @@ export class SymbolicEventModel implements EventModel  {
 
         console.log("AGENTS", agents);
         for(let agent of agents){
-            this.agentsEvents[agent] = new Map<string, BDDNode>();
-            console.log("Create maps", agent, this.agentsEvents[agent]);
+            this.agentsEvents.set(agent, new Map<string, BDDNode>());
         }
         console.log("Maps", this.agentsEvents);
 
@@ -88,12 +87,12 @@ export class SymbolicEventModel implements EventModel  {
 
         var bdd_single_event: BDDNode = this.getPointedActionBDD();
         
-        let agentMap = new Map<string, BDD>();
+        let agentMap = new Map<string, BDDNode>();
 
         for(var agent in this.agents){
             var ev_for_agent = this.getPlayerEvent(this.pointed, agent);
             
-            let support = BDD.bddService.support(ev_for_agent);
+            let support: string[] = BDD.bddService.support(ev_for_agent);
 
             /* Get the minus variables */
             var var_minus = [];
@@ -113,18 +112,18 @@ export class SymbolicEventModel implements EventModel  {
             }
             
             /* transistion var_plus to var_minus */
-            var transfert = {};
+            var transfert = new Map<string, string>();
             for(var i=0; i<var_plus.length; i++){
                 transfert[var_plus[i]] = var_minus;
             }
 
-            var pointeur = M.getAgentGraphe(agent);
-            pointeur = BDD.and([pointeur, ev_for_agent]);
-            pointeur = BDD.existentialforget(pointeur, var_minus);
-            /* pointeur = BDD.let(pointeur, transfert); */
+            var pointeur: BDDNode = M.getAgentGraphe(agent);
+            pointeur = BDD.bddService.applyAnd([BDD.bddService.createCopy(pointeur), BDD.bddService.createCopy(ev_for_agent)]);
+            pointeur = BDD.bddService.applyExistentialForget(pointeur, var_minus);
+            pointeur = BDD.bddService.applyRenaming(pointeur, transfert); 
             
-            agentMap[agent] = pointeur
-            // M.setAgentGraphe(agent, pointeur);
+            agentMap.set(agent, pointeur);
+            
         }
         /* Find the new true world */
 
@@ -168,14 +167,14 @@ export class SymbolicEventModel implements EventModel  {
     }
 
     getUniqueEvent(key: string): BDDNode{
-        return this.uniqueEvents[key];
+        return this.uniqueEvents.get(key);
     }
 
     addPlayerEvent(key, agent, event){
-        this.agentsEvents[agent][key] = event;
+        this.agentsEvents.get(agent).set(key, event);
     }
 
     getPlayerEvent(key, agent){
-        return this.agentsEvents[agent][key];
+        return this.agentsEvents.get(agent).get(key);
     }    
 }

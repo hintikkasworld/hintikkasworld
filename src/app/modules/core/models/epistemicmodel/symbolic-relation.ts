@@ -1,4 +1,4 @@
-import { Formula, FormulaFactory } from '../formula/formula';
+import { Formula, FormulaFactory, TrueFormula, AndFormula, EquivFormula, AtomicFormula} from '../formula/formula';
 import { SymbolicEpistemicModel } from './symbolic-epistemic-model';
 import { BddService, BDDNode } from '../../../../services/bdd.service';
 import { BDD } from '../formula/bdd';
@@ -14,20 +14,36 @@ export interface SymbolicRelation {
  */
 export class Obs implements SymbolicRelation {
 
-    protected observedVariables: string[];
+    protected observedVariables: (Formula|string)[];
 
-    constructor(observedVariables: string[]) {
+    constructor(observedVariables: (Formula|string)[]) {
         this.observedVariables = observedVariables;
     }
     toFormula() : Formula {
-        let strFormula: string = "";
-        this.observedVariables.forEach(atom => {
-            strFormula += "(" + atom + "<->" + SymbolicEpistemicModel.getPrimedVarName(atom) + ")";
-        });
-        return FormulaFactory.createFormula(strFormula);
+        let list_formula: Formula[] = [];
+        for(let form of this.observedVariables){
+            if(typeof form == "string"){
+                list_formula.push(new EquivFormula(new AtomicFormula(form), new AtomicFormula(SymbolicEpistemicModel.getPrimedVarName(form))));
+            }else{
+                list_formula.push(
+                    new EquivFormula(form, form.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); } ))
+                );
+            }
+
+        }
+        return new AndFormula(list_formula);
     }
 
     toBDD() : BDDNode {
-        return BDD.buildFromFormula(this.toFormula());
+        let formula = this.toFormula();
+        console.log(formula);
+        let res = null;
+        try {
+            res = BDD.buildFromFormula(formula);
+        } catch (error) {
+            BDD.bddService.stackTrace();
+            throw error;
+        }
+        return res;
     }
 }

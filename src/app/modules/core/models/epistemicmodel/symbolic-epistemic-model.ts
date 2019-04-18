@@ -30,7 +30,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     /**
      * Store for each agent the correspondant BDDNode
      */
-    protected graphe: Map<string, BDD>;
+    protected graphe: Map<string, BDDNode>;
 
     getAgents(): string[] {
         return this.agents;
@@ -56,7 +56,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * Return the primed symbol
      * @param varName
      */
-    static getPrimedString() { return "_p"; }
+    static getPrimedString() { return "_pr"; }
 
     /**
      * @param str 
@@ -94,13 +94,17 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         let rename = rules.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
         let and_rules = new AndFormula([rename, rules]);
 
+        console.log("AND RULES", and_rules);
         let initialFormula = BDD.buildFromFormula(and_rules);
+        console.log("AND RULES END");
 
-        let graphe = new Map();
+        let graphe = new Map<string, BDDNode>();
         console.log("ENTER relations", relations);
         relations.forEach((value: SymbolicRelation, key: string) => {
             console.log("parcous relations", value, key);
-            graphe[key] = BDD.bddService.applyAnd([BDD.bddService.createCopy(initialFormula), value.toBDD()]);
+            let bdd =  value.toBDD();
+            console.log("bdd", bdd);
+            graphe.set(key, BDD.bddService.applyAnd([BDD.bddService.createCopy(initialFormula), bdd]));
         });
 
         console.log("Graphe", graphe);
@@ -109,7 +113,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     }
 
-    constructor(agentMap: Map<string, BDD>, worldClass: WorldValuationType, agents: string[],
+    constructor(agentMap: Map<string, BDDNode>, worldClass: WorldValuationType, agents: string[],
         propositionalAtoms: string[], propositionalsPrimes: string[], formula: BDDNode) {
 
         // console.log("Agents of SymbolicEpistemicModel", agents);
@@ -121,9 +125,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         this.propositionalPrimes = propositionalsPrimes;
         this.initialFormula = formula;
 
-        this.graphe = new Map();
-        agentMap.forEach((value: BDD, key: string) => {
-            this.graphe[key] = value;
+        this.graphe = new Map<string, BDDNode>();
+        agentMap.forEach((value: BDDNode, key: string) => {
+            this.graphe.set(key, value);
             console.log("BDD of", key, value);
         });
     }
@@ -158,12 +162,12 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return null;
     };
 
-    getAgentGraphe(agent: string): BDD {
-        return this.graphe[agent];
+    getAgentGraphe(agent: string): BDDNode {
+        return this.graphe.get(agent);
     }
 
-    setAgentGraphe(agent: string, pointeur: BDD): void {
-        this.graphe[agent] = pointeur;
+    setAgentGraphe(agent: string, pointeur: BDDNode): void {
+        this.graphe.set(agent, pointeur);
     }
 
     getInitialFormula(): BDDNode {
@@ -171,21 +175,17 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     static getNotPrimeToPrime(atoms: string[]): Map<string, string> {
-        let map = new Map();
+        let map = new  Map<string, string>();
         atoms.forEach((value) => {
-            let prime = SymbolicEpistemicModel.getPrimedVarName(value);
-            map[prime] = value;
-
+            map.set(SymbolicEpistemicModel.getPrimedVarName(value), value);
         });
         return map;
     }
 
     static getPrimeToNotPrime(atoms: string[]): Map<string, string> {
-        let map = new Map();
+        let map = new Map<string, string>();
         atoms.forEach((value) => {
-            let prime = SymbolicEpistemicModel.getPrimedVarName(value);
-            map[value] = prime;
-
+            map.set(value, SymbolicEpistemicModel.getPrimedVarName(value));
         });
         return map;
     }
@@ -209,8 +209,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     check(formula: Formula): boolean {
 
         let pointeur = this._query_worlds(formula);
-        let res = null;
-        // res = BDD.bddService.let(this.pointed, pointeur)
+        let res = BDD.bddService.applyConditioning(pointeur, SymbolicEpistemicModel.valuationToMap(this.pointed));
         return BDD.bddService.isTrue(res)
     }
 
@@ -218,11 +217,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
         let f = new BDD(BDD.bddService.createFalse());
 
-        let pointeur = null;
-        /*pointeur = BDD.bddService.cube(this.pointed.propositions); */
+        // let pointeur: BDDNode = BDD.bddService.createCube(SymbolicEpistemicModel.valuationToMap(this.pointed));
 
-        this.graphe.forEach((value: BDD, key: string) => {
-            let f2 = new BDD(BDD.bddService.applyUniversalForget(pointeur, this.propositionalPrimes));
+        this.graphe.forEach((value: BDDNode, key: string) => {
+            let f2 = new BDD(BDD.bddService.applyUniversalForget(value, this.propositionalPrimes));
             f = BDD.or([f, f2]);
         });
 
@@ -282,6 +280,16 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         }
         return new AndFormula(liste);
     }
-}
 
+
+    static valuationToMap(valuation: Valuation): Map<string, boolean> {
+        let map = new Map<string, boolean>();
+        for (var element in valuation.propositions){
+            map.set(element, valuation[element]);
+        }
+        return map
+
+    } 
+
+}
 

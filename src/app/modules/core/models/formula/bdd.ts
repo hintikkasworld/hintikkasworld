@@ -36,7 +36,7 @@ export class BDD {
                 return BDD.bddService.applyAnd((<types.AndFormula>phi).formulas.map((f) => this.getBDDNode(f)));
 
             case (phi instanceof types.OrFormula):
-                return BDD.bddService.applyOr((<types.AndFormula>phi).formulas.map((f) => this.getBDDNode(f)));
+                return BDD.bddService.applyOr((<types.OrFormula>phi).formulas.map((f) => this.getBDDNode(f)));
             case (phi instanceof types.XorFormula): {
                 throw new Error("to be implemented");
             }
@@ -74,8 +74,8 @@ export class BDD {
             store(kVar, 0, this.getBDDNode(new types.AndFormula(vars.slice(kVar).map((p) => new types.NotFormula(new types.AtomicFormula(p))))));
 
             for (let i = 0; i <= n; i++) {
-                    let b1 = getExactlyBDD(kVar+1, i-1);
-                    let b2 = getExactlyBDD(kVar, i);
+                    let b1 = BDD.bddService.createCopy(getExactlyBDD(kVar+1, i-1));
+                    let b2 = BDD.bddService.createCopy(getExactlyBDD(kVar, i));
 
                     store(kVar, i, BDD.bddService.applyIte(BDD.bddService.createLiteral(vars[kVar]), b1, b2));
             }
