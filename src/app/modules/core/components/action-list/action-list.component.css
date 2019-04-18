@@ -11,6 +11,7 @@ button {
   max-width: 240px;
   text-align: left;
   outline: none;
+  
 }
 
 button :hover {
