@@ -250,7 +250,7 @@ export class BddService {
    * NB: this is not efficient
    */
   pickSolutions(bddNode: BDDNode, max?: number): Valuation[] {
-    function getSetOfTrueAtomsOf(n: BDDNode, max: number): string[][] {
+    const getSetOfTrueAtomsOf = (n: BDDNode, max: number): string[][] => {
       if (max === 0 || this.isFalse(n)) return [];
       if (this.isTrue(n)) return [[]];
       const sols = getSetOfTrueAtomsOf(this.getElseOf(n), max);
@@ -263,7 +263,7 @@ export class BddService {
         sols.push(trueAtoms);
       }
       return sols;
-    }
+    };
     return getSetOfTrueAtomsOf(bddNode, max).map(trueAtoms => new Valuation(trueAtoms));
   }
 
