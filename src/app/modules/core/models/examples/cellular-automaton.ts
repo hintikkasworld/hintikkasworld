@@ -32,18 +32,15 @@ class CellularAutomataWorld extends World {
     };
 
     constructor(cellState: string, propositionRightTrue: boolean) {
-        function setAgentPositions() {
-            let posleft = { x: 24, y: 32, r: 24 };
-            let posright = { x: 128 - 24, y: 32, r: 24 };
-            this.agentPos["a"] = this.isPropositinoRightTrue() ? posleft : posright;
-            this.agentPos["b"] = this.isPropositinoRightTrue() ? posright : posleft;
-            this.agentPos["c"] = undefined;
-        }
-
         super();
         this.cellState = cellState;
         this.propositionRightTrue = propositionRightTrue;
-        setAgentPositions();
+
+        let posleft = { x: 24, y: 32, r: 24 };
+        let posright = { x: 128 - 24, y: 32, r: 24 };
+        this.agentPos["a"] = propositionRightTrue ? posleft : posright;
+        this.agentPos["b"] = propositionRightTrue ? posright : posleft;
+        this.agentPos["c"] = undefined;
     }
 
     modelCheck(phi: string) { return (phi == "r") ? this.propositionRightTrue : (this.cellState == phi); }

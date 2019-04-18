@@ -24,11 +24,12 @@ export class Environment {
         return this._exampleDescription;
     }
 
-    getActions() {
+    getActions(): [Action] {
         return this._exampleDescription.getActions();
     }
 
-    getExecutableActions() {
+    getExecutableActions(): [Action] {
+        console.log("we compute the set of executable actions");
         let M = this._epistemicModel;
         return this._exampleDescription.getActions().filter((action) => M.check(action.getPrecondition()) );
     }
