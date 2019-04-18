@@ -97,27 +97,28 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         let initialFormula = BDD.buildFromFormula(and_rules);
 
         let graphe = new Map();
+        console.log("ENTER relations", relations);
         relations.forEach((value: SymbolicRelation, key: string) => {
+            console.log("parcous relations", value, key);
             graphe[key] = BDD.bddService.applyAnd([BDD.bddService.createCopy(initialFormula), value.toBDD()]);
         });
 
         console.log("Graphe", graphe);
 
-        return new SymbolicEpistemicModel(graphe, worldClass, agents, propositionalAtoms, propositionalPrimes, to_prime, not_to_prime, initialFormula);
+        return new SymbolicEpistemicModel(graphe, worldClass, agents, propositionalAtoms, propositionalPrimes, initialFormula);
 
     }
 
     constructor(agentMap: Map<string, BDD>, worldClass: WorldValuationType, agents: string[],
-        propositionalAtoms: string[], propositionalsPrimes: string[], toprime: Map<string, string>,
-        nottoprime: Map<string, string>, formula: BDDNode) {
+        propositionalAtoms: string[], propositionalsPrimes: string[], formula: BDDNode) {
+
+        // console.log("Agents of SymbolicEpistemicModel", agents);
 
         this.agents = agents;
         this.pointed = null;
         this.worldClass = worldClass;
         this.propositionalAtoms = propositionalAtoms;
         this.propositionalPrimes = propositionalsPrimes;
-        this.notPrimetoPrime = toprime;
-        this.primeToNotPrime = nottoprime;
         this.initialFormula = formula;
 
         this.graphe = new Map();
@@ -169,12 +170,24 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return this.initialFormula
     }
 
-    getNotPrimeToPrime(): Map<string, string> {
-        return this.notPrimetoPrime;
+    static getNotPrimeToPrime(atoms: string[]): Map<string, string> {
+        let map = new Map();
+        atoms.forEach((value) => {
+            let prime = SymbolicEpistemicModel.getPrimedVarName(value);
+            map[prime] = value;
+
+        });
+        return map;
     }
 
-    getPrimeToNotPrime(): Map<string, string> {
-        return this.primeToNotPrime;
+    static getPrimeToNotPrime(atoms: string[]): Map<string, string> {
+        let map = new Map();
+        atoms.forEach((value) => {
+            let prime = SymbolicEpistemicModel.getPrimedVarName(value);
+            map[value] = prime;
+
+        });
+        return map;
     }
 
     getPropositionalAtoms() {

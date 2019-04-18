@@ -195,7 +195,7 @@ export class BddService {
     return res;
   }
 
-  applyConditioning(b: BDDNode, assignment: {[atom: string]: boolean}): BDDNode {
+  applyConditioning(b: BDDNode, assignment: Map<string, boolean>): BDDNode {
     const cube = this.createCube(assignment);
     return this.bddModule._apply_conditioning(b, cube);
   }
@@ -260,11 +260,11 @@ export class BddService {
     return support;
   }
 
-  createCube(assignment:  {[atom: string]: boolean}): BDDNode{
+  createCube(assignment:  Map<string, boolean>): BDDNode{
     const literals = []
-    for (const [atom, value] of Object.entries(assignment)) {
+    for (const [atom, value] of Array.from(assignment.entries())) {
       let lit = this.createLiteral(atom);
-      if (value) lit = this.applyNot(lit);
+      if (!value) lit = this.applyNot(lit);
       literals.push(lit);
     }
     return this.applyAnd(literals);

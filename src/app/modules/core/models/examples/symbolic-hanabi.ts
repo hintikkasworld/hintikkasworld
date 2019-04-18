@@ -217,7 +217,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         /* Creation of all variables getVarName */
         var variables: string[] = [];
-        this.agents.forEach((agent) => {
+        this.owners.forEach((agent) => {
             for (var i = 0; i < SimpleSymbolicHanabi.nbCards; i++) {
                 variables.push(SimpleSymbolicHanabi.getVarName(agent, i));
             }
@@ -289,7 +289,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             }
         });
 
-        console.log("Valuation", propositions);
+        console.log("Valuation", propositions, );
 
         M.setPointedWorld(new Valuation(propositions));
 
@@ -298,6 +298,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
 
     getActions() {
+
+        console.log("BEGIN ACTION", SimpleSymbolicHanabi.ok);
 
         const that = this;
 
@@ -420,23 +422,23 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         }
 
         let list = [];
+
         if(!SimpleSymbolicHanabi.ok){
             
             console.log(this.agents);
-            /* DRAWS */
-            //for (let agent of this.agents) {
+            SimpleSymbolicHanabi.ok = true;
+        /* DRAWS */
+        //for (let agent of this.agents) {
             console.log(this.agents[0]);
             let ema = new EventModelAction(
                 {
                     name: "Agent " + this.agents[0] + " draws a card.",
-                    eventModel: ExplicitToSymbolic.translate(draw(this.agents[0]), this.variables)
+                    eventModel: ExplicitToSymbolic.translate(draw(this.agents[0]), this.variables, this.agents)
                 }
             );
             list.push(ema);
-            SimpleSymbolicHanabi.ok = true;
+            
         }
-        throw Error("stop!");
-        //}
 
         
         // for (let agent of this.agents) {
@@ -486,6 +488,6 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         //     }
         // } 
 
-        return list;
+        return [];
     }
 }

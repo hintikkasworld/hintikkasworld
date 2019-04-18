@@ -4,6 +4,8 @@ import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-mod
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 import { BDD } from '../formula/bdd';
 import { WorldValuation } from '../epistemicmodel/world-valuation';
+import { BddService, BDDNode } from '../../../../services/bdd.service';
+
 
 export class SymbolicEventModel implements EventModel  {
 
@@ -36,8 +38,8 @@ export class SymbolicEventModel implements EventModel  {
         return varName + SymbolicEventModel.getPostedString() + SymbolicEpistemicModel.getPrimedString();
     }
 
-    static varsToPosted(vars: string[]){
-        let liste = {};
+    static varsToPosted(vars: string[]): Map<string, string>{
+        let liste = new Map();
         for(let vari in vars){
             liste[vari] = SymbolicEventModel.getPostedVarName(vari);
         }
@@ -46,19 +48,23 @@ export class SymbolicEventModel implements EventModel  {
 
     private agents: string[];
     private variables: string[];
-    private uniqueEvents: {};
-    private agentsEvents: {};
+    private uniqueEvents: Map<string, BDDNode>;
+    private agentsEvents: Map<string, Map<string, BDDNode>>;
     private pointed: string;
 
     constructor(agents: string[], variables: string[]) {
         this.agents = agents;
         this.variables = variables;
 
-        this.uniqueEvents = {}
-        this.agentsEvents = {}
-        for(let agent in agents){
-            this.agentsEvents[agent] = {};
+        this.uniqueEvents = new Map<string, BDDNode>();
+        this.agentsEvents = new Map<string, Map<string, BDDNode>>();
+
+        console.log("AGENTS", agents);
+        for(let agent of agents){
+            this.agentsEvents[agent] = new Map<string, BDDNode>();
+            console.log("Create maps", agent, this.agentsEvents[agent]);
         }
+        console.log("Maps", this.agentsEvents);
 
     }
 
@@ -80,7 +86,7 @@ export class SymbolicEventModel implements EventModel  {
         
         var M = <SymbolicEpistemicModel> M1;
 
-        var bdd_single_event: BDD = this.getPointedActionBDD();
+        var bdd_single_event: BDDNode = this.getPointedActionBDD();
         
         let agentMap = new Map<string, BDD>();
 
@@ -123,7 +129,7 @@ export class SymbolicEventModel implements EventModel  {
         /* Find the new true world */
 
         var bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation));
-        var w = BDD.bddService.applyAnd([bdd_valuation, BDD.bddService.createCopy(bdd_single_event.bddNode)]);
+        var w = BDD.bddService.applyAnd([bdd_valuation, BDD.bddService.createCopy(bdd_single_event)]);
 
         if(BDD.bddService.isFalse(w)){
             throw new Error("An error has occured in the application of SymbolicEventModel on SymbolicEpistemicModel.");
@@ -139,7 +145,7 @@ export class SymbolicEventModel implements EventModel  {
         let res = null;
         // BDD.bddService.applyExistentialForget(BDD.bddService.let(transfert2, w), plus)  //  Oublie des Post
         
-        let newSEM = new SymbolicEpistemicModel(agentMap, M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getPrimeToNotPrime(), M.getNotPrimeToPrime(), M.getInitialFormula())
+        let newSEM = new SymbolicEpistemicModel(agentMap, M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula())
         newSEM.setPointedWorld(BDD.bddService.toValuation(res));
         return newSEM;
     };
@@ -148,19 +154,20 @@ export class SymbolicEventModel implements EventModel  {
         this.pointed = e;
     }
 
-    getPointedAction(): string{
+    getPointedAction(): string {
         return this.pointed;
     }
 
-    getPointedActionBDD(): BDD {
-        return this.getUniqueEvent(this.getPointedAction());
+    getPointedActionBDD(): BDDNode {
+        let action: string = this.getPointedAction();
+        return this.getUniqueEvent(action);
     }
 
     addUniqueEvent(key, event){
         this.uniqueEvents[key] = event;
     }
 
-    getUniqueEvent(key){
+    getUniqueEvent(key: string): BDDNode{
         return this.uniqueEvents[key];
     }
 
