@@ -7,6 +7,11 @@ export class Environment {
     private readonly _exampleDescription: ExampleDescription;
     private _agentPerspective: string;
 
+    /*memoization : we store the set of executable actions. When it has the value undefined, it means 
+    that it has to be recomputed*/
+    private executableActions: [Action] = undefined; 
+
+
     constructor(exampleDescription: ExampleDescription) {
         this._exampleDescription = exampleDescription;
         this.reset();
@@ -18,6 +23,7 @@ export class Environment {
 
     setEpistemicModel(M: EpistemicModel) {
         this._epistemicModel = M;
+        this.executableActions = undefined;
     }
 
     getExampleDescription(): ExampleDescription {
@@ -29,9 +35,13 @@ export class Environment {
     }
 
     getExecutableActions(): [Action] {
-        console.log("we compute the set of executable actions");
-        let M = this._epistemicModel;
-        return this._exampleDescription.getActions().filter((action) => M.check(action.getPrecondition()) );
+        if (this.executableActions == undefined) {
+            console.log("we compute the set of executable actions");
+            let M = this._epistemicModel;
+            this.executableActions = this._exampleDescription.getActions().filter((action) => M.check(action.getPrecondition()));
+        }
+        return this.executableActions;
+
     }
 
     set agentPerspective(a: string) {
@@ -45,9 +55,12 @@ export class Environment {
 
     perform(action: Action) {
         this._epistemicModel = action.perform(this._epistemicModel);
+        this.executableActions = undefined;
     }
 
     reset() {
         this._epistemicModel = this._exampleDescription.getInitialEpistemicModel();
+        this.executableActions = undefined;
+
     }
 }
