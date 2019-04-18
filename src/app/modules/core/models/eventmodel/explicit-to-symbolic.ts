@@ -44,7 +44,7 @@ export class ExplicitToSymbolic {
 
                 //console.log(agent, event, value);
 
-                let action = null; //event_bdd[event];
+                let action = event_bdd[node];
 
                 let liste = variables.slice(0);
                 /* Keep the precondition variables */
@@ -54,7 +54,7 @@ export class ExplicitToSymbolic {
                     }
                 }
 
-                // console.log("Preconditions", BDD.bddService.support(action));
+                console.log("Preconditions", BDD.bddService.support(action));
                 
                 let action_frame = BDD.bddService.applyAnd([BDD.bddService.createCopy(action), ExplicitToSymbolic._frame(liste, false)]);
                 let pointeur = action_frame;
@@ -65,13 +65,9 @@ export class ExplicitToSymbolic {
 
                 console.log("Nodes ?", explicit_em.getNodes());
 
-                // IT RETURS []
-                console.log("SuccessorsID", explicit_em.getSuccessorsID(event, agent));
+                console.log("SuccessorsID", explicit_em.getSuccessorsID(node, agent));
                 
-
-                for(let succ of explicit_em.getSuccessorsID(event, agent)){
-                    
-                    // IT NEVER HAPPENS
+                for(let succ of explicit_em.getSuccessorsID(node, agent)){
 
                     console.log("Successor", succ);
                     console.log(explicit_em.getSuccessorsID(succ, agent));

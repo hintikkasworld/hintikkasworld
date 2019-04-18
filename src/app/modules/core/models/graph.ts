@@ -130,7 +130,9 @@ export class Graph {
      * */
     getSuccessorsID(node, agent) {
         if (this.nodes[node] == undefined) throw ("getSuccessors : There is no source node of ID " + node);
-
+        console.log(this.successors);
+        console.log(this.successors[agent]);
+        console.log(this.successors[agent][node]);
         if (this.successors[agent] == undefined)
             return new Array();
         else if (this.successors[agent][node] == undefined)

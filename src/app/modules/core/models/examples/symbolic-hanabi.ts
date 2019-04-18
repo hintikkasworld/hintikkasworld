@@ -309,7 +309,6 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
             var E = new ExplicitEventModel();
 
-            let events = [];
             for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                 let post = {};
                 post[SimpleSymbolicHanabi.getVarName(current_agent, c)] = true;
@@ -325,12 +324,12 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 E.addAction(current_agent + " draws " + c, pre, new PropositionalAssignmentsPostcondition(post));
             }
 
-            for (let agent in that.agents) {
+            for (let agent of that.agents) {
                 E.makeReflexiveRelation(agent);
             }
 
-            for (let event in events) {
-                for (let event2 in events) {
+            for (let event in E.getNodes()) {
+                for (let event2 in E.getNodes()) {
                     E.addEdge(current_agent, event, event2);
                 }
             }
