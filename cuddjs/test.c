@@ -1,3 +1,6 @@
+#define CUDDJS_DEBUG_MODE 1
+void debug(char *);
+#define DEBUG(msg) do {if (CUDDJS_DEBUG_MODE) debug(msg);} while(0)
 
 #include <stdarg.h>
 #include <stdbool.h>
@@ -247,6 +250,7 @@ enum CuddJS_BinaryOperator {
 Bdd apply_binary_op(Bdd n1, Bdd n2, enum CuddJS_BinaryOperator op) {
 	//fprintf(stderr, "debug op 1: %d\n", Cudd_DebugCheck(ddm));
 	DdNode *res;
+	DEBUG("binop start");
 	switch (op) {
 		case CUDDJS_AND:
 			res = Cudd_bddAnd(ddm, n1, n2);
@@ -261,11 +265,13 @@ Bdd apply_binary_op(Bdd n1, Bdd n2, enum CuddJS_BinaryOperator op) {
 			res = Cudd_bddXnor(ddm, n1, n2);
 			break;
 	}
+	DEBUG("binop done");
 	if (res == NULL) return NULL;
 	Cudd_Ref(res);
 	//fprintf(stderr, "debug op 2: %d\n", Cudd_DebugCheck(ddm));
 	Cudd_RecursiveDeref(ddm, n1);
 	Cudd_RecursiveDeref(ddm, n2);
+	DEBUG("binop refs done");
 	//fprintf(stderr, "debug op 3: %d\n", Cudd_DebugCheck(ddm));
 	return res;
 }
@@ -571,6 +577,13 @@ void init()
 
 void print_stats() {
  	printf("refs=%u, dead=%u\n", referenced_count(), dead_count());
+}
+void debug(char *msg) {
+	printf("%s\n", msg);
+	if (Cudd_DebugCheck(ddm) != 0) {
+		print_stats();
+		die("CUDD Debug Check failed");
+	}
 }
 
 void tests() {
