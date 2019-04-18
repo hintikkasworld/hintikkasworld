@@ -128,12 +128,12 @@ class MyTestForBDD {
 
         MyTestForBDD.assert(service.getAtomOf(bAtomP) == "p", "p is p.");
         
-        MyTestForBDD.assert(typeof service.applyIte(bAtomP, bTrue, bFalse) === "number", "applyIte(p, top, bot) is a number.");
+        MyTestForBDD.assert(typeof service.applyIte(service.createCopy(bAtomP), service.createCopy(bTrue), service.createCopy(bFalse)) === "number", "applyIte(p, top, bot) is a number.");
     
         MyTestForBDD.assert(!service.isInternalNode(bTrue), "True is not an InternalNode");
         MyTestForBDD.assert(service.isInternalNode(bAtomP), "p is an InternalNode");
 
-        MyTestForBDD.assert(service.getAtomOf(service.applyAnd([bAtomP, bTrue])) == "p", "service.getAtomOf(service.applyAnd([bAtomP, bTrue]) == p")
+        MyTestForBDD.assert(service.getAtomOf(service.applyAnd([service.createCopy(bAtomP), service.createCopy(bTrue)])) == "p", "service.getAtomOf(service.applyAnd([bAtomP, bTrue]) == p")
         
         MyTestForBDD.assert(service.isFalse(service.applyAnd([service.createCopy(bAtomP), service.createCopy(bFalse)])), "(p and false) is false");
         MyTestForBDD.assert(service.isTrue(service.applyOr([service.createCopy(bAtomP), service.createCopy(bTrue)])), "(p or true) is true");
@@ -147,6 +147,14 @@ class MyTestForBDD {
         MyTestForBDD.assert(service.isTrue(service.applyNot(service.createFalse())), "not false is true");
 
         let bAtomQ = service.createLiteral("q");
+        console.log("q");
+
+        let or1 = service.applyAnd([service.createLiteral("q"), service.createLiteral("p")]);
+
+        let or2 = service.applyOr([service.createCopy(bAtomQ), service.createCopy(bAtomP)]);
+
+        console.log("PICK", service.pickSolutions(or2));
+
         let notQ = service.applyNot(service.createCopy(bAtomQ));
         let implies1 = service.applyImplies(service.createCopy(bAtomP), service.createCopy(bAtomQ));
         let implies2 = service.applyImplies(service.createCopy(bAtomQ), service.createCopy(bAtomP));
@@ -473,23 +481,17 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         let list = [];
 
-        if(!SimpleSymbolicHanabi.ok){
-            
-            console.log(this.agents);
-            SimpleSymbolicHanabi.ok = true;
+
         /* DRAWS */
         //for (let agent of this.agents) {
-            console.log(this.agents[0]);
-            let ema = new EventModelAction(
-                {
-                    name: "Agent " + this.agents[0] + " draws a card.",
-                    eventModel: ExplicitToSymbolic.translate(draw(this.agents[0]), this.variables, this.agents)
-                }
-            );
-            list.push(ema);
-            
-        }
-
+        console.log(this.agents[0]);
+        let ema = new EventModelAction(
+            {
+                name: "Agent " + this.agents[0] + " draws a card.",
+                eventModel: ExplicitToSymbolic.translate(draw(this.agents[0]), this.variables, this.agents)
+            }
+        );
+        list.push(ema);
         
         // for (let agent of this.agents) {
         //     for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
