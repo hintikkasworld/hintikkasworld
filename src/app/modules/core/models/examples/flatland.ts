@@ -64,7 +64,14 @@ class FlatlandWorld extends World {
      * @returns true if agent sees agentb (agentb is in the cone of vision of agent) 
      */
     isSee(agent: string, agentb: string): boolean {
+        if(agent == agentb)
+            return true;
+
         let dist = Math.sqrt((this.pos[agentb].x - this.pos[agent].x) ^ 2 + (this.pos[agentb].y - this.pos[agent].y) ^ 2);
+
+        if(dist == 0)
+            return true;
+
         let scalarProduct = (this.pos[agentb].x - this.pos[agent].x) * Math.cos(this.dir[agent]) +
             (this.pos[agentb].y - this.pos[agent].y) * Math.sin(this.dir[agent]) / dist;
 
@@ -137,6 +144,9 @@ class FlatlandEpistemicModel implements EpistemicModel {
         if (w.isSee(a, "a") && w.isSee(a, "b") && w.isSee(a, "c"))
             return [w];
         else {
+            console.log('w.isSee(a, "a") : '+ w.isSee(a, "a") );
+            console.log('w.isSee(a, "b") : '+ w.isSee(a, "b") );
+            console.log('w.isSee(a, "c") : '+ w.isSee(a, "c") );
             let succs = [];
             for (let i = 0; i < 50; i++) {
                 let u = getSuccessor(w, a);
