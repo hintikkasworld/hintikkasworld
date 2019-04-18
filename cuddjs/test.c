@@ -48,9 +48,12 @@ DdManager *ddm;
 // 		backtrace_symbols_fd(array, size, 2);
 // 	}
 
+	void print_stats();
+
 	void debug(char *msg) {
 		printf("%s\n", msg);
 		if (Cudd_DebugCheck(ddm) != 0) {
+			print_stats();
 // 			print_trace();
 			die("CUDD Debug Check failed");
 		}
@@ -248,8 +251,10 @@ Atom make_new_atom() {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd create_false() {
+	DEBUG("create false");
 	DdNode *tmp = Cudd_ReadLogicZero(ddm);
 	Cudd_Ref(tmp);
+	DEBUG("false ref'ed");
 	return tmp;
 }
 
@@ -258,8 +263,10 @@ Bdd create_false() {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd create_true() {
+	DEBUG("create true");
 	DdNode *tmp = Cudd_ReadOne(ddm);
 	Cudd_Ref(tmp);
+	DEBUG("true ref'ed");
 	return tmp;
 }
 
@@ -269,7 +276,9 @@ Bdd create_true() {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd create_literal(Atom var) {
+	DEBUG("create literal");
 	Cudd_Ref(var);
+	DEBUG("literal ref'ed");
 	return var;
 }
 
@@ -295,7 +304,7 @@ Bdd apply_binary_op(Bdd n1, Bdd n2, enum CuddJS_BinaryOperator op) {
 			res = Cudd_bddXnor(ddm, n1, n2);
 			break;
 	}
-	DEBUG("binop done");
+	//DEBUG("binop done");
 	if (res == NULL) return NULL;
 	Cudd_Ref(res);
 	DEBUG("binop ref'ed result");
@@ -472,7 +481,9 @@ Bdd apply_renaming(Bdd f, Atom oldvars[], Atom newvars[], int nb) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd create_copy(Bdd f) {
+	DEBUG("copying");
 	Cudd_Ref(f);
+	DEBUG("copy ref'ed");
 	return f;
 }
 
@@ -677,11 +688,51 @@ void tests() {
 	//printf("%s\n", get_error());
 }
 
+#define ASSERT(test, msg) do{if(test);else{printf("assert failed: %s\n", msg);}}while(0)
+void simpleformulatest() {
+	init();
+	Atom p = make_new_atom();
+	Bdd bAtomP = create_literal(p);
+	Bdd bTrue = create_true();
+	Bdd bFalse = create_false();
+
+	ASSERT(get_atom_of(bAtomP) == p, "p is p.");
+
+	apply_ite(create_copy(bAtomP), create_copy(bTrue), create_copy(bFalse));
+
+	ASSERT(!is_internal_node(bTrue), "True is not an InternalNode");
+	ASSERT(is_internal_node(bAtomP), "p is an InternalNode");
+
+	ASSERT(get_atom_of(apply_and(create_copy(bAtomP), create_copy(bTrue))) == p, "service.getAtomOf(apply_And([bAtomP, bTrue]) == p");
+
+	ASSERT(is_false(apply_and(create_copy(bAtomP), create_copy(bFalse))), "(p and false) is false");
+	ASSERT(is_true(apply_or(create_copy(bAtomP), create_copy(bTrue))), "(p or true) is true");
+
+	Bdd notP = apply_not(create_copy(bAtomP));
+
+	ASSERT(is_false(apply_and(create_copy(bAtomP), create_copy(notP))), "(p and not p) is false");
+	ASSERT(is_true(apply_or(create_copy(bAtomP), create_copy(notP))), "(p or not p) is true");
+
+	ASSERT(is_false(apply_not(create_true())), "not true is false");
+	ASSERT(is_true(apply_not(create_false())), "not false is true");
+
+	Atom q = make_new_atom();
+	Bdd bAtomQ = create_literal(q);
+
+	puts("je suis ici"); 
+	Bdd or1 = apply_and(create_literal(q), create_literal(p));
+	puts("je suis là"); 
+
+	Bdd or2 = apply_or(create_copy(bAtomQ), create_copy(bAtomP));
+	puts("je suis là-bas"); 
+}
+
 
 int main() {
 	// for testing things
 	puts("*** THIS IS THE CUDDJS MAIN ***");
 	//tests();
+	//simpleformulatest();
 	//
 	//
 	// DONE: decide how refs are handled.
@@ -701,3 +752,5 @@ int main() {
 	// the JS side: wrap the nodes and throw exception if node is used
 	// in operation two times or something.
 }
+
+
