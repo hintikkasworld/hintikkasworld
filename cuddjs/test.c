@@ -1,6 +1,3 @@
-#define CUDDJS_DEBUG_MODE 1
-void debug(char *);
-#define DEBUG(msg) do {if (CUDDJS_DEBUG_MODE) debug(msg);} while(0)
 
 #include <stdarg.h>
 #include <stdbool.h>
@@ -8,6 +5,9 @@ void debug(char *);
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+
+#define CUDDJS_DEBUG_MODE
+
 
 #include "cudd.h"
 
@@ -24,11 +24,41 @@ void die(char *msg, ...)
 	vfprintf(stderr, msg, l);
 	va_end(l);
 	fputs("\n", stderr);
+#ifdef __EMSCRIPTEN__
+	EM_ASM(
+		throw new Error('Cuddjs just died');
+	);
+#else
 	exit(EXIT_FAILURE);
+#endif
 }
 
 
 DdManager *ddm;
+
+#ifdef CUDDJS_DEBUG_MODE
+#	define STACK_MAX 10
+//#	include <execinfo.h>
+// 	/* https://www.gnu.org/software/libc/manual/html_node/Backtraces.html */
+// 	/* Obtain a backtrace and print it to stderr. */
+// 	void print_trace(void) {
+// 		void *array[STACK_MAX];
+// 		size_t size = backtrace(array, STACK_MAX);
+// 		fprintf(stderr, "Obtained %zd stack frames.\n", size);
+// 		backtrace_symbols_fd(array, size, 2);
+// 	}
+
+	void debug(char *msg) {
+		printf("%s\n", msg);
+		if (Cudd_DebugCheck(ddm) != 0) {
+// 			print_trace();
+			die("CUDD Debug Check failed");
+		}
+	}
+#	define DEBUG(msg) debug(msg);
+#endif
+
+
 
 // void safe_deref(DdNode *node) {
 // 	if ( ! Cudd_bddIsVar(ddm, node)) Cudd_RecursiveDeref(ddm, node);
@@ -268,10 +298,11 @@ Bdd apply_binary_op(Bdd n1, Bdd n2, enum CuddJS_BinaryOperator op) {
 	DEBUG("binop done");
 	if (res == NULL) return NULL;
 	Cudd_Ref(res);
+	DEBUG("binop ref'ed result");
 	//fprintf(stderr, "debug op 2: %d\n", Cudd_DebugCheck(ddm));
 	Cudd_RecursiveDeref(ddm, n1);
 	Cudd_RecursiveDeref(ddm, n2);
-	DEBUG("binop refs done");
+	DEBUG("binop derefs done");
 	//fprintf(stderr, "debug op 3: %d\n", Cudd_DebugCheck(ddm));
 	return res;
 }
@@ -577,13 +608,6 @@ void init()
 
 void print_stats() {
  	printf("refs=%u, dead=%u\n", referenced_count(), dead_count());
-}
-void debug(char *msg) {
-	printf("%s\n", msg);
-	if (Cudd_DebugCheck(ddm) != 0) {
-		print_stats();
-		die("CUDD Debug Check failed");
-	}
 }
 
 void tests() {
