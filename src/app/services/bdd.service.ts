@@ -40,20 +40,20 @@ export class BddService {
 
   }
 
-  private isAlive(bdd: BDDNode): boolean {
-    if (this.aliveBdds.has(bdd)) {
-      if (this.aliveBdds.get(bdd) > 0) {
-        return true;
-      }
-      this.aliveBdds.delete(bdd);
-    }
-    return false;
-  }
-  private killArgs(bdds: BDDNode[]): void {
-    for (const bdd of bdds) {
-      //TODO unfinished
-    }
-  }
+//   private isAlive(bdd: BDDNode): boolean {
+//     if (this.aliveBdds.has(bdd)) {
+//       if (this.aliveBdds.get(bdd) > 0) {
+//         return true;
+//       }
+//       this.aliveBdds.delete(bdd);
+//     }
+//     return false;
+//   }
+//   private killArgs(bdds: BDDNode[]): void {
+//     for (const bdd of bdds) {
+//       //TODO unfinished
+//     }
+//   }
 
 
   private async instantiateWasm(url: string, f:()=>void) {
@@ -236,18 +236,35 @@ export class BddService {
   //   }
 
   pickRandomSolution(bddNode: BDDNode): Valuation {
-    if (this.isFalse(bddNode)) {
-      throw new Error("Cannot pick a solution from FALSE");
+    throw new Error("DEPRECATED: use pickOneSolution()");
+  }
+
+  pickOneSolution(bddNode: BDDNode): Valuation {
+    const sols = this.pickSolutions(bddNode, 1);
+    if (sols.length === 0) throw new Error("No solution to pick!");
+    if (sols.length !== 1) throw new Error("Too many solutions: this is a bug in pickSolutions()!");
+    return sols[0];
+  }
+
+  /**
+   * NB: this is not efficient
+   */
+  pickSolutions(bddNode: BDDNode, max?: number): Valuation[] {
+    function getSetOfTrueAtomsOf(n: BDDNode, max: number): string[] {
+      if (max === 0 || this.isFalse(n)) return [];
+      if (this.isTrue(n)) return new Valuation([]);
+      const sols = getSetOfTrueAtomsOf(this.getElseOf(n), max);
+      if (sols.length === max) return sols;
+      if (max !== undefined) max = max-sols.length;
+      let thenSols = getSetOfTrueAtomsOf(this.getThenOf(n), max);
+      for (const trueAtoms of thenSols) {
+        trueAtoms = trueAtoms.slice();
+        trueAtoms.push(this.getAtomOf(n));
+        sols.push(trueAtoms);
+      }
+      return sols;
     }
-    const trueAtoms = [];
-    let current = bddNode;
-    while ( ! this.isTrue(current)) {
-      let next = this.getThenOf(current);
-      if (this.isFalse(next)) next = this.getElseOf(current);
-      else trueAtoms.push(this.getAtomOf(current));
-      current = next;
-    }
-    return new Valuation(trueAtoms);
+    return getSetOfTrueAtomsOf(bddNode, max).map(trueAtoms => new Valuation(trueAtoms));
   }
 
   support(bddNode: BDDNode): string[] {
@@ -271,25 +288,11 @@ export class BddService {
   }
 
   toValuation(bddNode: BDDNode): Valuation{
-    if (this.isFalse(bddNode)) {
-      throw new Error("FALSE is not a valuation");
-    }
-    const trueAtoms = [];
-    let current = bddNode;
-    while ( ! this.isTrue(current)) {
-      const thenNode = this.getThenOf(current);
-      const elseNode = this.getElseOf(current);
-      if (this.isFalse(thenNode)) {
-        current = elseNode;
-      } else {
-        if ( ! this.isFalse(elseNode)) {
-          throw new Error("No child is FALSE: the BDD is not a cube, cannot be a valuation");
-        }
-        trueAtoms.push(this.getAtomOf(current));
-        current = thenNode;
-      }
-    }
-    return new Valuation(trueAtoms);
+    const sols = this.pickSolutions(bddNode, 2);
+    if (sols.length === 0) throw new Error("FALSE is not a valuation");
+    if (sols.length === 1) return sols[0];
+    if (sols.length === 2) throw new Error("Too many solutions: this is not a valuation");
+    throw new Error("Too many solutions: this is a bug in pickSolutions()!");
   }
 
   destroy(bddNode: BDDNode): void{
