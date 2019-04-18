@@ -9,8 +9,17 @@ import { TrivialPostcondition } from './trivial-postcondition';
 
 export type BDDNode = number;
 
+/**
+ * Allows to transform an ExplicitEventModel into a SymbolicEventModel, using the translate() method.
+ */
 export class ExplicitToSymbolic {
     
+    /**
+     * Translate an ExplicitEventModel into a SymbolicEventModel
+     * @param explicit_em the ExplicitEventModel we want to transform
+     * @param variables list of all variables which describe worlds
+     * @param agents list of agents
+     */
     static translate(explicit_em: ExplicitEventModel, variables: string[], agents: string[]): SymbolicEventModel{
 
         console.log("ExplicitToSymbolic.translate");
@@ -90,7 +99,9 @@ export class ExplicitToSymbolic {
                     console.log("Liste", liste);
 
                     let action_prime_frame = BDD.bddService.applyAnd([bdd_action_prime, ExplicitToSymbolic._frame(liste, true)]);
+                    console.log("action_prime_frame", action_prime_frame);
                     or_others = BDD.bddService.applyOr([BDD.bddService.createCopy(or_others), action_prime_frame]);
+                    console.log("or_others", or_others)
                 }
                 symb_em.addPlayerEvent(event, agent, BDD.bddService.applyAnd([pointeur, or_others]))
             }
@@ -101,6 +112,11 @@ export class ExplicitToSymbolic {
         return symb_em;
     }
 
+    /**
+     * Return the event, define as precondition:Formula and postcondition: Postcondition as BDD
+     * @param pre Formula as precondition
+     * @param post Poscondition as postcondition, like Map<atom, new value>
+     */
     static _event_to_bdd(pre: Formula, post: Postcondition): BDDNode{
 
         console.log("event_to_bdd", pre, post, "->", post.getValuation());
@@ -122,6 +138,11 @@ export class ExplicitToSymbolic {
         return BDD.bddService.applyAnd([BDD.bddService.createCopy(bdd_prec), BDD.bddService.createCopy(bdd_post)]);
     }
 
+    /**
+     * Method to calculate the BDDNode of the frame axiom : for all vars BigAnd[var<->+_var]
+     * @param vars list of atoms.
+     * @param prime if prime, add prime to calculation : BigAnd[var_p<->+_var_p]
+     */
     static _frame(vars: string[], prime: boolean): BDDNode {
         let pointeur = BDD.bddService.createTrue();
         for(let vari in vars){

@@ -61,18 +61,31 @@ class SimpleHanabiWorld extends WorldValuation {
 
 }
 
+/**
+ * Class to test BDD on with ng serve because ng test doesn"t load cudd.
+ */
 class MyTestForBDD {
 
     private static n: number = 0;
 
+    /**
+     * Run tests with MyTestForBDD.run()
+     */
     static run(): void{
         console.log(" === Run tests ===")
         MyTestForBDD.testInitialisation();
+        MyTestForBDD.simpleFormula();
+        MyTestForBDD.someBDDMethod();
         console.log(" ==> " + MyTestForBDD.n + " success.")
         console.log(" === End tests ===")
     }
 
-    private static assert(condition, message){
+    /**
+     * Assertion method
+     * @param condition conditon as boolean
+     * @param message message as string
+     */
+    private static assert(condition: boolean, message: string){
         MyTestForBDD.n = MyTestForBDD.n + 1;
         if(!condition){
             message = message || "Assertion failed";
@@ -85,12 +98,17 @@ class MyTestForBDD {
         }
     }
 
+    /**
+     * console.log variable and successors in BDDNode
+     * @param variable 
+     */
     private static printThenElse(variable: number): void{
         let service = BDD.bddService;
         console.log(service.getAtomOf(variable), ":", variable, "|", "Then", service.getThenOf(variable), "Else", service.getElseOf(variable), "True :", service.createTrue(), "False:", service.createFalse());
     }
 
     private static testInitialisation(){
+
         let service = BDD.bddService;
         MyTestForBDD.assert(service != null, "BDD.bddService is null.");
 
@@ -99,8 +117,15 @@ class MyTestForBDD {
 
         let bFalse = service.createFalse();
         MyTestForBDD.assert(service.isFalse(bFalse), "False is false.");
-        
+    }
+
+    private static simpleFormula(){
+
+        let service = BDD.bddService;
         let bAtomP = service.createLiteral("p");
+        let bTrue = service.createTrue();
+        let bFalse = service.createFalse();
+
         MyTestForBDD.assert(service.getAtomOf(bAtomP) == "p", "p is p.");
         
         MyTestForBDD.assert(typeof service.applyIte(bAtomP, bTrue, bFalse) === "number", "applyIte(p, top, bot) is a number.");
@@ -146,6 +171,21 @@ class MyTestForBDD {
 
         MyTestForBDD.assert(service.isTrue(service.applyExistentialForget(service.createCopy(bAtomP), ["p"])), "EForget(p, ['p']) == True")
         
+        MyTestForBDD.assert(BDD.buildFromFormula(new AtomicFormula("p")) == bAtomP, "buildFromFormula(p) == p"); 
+    }
+
+
+    private static someBDDMethod(){
+
+        let service = BDD.bddService;
+
+        
+        let bAtomP = service.createLiteral("p");
+        let bAtomQ = service.createLiteral("q");
+        let notQ = service.applyNot(service.createCopy(bAtomQ));
+        let notP = service.applyNot(service.createCopy(bAtomP));
+
+        // (p&q)|(np&nq)
         let phi = service.applyOr([
             service.applyAnd([service.createCopy(bAtomP), service.createCopy(bAtomQ)]), 
             service.applyAnd([service.createCopy(notP), service.createCopy(notQ)])]
@@ -154,7 +194,18 @@ class MyTestForBDD {
         MyTestForBDD.assert(service.isTrue(service.applyExistentialForget(service.createCopy(phi), ["p"])), "EForget( (p&q)|(np&nq) , ['p']) == True")
         MyTestForBDD.assert(service.isFalse(service.applyUniversalForget(service.createCopy(phi), ["p"])), "UForget( (p&q)|(np&nq) , ['p']) == False")
 
-        MyTestForBDD.assert(BDD.buildFromFormula(new AtomicFormula("p")) == bAtomP, "buildFromFormula(p) == p"); 
+        let map = new Map();
+        for(const [i, vari] of Array.from(["a", "b", "c"].entries())){
+            map.set(vari, i % 2 == 0);
+        }
+
+        console.log(map);
+
+        let anbc = service.applyAnd([service.createLiteral("a"), service.applyNot(service.createLiteral("b")), service.createLiteral("c")]);
+        let anbc2 = BDD.buildFromFormula(new AndFormula([new AtomicFormula("a"), new NotFormula(new AtomicFormula("b")), new AtomicFormula("c") ]))
+        let cube = service.createCube(map);
+        MyTestForBDD.assert(cube == anbc && anbc == anbc2 && cube == anbc2 , "cube([a:t, b:f, c:t]) == a & not b & c == buildFromFormula");
+        
 
     }
 }
