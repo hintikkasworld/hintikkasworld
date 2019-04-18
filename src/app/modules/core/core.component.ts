@@ -1,3 +1,4 @@
+import { MuddyChildren } from './models/examples/muddy-children';
 import { environment } from './../../../environments/environment';
 
 import { ExampleService } from './../../services/example.service';
@@ -19,12 +20,24 @@ export class CoreComponent implements OnInit {
 
   bsEnv: BehaviorSubject<Environment>;
 
-  constructor(private exampleService: ExampleService) {}
+  constructor(private exampleService: ExampleService) { }
 
   ngOnInit() {
-   let exampleDescription = this.exampleService.getExampleDescription();
-    let env: Environment = new Environment(exampleDescription);
+    let exampleDescription = this.exampleService.getExampleDescription();
+    let env: Environment; 
+    try {
+       env = new Environment(exampleDescription);
+    }
+    catch {
+      console.log("Error: so we load MuddyChildren!");
+      exampleDescription = new MuddyChildren();
+      env = new Environment(exampleDescription);
+    }
+
+    
     this.bsEnv = new BehaviorSubject(env);
+    console.log("core load: is this.bsEnv undefined? " + (this.bsEnv == undefined));
+    console.log("core load: end");
   }
 
   perform(action) {
@@ -44,6 +57,10 @@ export class CoreComponent implements OnInit {
   }
 
   getAgents(): string[] {
+    if(this.bsEnv == undefined) {
+      console.log("error in core components getagents: no environment")
+      return ["a"];
+    }
     return this.bsEnv.value.getEpistemicModel().getAgents();
   }
 }
