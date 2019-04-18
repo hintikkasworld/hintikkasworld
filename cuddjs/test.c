@@ -35,6 +35,7 @@ void die(char *msg, ...)
 
 
 DdManager *ddm;
+bool debug_on = false;
 
 #ifdef CUDDJS_DEBUG_MODE
 #	define STACK_MAX 10
@@ -58,10 +59,14 @@ DdManager *ddm;
 			die("CUDD Debug Check failed");
 		}
 	}
-#	define DEBUG(msg) debug(msg);
+#	define DEBUG(msg) do{if(debug_on) debug(msg);}while(0)
 #endif
 
 
+EMSCRIPTEN_KEEPALIVE
+void set_debug_mode(bool debug) {
+	debug_on = debug;
+}
 
 // void safe_deref(DdNode *node) {
 // 	if ( ! Cudd_bddIsVar(ddm, node)) Cudd_RecursiveDeref(ddm, node);
@@ -725,6 +730,8 @@ void simpleformulatest() {
 
 	Bdd or2 = apply_or(create_copy(bAtomQ), create_copy(bAtomP));
 	puts("je suis là-bas"); 
+	destroy(or1);
+	destroy(or2);
 }
 
 

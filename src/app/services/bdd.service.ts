@@ -70,6 +70,7 @@ export class BddService {
       wasmBinary: binary,
       onRuntimeInitialized: () => {
         this.bddModule._init();
+        this.bddModule._set_debug_mode(true);
         f();
         this.wasmReady.next(true);
         
