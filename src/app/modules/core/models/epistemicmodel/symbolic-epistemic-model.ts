@@ -165,7 +165,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                 this.propositionalAtoms),
             this.notPrimetoPrime); 
         // return Valuation
-        return BDD.bddService.pickSolutions(res);
+        return BDD.bddService.pickSolutions(res, 0, []); // François : just for making it compile
     };
 
     getAgentGraphe(agent: string): BDDNode {
