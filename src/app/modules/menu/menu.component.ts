@@ -14,6 +14,7 @@ import { ExampleDescription } from './../core/models/environment/exampledescript
 import { Component, OnInit, Input } from '@angular/core';
 import { ExampleService } from 'src/app/services/example.service';
 import { SallyAndAnn } from '../core/models/examples/sally-and-ann';
+import { SymbolicSimpleExample } from '../core/models/examples/symbolic-small-example';
 
 
 
@@ -25,7 +26,7 @@ import { SallyAndAnn } from '../core/models/examples/sally-and-ann';
 export class MenuComponent implements OnInit {
 
   examples = [new Simple(), new MuddyChildren(), new SallyAndAnn(), new MineSweeper(), new ConsecutiveNumbers(), new Hanabi(), new Belote(),
-    new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton(), new SimpleSymbolicHanabi(), new Flatland()];
+    new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton(), new SymbolicSimpleExample(), new SimpleSymbolicHanabi(), new Flatland()];
 
   openExampleDescription(exampleDescription: ExampleDescription ) {
     this.exampleService.setExampleDescription(exampleDescription);

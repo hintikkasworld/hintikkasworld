@@ -17,7 +17,7 @@ type pointer = number;
 @Injectable({
   providedIn: 'root'
 })
- 
+
 export class BddService {
 
   bddModule: any;
@@ -27,36 +27,33 @@ export class BddService {
 
   wasmReady = new BehaviorSubject<boolean>(false);
 
-  aliveBdds: Map<BDDNode, number>= new Map(); 
+  aliveBdds: Map<BDDNode, number> = new Map();
 
 
-  constructor(f: ()=>void) {
-    this.instantiateWasm("wasm/cuddjs.wasm2", f).catch(e=>{
+  constructor(f: () => void) {
+    this.instantiateWasm("wasm/cuddjs.wasm2", f).catch(e => {
       alert("Problem initializing WASM module, maybe the browser does not have enough memory?");
       throw e;
     });
-
-
-
   }
 
-//   private isAlive(bdd: BDDNode): boolean {
-//     if (this.aliveBdds.has(bdd)) {
-//       if (this.aliveBdds.get(bdd) > 0) {
-//         return true;
-//       }
-//       this.aliveBdds.delete(bdd);
-//     }
-//     return false;
-//   }
-//   private killArgs(bdds: BDDNode[]): void {
-//     for (const bdd of bdds) {
-//       //TODO unfinished
-//     }
-//   }
+  //   private isAlive(bdd: BDDNode): boolean {
+  //     if (this.aliveBdds.has(bdd)) {
+  //       if (this.aliveBdds.get(bdd) > 0) {
+  //         return true;
+  //       }
+  //       this.aliveBdds.delete(bdd);
+  //     }
+  //     return false;
+  //   }
+  //   private killArgs(bdds: BDDNode[]): void {
+  //     for (const bdd of bdds) {
+  //       //TODO unfinished
+  //     }
+  //   }
 
 
-  private async instantiateWasm(url: string, f:()=>void) {
+  private async instantiateWasm(url: string, f: () => void) {
     // fetch the wasm file
     const wasmFile = await fetch(url);
 
@@ -73,7 +70,7 @@ export class BddService {
         this.bddModule._set_debug_mode(false);
         f();
         this.wasmReady.next(true);
-        
+
       }
     };
 
@@ -204,7 +201,7 @@ export class BddService {
   applyRenaming(b: BDDNode, renaming: Map<string, string>) {
     const oldvars: string[] = [];
     const newvars: string[] = [];
-    for (const [o,n] of Array.from(renaming.entries())) {
+    for (const [o, n] of Array.from(renaming.entries())) {
       oldvars.push(o);
       newvars.push(n);
     }
@@ -256,7 +253,7 @@ export class BddService {
       if (this.isTrue(n)) return [[]];
       const sols = getSetOfTrueAtomsOf(this.getElseOf(n), max);
       if (sols.length === max) return sols;
-      if (max !== undefined) max = max-sols.length;
+      if (max !== undefined) max = max - sols.length;
       let thenSols = getSetOfTrueAtomsOf(this.getThenOf(n), max);
       for (let trueAtoms of thenSols) {
         trueAtoms = trueAtoms.slice();
@@ -278,7 +275,7 @@ export class BddService {
     return support;
   }
 
-  createCube(assignment:  Map<string, boolean>): BDDNode{
+  createCube(assignment: Map<string, boolean>): BDDNode {
     const literals = []
     for (const [atom, value] of Array.from(assignment.entries())) {
       let lit = this.createLiteral(atom);
@@ -288,7 +285,7 @@ export class BddService {
     return this.applyAnd(literals);
   }
 
-  toValuation(bddNode: BDDNode): Valuation{
+  toValuation(bddNode: BDDNode): Valuation {
     const sols = this.pickSolutions(bddNode, 2);
     if (sols.length === 0) throw new Error("FALSE is not a valuation");
     if (sols.length === 1) return sols[0];
@@ -296,15 +293,15 @@ export class BddService {
     throw new Error("Too many solutions: this is a bug in pickSolutions()!");
   }
 
-  destroy(bddNode: BDDNode): void{
+  destroy(bddNode: BDDNode): void {
     this.bddModule._destroy(bddNode);
   }
 
-  createCopy(bddNode: BDDNode): BDDNode{
+  createCopy(bddNode: BDDNode): BDDNode {
     return this.bddModule._create_copy(bddNode)
   }
 
-  stackTrace(){
+  stackTrace() {
     return this.bddModule.stackTrace();
   }
 

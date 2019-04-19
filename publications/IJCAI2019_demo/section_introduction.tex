@@ -2,7 +2,8 @@ The current trend is to construct programs that play games with imperfect inform
 
 The only pedagogical tool we are aware of that explains such models is \emph{Hintikka's world} and was presented at ECAI-IJCAI 2018 \cite{DBLP:conf/ijcai/Schwarzentruber18}. 
 \emph{Hintikka's world} is a proof of concept of a graphical user interface that represent Kripke models by  comic strips, as shown in Figure \ref{figure:gui}. It enables to explore mental states of agents. The tool is available at the following address:
-\url{http://hintikkasworld.irisa.fr/}. 
+\url{http://hintikkasworld.irisa.fr/} and the source code is available here:
+\url{https://gitlab.inria.fr/fschwarz/hintikkasworld}
 
 
 Kripke models are graphs, represented explicitly in memory in the first version of the tool. Explicit models are useful to learn how dynamic epistemic logic works by means of toy examples: muddy children, Sally and Anne  \cite{wimmer1983beliefs}, etc.  However, in real card games, such as Hanabi, there are an exponential number of possible configurations of cards. For instance Hanabi has 50 cards total and each player has 4 cards and the order of the cards is important. Therefore with 4 players, the initial Kripke model features $50 \times 49 \times 48 \times \dots \times 38$ configurations, that is $2.2 \times 10^{21}$. Thus, it is impossible to represent explicitly the full graph in memory:  the first version of Hintikka's world does not \emph{scale}. 
