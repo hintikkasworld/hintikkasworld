@@ -458,11 +458,14 @@ EMSCRIPTEN_KEEPALIVE
 Bdd apply_conditioning(Bdd f, Bdd cube) {
 	/* conditioning is implemented via bddAndAbstract, which makes a
 	 * conjunction and forgets the variables in a cube at the same time */
+	DEBUG("conditioning");
 	DdNode *res = Cudd_bddAndAbstract(ddm, f, cube, cube);
 	if (res == NULL) return NULL;
 	Cudd_Ref(res);
+	DEBUG("conditioning done");
 	Cudd_RecursiveDeref(ddm, cube);
 	Cudd_RecursiveDeref(ddm, f);
+	DEBUG("conditioning derefs done");
 	return NULL;
 }
 

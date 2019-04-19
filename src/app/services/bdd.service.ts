@@ -195,6 +195,7 @@ export class BddService {
 
   applyConditioning(b: BDDNode, assignment: Map<string, boolean>): BDDNode {
     const cube = this.createCube(assignment);
+    console.log("Will apply conditioning on " + this.nodeToString(b) + " with assignment " + assignment + "(cube = " + this.nodeToString(cube) + ")");
     return this.bddModule._apply_conditioning(b, cube);
   }
 
