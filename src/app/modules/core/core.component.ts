@@ -28,7 +28,10 @@ export class CoreComponent implements OnInit {
     try {
        env = new Environment(exampleDescription);
     }
-    catch {
+    catch(error) {
+      let err = <Error> error;
+      console.error(err.name, err.message);
+      console.error(err.stack);
       console.log("Error: so we load MuddyChildren!");
       exampleDescription = new MuddyChildren();
       env = new Environment(exampleDescription);

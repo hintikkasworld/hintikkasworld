@@ -22,7 +22,6 @@ export class BDD {
         return BDD.bddService.pickRandomSolution(this.bddNode);
     }
     private static getBDDNode(phi: Formula): BDDNode {
-        // console.log(typeof phi, phi);
         switch (true) {
             case (phi instanceof types.TrueFormula): return BDD.bddService.createTrue();
             case (phi instanceof types.FalseFormula): return BDD.bddService.createFalse();
@@ -56,31 +55,42 @@ export class BDD {
     }
 
 
+    private static createExactlyBDD(n: number, vars: string[]): BDDNode {
 
+        const cache: Map<string, BDDNode> = new Map();
 
-    private static createExactlyBDD(n: number, vars: string[]) {
-        let dic: BDDNode[] = [];
+        const getNamongK = (n: number, k:number) => {
 
-        function store(kVar: number, i: number, b: BDDNode) {
-            dic[kVar * n + i] = b;
-        }
+            const key =  n + "," + k;
 
-        function getExactlyBDD(kVar, i) {
-            return dic[kVar * n + i];
-        }
-
-        for (let kVar = vars.length - 1; kVar >= 0; kVar--) {
-            store(kVar, 0, this.getBDDNode(new types.AndFormula(vars.slice(kVar).map((p) => new types.NotFormula(new types.AtomicFormula(p))))));
-
-            for (let i = 0; i <= n; i++) {
-                    let b1 = BDD.bddService.createCopy(getExactlyBDD(kVar+1, i-1));
-                    let b2 = BDD.bddService.createCopy(getExactlyBDD(kVar, i));
-
-                    store(kVar, i, BDD.bddService.applyIte(BDD.bddService.createLiteral(vars[kVar]), b1, b2));
+            if(cache.has(key)) return cache.get(key);
+            if(n==0){
+                const assignment = new Map();
+                for(let v of vars.slice(0, k)){
+                    assignment.set(v, false);
+                }
+                cache.set(key, BDD.bddService.createCube(assignment));
+                return cache.get(key);
             }
+            if(k == 0) return BDD.bddService.createFalse();
+
+            let x = BDD.bddService.createLiteral(vars[k-1]);
+            let bdd_1 = BDD.bddService.createCopy(getNamongK(n-1, k-1));
+            let bdd_2 = BDD.bddService.createCopy(getNamongK(n, k-1));
+            let res = BDD.bddService.applyIte(x, bdd_1, bdd_2);
+            cache.set(key, res);
+            return res;
+
         }
 
-        return getExactlyBDD(0, n);
+        let res = BDD.bddService.createCopy(getNamongK(n, vars.length));
+        
+        cache.forEach((value, key) => {
+            BDD.bddService.destroy(value);
+        });
+
+        return res;
+
     }
 
     static and(lb:BDD[]):BDD {

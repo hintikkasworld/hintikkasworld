@@ -249,13 +249,13 @@ export class BddService {
     const childrenToString = n => {
       if (this.isFalse(n)) return "[FALSE]";
       if (this.isTrue(n)) return "[TRUE]";
-      return full ? nodeToString(n, true) : "[#" + n + "]";
+      return full ? this.nodeToString(n, true) : "[#" + n + "]";
     };
     if (this.isInternalNode(bddNode)) {
       const v = this.getAtomOf(bddNode);
       const t = childrenToString(this.getThenOf(bddNode));
       const e = childrenToString(this.getElseOf(bddNode));
-      return "[IF ${v} THEN ${t} ELSE ${e}]";
+      return `[IF ${v} THEN ${t} ELSE ${e}]`;
     } else return childrenToString(bddNode);
   }
 
@@ -274,7 +274,7 @@ export class BddService {
       return sols;
     }
     const getSetOfTrueAtomsOf = (n: BDDNode, vars: string[]): string[][] => {
-      console.log("Current node: " + nodeToString(n));
+      // console.log("Current node: " + this.nodeToString(n));
       if (this.isFalse(n)) return [];
       if (this.isTrue(n)) {
         if (vars.length === 0) return [[]];
@@ -282,7 +282,7 @@ export class BddService {
         return combineSols(x, n, n, vars.slice(1));
       }
       const x = this.getAtomOf(n);
-      vars = vars.slice().remove(x);
+      vars = vars.filter(v => v !== x);
       return combineSols(x, this.getThenOf(n), this.getElseOf(n), vars);
     };
     return getSetOfTrueAtomsOf(bddNode, support).map(trueAtoms => new Valuation(trueAtoms));
@@ -292,44 +292,45 @@ export class BddService {
    */
   pickSolutions(bddNode: BDDNode, max?: number): Valuation[] {
     if (max !== undefined) throw new Error("NOT YET IMPLEMENTED - use pickAllSolutions for debugging");
-    else return pickAllSolutions(bddNode);
-    Map<BDDNode, {sols: string[][], guaranteedComplete: boolean}> cache = new Map();
-    const getSetOfTrueAtomsOf = (n: BDDNode, max: number): string[][] => {
-      if (max === 0 || this.isFalse(n)) return [];
-      if (this.isTrue(n)) return [[]];
-      if (cache.has(n)) {
-    // FIXME WIP
-        const {sols, guaranteedComplete} = cache.get(n);
-        let enoughSols = false;
-        let sliceMax = max;
-        if (guaranteedComplete) {
-          /* the cache has all solutions */
-          /* we return only 'max' of them */
-          if (max === undefined) sliceMax = sols.length;
-          enoughSols = true;
-        } else if (max !== undefined && sols.length >= max) {
-          /* the cache may have missed some of the solutions
-           * but we don't need more */
-          enoughSols = true;
-        }
-        if (enoughSols) return sols.slice(sliceMax);
-      }
-      const sols = getSetOfTrueAtomsOf(this.getElseOf(n), max);
-      if (sols.length === max) {
-        cache.set(n, {sols, max});
-        return sols;
-      }
-      const thenMax = (max !== undefined) max-sols.length : undefined;
-      const thenSols = getSetOfTrueAtomsOf(this.getThenOf(n), thenMax);
-      for (let trueAtoms of thenSols) {
-        trueAtoms = trueAtoms.slice();
-        trueAtoms.push(this.getAtomOf(n));
-        sols.push(trueAtoms);
-      }
-      cache.set(n, sols);
-      return sols;
-    };
-    return getSetOfTrueAtomsOf(bddNode, max).map(trueAtoms => new Valuation(trueAtoms));
+    else return this.pickAllSolutions(bddNode);
+
+    // const cache: Map<BDDNode, {sols: string[][], guaranteedComplete: boolean}> = new Map();
+    // const getSetOfTrueAtomsOf = (n: BDDNode, max: number): string[][] => {
+    //   if (max === 0 || this.isFalse(n)) return [];
+    //   if (this.isTrue(n)) return [[]];
+    //   if (cache.has(n)) {
+    // // FIXME WIP
+    //     const {sols, guaranteedComplete} = cache.get(n);
+    //     let enoughSols = false;
+    //     let sliceMax = max;
+    //     if (guaranteedComplete) {
+    //       /* the cache has all solutions */
+    //       /* we return only 'max' of them */
+    //       if (max === undefined) sliceMax = sols.length;
+    //       enoughSols = true;
+    //     } else if (max !== undefined && sols.length >= max) {
+    //       /* the cache may have missed some of the solutions
+    //        * but we don't need more */
+    //       enoughSols = true;
+    //     }
+    //     if (enoughSols) return sols.slice(sliceMax);
+    //   }
+    //   const sols = getSetOfTrueAtomsOf(this.getElseOf(n), max);
+    //   if (sols.length === max) {
+    //     cache.set(n, {sols, max});
+    //     return sols;
+    //   }
+    //   const thenMax = (max !== undefined) max-sols.length : undefined;
+    //   const thenSols = getSetOfTrueAtomsOf(this.getThenOf(n), thenMax);
+    //   for (let trueAtoms of thenSols) {
+    //     trueAtoms = trueAtoms.slice();
+    //     trueAtoms.push(this.getAtomOf(n));
+    //     sols.push(trueAtoms);
+    //   }
+    //   cache.set(n, sols);
+    // return sols;
+    // };
+    //return getSetOfTrueAtomsOf(bddNode, max).map(trueAtoms => new Valuation(trueAtoms));
   }
 
   support(bddNode: BDDNode): string[] {

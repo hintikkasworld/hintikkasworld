@@ -46,9 +46,7 @@ export class Obs implements SymbolicRelation {
      */
     toBDD() : BDDNode {
         let formula = this.toFormula();
-        console.log(formula);
         let res = null;
-        //console.log(BDD.bddService.stackTrace());
         try {
             res = BDD.buildFromFormula(formula);
         } catch (error) {
