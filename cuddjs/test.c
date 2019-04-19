@@ -12,6 +12,7 @@
 #include "cudd.h"
 
 #include "emscripten.h"
+#include "emscripten/trace.h"
 
 typedef DdNode *Atom;
 typedef DdNode *Bdd;
@@ -615,6 +616,8 @@ EMSCRIPTEN_KEEPALIVE
 void init()
 {
 	puts("*** CuddJS init ***");
+	emscripten_trace_configure("http://127.0.0.1:5000/", "CUDDJS");
+    
 	ddm = Cudd_Init(100, 100, CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS, 100);
 	Cudd_ClearErrorCode(ddm);
 // 	printf("p=%p\n", get_literal_as_bdd(3));

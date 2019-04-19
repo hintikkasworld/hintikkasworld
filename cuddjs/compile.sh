@@ -10,7 +10,7 @@ compile_wasm () {
 		# 
 		#-s EXPORTED_FUNCTIONS='["_get_literal_as_bdd", "_peak_node_count"]' 
 		#-s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]'
-		emcc test.c --emrun -O3 -s NO_EXIT_RUNTIME=1 -s ASSERTIONS=1 -s ALLOW_MEMORY_GROWTH=1 -s WASM=1 -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "stackTrace"]' --shell-file template.html -I ./vendor/cudd/ -L ./vendor/cudd/.libs/ -lm -lcudd "$@"
+		emcc test.c --closure 1 --tracing -O3 -s NO_EXIT_RUNTIME=1 -s ASSERTIONS=1 -s ALLOW_MEMORY_GROWTH=1 -s WASM=1 -s EXTRA_EXPORTED_RUNTIME_METHODS='["cwrap", "stackTrace"]' -I ./vendor/cudd/ -L ./vendor/cudd/.libs/ -lm -lcudd "$@"
 }
 
 case "$1" in
@@ -18,7 +18,7 @@ case "$1" in
 		gcc -Wall -Wpedantic --static  -I cudd/include/ -I ~/src/external/emsdk/emscripten/1.38.27/system/include/emscripten/ -L cudd/ test.c -lcudd -lm -o out/test
 		;;
 	js)
-		compile_wasm -o out/test.html
+		compile_wasm --emrun --shell-file template.html -o out/test.html
 		# emrun --serve_root . out/test.html
 		;;
 	module)

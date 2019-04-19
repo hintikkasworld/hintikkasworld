@@ -88,8 +88,8 @@ async function mycode() {
 
 	api.init();
 
-	console.log("test malloc: ", Module._malloc(1024*1024*1024*1024));
-	console.log(Module.HEAPU8);
+	//console.log("test malloc: ", Module._malloc(1024*1024*1024*1024));
+// 	console.log(Module.HEAPU8);
 	let arr = [];
 	for (let i = 0; i < 1024*1024; i++) arr[i] = i;
 	for (let k = 0; k < 1100; k++) {
