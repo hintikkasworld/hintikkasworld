@@ -493,7 +493,7 @@ Bdd apply_conditioning(Bdd f, Bdd cube) {
 	Cudd_RecursiveDeref(ddm, cube);
 	Cudd_RecursiveDeref(ddm, f);
 	DEBUG("conditioning derefs done");
-	return NULL;
+	return res;
 }
 
 /**
