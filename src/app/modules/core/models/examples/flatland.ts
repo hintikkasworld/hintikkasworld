@@ -40,14 +40,32 @@ class FlatlandWorld extends World {
         function drawVisionCone(agent: string, p: Point, d: number) {
             let coneLength = 200;
 
-            context.beginPath();
+            let p1: Point = {x: p.x + coneLength * Math.cos(d + FlatlandWorld.angleCone),
+                y: p.y + coneLength * Math.sin(d + FlatlandWorld.angleCone)};
+
+            let p2: Point = {x: p.x + coneLength * Math.cos(d - FlatlandWorld.angleCone),
+                y: p.y + coneLength * Math.sin(d - FlatlandWorld.angleCone)};
+            
+                
             context.strokeStyle = environment.agentColor[agent];
+            context.beginPath();
             context.moveTo(p.x, p.y);
-            context.lineTo(p.x + coneLength * Math.cos(d + FlatlandWorld.angleCone), p.y + coneLength * Math.sin(d + FlatlandWorld.angleCone));
+            context.lineTo(p1.x, p1.y);
             context.stroke();
             context.moveTo(p.x, p.y);
-            context.lineTo(p.x + coneLength * Math.cos(d - FlatlandWorld.angleCone), p.y + coneLength * Math.sin(d - FlatlandWorld.angleCone));
+            context.lineTo(p2.x, p2.y);
             context.stroke();
+
+            
+            context.fillStyle = environment.agentColor[agent];
+            context.beginPath();
+            context.moveTo(p.x, p.y);
+            context.lineTo(p1.x, p1.y);
+            context.lineTo(p2.x, p2.y);
+            context.globalAlpha = 0.2;
+            context.closePath();
+            context.fill();
+            context.globalAlpha = 1.0;
         }
 
         context.clearRect(0, 0, 128, 64);
