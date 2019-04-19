@@ -67,7 +67,7 @@ export class BddService {
       wasmBinary: binary,
       onRuntimeInitialized: () => {
         this.bddModule._init();
-        this.bddModule._set_debug_mode(false);
+        this.bddModule._set_debug_mode(true);
         f();
         this.wasmReady.next(true);
 
@@ -128,6 +128,14 @@ export class BddService {
 
   isFalse(b: BDDNode): boolean {
     return this.bddModule._is_false(b);
+  }
+
+  isConsistent(b: BDDNode): boolean {
+    return this.bddModule._is_consistent(b);
+  }
+
+  areEquivalent(b: BDDNode, b2: BDDNode): boolean {
+    return this.bddModule._are_equivalent(b, b2);
   }
 
   isInternalNode(b: BDDNode): boolean {
@@ -195,8 +203,11 @@ export class BddService {
 
   applyConditioning(b: BDDNode, assignment: Map<string, boolean>): BDDNode {
     const cube = this.createCube(assignment);
-    console.log("Will apply conditioning on " + this.nodeToString(b) + " with assignment " + assignment + "(cube = " + this.nodeToString(cube) + ")");
-    return this.bddModule._apply_conditioning(b, cube);
+    // console.log("Will apply conditioning on " + this.nodeToString(b) + " with assignment " + assignment + "(cube = " + this.nodeToString(cube) + ")");
+    let res = this.bddModule._apply_conditioning(b, cube);
+    // console.log(res);
+    // console.log("end applyConditioning", this.nodeToString(res));
+    return res;
   }
 
   applyRenaming(b: BDDNode, renaming: Map<string, string>) {
@@ -352,6 +363,8 @@ export class BddService {
   stackTrace() {
     return this.bddModule.stackTrace();
   }
+
+
 
 }
 

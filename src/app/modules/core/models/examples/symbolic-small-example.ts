@@ -5,7 +5,7 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
-import { Formula, ExactlyFormula, AndFormula, AtomicFormula, NotFormula } from '../formula/formula';
+import { Formula, ExactlyFormula, OrFormula, AndFormula, AtomicFormula, NotFormula, KFormula } from '../formula/formula';
 import { ExplicitToSymbolic } from '../eventmodel/explicit-to-symbolic';
 import { EventModelAction } from './../environment/event-model-action';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
@@ -188,13 +188,34 @@ export class SymbolicSimpleExample extends ExampleDescription {
 
         // console.log("Pick one", BDD.bddService.pickOneSolution(M.getAgentGraphe("a")));
 
+        /*
         for(let val of BDD.bddService.pickAllSolutions(M.getAgentGraphe("a"))){
             console.log(val.toString())
+        }*/
+
+        console.log("A successors")
+        for(let val of M.getSuccessors(M.getPointedWorld(), "a")){
+            console.log(val.toString());
+        }
+        console.log("B successors")
+        for(let val of M.getSuccessors(M.getPointedWorld(), "b")){
+            console.log(val.toString());
         }
 
-        for(let val of M.getSuccessors(M.getPointedWorld(), "a")){
-            console.log(val.toString()) 
-        }
+        let form = new KFormula("a", new AtomicFormula(SymbolicSimpleExample.getVarName("a", 0)));
+        console.log(form.prettyPrint(), M.check(form));
+        let form2 = new KFormula("a", new AtomicFormula(SymbolicSimpleExample.getVarName("b", 1)));
+        console.log(form2.prettyPrint(), M.check(form2));
+
+        let form3 = new KFormula("b", new AtomicFormula(SymbolicSimpleExample.getVarName("a", 0)));
+        console.log(form3.prettyPrint(), M.check(form3));
+        let form4 = new KFormula("b", new AtomicFormula(SymbolicSimpleExample.getVarName("b", 1)));
+        console.log(form4.prettyPrint(), M.check(form4));
+
+        let form5 = new KFormula("a", new OrFormula([
+            new AtomicFormula(SymbolicSimpleExample.getVarName("b", 1)),
+            new AtomicFormula(SymbolicSimpleExample.getVarName("b", 2))]));
+        console.log(form5.prettyPrint(), M.check(form5));
 
         return M;
     }

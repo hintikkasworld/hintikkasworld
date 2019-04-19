@@ -83,9 +83,7 @@ export class ExplicitToSymbolic {
                     let action_prime_frame = BDD.bddService.applyAnd([bdd_action_prime, ExplicitToSymbolic._frame(liste, true)]);
                     or_others = BDD.bddService.applyOr([BDD.bddService.createCopy(or_others), action_prime_frame]);
                 }
-                symb_em.addPlayerEvent(event, agent, BDD.bddService.applyAnd([pointeur, or_others]))
-
-                
+                symb_em.addPlayerEvent(node, agent, BDD.bddService.applyAnd([pointeur, or_others]))
 
             }
         }

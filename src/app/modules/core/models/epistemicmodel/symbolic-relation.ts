@@ -55,7 +55,6 @@ export class Obs implements SymbolicRelation {
             console.log("Trace : ", error.stack);
             throw error;
         }
-        console.log(BDD.bddService.stackTrace());
         return res;
     }
 }

@@ -5,7 +5,7 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
-import { Formula, ExactlyFormula, AndFormula, AtomicFormula, NotFormula } from '../formula/formula';
+import { Formula, ExactlyFormula, AndFormula, AtomicFormula, NotFormula, KFormula, OrFormula } from '../formula/formula';
 import { ExplicitToSymbolic } from '../eventmodel/explicit-to-symbolic';
 import { EventModelAction } from './../environment/event-model-action';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
@@ -145,12 +145,11 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                 his_cards.push(SimpleSymbolicHanabi.getVarName(current_agent, c));
             }
-            /*
             for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                 for (var i = 1; i < 6; i++) {
                     liste_rel.push(new ExactlyFormula(i, his_cards));
                 };
-            };*/
+            };
             console.log("ListeRel", liste_rel);
             relationsSymboliques.set(current_agent, new Obs(liste_rel));
 
@@ -210,6 +209,21 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         console.log("Pick one", BDD.bddService.pickOneSolution(M.getAgentGraphe("a")));
 
         console.log(BDD.bddService.pickSolutions(M.getAgentGraphe("a"), 10));
+
+        let form = new KFormula("a", new AtomicFormula(SimpleSymbolicHanabi.getVarName("a", 0)));
+        console.log(form.prettyPrint(), M.check(form));
+        let form2 = new KFormula("a", new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)));
+        console.log(form2.prettyPrint(), M.check(form2));
+
+        let form3 = new KFormula("b", new AtomicFormula(SimpleSymbolicHanabi.getVarName("a", 0)));
+        console.log(form3.prettyPrint(), M.check(form3));
+        let form4 = new KFormula("b", new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)));
+        console.log(form4.prettyPrint(), M.check(form4));
+
+        let form5 = new KFormula("a", new OrFormula([
+            new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)),
+            new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 2))]));
+        console.log(form5.prettyPrint(), M.check(form5));
 
         return M;
     }
