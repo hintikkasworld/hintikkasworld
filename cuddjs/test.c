@@ -616,7 +616,7 @@ EMSCRIPTEN_KEEPALIVE
 void init()
 {
 	puts("*** CuddJS init ***");
-	emscripten_trace_configure("http://127.0.0.1:5000/", "CUDDJS");
+	//emscripten_trace_configure("http://127.0.0.1:5000/", "CUDDJS");
     
 	ddm = Cudd_Init(100, 100, CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS, 100);
 	Cudd_ClearErrorCode(ddm);
