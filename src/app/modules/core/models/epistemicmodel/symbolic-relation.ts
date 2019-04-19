@@ -14,11 +14,19 @@ export interface SymbolicRelation {
  */
 export class Obs implements SymbolicRelation {
 
+    /**
+     * What is known by the agent : String (which are atoms), or Formula.
+     * "a" <=> AtomicFormula("a")
+     */
     protected observedVariables: (Formula|string)[];
 
     constructor(observedVariables: (Formula|string)[]) {
         this.observedVariables = observedVariables;
     }
+
+    /**
+     * Return the formula of the SymbolicRelation
+     */
     toFormula() : Formula {
         let list_formula: Formula[] = [];
         for(let form of this.observedVariables){
@@ -29,21 +37,26 @@ export class Obs implements SymbolicRelation {
                     new EquivFormula(form, form.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); } ))
                 );
             }
-
         }
         return new AndFormula(list_formula);
     }
 
+    /**
+     * Return the BDD of the SymbolicRelation, build thanks to the toFormula()
+     */
     toBDD() : BDDNode {
         let formula = this.toFormula();
         console.log(formula);
         let res = null;
+        console.log(BDD.bddService.stackTrace());
         try {
             res = BDD.buildFromFormula(formula);
         } catch (error) {
             BDD.bddService.stackTrace();
+            console.log("Erreur dans le catch !")
             throw error;
         }
+        console.log(BDD.bddService.stackTrace());
         return res;
     }
 }

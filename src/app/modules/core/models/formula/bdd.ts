@@ -31,10 +31,9 @@ export class BDD {
             case (phi instanceof types.ImplyFormula):
                 return BDD.bddService.applyImplies(this.getBDDNode((<types.ImplyFormula>phi).formula1), this.getBDDNode((<types.ImplyFormula>phi).formula2));
             case (phi instanceof types.EquivFormula):
-                return BDD.bddService.applyEquiv(this.getBDDNode((<types.ImplyFormula>phi).formula1), this.getBDDNode((<types.ImplyFormula>phi).formula2));
+                return BDD.bddService.applyEquiv(this.getBDDNode((<types.EquivFormula>phi).formula1), this.getBDDNode((<types.EquivFormula>phi).formula2));
             case (phi instanceof types.AndFormula):
                 return BDD.bddService.applyAnd((<types.AndFormula>phi).formulas.map((f) => this.getBDDNode(f)));
-
             case (phi instanceof types.OrFormula):
                 return BDD.bddService.applyOr((<types.OrFormula>phi).formulas.map((f) => this.getBDDNode(f)));
             case (phi instanceof types.XorFormula): {

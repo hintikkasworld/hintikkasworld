@@ -305,7 +305,7 @@ export class BddService {
   }
 
   stackTrace(){
-    this.bddModule.stackTrace();
+    return this.bddModule.stackTrace();
   }
 
 }
