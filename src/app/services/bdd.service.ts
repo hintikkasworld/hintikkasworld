@@ -237,8 +237,8 @@ export class BddService {
     throw new Error("DEPRECATED: use pickOneSolution()");
   }
 
-  pickOneSolution(bddNode: BDDNode): Valuation {
-    const sols = this.pickSolutions(bddNode, 1);
+  pickOneSolution(bddNode: BDDNode, atoms?: string[]): Valuation {
+    const sols = this.pickSolutions(bddNode, 1, atoms);
     if (sols.length === 0) throw new Error("No solution to pick!");
     if (sols.length !== 1) throw new Error("Too many solutions: this is a bug in pickSolutions()!");
     return sols[0];
@@ -247,91 +247,53 @@ export class BddService {
 
   nodeToString(bddNode: BDDNode, full: boolean = false): string {
     const childrenToString = n => {
-      if (this.isFalse(n)) return "[FALSE]";
-      if (this.isTrue(n)) return "[TRUE]";
-      return full ? this.nodeToString(n, true) : "[#" + n + "]";
+      if (this.isFalse(n)) return "FALSE";
+      if (this.isTrue(n)) return "TRUE";
+      return full ? this.nodeToString(n, true) : "#" + n;
     };
     if (this.isInternalNode(bddNode)) {
       const v = this.getAtomOf(bddNode);
       const t = childrenToString(this.getThenOf(bddNode));
       const e = childrenToString(this.getElseOf(bddNode));
-      return `[IF ${v} THEN ${t} ELSE ${e}]`;
-    } else return childrenToString(bddNode);
+      const id = full ? `#${bddNode}: ` : '';
+      return `[${id}IF ${v} THEN ${t} ELSE ${e}]`;
+    } else return "[" + childrenToString(bddNode) + "]";
   }
 
+  pickAllSolutions(bddNode: BDDNode, atoms?: string[]): Valuation[] {
+    return this.pickSolutions(bddNode, Infinity, atoms);
+  }
   /**
    * NB: this is not efficient at all
    */
-  pickAllSolutions(bddNode: BDDNode): Valuation[] {
-    const support = this.support(bddNode);
-    const combineSols = (x: string, t: BDDNode, e: BDDNode, vars: string[]) => {
-      const sols = getSetOfTrueAtomsOf(e, vars).slice();
-      for (let trueAtoms of getSetOfTrueAtomsOf(t, vars)) {
+  pickSolutions(bddNode: BDDNode, max: number, atoms?: string[]): Valuation[] {
+    if (atoms === undefined) atoms = this.support(bddNode);
+    const combineSols = (x: string, t: BDDNode, e: BDDNode, max: number, atoms: string[]) => {
+      const sols = getSetOfTrueAtomsOf(e, max, atoms).slice();
+      for (let trueAtoms of getSetOfTrueAtomsOf(t, max-sols.length, atoms)) {
         trueAtoms = trueAtoms.slice();
         trueAtoms.push(x);
         sols.push(trueAtoms);
       }
       return sols;
     }
-    const getSetOfTrueAtomsOf = (n: BDDNode, vars: string[]): string[][] => {
+    const getSetOfTrueAtomsOf = (n: BDDNode, max: number, atoms: string[]): string[][] => {
       // console.log("Current node: " + this.nodeToString(n));
+      if (max === 0) return [];
       if (this.isFalse(n)) return [];
       if (this.isTrue(n)) {
-        if (vars.length === 0) return [[]];
-        const x = vars[0];
-        return combineSols(x, n, n, vars.slice(1));
+        if (atoms.length === 0) return [[]];
+        const x = atoms[0];
+        return combineSols(x, n, n, max, atoms.slice(1));
       }
       const x = this.getAtomOf(n);
-      vars = vars.filter(v => v !== x);
-      return combineSols(x, this.getThenOf(n), this.getElseOf(n), vars);
+      const nextatoms = atoms.filter(v => v !== x);
+      if (atoms.length !== nextatoms.length + 1) throw new Error("Atom " + x + " not in provided support");
+      return combineSols(x, this.getThenOf(n), this.getElseOf(n), max, nextatoms);
     };
-    return getSetOfTrueAtomsOf(bddNode, support).map(trueAtoms => new Valuation(trueAtoms));
+    return getSetOfTrueAtomsOf(bddNode, max, atoms).map(trueAtoms => new Valuation(trueAtoms));
   }
-  /**
-   * NB: this is not very efficient
-   */
-  pickSolutions(bddNode: BDDNode, max?: number): Valuation[] {
-    if (max !== undefined) throw new Error("NOT YET IMPLEMENTED - use pickAllSolutions for debugging");
-    else return this.pickAllSolutions(bddNode);
 
-    // const cache: Map<BDDNode, {sols: string[][], guaranteedComplete: boolean}> = new Map();
-    // const getSetOfTrueAtomsOf = (n: BDDNode, max: number): string[][] => {
-    //   if (max === 0 || this.isFalse(n)) return [];
-    //   if (this.isTrue(n)) return [[]];
-    //   if (cache.has(n)) {
-    // // FIXME WIP
-    //     const {sols, guaranteedComplete} = cache.get(n);
-    //     let enoughSols = false;
-    //     let sliceMax = max;
-    //     if (guaranteedComplete) {
-    //       /* the cache has all solutions */
-    //       /* we return only 'max' of them */
-    //       if (max === undefined) sliceMax = sols.length;
-    //       enoughSols = true;
-    //     } else if (max !== undefined && sols.length >= max) {
-    //       /* the cache may have missed some of the solutions
-    //        * but we don't need more */
-    //       enoughSols = true;
-    //     }
-    //     if (enoughSols) return sols.slice(sliceMax);
-    //   }
-    //   const sols = getSetOfTrueAtomsOf(this.getElseOf(n), max);
-    //   if (sols.length === max) {
-    //     cache.set(n, {sols, max});
-    //     return sols;
-    //   }
-    //   const thenMax = (max !== undefined) max-sols.length : undefined;
-    //   const thenSols = getSetOfTrueAtomsOf(this.getThenOf(n), thenMax);
-    //   for (let trueAtoms of thenSols) {
-    //     trueAtoms = trueAtoms.slice();
-    //     trueAtoms.push(this.getAtomOf(n));
-    //     sols.push(trueAtoms);
-    //   }
-    //   cache.set(n, sols);
-    // return sols;
-    // };
-    //return getSetOfTrueAtomsOf(bddNode, max).map(trueAtoms => new Valuation(trueAtoms));
-  }
 
   support(bddNode: BDDNode): string[] {
     const cube: BDDNode = this.bddModule._support(bddNode);
@@ -353,8 +315,8 @@ export class BddService {
     return this.applyAnd(literals);
   }
 
-  toValuation(bddNode: BDDNode): Valuation {
-    const sols = this.pickSolutions(bddNode, 2);
+  toValuation(bddNode: BDDNode, atoms?: string[]): Valuation {
+    const sols = this.pickSolutions(bddNode, 2, atoms);
     if (sols.length === 0) throw new Error("FALSE is not a valuation");
     if (sols.length === 1) return sols[0];
     if (sols.length === 2) throw new Error("Too many solutions: this is not a valuation");
