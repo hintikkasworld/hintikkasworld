@@ -229,12 +229,29 @@ export class BddService {
     return this.bddModule._get_else_of(b);
   }
 
-  //   save(b: BDDNode): void {
-  //     this.bddModule._save();
-  //   }
-
-  pickRandomSolution(bddNode: BDDNode): Valuation {
-    throw new Error("DEPRECATED: use pickOneSolution()");
+  pickRandomSolution(bddNode: BDDNode, atoms?: string[]): Valuation {
+    const pickRandomSolutionArray = (bddNode: BDDNode, atoms?: string[]): string[] => {
+      if (atoms === undefined) atoms = this.support(bddNode);
+      if (this.isFalse(bddNode)) throw new Error("Cannot pick a solution from FALSE");
+      if (this.isTrue(bddNode)) {
+        const sol = [];
+        for (const a of atoms) {
+          if (Math.random() < 0.5) sol.push(a);
+        }
+        return sol;
+      }
+      const x = this.getAtomOf(bddNode);
+      let next;
+      const sol = [];
+      if (Math.random() < 0.5) {
+        next = this.getThenOf(bddNode);
+        sol.push(x);
+      } else {
+        next = this.getElseOf(bddNode);
+      }
+      return sol.concat(this.pickRandomSolution(next, atoms.filter(v => (v !== x))));
+    }
+    return new Valuation(pickRandomSolutionArray(bddNode, atoms));
   }
 
   pickOneSolution(bddNode: BDDNode, atoms?: string[]): Valuation {
