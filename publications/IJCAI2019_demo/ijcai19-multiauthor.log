@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.6.20)  19 APR 2019 11:35
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.6.20)  19 APR 2019 14:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1131,27 +1131,27 @@ decorations.markings.code.tex))
 ) (./ijcai19-multiauthor.aux)
 \openout1 = `ijcai19-multiauthor.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 69.
-LaTeX Font Info:    ... okay on input line 69.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 69.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 70.
 
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 \AtBeginShipoutBox=\box100
-Package hyperref Info: Link coloring OFF on input line 69.
+Package hyperref Info: Link coloring OFF on input line 70.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
@@ -1161,9 +1161,9 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count181
 )
-LaTeX Info: Redefining \ref on input line 69.
-LaTeX Info: Redefining \pageref on input line 69.
-LaTeX Info: Redefining \nameref on input line 69.
+LaTeX Info: Redefining \ref on input line 70.
+LaTeX Info: Redefining \pageref on input line 70.
+LaTeX Info: Redefining \nameref on input line 70.
 
 (./ijcai19-multiauthor.out) (./ijcai19-multiauthor.out)
 \@outlinefile=\write5
@@ -1205,19 +1205,11 @@ e
 ABD: EveryShipout initializing macros
 \titlearea=\box102
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 73.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 74.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 73.
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 73.
-
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsptm.fd
-File: omsptm.fd 
-)
-LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 73.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 74.
 \actualheight=\skip76
-
-(./section_introduction.tex
+ (./section_introduction.tex
 <images/screenshot.png, id=77, 474.77374pt x 502.87875pt>
 File: images/screenshot.png Graphic file (type png)
 
@@ -1265,12 +1257,8 @@ File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 70.
-
-Overfull \hbox (16.34099pt too wide) in paragraph at lines 70--71
- [] 
- []
-
-) (./section_conclusion.tex) [2] (./ijcai19-multiauthor.bbl
+)
+(./section_conclusion.tex) [2] (./ijcai19-multiauthor.bbl
 Underfull \hbox (badness 10000) in paragraph at lines 10--14
 []\OT1/ptm/m/n/10 R. Iris Ba-har, Er-ica A. Frohm,
  []
@@ -1316,25 +1304,31 @@ Underfull \hbox (badness 10000) in paragraph at lines 115--119
  []
 
 ) [3]
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 130.
+
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsptm.fd
+File: omsptm.fd 
+)
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 129.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 132.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 130.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 133.
  [4
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 132.
- (./ijcai19-multiauthor.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 132.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 132.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 133.
+
+(./ijcai19-multiauthor.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 133.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 133.
 Package rerunfilecheck Info: File `ijcai19-multiauthor.out' has not changed.
 (rerunfilecheck)             Checksum: 0D6BAC38483D272ACE6A5E01DD12F53E;460.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 132.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 133.
  ) 
 Here is how much of TeX's memory you used:
- 22309 strings out of 494871
- 452918 string characters out of 6178634
- 621531 words of memory out of 5000000
- 25180 multiletter control sequences out of 15000+600000
+ 22306 strings out of 494871
+ 452869 string characters out of 6178634
+ 621450 words of memory out of 5000000
+ 25177 multiletter control sequences out of 15000+600000
  25110 words of font info for 55 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
  55i,12n,84p,1037b,995s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1352,7 +1346,7 @@ re/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/te
 xmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/
 type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times
 /utmri8a.pfb>
-Output written on ijcai19-multiauthor.pdf (4 pages, 197723 bytes).
+Output written on ijcai19-multiauthor.pdf (4 pages, 197308 bytes).
 PDF statistics:
  213 PDF objects out of 1000 (max. 8388607)
  171 compressed objects within 2 object streams

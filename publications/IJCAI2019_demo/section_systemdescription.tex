@@ -3,7 +3,7 @@ Whereas the first version was written in Javascript, the new version is written 
 
 \subsection{Binary decision diagrams}
 
-As shown in \cite{DBLP:conf/atal/CharrierS17}, the symbolic model checking of DEL is PSPACE-complete, thus is critical. We manipulate set of worlds, and relations by means of Binary decision diagrams. That is why, for manipulating the binary decision diagrams, we wrote a wrapup in C of the library CUDD (Colorado University Decision Diagram Package) \cite{DBLP:journals/sttt/Somenzi01}, that produces a Web Assembly library and a Javascript module.
+As shown in \cite{DBLP:conf/atal/CharrierS17}, the symbolic model checking of DEL is PSPACE-complete, thus is critical. We manipulate set of worlds, and relations by means of Binary decision diagrams. To this aim, we wrote a wrap-up in C of the library CUDD (Colorado University Decision Diagram Package) \cite{DBLP:journals/sttt/Somenzi01}, that produces a Web Assembly library and a Javascript module.
 
 In order to show possible worlds for a given agent $a$ in some world $w$, we first construct the BDD of $\succinctrelation a(descr(w), \vec x')$ where $descr(w)$ are the Boolean values of $\vec x$ corresponding to world $w$. We then count the number of possible valuations $\vec x'$ than makes for randomly values for $\vec x'$ that makes $\succinctrelation a(descr(w), \vec x')$ true (BDDs are convenient for counting, see TODO). If the number of such valuations is small, we show all the possible worlds, otherwise we randomly generate valuations for $\vec x'$ that makes $\succinctrelation a(descr(w), \vec x')$ true (we randomly select a branch that leads to the true-leaf in the BDD of $\succinctrelation a(descr(w), \vec x')$).
 
@@ -18,7 +18,7 @@ The system is easy to use to provide new examples. Explicit epistemic models are
 
 \begin{figure}
 	\begin{center}
-		\scalebox{0.8}{
+		\scalebox{0.7}{
 			\begin{tikzpicture}[scale=0.75]
 			
 			\umlclass[x=0,y=2]{EpistemicModel}{
