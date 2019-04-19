@@ -93,20 +93,16 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         let rename = rules.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
         let and_rules = new AndFormula([rename, rules]);
 
-        console.log("AND RULES", and_rules);
+        
         let initialFormula = BDD.buildFromFormula(and_rules);
-        console.log("AND RULES END");
+        console.log("INITIAL RULES", and_rules, "=>", initialFormula);
 
         let graphe = new Map<string, BDDNode>();
-        console.log("ENTER relations", relations);
         relations.forEach((value: SymbolicRelation, key: string) => {
-            console.log("parcous relations", value, key);
             let bdd =  value.toBDD();
-            console.log("bdd", bdd);
             graphe.set(key, BDD.bddService.applyAnd([BDD.bddService.createCopy(initialFormula), bdd]));
         });
-
-        console.log("Graphe", graphe);
+        console.log("Symbolic Relations", relations, "=>", graphe);
 
         return new SymbolicEpistemicModel(graphe, worldClass, agents, propositionalAtoms, propositionalPrimes, initialFormula);
 
@@ -127,7 +123,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         this.graphe = new Map<string, BDDNode>();
         agentMap.forEach((value: BDDNode, key: string) => {
             this.graphe.set(key, value);
-            console.log("BDD of", key, value);
         });
     }
 
@@ -148,8 +143,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     getSuccessors(w: World, a: string) {
-
-        console.log("getSucessors", this.getAgentGraphe(a))
 
         let w2 = <WorldValuation> w;
         let props: Map<string, boolean> = SymbolicEpistemicModel.valuationToMap(w2.valuation);
@@ -204,7 +197,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     static getNotPrimeToPrime(atoms: string[]): Map<string, string> {
         let map = new  Map<string, string>();
         atoms.forEach((value) => {
-            map.set(SymbolicEpistemicModel.getPrimedVarName(value), value);
+            map.set(value, SymbolicEpistemicModel.getPrimedVarName(value));
         });
         return map;
     }
@@ -212,7 +205,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     static getPrimeToNotPrime(atoms: string[]): Map<string, string> {
         let map = new Map<string, string>();
         atoms.forEach((value) => {
-            map.set(value, SymbolicEpistemicModel.getPrimedVarName(value));
+            map.set(SymbolicEpistemicModel.getPrimedVarName(value), value);
         });
         return map;
     }
@@ -230,15 +223,15 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     /**
-     * 
-     * @param formula a modal formula
+     * Check if the formula is true or false in the symbolyc epistemic model
+     * @param formula an epitemic formula
      */
     check(formula: Formula): boolean {
 
         let pointeur = this._query_worlds(formula);
-        console.log("check middle", BDD.bddService.pickAllSolutions(pointeur), SymbolicEpistemicModel.valuationToMap(this.pointed));
+        // console.log("check middle", BDD.bddService.pickAllSolutions(pointeur), SymbolicEpistemicModel.valuationToMap(this.pointed));
         let res = BDD.bddService.applyConditioning(pointeur, SymbolicEpistemicModel.valuationToMap(this.pointed));
-        console.log("check end",  BDD.bddService.pickAllSolutions(res))
+        // console.log("check end",  BDD.bddService.pickAllSolutions(res))
         return BDD.bddService.isConsistent(res)
     }
 
@@ -246,16 +239,16 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
         let all_worlds = BDD.bddService.createFalse();
         this.graphe.forEach((value: BDDNode, key: string) => {
-            console.log("_query_worlds", key, value)
+            //console.log("_query_worlds", key, value)
             let f2 = BDD.bddService.applyExistentialForget(BDD.bddService.createCopy(value), this.propositionalPrimes);
             all_worlds = BDD.bddService.applyOr([all_worlds, f2]);
         });
 
-        console.log("f of _query_worlds", BDD.bddService.pickAllSolutions(all_worlds))
+        // console.log("f of _query_worlds", BDD.bddService.pickAllSolutions(all_worlds))
 
         let res = this._query(all_worlds, phi);
 
-        console.log("end _query_worlds", res);
+        // console.log("end _query_worlds", res);
         return res;
     }
 
@@ -299,7 +292,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                     (<types.KFormula>phi).agent,
                     new types.NotFormula((<types.KFormula>phi).formula)
             ));
-            console.log("new form", form);
+            // console.log("new form", form);
             return this._query(all_worlds, form);
         }
         if (phi instanceof types.KposFormula) {
@@ -308,16 +301,25 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                 this._query(all_worlds, (<types.KposFormula>phi).formula),
                 SymbolicEpistemicModel.getPrimeToNotPrime(this.propositionalAtoms)
             );
-            console.log("mp", BDD.bddService.pickAllSolutions(mp));
+            // console.log("mp", BDD.bddService.pickAllSolutions(mp));
             let bdd_a = this.getAgentGraphe((<types.KposFormula>phi).agent);
             let bdd_and = BDD.bddService.applyAnd([BDD.bddService.createCopy(bdd_a), mp]);
-            console.log("bdd_and", BDD.bddService.pickAllSolutions(bdd_and).map(v => v.toAssignment(this.propositionalAtoms.concat(this.propositionalPrimes))), this.propositionalPrimes);
+            // console.log("bdd_and", BDD.bddService.pickAllSolutions(bdd_and).map(v => v.toAssignment(this.propositionalAtoms.concat(this.propositionalPrimes))), this.propositionalPrimes);
             let res = BDD.bddService.applyExistentialForget(bdd_and, this.propositionalPrimes);
-            console.log("res Kpos", BDD.bddService.pickAllSolutions(res).map(v => v.toAssignment(this.propositionalAtoms)));
+            // console.log("res Kpos", BDD.bddService.pickAllSolutions(res).map(v => v.toAssignment(this.propositionalAtoms)));
             return res
         }
         if (phi instanceof types.KwFormula) {
-            throw new Error("Kw not implemented");
+            // K p or K neg p
+            let Knp = new types.KFormula(
+                    (<types.KwFormula>phi).agent,
+                    new types.NotFormula((<types.KwFormula>phi).formula)
+            );
+            let Kp = new types.KFormula(
+                (<types.KwFormula>phi).agent,
+                new types.NotFormula((<types.KwFormula>phi).formula)
+            );
+            return this._query(all_worlds, new types.OrFormula([Knp, Kp]));
         }
 
         /* else */

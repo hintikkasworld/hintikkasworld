@@ -14,6 +14,7 @@ import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositi
 import { BddService } from './../../../../../app/services/bdd.service';
 import { BDD } from './../formula/bdd';
 import { MyTestForBDD } from "./test_bdd";
+import { SymbolicEventModel } from '../eventmodel/symbolic-event-model';
 
 /**
  * @param valuation a valuation
@@ -21,7 +22,7 @@ import { MyTestForBDD } from "./test_bdd";
 class SimpleExampleWorld extends WorldValuation {
 
     static readonly cardSuits = ["green", "blue", "orange", "red"];
-    static readonly cardValues = ["1", "2", "3", "4", "5"];
+    static readonly cardValues = ["1", "2", "3"] // "4", "5"];
     static readonly cardWidth = 9;
     static readonly cardHeight = 8;
     static readonly cardNumber = 5;
@@ -31,8 +32,8 @@ class SimpleExampleWorld extends WorldValuation {
 
         this.agentPos["a"] = { x: 64, y: 16, r: 8 };
         this.agentPos["b"] = { x: 128 - SimpleExampleWorld.cardWidth - 10, y: 32, r: 8 };
-        this.agentPos["c"] = { x: 64, y: 48, r: 8 };
-        this.agentPos["d"] = { x: 20, y: 32, r: 8 };
+        //this.agentPos["c"] = { x: 64, y: 48, r: 8 };
+        //this.agentPos["d"] = { x: 20, y: 32, r: 8 };
 
     }
 
@@ -41,8 +42,8 @@ class SimpleExampleWorld extends WorldValuation {
         let x, y, dx, dy;
         if (agent == "a") { x = 64 - SimpleExampleWorld.cardNumber / 2 * SimpleExampleWorld.cardWidth; y = 0; dx = SimpleExampleWorld.cardWidth; dy = 0; }
         if (agent == "b") { x = 128 - SimpleExampleWorld.cardWidth; y = 10; dx = 0; dy = SimpleExampleWorld.cardHeight; }
-        if (agent == "c") { x = 64 - SimpleExampleWorld.cardNumber / 2 * SimpleExampleWorld.cardWidth; y = 56; dx = SimpleExampleWorld.cardWidth; dy = 0; }
-        if (agent == "d") { x = 0; y = 10; dx = 0; dy = SimpleExampleWorld.cardHeight; }
+        //if (agent == "c") { x = 64 - SimpleExampleWorld.cardNumber / 2 * SimpleExampleWorld.cardWidth; y = 56; dx = SimpleExampleWorld.cardWidth; dy = 0; }
+        //if (agent == "d") { x = 0; y = 10; dx = 0; dy = SimpleExampleWorld.cardHeight; }
 
         SimpleExampleWorld.drawCard(context, { x: x + i * dx, y: y + i * dy, w: SimpleExampleWorld.cardWidth, h: SimpleExampleWorld.cardHeight, fontSize: 5, color: cardSuit, text: cardValue });
 
@@ -65,7 +66,7 @@ class SimpleExampleWorld extends WorldValuation {
 
 export class SymbolicSimpleExample extends ExampleDescription {
 
-    static ok: boolean = false;
+    static ok: boolean = true;
 
     static readonly nbCards: number = 3;
     private agents = ["a", "b"];
@@ -88,10 +89,11 @@ export class SymbolicSimpleExample extends ExampleDescription {
 
     getInitialEpistemicModel() {
 
-        /* DIRTY TESTS HERE.... */
+        /* Francois : DIRTY TESTS HERE.... 
+        * MyTestForBDD.run() is launch at the begining of the webapp ??
+        */
         MyTestForBDD.run();
 
-        console.log("ICI")
         /* Creation of all variables getVarName */
         var variables: string[] = [];
         this.owners.forEach((agent) => {
@@ -180,27 +182,25 @@ export class SymbolicSimpleExample extends ExampleDescription {
 
         M.setPointedWorld(new Valuation(propositions));
 
+
+        /**
+         * Francois : HERE TRY ALL TESTS :
+         * getSucessors
+         * modelChecking
+         * apply
+         */
+
         console.log("TEST");
 
         console.log("InitialWorld", new Valuation(propositions));
 
-        console.log("Graphe a", M.getAgentGraphe("a"));
+        for(let val of M.getSuccessors(M.getPointedWorld(), "a"))
+            console.log("A successors", val.toString());
+        
 
-        // console.log("Pick one", BDD.bddService.pickOneSolution(M.getAgentGraphe("a")));
-
-        /*
-        for(let val of BDD.bddService.pickAllSolutions(M.getAgentGraphe("a"))){
-            console.log(val.toString())
-        }*/
-
-        console.log("A successors")
-        for(let val of M.getSuccessors(M.getPointedWorld(), "a")){
-            console.log(val.toString());
-        }
-        console.log("B successors")
-        for(let val of M.getSuccessors(M.getPointedWorld(), "b")){
-            console.log(val.toString());
-        }
+        for(let val of M.getSuccessors(M.getPointedWorld(), "b"))
+            console.log("B successors", val.toString());
+        
 
         let form = new KFormula("a", new AtomicFormula(SymbolicSimpleExample.getVarName("a", 0)));
         console.log(form.prettyPrint(), M.check(form));
@@ -217,23 +217,66 @@ export class SymbolicSimpleExample extends ExampleDescription {
             new AtomicFormula(SymbolicSimpleExample.getVarName("b", 2))]));
         console.log(form5.prettyPrint(), M.check(form5));
 
+
+        let actions = this.getActions()
+
+        console.log(actions);
+
+        let newSEM: SymbolicEpistemicModel = actions[0].perform(M);
+
+        console.log("new world", newSEM.getPointedWorld().valuation.toString())
+        
+        let ci = 0;
+        for(let val of newSEM.getSuccessors(newSEM.getPointedWorld(), "a")){
+            console.log("A successors", val.toString());
+            if(ci > 10){
+                break;
+            } 
+            ci++;
+        }
+        
+        for(let val of newSEM.getSuccessors(newSEM.getPointedWorld(), "b")){
+            console.log("B successors", val.toString());
+            if(ci > 10){
+                break;
+            } 
+            ci++;
+        }
         return M;
     }
 
 
     getActions() {
-        return [];
 
-        console.log("NO ACTION FOR THE MOMENT", SymbolicSimpleExample.ok);
+        // Francois : STOP THE MULTIPLE CALL OF getActions()
+        if(!SymbolicSimpleExample.ok) return []
+        SymbolicSimpleExample.ok = false;
 
-        const that = this;
+        console.log("create actions");
 
-        function draw(current_agent) {
-
+        function announce(agent, value) {
+            var E = new ExplicitEventModel();
+            let pre: Formula = new AtomicFormula(SymbolicSimpleExample.getVarName("p", value))
+            let name = "Agent " + agent +" learns draw is " + value +".";
+            E.addAction(name, pre);
+            E.makeReflexiveRelation(agent);
+            E.setPointedAction(name);
+            return E;
         }
 
         let list = [];
-        
-        return [];
+        for(let agent of this.agents){
+            for(let card = SymbolicSimpleExample.nbCards-1; card>1; card--){
+                list.push(new EventModelAction(
+                    {
+                        name: "Agent " + agent +" learns draw is " + card +".",
+                        eventModel: ExplicitToSymbolic.translate(announce(agent, card), this.variables, this.agents)
+                    }
+                ));
+            }
+        }
+
+        console.log(list);
+        return list;
     }
 }
