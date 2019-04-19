@@ -204,9 +204,9 @@ DdNode *get_internal_characteristic(DdNode *node, enum CuddJS_InternalCharacteri
 				return Cudd_bddIthVar(ddm, (int)index);
 			}
 		case CUDDJS_THEN:
-			return Cudd_IsComplement(node) ? Cudd_E(node) : Cudd_T(node);
+			return Cudd_IsComplement(node) ? Cudd_Not(Cudd_T(node)) : Cudd_T(node);
 		case CUDDJS_ELSE:
-			return Cudd_IsComplement(node) ? Cudd_T(node) : Cudd_E(node);
+			return Cudd_IsComplement(node) ? Cudd_Not(Cudd_E(node)) : Cudd_E(node);
 		default:
 			error_code = CUDDJS_UNEXPECTED_ERROR;
 			return NULL;
