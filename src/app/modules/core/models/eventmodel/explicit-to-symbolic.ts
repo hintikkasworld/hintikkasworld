@@ -65,7 +65,7 @@ export class ExplicitToSymbolic {
 
                     // console.log("  Succ", succ);
                 
-                    let toprime = SymbolicEpistemicModel.getNotPrimeToPrime(BDD.bddService.support(event_bdd[succ]));
+                    let toprime = SymbolicEpistemicModel.getMapNotPrimeToPrime(BDD.bddService.support(event_bdd[succ]));
                     // console.log("toprime", toprime);
                     let bdd_action_prime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(event_bdd[succ]), toprime); 
                     // console.log("bdd_action_prime", bdd_action_prime);
