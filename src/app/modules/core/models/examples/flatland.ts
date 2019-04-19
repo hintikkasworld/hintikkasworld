@@ -123,7 +123,6 @@ class FlatlandEpistemicModel implements EpistemicModel {
 
     getSuccessors(w: FlatlandWorld, a: string) {
         /**
-         * 
          * @param w 
          * @param a 
          * @returns a possible world of w for agent a, or undefined (if it fails)
