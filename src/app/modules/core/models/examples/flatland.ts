@@ -20,46 +20,46 @@ interface Point {
  * of view.
  */
 class FlatlandWorld extends World {
-    readonly pos: { [agent: string]: Point };
-    readonly dir: { [agent: string]: number };// to each agent we associate an angle
+    readonly positions: { [agent: string]: Point };
+    readonly angle: { [agent: string]: number };// to each agent we associate an angle
     static readonly angleCone = 0.5;
 
-    constructor(pos: { [agent: string]: Point }, dir: { [agent: string]: number }) {
+    constructor(positions: { [agent: string]: Point }, angles: { [agent: string]: number }) {
         super();
-        this.pos = pos;
-        this.dir = dir;
+        this.positions = positions;
+        this.angle = angles;
 
         //restore the position of agents for drawing purposes
-        for (let agent in pos) {
-            this.agentPos[agent] = { x: this.pos[agent].x, y: this.pos[agent].y, r: 8 };
+        for (let agent in positions) {
+            this.agentPos[agent] = { x: this.positions[agent].x, y: this.positions[agent].y, r: 8 };
         }
     }
 
 
     draw(context: CanvasRenderingContext2D) {
-        function drawVisionCone(agent: string, p: Point, d: number) {
+        function drawVisionCone(agent: string, pos: Point, angle: number) {
             let coneLength = 200;
 
-            let p1: Point = {x: p.x + coneLength * Math.cos(d + FlatlandWorld.angleCone),
-                y: p.y + coneLength * Math.sin(d + FlatlandWorld.angleCone)};
+            let p1: Point = {x: pos.x + coneLength * Math.cos(angle + FlatlandWorld.angleCone),
+                y: pos.y + coneLength * Math.sin(angle + FlatlandWorld.angleCone)};
 
-            let p2: Point = {x: p.x + coneLength * Math.cos(d - FlatlandWorld.angleCone),
-                y: p.y + coneLength * Math.sin(d - FlatlandWorld.angleCone)};
+            let p2: Point = {x: pos.x + coneLength * Math.cos(angle - FlatlandWorld.angleCone),
+                y: pos.y + coneLength * Math.sin(angle - FlatlandWorld.angleCone)};
             
                 
             context.strokeStyle = environment.agentColor[agent];
             context.beginPath();
-            context.moveTo(p.x, p.y);
+            context.moveTo(pos.x, pos.y);
             context.lineTo(p1.x, p1.y);
             context.stroke();
-            context.moveTo(p.x, p.y);
+            context.moveTo(pos.x, pos.y);
             context.lineTo(p2.x, p2.y);
             context.stroke();
 
             
             context.fillStyle = environment.agentColor[agent];
             context.beginPath();
-            context.moveTo(p.x, p.y);
+            context.moveTo(pos.x, pos.y);
             context.lineTo(p1.x, p1.y);
             context.lineTo(p2.x, p2.y);
             context.globalAlpha = 0.2;
@@ -69,8 +69,8 @@ class FlatlandWorld extends World {
         }
 
         context.clearRect(0, 0, 128, 64);
-        for (let agent in this.pos)
-            drawVisionCone(agent, this.pos[agent], this.dir[agent]);
+        for (let agent in this.positions)
+            drawVisionCone(agent, this.positions[agent], this.angle[agent]);
         this.drawAgents(context);
     }
 
@@ -85,13 +85,14 @@ class FlatlandWorld extends World {
         if(agent == agentb)
             return true;
 
-        let dist = Math.sqrt((this.pos[agentb].x - this.pos[agent].x) ^ 2 + (this.pos[agentb].y - this.pos[agent].y) ^ 2);
+        let dist = Math.sqrt((this.positions[agentb].x - this.positions[agent].x) ^ 2
+                      + (this.positions[agentb].y - this.positions[agent].y) ^ 2);
 
         if(dist == 0)
             return true;
 
-        let scalarProduct = (this.pos[agentb].x - this.pos[agent].x) * Math.cos(this.dir[agent]) +
-            (this.pos[agentb].y - this.pos[agent].y) * Math.sin(this.dir[agent]) / dist;
+        let scalarProduct = (this.positions[agentb].x - this.positions[agent].x) * Math.cos(this.angle[agent]) +
+            (this.positions[agentb].y - this.positions[agent].y) * Math.sin(this.angle[agent]) / dist;
 
         return scalarProduct >= Math.cos(FlatlandWorld.angleCone);
     }
@@ -103,7 +104,7 @@ class FlatlandWorld extends World {
 
 
     toString() {
-        return JSON.stringify(this.pos) + JSON.stringify(this.dir);
+        return JSON.stringify(this.positions) + JSON.stringify(this.angle);
     }
 
 
@@ -129,7 +130,7 @@ class FlatlandEpistemicModel implements EpistemicModel {
          */
         function getSuccessor(w: FlatlandWorld, a: string): FlatlandWorld {
             function testIfSuccessor(w: FlatlandWorld, u: FlatlandWorld) {
-                for (let agent in w.pos) {
+                for (let agent in w.positions) {
                     if (!w.isSee(a, agent) && u.isSee(a, agent))
                         return false;
                 }
@@ -141,8 +142,8 @@ class FlatlandEpistemicModel implements EpistemicModel {
 
             for (let agent of ["a", "b", "c"]) {
                 if (w.isSee(a, agent) || a == agent) {
-                    newPos[agent] = w.pos[agent];
-                    newDir[agent] = w.dir[agent];
+                    newPos[agent] = w.positions[agent];
+                    newDir[agent] = w.angle[agent];
                 }
                 else {
                     newPos[agent] = { x: Math.random() * 128, y: Math.random() * 64 };
