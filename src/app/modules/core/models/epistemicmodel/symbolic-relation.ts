@@ -48,12 +48,13 @@ export class Obs implements SymbolicRelation {
         let formula = this.toFormula();
         console.log(formula);
         let res = null;
-        console.log(BDD.bddService.stackTrace());
+        //console.log(BDD.bddService.stackTrace());
         try {
             res = BDD.buildFromFormula(formula);
         } catch (error) {
-            BDD.bddService.stackTrace();
-            console.log("Erreur dans le catch !")
+            console.log(BDD.bddService.stackTrace());
+            console.log("Erreur dans la contruction de la formule !")
+            console.log("Trace : ", error.stack);
             throw error;
         }
         console.log(BDD.bddService.stackTrace());

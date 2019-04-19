@@ -22,7 +22,7 @@ export class BDD {
         return BDD.bddService.pickRandomSolution(this.bddNode);
     }
     private static getBDDNode(phi: Formula): BDDNode {
-
+        // console.log(typeof phi, phi);
         switch (true) {
             case (phi instanceof types.TrueFormula): return BDD.bddService.createTrue();
             case (phi instanceof types.FalseFormula): return BDD.bddService.createFalse();

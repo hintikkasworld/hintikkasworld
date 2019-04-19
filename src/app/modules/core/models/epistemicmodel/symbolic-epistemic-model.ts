@@ -76,7 +76,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      */
     static build(worldClass: WorldValuationType, agents: string[], atoms: string[], relations: Map<string, SymbolicRelation>, rules: Formula) {
 
-
         let propositionalAtoms = [];
         let propositionalPrimes = []
 
@@ -150,16 +149,23 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     getSuccessors(w: World, a: string) {
 
+        let w2 = <WorldValuation> w;
+        let props: Map<string, boolean> = SymbolicEpistemicModel.valuationToMap(w2.valuation);
+        let bdd = BDD.bddService.createCube(props);
+        
         /**
          * in this method, we will use new this.worldClass(val) to instantiate world with valuation val
          */
         /* Caution : w must be a BDD, need rename function.
-        // François says: w is a World, more precisely a ValuationWorld. You should extract a BDD from it.
+        // François says: w is a World, more precisely a ValuationWorld. You should extract a BDD from it. */
         
-        BDD.rename(BDD.universalforget(BDD.and([this.graphe[a], BDD.cube(w.valuation())]), this.propositionalAtoms), this.notPrimetoPrime); 
-        */
-
-        return null;
+        let res = BDD.bddService.applyRenaming(
+            BDD.bddService.applyUniversalForget(
+                BDD.bddService.applyAnd([this.graphe[a], bdd]),
+                this.propositionalAtoms),
+            this.notPrimetoPrime); 
+        // return Valuation
+        return BDD.bddService.pickSolutions(res);
     };
 
     getAgentGraphe(agent: string): BDDNode {
