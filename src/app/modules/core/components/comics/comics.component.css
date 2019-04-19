@@ -48,6 +48,7 @@
   border-radius: 25px;
   border: 3px solid black;
   padding: 8px;
+  resize: both;
 }
 
 
@@ -58,6 +59,7 @@
   border: 3px solid black;
   position:absolute;
   background-color: white;
+  resize: both;
 }
 
 
