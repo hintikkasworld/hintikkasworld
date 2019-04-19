@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.6.20)  19 APR 2019 11:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2018.6.20)  19 APR 2019 11:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1306,12 +1306,12 @@ Underfull \hbox (badness 4048) in paragraph at lines 82--88
  []
 
 
-Underfull \hbox (badness 2521) in paragraph at lines 105--108
+Underfull \hbox (badness 2521) in paragraph at lines 110--113
 []\OT1/ptm/m/n/10 Hans van Dit-marsch, Wiebe
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 110--114
+Underfull \hbox (badness 10000) in paragraph at lines 115--119
 []\OT1/ptm/m/n/10 Heinz Wim-mer and Josef
  []
 
@@ -1331,10 +1331,10 @@ Package rerunfilecheck Info: File `ijcai19-multiauthor.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 132.
  ) 
 Here is how much of TeX's memory you used:
- 22307 strings out of 494871
- 452855 string characters out of 6178634
- 620212 words of memory out of 5000000
- 25179 multiletter control sequences out of 15000+600000
+ 22309 strings out of 494871
+ 452918 string characters out of 6178634
+ 621531 words of memory out of 5000000
+ 25180 multiletter control sequences out of 15000+600000
  25110 words of font info for 55 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
  55i,12n,84p,1037b,995s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1352,10 +1352,10 @@ re/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/te
 xmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/
 type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times
 /utmri8a.pfb>
-Output written on ijcai19-multiauthor.pdf (4 pages, 197391 bytes).
+Output written on ijcai19-multiauthor.pdf (4 pages, 197723 bytes).
 PDF statistics:
- 210 PDF objects out of 1000 (max. 8388607)
- 168 compressed objects within 2 object streams
- 33 named destinations out of 1000 (max. 500000)
+ 213 PDF objects out of 1000 (max. 8388607)
+ 171 compressed objects within 2 object streams
+ 34 named destinations out of 1000 (max. 500000)
  183 words of extra memory for PDF output out of 10000 (max. 10000000)
 
