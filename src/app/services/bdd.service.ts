@@ -263,20 +263,29 @@ export class BddService {
    * NB: this is not efficient at all
    */
   pickAllSolutions(bddNode: BDDNode): Valuation[] {
-    const getSetOfTrueAtomsOf = (n: BDDNode): string[][] => {
-      console.log("Current node: " + nodeToString(n));
-      if (this.isFalse(n)) return [];
-      if (this.isTrue(n)) return [[]];
-      const sols = getSetOfTrueAtomsOf(this.getElseOf(n)).slice();
-      const thenSols = getSetOfTrueAtomsOf(this.getThenOf(n));
-      for (let trueAtoms of thenSols) {
+    const support = this.support(bddNode);
+    const combineSols = (x: string, t: BDDNode, e: BDDNode, vars: string[]) => {
+      const sols = getSetOfTrueAtomsOf(e, vars).slice();
+      for (let trueAtoms of getSetOfTrueAtomsOf(t, vars)) {
         trueAtoms = trueAtoms.slice();
-        trueAtoms.push(this.getAtomOf(n));
+        trueAtoms.push(x);
         sols.push(trueAtoms);
       }
       return sols;
+    }
+    const getSetOfTrueAtomsOf = (n: BDDNode, vars: string[]): string[][] => {
+      console.log("Current node: " + nodeToString(n));
+      if (this.isFalse(n)) return [];
+      if (this.isTrue(n)) {
+        if (vars.length === 0) return [[]];
+        const x = vars[0];
+        return combineSols(x, n, n, vars.slice(1));
+      }
+      const x = this.getAtomOf(n);
+      vars = vars.slice().remove(x);
+      return combineSols(x, this.getThenOf(n), this.getElseOf(n), vars);
     };
-    return getSetOfTrueAtomsOf(bddNode).map(trueAtoms => new Valuation(trueAtoms));
+    return getSetOfTrueAtomsOf(bddNode, support).map(trueAtoms => new Valuation(trueAtoms));
   }
   /**
    * NB: this is not very efficient
