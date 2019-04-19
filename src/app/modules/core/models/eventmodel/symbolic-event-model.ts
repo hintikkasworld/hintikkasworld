@@ -23,14 +23,14 @@ export class SymbolicEventModel implements EventModel  {
      * @param varName
      */
     static getPostedVarName(varName:string): string {
-        return varName + SymbolicEventModel.getPostedString();
+        return SymbolicEventModel.getPostedString() + varName ;
     }
     
     /**
      * Return the string that symbolise the Posted atom.
      */
     static getPostedString(): string {
-        return "_+"
+        return "+_"
     }
 
     /**
@@ -46,7 +46,7 @@ export class SymbolicEventModel implements EventModel  {
      * @param varName variable
      */
     static getPrimedPostedVarName(varName:string): string {
-        return varName + SymbolicEventModel.getPostedString() + SymbolicEpistemicModel.getPrimedString();
+        return SymbolicEventModel.getPostedString() + varName + SymbolicEpistemicModel.getPrimedString();
     }
 
     /**
@@ -54,10 +54,12 @@ export class SymbolicEventModel implements EventModel  {
      * @param vars list of atom as string
      */
     static varsToPosted(vars: string[]): Map<string, string>{
+    
         let liste = new Map();
-        for(let vari in vars){
-            liste[vari] = SymbolicEventModel.getPostedVarName(vari);
+        for(let vari of vars){
+            liste.set(vari, SymbolicEventModel.getPostedVarName(vari));
         }
+        console.log("varsToPosted", vars, liste)
         return liste;
     }
 
@@ -108,25 +110,31 @@ export class SymbolicEventModel implements EventModel  {
         
         let agentMap = new Map<string, BDDNode>();
 
-        for(var agent in this.agents){
+        console.log("APPLY", this.pointed, M1.getPointedWorld().valuation)
+
+        for(let agent of this.agents){
+
             var ev_for_agent = this.getPlayerEvent(this.pointed, agent);
+
+            console.log("ev_for_agent", BDD.bddService.pickAllSolutions(ev_for_agent));
             
             let support: string[] = BDD.bddService.support(ev_for_agent);
 
             /* Get the minus variables */
             var var_minus: string[] = [];
-            for(let variable in support){
+            for(let variable of support){
                 /* remove the _+ */
-                let var1 = variable.replace("/" + SymbolicEventModel.getPostedString() +"/g",'');
-                if(var1 in var_minus){
-                    var_minus.slice( var_minus.indexOf(var1), 1);
+                let var1 = variable.replace(SymbolicEventModel.getPostedString(),'');
+                console.log("var", variable, var1, var1 in var_minus)
+                if(!(var1 in var_minus)){
+                    //var_minus.slice( var_minus.indexOf(var1), 1);
+                    var_minus.push(var1);
                 }
-                var_minus.push(var1);
             }
             
             /* Get the posted variables */
             var var_plus: string[] = [];
-            for(var vari in var_minus){
+            for(var vari of var_minus){
                 var_plus.push(SymbolicEventModel.getPostedVarName(vari));
             }
             
@@ -136,10 +144,30 @@ export class SymbolicEventModel implements EventModel  {
                 transfert.set(var_plus[i], var_minus[i]);
             }
 
+<<<<<<< HEAD
             var pointeur: BDDNode = M.getAgentSymbolicRelation(agent);
+=======
+            console.log("ev_for_agent", ev_for_agent)
+            console.log("support", support)
+            console.log("var_minus", var_minus)
+            console.log("var_plus", var_plus)
+            console.log("transfert", transfert)
+
+            var pointeur: BDDNode = M.getAgentGraphe(agent);
+>>>>>>> a1ed363a7adf5e273d813fbc1b5dffbbd9af77f6
             pointeur = BDD.bddService.applyAnd([BDD.bddService.createCopy(pointeur), BDD.bddService.createCopy(ev_for_agent)]);
-            pointeur = BDD.bddService.applyExistentialForget(pointeur, var_minus);
-            pointeur = BDD.bddService.applyRenaming(pointeur, transfert); 
+            console.log("1", BDD.bddService.pickAllSolutions(pointeur))
+            pointeur = BDD.bddService.applyExistentialForget(BDD.bddService.createCopy(pointeur), var_minus);
+            console.log("2", BDD.bddService.pickAllSolutions(pointeur))
+            pointeur = BDD.bddService.applyRenaming(BDD.bddService.createCopy(pointeur), transfert); 
+            console.log("3", BDD.bddService.pickAllSolutions(pointeur))
+
+            let ci = 0;
+            for(let val of BDD.bddService.pickAllSolutions(pointeur)){
+                console.log("val", val.toString())
+                if(ci>10) break
+                ci++
+            }
             
             agentMap.set(agent, pointeur);
             
@@ -148,7 +176,7 @@ export class SymbolicEventModel implements EventModel  {
         var bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation));
         var w = BDD.bddService.applyAnd([bdd_valuation, BDD.bddService.createCopy(bdd_single_event)]);
 
-        if(BDD.bddService.isFalse(w)) throw new Error("An error has occured in the application of SymbolicEventModel on SymbolicEpistemicModel.");
+        if(BDD.bddService.isFalse(w)) throw new Error("An error has occured in the application of SymbolicEventModel on SymbolicEpistemicModel. Are sure that event '" + this.getPointedAction() + "' can be apply on valuation " + M1.getPointedWorld().valuation);
         
         let transfert2: Map<string, string> = new Map<string, string>();
         let plus: string[] = [];
@@ -210,6 +238,7 @@ export class SymbolicEventModel implements EventModel  {
      * @param event the BDDNode of the event
      */
     addPlayerEvent(key: string, agent: string, event: BDDNode): void {
+        console.log("add", key, agent, event)
         this.agentsEvents.get(agent).set(key, event);
     }
 
@@ -219,6 +248,10 @@ export class SymbolicEventModel implements EventModel  {
      * @param agent the name of the agent
      */
     getPlayerEvent(key: string, agent: string): BDDNode {
+        console.log("getPlayerEvent", key, agent)
+        console.log("agentsEvents", this.agentsEvents, this.agentsEvents.keys())
+        console.log("uniqueEvents", this.uniqueEvents, this.uniqueEvents.keys())
+        console.log(this.agentsEvents.get(agent))
         return this.agentsEvents.get(agent).get(key);
     }    
 }

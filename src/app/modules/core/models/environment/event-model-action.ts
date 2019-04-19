@@ -26,7 +26,7 @@ export class EventModelAction implements Action {
         return this._name;
     }
 
-    perform(M: ExplicitEpistemicModel): EpistemicModel {
+    perform(M: EpistemicModel): EpistemicModel {
         return this._E.apply(M);
     }
 }
