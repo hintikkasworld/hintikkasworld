@@ -456,10 +456,8 @@ Bdd apply_universal_forget(Bdd f, Atom vars[], int nb) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd apply_conditioning(Bdd f, Bdd cube) {
-	/* conditioning is implemented via bddAndAbstract, which makes a
-	 * conjunction and forgets the variables in a cube at the same time */
 	DEBUG("conditioning");
-	DdNode *res = Cudd_bddAndAbstract(ddm, f, cube, cube);
+	DdNode *res = Cudd_Cofactor(ddm, f, cube);
 	if (res == NULL) return NULL;
 	Cudd_Ref(res);
 	DEBUG("conditioning done");
