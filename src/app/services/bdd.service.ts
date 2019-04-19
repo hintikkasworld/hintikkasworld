@@ -244,11 +244,27 @@ export class BddService {
     return sols[0];
   }
 
+
+  nodeToString(bddNode: BDDNode, full: boolean = false): string {
+    const childrenToString = n => {
+      if (this.isFalse(n)) return "[FALSE]";
+      if (this.isTrue(n)) return "[TRUE]";
+      return full ? nodeToString(n, true) : "[#" + n + "]";
+    };
+    if (this.isInternalNode(bddNode)) {
+      const v = this.getAtomOf(bddNode);
+      const t = childrenToString(this.getThenOf(bddNode));
+      const e = childrenToString(this.getElseOf(bddNode));
+      return "[IF ${v} THEN ${t} ELSE ${e}]";
+    } else return childrenToString(bddNode);
+  }
+
   /**
    * NB: this is not efficient at all
    */
   pickAllSolutions(bddNode: BDDNode): Valuation[] {
     const getSetOfTrueAtomsOf = (n: BDDNode): string[][] => {
+      console.log("Current node: " + nodeToString(n));
       if (this.isFalse(n)) return [];
       if (this.isTrue(n)) return [[]];
       const sols = getSetOfTrueAtomsOf(this.getElseOf(n)).slice();
@@ -260,13 +276,14 @@ export class BddService {
       }
       return sols;
     };
-    return getSetOfTrueAtomsOf(bddNode, max).map(trueAtoms => new Valuation(trueAtoms));
+    return getSetOfTrueAtomsOf(bddNode).map(trueAtoms => new Valuation(trueAtoms));
   }
   /**
    * NB: this is not very efficient
    */
   pickSolutions(bddNode: BDDNode, max?: number): Valuation[] {
-    throw new Error("NOT YET IMPLEMENTED - use pickAllSolutions for debugging");
+    if (max !== undefined) throw new Error("NOT YET IMPLEMENTED - use pickAllSolutions for debugging");
+    else return pickAllSolutions(bddNode);
     Map<BDDNode, {sols: string[][], guaranteedComplete: boolean}> cache = new Map();
     const getSetOfTrueAtomsOf = (n: BDDNode, max: number): string[][] => {
       if (max === 0 || this.isFalse(n)) return [];
