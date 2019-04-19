@@ -144,17 +144,13 @@ export class SymbolicEventModel implements EventModel  {
                 transfert.set(var_plus[i], var_minus[i]);
             }
 
-<<<<<<< HEAD
-            var pointeur: BDDNode = M.getAgentSymbolicRelation(agent);
-=======
             console.log("ev_for_agent", ev_for_agent)
             console.log("support", support)
             console.log("var_minus", var_minus)
             console.log("var_plus", var_plus)
             console.log("transfert", transfert)
 
-            var pointeur: BDDNode = M.getAgentGraphe(agent);
->>>>>>> a1ed363a7adf5e273d813fbc1b5dffbbd9af77f6
+            var pointeur: BDDNode = M.getAgentSymbolicRelation(agent);
             pointeur = BDD.bddService.applyAnd([BDD.bddService.createCopy(pointeur), BDD.bddService.createCopy(ev_for_agent)]);
             console.log("1", BDD.bddService.pickAllSolutions(pointeur))
             pointeur = BDD.bddService.applyExistentialForget(BDD.bddService.createCopy(pointeur), var_minus);

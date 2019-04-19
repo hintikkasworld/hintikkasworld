@@ -190,11 +190,7 @@ export class SymbolicSimpleExample extends ExampleDescription {
          * apply
          */
 
-<<<<<<< HEAD
         console.log("Graphe a", M.getAgentSymbolicRelation("a"));
-=======
-        console.log("TEST");
->>>>>>> a1ed363a7adf5e273d813fbc1b5dffbbd9af77f6
 
         console.log("InitialWorld", new Valuation(propositions));
 
