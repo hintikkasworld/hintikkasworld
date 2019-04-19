@@ -12,7 +12,7 @@
 #include "cudd.h"
 
 #include "emscripten.h"
-#include "emscripten/trace.h"
+//#include "emscripten/trace.h"
 
 typedef DdNode *Atom;
 typedef DdNode *Bdd;
@@ -34,6 +34,7 @@ void die(char *msg, ...)
 #endif
 }
 
+#define ABORT_ON_NULL(p, msg) do{if((p) == NULL) die((msg), " aborted: ", get_error());}while(0)
 
 DdManager *ddm;
 bool debug_on = false;
@@ -61,6 +62,7 @@ bool debug_on = false;
 		}
 	}
 #	define DEBUG(msg) do{if(debug_on) debug(msg);}while(0)
+#	define DEBUG_ENSURE_NONNULL(p, msg) ABORT_ON_NULL(p, msg)
 #endif
 
 
@@ -91,8 +93,6 @@ char *get_error() {
 			switch(error_code) {
 				case CUDDJS_NO_ERROR:
 					msg = "no error";
-					break;
-				case CUDDJS_UNMET_ASSERTION:
 					msg = "unmet assertion in wrapped CUDD code";
 					break;
 				case CUDDJS_NOT_INTERNAL_NODE:
@@ -138,6 +138,7 @@ char *get_error() {
  */
 EMSCRIPTEN_KEEPALIVE
 bool is_true(DdNode *node) {
+	DEBUG_ENSURE_NONNULL(node, "is_true got NULL");
 	return Cudd_IsConstant(node) && ! Cudd_IsComplement(node);
 }
 
@@ -146,6 +147,7 @@ bool is_true(DdNode *node) {
  */
 EMSCRIPTEN_KEEPALIVE
 bool is_false(DdNode *node) {
+	DEBUG_ENSURE_NONNULL(node, "is_false got NULL");
 	return Cudd_IsConstant(node) && Cudd_IsComplement(node);
 }
 
@@ -154,6 +156,7 @@ bool is_false(DdNode *node) {
  */
 EMSCRIPTEN_KEEPALIVE
 bool is_consistent(Bdd bdd) {
+	DEBUG_ENSURE_NONNULL(bdd, "is_consistent got NULL");
 	return ! is_false(bdd);
 }
 
@@ -162,6 +165,8 @@ bool is_consistent(Bdd bdd) {
  */
 EMSCRIPTEN_KEEPALIVE
 bool are_equivalent(Bdd f, Bdd g) {
+	DEBUG_ENSURE_NONNULL(f, "are_equivalent got (NULL,*)");
+	DEBUG_ENSURE_NONNULL(g, "are_equivalent got (*,NULL)");
 	return f == g;
 }
 
@@ -171,8 +176,9 @@ bool are_equivalent(Bdd f, Bdd g) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd support(Bdd f) {
+	DEBUG_ENSURE_NONNULL(f, "support got NULL");
 	DdNode *res = Cudd_Support(ddm, f);
-	if (res == NULL) return NULL;
+	ABORT_ON_NULL(res, "support");
 	Cudd_Ref(res);
 	return res;
 }
@@ -182,6 +188,7 @@ Bdd support(Bdd f) {
  */
 EMSCRIPTEN_KEEPALIVE
 bool is_internal_node(DdNode *node) {
+	DEBUG_ENSURE_NONNULL(node, "is_internal_node got NULL");
 	return Cudd_IsNonConstant(node);
 }
 
@@ -189,6 +196,7 @@ enum CuddJS_InternalCharacteristic {
 	CUDDJS_ATOM, CUDDJS_THEN, CUDDJS_ELSE,
 };
 DdNode *get_internal_characteristic(DdNode *node, enum CuddJS_InternalCharacteristic ic) {
+	DEBUG_ENSURE_NONNULL(node, "get_internal_characteristic got NULL");
 	if (Cudd_IsConstant(node)) {
 		error_code = CUDDJS_NOT_INTERNAL_NODE;
 		return NULL;
@@ -249,6 +257,7 @@ DdNode *get_else_of(DdNode *node) {
 EMSCRIPTEN_KEEPALIVE
 Atom make_new_atom() {
 	DdNode *tmp = Cudd_bddNewVar(ddm);
+	ABORT_ON_NULL(tmp, "make_new_atom");
 	return tmp;
 }
 
@@ -259,6 +268,7 @@ EMSCRIPTEN_KEEPALIVE
 Bdd create_false() {
 	DEBUG("create false");
 	DdNode *tmp = Cudd_ReadLogicZero(ddm);
+	ABORT_ON_NULL(tmp, "create_false");
 	Cudd_Ref(tmp);
 	DEBUG("false ref'ed");
 	return tmp;
@@ -271,6 +281,7 @@ EMSCRIPTEN_KEEPALIVE
 Bdd create_true() {
 	DEBUG("create true");
 	DdNode *tmp = Cudd_ReadOne(ddm);
+	ABORT_ON_NULL(tmp, "create_true");
 	Cudd_Ref(tmp);
 	DEBUG("true ref'ed");
 	return tmp;
@@ -293,6 +304,8 @@ enum CuddJS_BinaryOperator {
 };
 
 Bdd apply_binary_op(Bdd n1, Bdd n2, enum CuddJS_BinaryOperator op) {
+	DEBUG_ENSURE_NONNULL(n1, "binop got (NULL,*)");
+	DEBUG_ENSURE_NONNULL(n2, "binop got (*,NULL)");
 	//fprintf(stderr, "debug op 1: %d\n", Cudd_DebugCheck(ddm));
 	DdNode *res;
 	DEBUG("binop start");
@@ -311,7 +324,7 @@ Bdd apply_binary_op(Bdd n1, Bdd n2, enum CuddJS_BinaryOperator op) {
 			break;
 	}
 	//DEBUG("binop done");
-	if (res == NULL) return NULL;
+	ABORT_ON_NULL(res, "bin_op");
 	Cudd_Ref(res);
 	DEBUG("binop ref'ed result");
 	//fprintf(stderr, "debug op 2: %d\n", Cudd_DebugCheck(ddm));
@@ -349,10 +362,14 @@ Bdd apply_or(Bdd n1, Bdd n2) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd apply_not(Bdd n) {
+	DEBUG_ENSURE_NONNULL(n, "apply_not got NULL");
+	DEBUG("negation");
 	DdNode *res = Cudd_Not(n);
-	if (res == NULL) return NULL;
+	ABORT_ON_NULL(res, "not");
 	Cudd_Ref(res);
+	DEBUG("negation, done");
 	Cudd_RecursiveDeref(ddm, n);
+	DEBUG("negation, after deref");
 	return res;
 }
 
@@ -383,12 +400,18 @@ Bdd apply_equiv(Bdd f, Bdd g) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd apply_ite(Bdd f, Bdd g, Bdd h) {
+	DEBUG_ENSURE_NONNULL(f, "ite got (NULL,*,*)");
+	DEBUG_ENSURE_NONNULL(g, "ite got (*,NULL,*)");
+	DEBUG_ENSURE_NONNULL(h, "ite got (*,*,NULL)");
+	DEBUG("ite");
 	DdNode *res = Cudd_bddIte(ddm, f, g, h);
-	if (res == NULL) return NULL;
+	ABORT_ON_NULL(res, "ite");
 	Cudd_Ref(res);
+	DEBUG("ite done");
 	Cudd_RecursiveDeref(ddm, f);
 	Cudd_RecursiveDeref(ddm, g);
 	Cudd_RecursiveDeref(ddm, h);
+	DEBUG("ite derefs done");
 	return res;
 }
 
@@ -400,18 +423,22 @@ Bdd apply_ite(Bdd f, Bdd g, Bdd h) {
  * need to be deref'ed.
  */
 Bdd apply_forget(Bdd f, Atom vars[], int nb, bool existential) {
-	//fprintf(stderr, "debug forget 1: %d\n", Cudd_DebugCheck(ddm));
+	DEBUG_ENSURE_NONNULL(f, "forget got NULL");
+	DEBUG("forget, start");
 	DdNode *cube = Cudd_bddComputeCube(ddm, vars, NULL, nb);
-	if (cube == NULL) return NULL;
+	ABORT_ON_NULL(cube, "forget cube");
 	Cudd_Ref(cube);
+	DEBUG("forget, cube created");
 	DdNode *res = existential ?
 		Cudd_bddExistAbstract(ddm, f, cube) :
 		Cudd_bddUnivAbstract(ddm, f, cube);
 	//fprintf(stderr, "debug forget 2: %d\n", Cudd_DebugCheck(ddm));
-	if (res == NULL) return NULL;
+	ABORT_ON_NULL(res, "forget");
 	Cudd_Ref(res);
+	DEBUG("forget, done");
 	Cudd_RecursiveDeref(ddm, cube);
 	Cudd_RecursiveDeref(ddm, f);
+	DEBUG("forget, derefs done");
 	//fprintf(stderr, "debug forget 3: %d\n", Cudd_DebugCheck(ddm));
 	return res;
 }
@@ -456,9 +483,11 @@ Bdd apply_universal_forget(Bdd f, Atom vars[], int nb) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd apply_conditioning(Bdd f, Bdd cube) {
+	DEBUG_ENSURE_NONNULL(f, "conditioning got NULL");
+	DEBUG_ENSURE_NONNULL(cube, "conditioning got NULL cube");
 	DEBUG("conditioning");
 	DdNode *res = Cudd_Cofactor(ddm, f, cube);
-	if (res == NULL) return NULL;
+	ABORT_ON_NULL(res, "conditioning");
 	Cudd_Ref(res);
 	DEBUG("conditioning done");
 	Cudd_RecursiveDeref(ddm, cube);
@@ -474,10 +503,14 @@ Bdd apply_conditioning(Bdd f, Bdd cube) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd apply_renaming(Bdd f, Atom oldvars[], Atom newvars[], int nb) {
+	DEBUG_ENSURE_NONNULL(f, "renaming got NULL");
+	DEBUG("renaming, start");
 	DdNode *res = Cudd_bddSwapVariables(ddm, f, oldvars, newvars, nb);
-	if (res == NULL) return NULL;
+	ABORT_ON_NULL(res, "renaming");
 	Cudd_Ref(res);
+	DEBUG("renaming, done");
 	Cudd_RecursiveDeref(ddm, f);
+	DEBUG("renaming, deref done");
 	return res;
 }
 
@@ -488,6 +521,7 @@ Bdd apply_renaming(Bdd f, Atom oldvars[], Atom newvars[], int nb) {
  */
 EMSCRIPTEN_KEEPALIVE
 Bdd create_copy(Bdd f) {
+	DEBUG_ENSURE_NONNULL(f, "create_copy got NULL");
 	DEBUG("copying");
 	Cudd_Ref(f);
 	DEBUG("copy ref'ed");
@@ -499,18 +533,18 @@ Bdd create_copy(Bdd f) {
  */
 EMSCRIPTEN_KEEPALIVE
 void destroy(Bdd f) {
+	DEBUG_ENSURE_NONNULL(f, "destroy got NULL");
+	DEBUG("destroy start");
 	Cudd_RecursiveDeref(ddm, f);
+	DEBUG("destroy end");
 }
 
-/**
- * Return a random solution of a given BDD.
- * TODO: in what form??
- */
-EMSCRIPTEN_KEEPALIVE
-DdNode *pick_random_solution(Bdd f) {
-	die("TO BE IMPLEMENTED");
-	return NULL;
-}
+// removed, simpler to do in JS
+// EMSCRIPTEN_KEEPALIVE
+// DdNode *pick_random_solution(Bdd f) {
+// 	die("TO BE IMPLEMENTED");
+// 	return NULL;
+// }
 
 /******************************************************************************/
 /******************************************************************************/
