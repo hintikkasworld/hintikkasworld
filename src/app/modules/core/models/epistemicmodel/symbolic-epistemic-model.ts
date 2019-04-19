@@ -16,7 +16,7 @@ interface WorldValuationType extends Function { new(val: Valuation): WorldValuat
  */
 export class SymbolicEpistemicModel implements EpistemicModel {
 
-    protected pointed: Valuation; //the valuation that corresponds to the pointed world
+    protected pointedValuation: Valuation; //the valuation that corresponds to the pointed world
     protected propositionalAtoms: string[];
     protected propositionalPrimes: string[];
 
@@ -114,7 +114,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         // console.log("Agents of SymbolicEpistemicModel", agents);
 
         this.agents = agents;
-        this.pointed = null;
+        this.pointedValuation = null;
         this.worldClass = worldClass;
         this.propositionalAtoms = propositionalAtoms;
         this.propositionalPrimes = propositionalsPrimes;
@@ -130,17 +130,14 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     /**
     @returns the pointed world
     **/
-    getPointedWorld() { return new this.worldClass(this.pointed); }
+    getPointedWorld() { return new this.worldClass(this.pointedValuation); }
 
     /**
-    @returns the pointed world
-    TODO François says: newPointedWorld instanceof WorldValuation should never be the case
+    @param a valuation
+    Makes that valuation to be the pointed one
     **/
-    setPointedWorld(newPointedWorld: Valuation) {
-        if (newPointedWorld instanceof WorldValuation) {
-            this.pointed = newPointedWorld.valuation;
-        }
-        this.pointed = newPointedWorld;
+    setPointedValuation(newPointedValuation: Valuation) {
+        this.pointedValuation = newPointedValuation;
     }
 
     getSuccessors(w: World, a: string) {
@@ -232,7 +229,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     check(formula: Formula): boolean {
         let pointeur = this._query_worlds(formula);
         // console.log("check middle", BDD.bddService.pickAllSolutions(pointeur), SymbolicEpistemicModel.valuationToMap(this.pointed));
-        let res = BDD.bddService.applyConditioning(pointeur, SymbolicEpistemicModel.valuationToMap(this.pointed));
+        let res = BDD.bddService.applyConditioning(pointeur, SymbolicEpistemicModel.valuationToMap(this.pointedValuation));
         //console.log("check end",  BDD.bddService.pickAllSolutions(res))
         return BDD.bddService.isConsistent(res)
     }
