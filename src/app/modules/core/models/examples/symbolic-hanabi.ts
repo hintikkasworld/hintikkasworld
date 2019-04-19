@@ -391,7 +391,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
 
     getActions() {
-
+        return [];
         console.log("BEGIN ACTION", SimpleSymbolicHanabi.ok);
 
         const that = this;
