@@ -25,7 +25,7 @@ export interface EpistemicModel {
      * for an explicit representation). Otherwise, for a symbolic representation, and if there
      * are many successors, we expect this method to return *some* possible worlds.
      */
-    getSuccessors(w: World, a: string);
+    getSuccessors(w: World, a: string): World[];
     
     /**
      * 

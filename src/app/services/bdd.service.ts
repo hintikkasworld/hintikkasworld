@@ -334,6 +334,11 @@ export class BddService {
     return support;
   }
 
+  /**
+   * 
+   * @param assignment an assignment (a Map) from propositions (names) to Boolean (their truth values)
+   * @returns the BDD that corresponds to the conjunction of litterals that describes the assignment.
+   */
   createCube(assignment: Map<string, boolean>): BDDNode {
     const literals = []
     for (const [atom, value] of Array.from(assignment.entries())) {

@@ -198,17 +198,17 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         console.log("Valuation", propositions, );
 
-        M.setPointedWorld(new Valuation(propositions));
+        M.setPointedValuation(new Valuation(propositions));
 
         console.log("TEST");
 
         console.log("InitialWorld", new Valuation(propositions));
 
-        console.log("Graphe a", M.getAgentGraphe("a"));
+        console.log("Graphe a", M.getAgentSymbolicRelation("a"));
 
-        console.log("Pick one", BDD.bddService.pickOneSolution(M.getAgentGraphe("a")));
+        console.log("Pick one", BDD.bddService.pickOneSolution(M.getAgentSymbolicRelation("a")));
 
-        console.log(BDD.bddService.pickSolutions(M.getAgentGraphe("a"), 10));
+        console.log(BDD.bddService.pickSolutions(M.getAgentSymbolicRelation("a"), 10));
 
         let form = new KFormula("a", new AtomicFormula(SimpleSymbolicHanabi.getVarName("a", 0)));
         console.log(form.prettyPrint(), M.check(form));

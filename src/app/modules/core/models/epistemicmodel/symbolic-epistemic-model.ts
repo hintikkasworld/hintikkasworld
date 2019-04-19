@@ -28,7 +28,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     /**
      * Store for each agent the correspondant BDDNode
      */
-    protected graphe: Map<string, BDDNode>;
+    protected symbolicRelations: Map<string, BDDNode>;
 
     getAgents(): string[] {
         return this.agents;
@@ -120,9 +120,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         this.propositionalPrimes = propositionalsPrimes;
         this.initialFormula = formula;
 
-        this.graphe = new Map<string, BDDNode>();
+        this.symbolicRelations = new Map<string, BDDNode>();
         agentMap.forEach((value: BDDNode, key: string) => {
-            this.graphe.set(key, value);
+            this.symbolicRelations.set(key, value);
             console.log("BDD of", key, value);
         });
     }
@@ -136,17 +136,15 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     @param a valuation
     Makes that valuation to be the pointed one
     **/
-    setPointedValuation(newPointedValuation: Valuation) {
-        this.pointedValuation = newPointedValuation;
-    }
+    setPointedValuation(valuation: Valuation) { this.pointedValuation = valuation; }
 
-    getSuccessors(w: World, a: string) {
+    getSuccessors(w: World, a: string): World[] {
 
-        console.log("getSucessors", this.getAgentGraphe(a))
+        console.log("getSucessors", this.getAgentSymbolicRelation(a))
 
         let props: Map<string, boolean> = SymbolicEpistemicModel.valuationToMap((<WorldValuation>w).valuation);
         //console.log("Props", props);
-        let bdd = BDD.bddService.createCube(props);
+        let wBDD = BDD.bddService.createCube(props);
 
         /**
          * in this method, we will use new this.worldClass(val) to instantiate world with valuation val
@@ -158,35 +156,35 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
         //console.log("graphe", BDD.bddService.pickAllSolutions(this.getAgentGraphe(a)));
 
-        let bdd_and = BDD.bddService.applyAnd([
-            BDD.bddService.createCopy(this.getAgentGraphe(a)),
-            bdd]);
+        let bddRelationOnW = BDD.bddService.applyAnd([
+            BDD.bddService.createCopy(this.getAgentSymbolicRelation(a)),
+            wBDD]);
 
         //console.log("AND", BDD.bddService.pickAllSolutions(bdd_and));
 
-        let forget = BDD.bddService.applyExistentialForget(
-            bdd_and,
+        let bddSetSuccessorsWithPrime = BDD.bddService.applyExistentialForget(
+            bddRelationOnW,
             this.propositionalAtoms);
 
         //console.log("forget", this.propositionalAtoms, BDD.bddService.pickAllSolutions(forget));
 
-        let res = BDD.bddService.applyRenaming(
-            forget,
+        let bddSetSuccessors = BDD.bddService.applyRenaming(
+            bddSetSuccessorsWithPrime,
             SymbolicEpistemicModel.getMapPrimeToNotPrime(this.propositionalAtoms));
 
         //console.log("Calcul bdd sucessors", res);
 
-        let sols: Valuation[] = BDD.bddService.pickAllSolutions(res);
+        let sols: Valuation[] = BDD.bddService.pickSolutions(bddSetSuccessors, 4, this.propositionalAtoms);
         //console.log("Solutions", sols);
-        return sols;
+        return sols.map((val: Valuation) => new this.worldClass(val));
     };
 
-    getAgentGraphe(agent: string): BDDNode {
-        return this.graphe.get(agent);
+    getAgentSymbolicRelation(agent: string): BDDNode {
+        return this.symbolicRelations.get(agent);
     }
 
-    setAgentGraphe(agent: string, pointeur: BDDNode): void {
-        this.graphe.set(agent, pointeur);
+    setAgentSymbolicRelation(agent: string, bddPointer: BDDNode): void {
+        this.symbolicRelations.set(agent, bddPointer);
     }
 
     getInitialFormula(): BDDNode {
@@ -237,7 +235,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     private _query_worlds(phi: Formula): BDDNode {
 
         let all_worlds = BDD.bddService.createFalse();
-        this.graphe.forEach((value: BDDNode, key: string) => {
+        this.symbolicRelations.forEach((value: BDDNode, key: string) => {
             console.log("_query_worlds", key, value)
             let f2 = BDD.bddService.applyExistentialForget(BDD.bddService.createCopy(value), this.propositionalPrimes);
             all_worlds = BDD.bddService.applyOr([all_worlds, f2]);
@@ -301,7 +299,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                 SymbolicEpistemicModel.getMapPrimeToNotPrime(this.propositionalAtoms)
             );
             console.log("mp", BDD.bddService.pickAllSolutions(mp));
-            let bdd_a = this.getAgentGraphe((<types.KposFormula>phi).agent);
+            let bdd_a = this.getAgentSymbolicRelation((<types.KposFormula>phi).agent);
             let bdd_and = BDD.bddService.applyAnd([BDD.bddService.createCopy(bdd_a), mp]);
             console.log("bdd_and", BDD.bddService.pickAllSolutions(bdd_and).map(v => v.toAssignment(this.propositionalAtoms.concat(this.propositionalPrimes))), this.propositionalPrimes);
             let res = BDD.bddService.applyExistentialForget(bdd_and, this.propositionalPrimes);

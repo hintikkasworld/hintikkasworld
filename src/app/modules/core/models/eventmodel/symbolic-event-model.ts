@@ -136,7 +136,7 @@ export class SymbolicEventModel implements EventModel  {
                 transfert.set(var_plus[i], var_minus[i]);
             }
 
-            var pointeur: BDDNode = M.getAgentGraphe(agent);
+            var pointeur: BDDNode = M.getAgentSymbolicRelation(agent);
             pointeur = BDD.bddService.applyAnd([BDD.bddService.createCopy(pointeur), BDD.bddService.createCopy(ev_for_agent)]);
             pointeur = BDD.bddService.applyExistentialForget(pointeur, var_minus);
             pointeur = BDD.bddService.applyRenaming(pointeur, transfert); 
@@ -159,7 +159,7 @@ export class SymbolicEventModel implements EventModel  {
         
         let res = BDD.bddService.applyExistentialForget(BDD.bddService.applyRenaming(w, transfert2), plus)  //  Oublie des Post
         let newSEM = new SymbolicEpistemicModel(agentMap, M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula())
-        newSEM.setPointedWorld(BDD.bddService.toValuation(res));
+        newSEM.setPointedValuation(BDD.bddService.toValuation(res));
         return newSEM;
     };
 

@@ -178,13 +178,13 @@ export class SymbolicSimpleExample extends ExampleDescription {
 
         console.log("Valuation", propositions, );
 
-        M.setPointedWorld(new Valuation(propositions));
+        M.setPointedValuation(new Valuation(propositions));
 
         console.log("TEST");
 
         console.log("InitialWorld", new Valuation(propositions));
 
-        console.log("Graphe a", M.getAgentGraphe("a"));
+        console.log("Graphe a", M.getAgentSymbolicRelation("a"));
 
         // console.log("Pick one", BDD.bddService.pickOneSolution(M.getAgentGraphe("a")));
 
