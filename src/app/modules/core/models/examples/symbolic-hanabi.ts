@@ -82,7 +82,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     /**
      * Number of cards in the game Hanabi
      */
-    static readonly nbCards: number = 10;
+    static readonly nbCards: number = 7;
     /**
      * List of agents
      */
@@ -113,7 +113,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     getInitialEpistemicModel() {
 
         /* DIRTY TESTS HERE.... */
-        MyTestForBDD.run();
+  //      MyTestForBDD.run();
 
 
         /* Creation of all variables getVarName */

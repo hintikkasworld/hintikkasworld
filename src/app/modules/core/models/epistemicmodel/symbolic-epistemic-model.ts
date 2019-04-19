@@ -151,8 +151,8 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
         console.log("getSucessors", this.getAgentGraphe(a))
 
-        let w2 = <WorldValuation> w;
-        let props: Map<string, boolean> = SymbolicEpistemicModel.valuationToMap(w2.valuation);
+        let wValuation = <WorldValuation> w;
+        let props: Map<string, boolean> = SymbolicEpistemicModel.valuationToMap(wValuation.valuation);
         //console.log("Props", props);
         let bdd = BDD.bddService.createCube(props);
         
