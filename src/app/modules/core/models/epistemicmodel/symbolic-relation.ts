@@ -18,7 +18,7 @@ export class Obs implements SymbolicRelation {
      * What is known by the agent : String (which are atoms), or Formula.
      * "a" <=> AtomicFormula("a")
      */
-    protected observedVariables: (Formula|string)[];
+    protected readonly observedVariables: (Formula|string)[];
 
     constructor(observedVariables: (Formula|string)[]) {
         this.observedVariables = observedVariables;
