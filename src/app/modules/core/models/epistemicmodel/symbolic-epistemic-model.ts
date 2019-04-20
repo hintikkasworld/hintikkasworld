@@ -25,6 +25,23 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     protected worldClass: WorldValuationType;
 
+    private worlds = {};
+
+
+private getWorld(valuation: Valuation): WorldValuation {
+    let key = valuation.toString();
+    if(this.worlds[key] == undefined)
+        this.worlds[key] = new this.worldClass(valuation);
+    
+    return this.worlds[key];
+}
+
+
+
+
+
+
+
     /**
      * Store for each agent the correspondant BDDNode
      */
@@ -125,7 +142,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     /**
     @returns the pointed world
     **/
-    getPointedWorld() { return new this.worldClass(this.pointedValuation); }
+    getPointedWorld() { return this.getWorld(this.pointedValuation); }
 
     /**
     @param a valuation
@@ -171,7 +188,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
         let sols: Valuation[] = BDD.bddService.pickSolutions(bddSetSuccessors, 4, this.propositionalAtoms);
         //console.log("Solutions", sols);
-        return sols.map((val: Valuation) => new this.worldClass(val));
+        return sols.map((val: Valuation) => this.getWorld(val));
     };
 
     getAgentSymbolicRelation(agent: string): BDDNode {
