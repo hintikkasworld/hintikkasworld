@@ -24,7 +24,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     protected readonly propositionalAtoms: string[];
     protected readonly propositionalPrimes: string[];
 
-    protected readonly initialFormula: BDDNode;
+    protected readonly formulaSetWorlds: BDDNode;
     protected readonly agents: string[];
 
     protected readonly worldClass: WorldValuationType;
@@ -99,26 +99,26 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             not_to_prime[prime] = to_prime;
         });
 
-        let rename = rules.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
-        let and_rules = new AndFormula([rename, rules]);
+        let rulesPrime = rules.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
+        let rulesAndRulesPrime = new AndFormula([rulesPrime, rules]);
 
 
-        let initialFormula = BDD.buildFromFormula(and_rules);
-        console.log("INITIAL RULES", and_rules, "=>", initialFormula);
+        let bddRulesAndRulesPrime = BDD.buildFromFormula(rulesAndRulesPrime);
+        console.log("INITIAL RULES", rulesAndRulesPrime, "=>", bddRulesAndRulesPrime);
 
         let relationsRestrictedToInitialFormula = new Map<string, BDDNode>();
         relations.forEach((value: SymbolicRelation, key: string) => {
-            let bdd = value.toBDD();
-            relationsRestrictedToInitialFormula.set(key, BDD.bddService.applyAnd([BDD.bddService.createCopy(initialFormula), bdd]));
+            let bddRelation = value.toBDD();
+            relationsRestrictedToInitialFormula.set(key, BDD.bddService.applyAnd([BDD.bddService.createCopy(bddRulesAndRulesPrime), bddRelation]));
         });
         console.log("Symbolic Relations", relations, "=>", relationsRestrictedToInitialFormula);
 
-        return new SymbolicEpistemicModel(relationsRestrictedToInitialFormula, worldClass, agents, propositionalAtoms, propositionalPrimes, initialFormula);
+        return new SymbolicEpistemicModel(relationsRestrictedToInitialFormula, worldClass, agents, propositionalAtoms, propositionalPrimes, bddRulesAndRulesPrime);
 
     }
 
-    constructor(agentMap: Map<string, BDDNode>, worldClass: WorldValuationType, agents: string[],
-        propositionalAtoms: string[], propositionalsPrimes: string[], formula: BDDNode) {
+    constructor(relations: Map<string, BDDNode>, worldClass: WorldValuationType, agents: string[],
+        propositionalAtoms: string[], propositionalsPrimes: string[], formulaSetWorlds: BDDNode) {
 
         // console.log("Agents of SymbolicEpistemicModel", agents);
 
@@ -127,12 +127,14 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         this.worldClass = worldClass;
         this.propositionalAtoms = propositionalAtoms;
         this.propositionalPrimes = propositionalsPrimes;
-        this.initialFormula = formula;
+        this.formulaSetWorlds = formulaSetWorlds;
+        this.symbolicRelations = relations;
 
+        /**François commented this:
         this.symbolicRelations = new Map<string, BDDNode>();
-        agentMap.forEach((value: BDDNode, key: string) => {
+        relations.forEach((value: BDDNode, key: string) => {
             this.symbolicRelations.set(key, value);
-        });
+        });*/
     }
 
     /**
@@ -196,7 +198,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     getInitialFormula(): BDDNode {
-        return this.initialFormula
+        return this.formulaSetWorlds
     }
 
     static getMapNotPrimeToPrime(atoms: string[]): Map<string, string> {
@@ -223,35 +225,31 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return this.propositionalPrimes;
     }
 
-    getWorldClass() {
-        return this.worldClass;
-    }
+    getWorldClass() { return this.worldClass; }
 
     /**
-     * 
      * @param formula a modal formula
      * @returns true if the formula is true in the real world (the pointed one)
      */
     check(formula: Formula): boolean {
-        let pointeur = this._query_worlds(formula);
+        let bddFormulaSemantics = this._queryWorlds(formula);
         // console.log("check middle", BDD.bddService.pickAllSolutions(pointeur), SymbolicEpistemicModel.valuationToMap(this.pointed));
-        let res = BDD.bddService.applyConditioning(pointeur, SymbolicEpistemicModel.valuationToMap(this.pointedValuation));
+        let res = BDD.bddService.applyConditioning(bddFormulaSemantics, SymbolicEpistemicModel.valuationToMap(this.pointedValuation));
         //console.log("check end",  BDD.bddService.pickAllSolutions(res))
         return BDD.bddService.isConsistent(res)
     }
 
-    private _query_worlds(phi: Formula): BDDNode {
+    private _queryWorlds(phi: Formula): BDDNode {
 
-        let all_worlds = BDD.bddService.createFalse();
+        let allWorlds = BDD.bddService.createFalse();
         this.symbolicRelations.forEach((value: BDDNode, key: string) => {
-            // console.log("_query_worlds", key, value)
             let f2 = BDD.bddService.applyExistentialForget(BDD.bddService.createCopy(value), this.propositionalPrimes);
-            all_worlds = BDD.bddService.applyOr([all_worlds, f2]);
+            allWorlds = BDD.bddService.applyOr([allWorlds, f2]);
         });
 
         // console.log("f of _query_worlds", BDD.bddService.pickAllSolutions(all_worlds))
 
-        let res = this._query(all_worlds, phi);
+        let res = this._query(allWorlds, phi);
 
         // console.log("end _query_worlds", res);
         return res;
