@@ -82,7 +82,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     /**
      * Number of cards in the game Hanabi
      */
-    static readonly nbCards: number = 7;
+    static readonly nbCards: number = 4;
+
     /**
      * List of agents
      */
@@ -96,30 +97,24 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
      */
     private variables: string[];
 
-    getName() {
-        return "SimpleSymbolicHanabi";
-    }
+    getName() { return "SimpleSymbolicHanabi"; }
 
-    static getVarName(agent: string, card: number) {
-        return "var_" + agent + "_" + card;
-    }
+    static getVarName(agent: string, card: number) { return "var_" + agent + "_" + card; }
 
 
-    getWorldExample() {
-        return new SimpleHanabiWorld(new Valuation([SimpleSymbolicHanabi.getVarName("a", 2)]));
-    }
+    getWorldExample() { return new SimpleHanabiWorld(new Valuation([SimpleSymbolicHanabi.getVarName("a", 2)])); }
 
 
     getInitialEpistemicModel() {
 
         /* DIRTY TESTS HERE.... */
-  //      MyTestForBDD.run();
+        //      MyTestForBDD.run();
 
 
         /* Creation of all variables getVarName */
-        var variables: string[] = [];
+        let variables: string[] = [];
         this.owners.forEach((agent) => {
-            for (var i = 0; i < SimpleSymbolicHanabi.nbCards; i++) {
+            for (let i = 0; i < SimpleSymbolicHanabi.nbCards; i++) {
                 variables.push(SimpleSymbolicHanabi.getVarName(agent, i));
             }
         });
@@ -128,14 +123,14 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         console.log("Variables", variables);
 
         /* Create Obs <<SymbolicRelation>> which represent relations of each agent like var_a_c <-> var_a_c_p */
-        let relationsSymboliques: Map<string, SymbolicRelation> = new Map();
-        this.agents.forEach((current_agent) => {
-            let liste_rel: (Formula|string)[] = [];
+        let symbolicRelations: Map<string, SymbolicRelation> = new Map();
+        this.agents.forEach((agent) => {
+            let liste_rel: (Formula | string)[] = [];
             /* Reciprocity of cards : agent does'nt see all variables of himself and draw */
-            this.owners.forEach((agent) => {
+            this.owners.forEach((agentb) => {
                 for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                    if (current_agent != agent && current_agent != "p") {
-                        liste_rel.push(SimpleSymbolicHanabi.getVarName(agent, c));
+                    if (agent != agentb && agent != "p") {
+                        liste_rel.push(SimpleSymbolicHanabi.getVarName(agentb, c));
                     };
                 };
             });
@@ -143,19 +138,19 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             /* Enumeration of agent's card : : agent see the number of his cards : 0 <-> 0p and 1 <-> 1p and ... */
             let his_cards = [];
             for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                his_cards.push(SimpleSymbolicHanabi.getVarName(current_agent, c));
+                his_cards.push(SimpleSymbolicHanabi.getVarName(agent, c));
             }
             for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                 for (var i = 1; i < 6; i++) {
                     liste_rel.push(new ExactlyFormula(i, his_cards));
                 };
             };
-            console.log("ListeRel", liste_rel);
-            relationsSymboliques.set(current_agent, new Obs(liste_rel));
+         //   console.log("ListeRel", liste_rel);
+            symbolicRelations.set(agent, new Obs(liste_rel));
 
         });
 
-        console.log("RelationsSymboliques", relationsSymboliques);
+       // console.log("RelationsSymboliques", relationsSymboliques);
 
         /* Unicity of cards : a card is here only once : a:1 but no b:1 ... */
         let liste_rules = [];
@@ -170,7 +165,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         console.log("Rules", rules);
 
-        let M = SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, variables, relationsSymboliques, rules);
+        let M = SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, variables, symbolicRelations, rules);
 
         console.log("Fin SEM");
 
@@ -196,35 +191,42 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             }
         });
 
-        console.log("Valuation", propositions, );
+        console.log("Valuation", propositions);
 
         M.setPointedValuation(new Valuation(propositions));
 
-        console.log("TEST");
 
-        console.log("InitialWorld", new Valuation(propositions));
+        function test(M: SymbolicEpistemicModel) {
+            console.log("TEST");
 
-        console.log("Graphe a", M.getAgentSymbolicRelation("a"));
+            console.log("InitialWorld", new Valuation(propositions));
+    
+            console.log("Graphe a", M.getAgentSymbolicRelation("a"));
+    
+            console.log("Pick one", BDD.bddService.pickOneSolution(M.getAgentSymbolicRelation("a")));
+    
+            console.log(BDD.bddService.pickSolutions(M.getAgentSymbolicRelation("a"), 10));
+    
+            let form = new KFormula("a", new AtomicFormula(SimpleSymbolicHanabi.getVarName("a", 0)));
+            console.log(form.prettyPrint(), M.check(form));
+            let form2 = new KFormula("a", new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)));
+            console.log(form2.prettyPrint(), M.check(form2));
+    
+            let form3 = new KFormula("b", new AtomicFormula(SimpleSymbolicHanabi.getVarName("a", 0)));
+            console.log(form3.prettyPrint(), M.check(form3));
+            let form4 = new KFormula("b", new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)));
+            console.log(form4.prettyPrint(), M.check(form4));
+    
+            let form5 = new KFormula("a", new OrFormula([
+                new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)),
+                new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 2))]));
+            console.log(form5.prettyPrint(), M.check(form5));
+    
+        }
 
-        console.log("Pick one", BDD.bddService.pickOneSolution(M.getAgentSymbolicRelation("a")));
 
-        console.log(BDD.bddService.pickSolutions(M.getAgentSymbolicRelation("a"), 10));
-
-        let form = new KFormula("a", new AtomicFormula(SimpleSymbolicHanabi.getVarName("a", 0)));
-        console.log(form.prettyPrint(), M.check(form));
-        let form2 = new KFormula("a", new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)));
-        console.log(form2.prettyPrint(), M.check(form2));
-
-        let form3 = new KFormula("b", new AtomicFormula(SimpleSymbolicHanabi.getVarName("a", 0)));
-        console.log(form3.prettyPrint(), M.check(form3));
-        let form4 = new KFormula("b", new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)));
-        console.log(form4.prettyPrint(), M.check(form4));
-
-        let form5 = new KFormula("a", new OrFormula([
-            new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)),
-            new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 2))]));
-        console.log(form5.prettyPrint(), M.check(form5));
-
+        //test(M);
+      
         return M;
     }
 
@@ -365,7 +367,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             }
         );
         list.push(ema);
-        
+
         // for (let agent of this.agents) {
         //     for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
         //         /* PLAY */
