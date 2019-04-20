@@ -71,39 +71,33 @@ export class ComicsComponent implements OnInit {
   */
   private canvasRealWorldTop = 250;
   private canvasFromWorld: (Map<World, HTMLCanvasElement>)[] = [];
-  private canvasWorldStandardWidth = 128;
-  private zoomWorldCanvasInBubble = 1;
+  private readonly canvasWorldStandardWidth = 128;
+  private zoomWorldCanvasInBubble = 1.5;
   private levelheight = 170;//this.zoomWorldCanvasInBubble * this.canvasWorldStandardWidth + 40; //170
   private getMaxLevelWidth = () => 480;
 
   private getYLevelBulle(level: number): number {
-    if(this.openWorlds.length == 1 && this.env.getEpistemicModel().getAgents().length == 1)  {
+    if (this.openWorlds.length == 1 && this.env.getEpistemicModel().getAgents().length == 1) {
       return this.canvasRealWorldTop - level * this.levelheight * 1.4;
     }
     else
-    return  this.canvasRealWorldTop - level * this.levelheight;
-  } 
-
-  /**
-  @description draw a circle center x, y and radius r
-  */
-  private circle(x: number, y: number, r: number) {
-    let circleElement = $("<div>");
-    circleElement.addClass("bullethought");
-    $("#canvas-wrap").append(circleElement);
-    circleElement.css({
-      left: x - r,
-      width: 2 * r,
-      height: 2 * r,
-      top: y - r,
-      position: 'absolute'
-    });
+      return this.canvasRealWorldTop - level * this.levelheight;
   }
+
+
 
   /**
   @description draw thinking circles (like in comics)
   */
   private drawThinkingCircles(x1: number, y1: number, x2: number, y2: number) {
+    /* draw a circle center x, y and radius r */
+    function circle(x: number, y: number, r: number) {
+      let circleElement = $("<div>");
+      circleElement.addClass("bullethought");
+      circleElement.css({ left: x - r, width: 2 * r, height: 2 * r, top: y - r });
+      $("#canvas-wrap").append(circleElement);
+    }
+
     let yShift = 80;
     y1 += yShift;
     y2 += yShift;
@@ -116,7 +110,7 @@ export class ComicsComponent implements OnInit {
       let x = x1 + (i * (x2 - x1)) / imax;
 
       if (y - r < y2) return;
-      this.circle(x, y, r);
+      circle(x, y, r);
       y -= pas;
       r += 6;
     }
@@ -391,23 +385,7 @@ export class ComicsComponent implements OnInit {
   @description update the GUI
   */
   private compute(fromlevel: number) {
-    function getRandomElementInArray(array) {
-      // if (array.length > 100)
-      return array[Math.floor(Math.random() * array.length)]
-      /** else {
-         if (getRandomElementPermutation == undefined)
-           getRandomElementPermutation = createRandomPermutation(array.length);
- 
-         if (getRandomElementPermutation.length != array.length)
-           getRandomElementPermutation = createRandomPermutation(array.length);
- 
-         getRandomElementPermutationIndex++;
-         if (getRandomElementPermutationIndex >= array.length)
-           getRandomElementPermutationIndex = 0;
- 
-         return array[getRandomElementPermutation[getRandomElementPermutationIndex]];
-       }*/
-    }
+    function getRandomElementInArray(array) { return array[Math.floor(Math.random() * array.length)]; }
 
     if (this.env.getEpistemicModel().getPointedWorld() == undefined) {
       this.guiError();

@@ -82,7 +82,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     /**
      * Number of cards in the game Hanabi
      */
-    static readonly nbCards: number = 4;
+    static readonly nbCards: number = 2;
 
     /**
      * List of agents
@@ -163,7 +163,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         }
         let rules = new AndFormula(liste_rules);
 
-        console.log("Rules", rules);
+       // console.log("Rules", rules);
 
         let M = SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, variables, symbolicRelations, rules);
 
@@ -183,7 +183,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             propositions[SimpleSymbolicHanabi.getVarName("p", c)] = true;
         };
 
-        console.log("MapVal", propositions);
+        //console.log("MapVal", propositions);
 
         variables.forEach((variable) => {
             if (!(variable in propositions)) {
