@@ -110,27 +110,18 @@ export class SymbolicEventModel implements EventModel  {
         
         let agentMap = new Map<string, BDDNode>();
 
-        console.log("APPLY", this.pointed, M1.getPointedWorld().valuation)
+        // console.log("APPLY", this.pointed, M1.getPointedWorld().valuation)
 
         for(let agent of this.agents){
 
             var ev_for_agent = this.getPlayerEvent(this.pointed, agent);
 
-            console.log("ev_for_agent", BDD.bddService.pickAllSolutions(ev_for_agent));
+            // console.log("ev_for_agent", BDD.bddService.pickAllSolutions(ev_for_agent));
             
             let support: string[] = BDD.bddService.support(ev_for_agent);
 
             /* Get the minus variables */
-            var var_minus: string[] = [];
-            for(let variable of support){
-                /* remove the _+ */
-                let var1 = variable.replace(SymbolicEventModel.getPostedString(),'');
-                console.log("var", variable, var1, var1 in var_minus)
-                if(!(var1 in var_minus)){
-                    //var_minus.slice( var_minus.indexOf(var1), 1);
-                    var_minus.push(var1);
-                }
-            }
+            var var_minus: string[] = M.getPropositionalAtoms().concat(M.getPropositionalPrimes());
             
             /* Get the posted variables */
             var var_plus: string[] = [];
@@ -144,23 +135,25 @@ export class SymbolicEventModel implements EventModel  {
                 transfert.set(var_plus[i], var_minus[i]);
             }
 
+            /*
             console.log("ev_for_agent", ev_for_agent)
             console.log("support", support)
             console.log("var_minus", var_minus)
             console.log("var_plus", var_plus)
             console.log("transfert", transfert)
+            */
 
             var pointeur: BDDNode = M.getAgentSymbolicRelation(agent);
             pointeur = BDD.bddService.applyAnd([BDD.bddService.createCopy(pointeur), BDD.bddService.createCopy(ev_for_agent)]);
-            console.log("1", BDD.bddService.pickAllSolutions(pointeur))
+            // console.log("1", BDD.bddService.pickAllSolutions(pointeur))
             pointeur = BDD.bddService.applyExistentialForget(BDD.bddService.createCopy(pointeur), var_minus);
-            console.log("2", BDD.bddService.pickAllSolutions(pointeur))
+            // console.log("2", BDD.bddService.pickAllSolutions(pointeur))
             pointeur = BDD.bddService.applyRenaming(BDD.bddService.createCopy(pointeur), transfert); 
-            console.log("3", BDD.bddService.pickAllSolutions(pointeur))
+            // console.log("3", BDD.bddService.pickAllSolutions(pointeur))
 
             let ci = 0;
             for(let val of BDD.bddService.pickAllSolutions(pointeur)){
-                console.log("val", val.toString())
+                // console.log("val", val.toString())
                 if(ci>10) break
                 ci++
             }
@@ -169,19 +162,24 @@ export class SymbolicEventModel implements EventModel  {
             
         }
         /* Find the new true world */
+
         var bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation));
         var w = BDD.bddService.applyAnd([bdd_valuation, BDD.bddService.createCopy(bdd_single_event)]);
+        // console.log("and new world", BDD.bddService.pickAllSolutions(w))
 
         if(BDD.bddService.isFalse(w)) throw new Error("An error has occured in the application of SymbolicEventModel on SymbolicEpistemicModel. Are sure that event '" + this.getPointedAction() + "' can be apply on valuation " + M1.getPointedWorld().valuation);
         
         let transfert2: Map<string, string> = new Map<string, string>();
         let plus: string[] = [];
-        for(var vari in this.variables){
-            plus.push(SymbolicEventModel.getPostedVarName(vari));
-            transfert2.set(SymbolicEventModel.getPostedVarName(vari), vari);
+        for(var vari of BDD.bddService.support(w)){
+            if(SymbolicEventModel.isPosted(vari)){
+                plus.push(SymbolicEventModel.getPostedVarName(vari));
+                transfert2.set(SymbolicEventModel.getPostedVarName(vari), vari);
+            }
         }
         
         let res = BDD.bddService.applyExistentialForget(BDD.bddService.applyRenaming(w, transfert2), plus)  //  Oublie des Post
+        // console.log("forget new world", BDD.bddService.pickAllSolutions(res))
         let newSEM = new SymbolicEpistemicModel(agentMap, M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula())
         newSEM.setPointedValuation(BDD.bddService.toValuation(res));
         return newSEM;

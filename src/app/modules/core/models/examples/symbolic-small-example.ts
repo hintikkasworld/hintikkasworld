@@ -192,7 +192,7 @@ export class SymbolicSimpleExample extends ExampleDescription {
 
         console.log("Graphe a", M.getAgentSymbolicRelation("a"));
 
-        console.log("InitialWorld", new Valuation(propositions));
+        console.log("InitialWorld", new Valuation(propositions).toString());
 
         for(let val of M.getSuccessors(M.getPointedWorld(), "a"))
             console.log("A successors", val.toString());
@@ -224,6 +224,7 @@ export class SymbolicSimpleExample extends ExampleDescription {
 
         let newSEM: SymbolicEpistemicModel = actions[0].perform(M);
 
+
         console.log("new world", newSEM.getPointedWorld().valuation.toString())
         
         let ci = 0;
@@ -254,28 +255,27 @@ export class SymbolicSimpleExample extends ExampleDescription {
 
         console.log("create actions");
 
-        function announce(agent, value) {
+        function announce(agents, value) {
             var E = new ExplicitEventModel();
             let pre: Formula = new AtomicFormula(SymbolicSimpleExample.getVarName("p", value))
-            let name = "Agent " + agent +" learns draw is " + value +".";
+            let name = "Agents learns draw is " + value +".";
             E.addAction(name, pre);
-            E.makeReflexiveRelation(agent);
+            for(let agent of agents) E.makeReflexiveRelation(agent);
             E.setPointedAction(name);
             return E;
         }
 
         let list = [];
-        for(let agent of this.agents){
-            for(let card = SymbolicSimpleExample.nbCards-1; card>1; card--){
-                list.push(new EventModelAction(
-                    {
-                        name: "Agent " + agent +" learns draw is " + card +".",
-                        eventModel: ExplicitToSymbolic.translate(announce(agent, card), this.variables, this.agents)
-                    }
-                ));
-            }
+        
+        for(let card = SymbolicSimpleExample.nbCards-1; card>1; card--){
+            list.push(new EventModelAction(
+                {
+                    name: "Agents learn draw is " + card +".",
+                    eventModel: ExplicitToSymbolic.translate(announce(this.agents, card), this.variables, this.agents)
+                }
+            ));
         }
-
+        
         console.log(list);
         return list;
     }
