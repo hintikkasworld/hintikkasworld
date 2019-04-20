@@ -337,16 +337,16 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * describes that valuation.
      */
     static valuationToFormula(valuation: Valuation): Formula {
-        let liste = [];
-        for (var element in valuation.propositions) {
-            if (valuation.propositions[element]) {
-                liste.push(new AtomicFormula(element));
+        let literals = [];
+        for (var proposition in valuation.propositions) {
+            if (valuation.propositions[proposition]) {
+                literals.push(new AtomicFormula(proposition));
             } else {
-                liste.push(new NotFormula(new AtomicFormula(element)));
+                literals.push(new NotFormula(new AtomicFormula(proposition)));
             }
 
         }
-        return new AndFormula(liste);
+        return new AndFormula(literals);
     }
 
     /**
