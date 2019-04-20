@@ -9,47 +9,52 @@ import { BDD } from '../formula/bdd';
 import * as types from './../formula/formula';
 import { BddService, BDDNode } from '../../../../services/bdd.service';
 
+
+/**
+ * this interface implements a super type of WorldValuation
+ */
 interface WorldValuationType extends Function { new(val: Valuation): WorldValuation; }
 
 /**
- * 
+ * it implements an epistemic model described symbolically by means of BDDs
  */
 export class SymbolicEpistemicModel implements EpistemicModel {
 
     protected pointedValuation: Valuation; //the valuation that corresponds to the pointed world
-    protected propositionalAtoms: string[];
-    protected propositionalPrimes: string[];
+    protected readonly propositionalAtoms: string[];
+    protected readonly propositionalPrimes: string[];
 
-    protected initialFormula: BDDNode;
-    protected agents: string[];
+    protected readonly initialFormula: BDDNode;
+    protected readonly agents: string[];
 
-    protected worldClass: WorldValuationType;
+    protected readonly worldClass: WorldValuationType;
 
-    private worlds = {};
+    /**
+     * stores the worlds (that are of type WorldValuation) that the user already asked for.
+     * keys are strings (from a valuation, you call valuation.toString() to get the key... hhmm.. still a bit weird
+     * but I do not know how to improve it yet)
+     * values are the worlds themselves.
+     */
+    private readonly worlds = {};
 
+    /**
+     * @param valuation 
+     * @retuns the world that has this valuation (PS : we suppose unicity of the current world in symbolic model)
+     */
+    private getWorld(valuation: Valuation): WorldValuation {
+        let key = valuation.toString();
+        if (this.worlds[key] == undefined)
+            this.worlds[key] = new this.worldClass(valuation);
 
-private getWorld(valuation: Valuation): WorldValuation {
-    let key = valuation.toString();
-    if(this.worlds[key] == undefined)
-        this.worlds[key] = new this.worldClass(valuation);
-    
-    return this.worlds[key];
-}
-
-
-
-
-
-
+        return this.worlds[key];
+    }
 
     /**
      * Store for each agent the correspondant BDDNode
      */
     protected symbolicRelations: Map<string, BDDNode>;
 
-    getAgents(): string[] {
-        return this.agents;
-    }
+    getAgents(): string[] { return this.agents; }
     /**
      * Implementation of Symbolic Epistemique Model
      * Here, with BDD and Cudd
@@ -106,13 +111,13 @@ private getWorld(valuation: Valuation): WorldValuation {
         let rename = rules.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
         let and_rules = new AndFormula([rename, rules]);
 
-        
+
         let initialFormula = BDD.buildFromFormula(and_rules);
         console.log("INITIAL RULES", and_rules, "=>", initialFormula);
 
         let graphe = new Map<string, BDDNode>();
         relations.forEach((value: SymbolicRelation, key: string) => {
-            let bdd =  value.toBDD();
+            let bdd = value.toBDD();
             graphe.set(key, BDD.bddService.applyAnd([BDD.bddService.createCopy(initialFormula), bdd]));
         });
         console.log("Symbolic Relations", relations, "=>", graphe);
@@ -300,7 +305,7 @@ private getWorld(valuation: Valuation): WorldValuation {
                 new types.KposFormula(
                     (<types.KFormula>phi).agent,
                     new types.NotFormula((<types.KFormula>phi).formula)
-            ));
+                ));
             // console.log("new form", form);
             return this._query(all_worlds, form);
         }
@@ -321,8 +326,8 @@ private getWorld(valuation: Valuation): WorldValuation {
         if (phi instanceof types.KwFormula) {
             // K p or K neg p
             let Knp = new types.KFormula(
-                    (<types.KwFormula>phi).agent,
-                    new types.NotFormula((<types.KwFormula>phi).formula)
+                (<types.KwFormula>phi).agent,
+                new types.NotFormula((<types.KwFormula>phi).formula)
             );
             let Kp = new types.KFormula(
                 (<types.KwFormula>phi).agent,
