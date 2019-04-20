@@ -55,24 +55,16 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     protected symbolicRelations: Map<string, BDDNode>;
 
     getAgents(): string[] { return this.agents; }
-    /**
-     * Implementation of Symbolic Epistemique Model
-     * Here, with BDD and Cudd
-     */
-
-    /*********
-     * STATIC
-     *********/
 
     /**
-     * @returns the name of the primed variable 
      * @param varName
+     * @returns the name of the primed variable 
      */
     static getPrimedVarName(varName: string) { return varName + SymbolicEpistemicModel.getPrimedString(); }
 
     /**
-     * @returns the primed symbol
      * @param varName
+     * @returns the primed symbol
      */
     static getPrimedString() { return "_pr"; }
 
@@ -89,7 +81,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * @param worldClass the type of worlds that the symbolic epistemic models returns (e.g. BeloteWorld)
      * @param agents list of agents as string
      * @param atoms list of propositional atoms describing the example
-     * @param relations Map of agent : accessibility relations
+     * @param relations Map of agent: accessibility relations
      * @param rules specific rules of the game as Formula
      */
     static build(worldClass: WorldValuationType, agents: string[], atoms: string[], relations: Map<string, SymbolicRelation>, rules: Formula) {
@@ -105,7 +97,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             propositionalPrimes.push(prime);
             to_prime[value] = prime;
             not_to_prime[prime] = to_prime;
-
         });
 
         let rename = rules.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
@@ -115,14 +106,14 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         let initialFormula = BDD.buildFromFormula(and_rules);
         console.log("INITIAL RULES", and_rules, "=>", initialFormula);
 
-        let graphe = new Map<string, BDDNode>();
+        let relationsRestrictedToInitialFormula = new Map<string, BDDNode>();
         relations.forEach((value: SymbolicRelation, key: string) => {
             let bdd = value.toBDD();
-            graphe.set(key, BDD.bddService.applyAnd([BDD.bddService.createCopy(initialFormula), bdd]));
+            relationsRestrictedToInitialFormula.set(key, BDD.bddService.applyAnd([BDD.bddService.createCopy(initialFormula), bdd]));
         });
-        console.log("Symbolic Relations", relations, "=>", graphe);
+        console.log("Symbolic Relations", relations, "=>", relationsRestrictedToInitialFormula);
 
-        return new SymbolicEpistemicModel(graphe, worldClass, agents, propositionalAtoms, propositionalPrimes, initialFormula);
+        return new SymbolicEpistemicModel(relationsRestrictedToInitialFormula, worldClass, agents, propositionalAtoms, propositionalPrimes, initialFormula);
 
     }
 
