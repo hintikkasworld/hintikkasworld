@@ -190,6 +190,7 @@ export class SymbolicSimpleExample extends ExampleDescription {
          * apply
          */
 
+         
         console.log("Graphe a", M.getAgentSymbolicRelation("a"));
 
         console.log("InitialWorld", new Valuation(propositions).toString());
@@ -243,6 +244,9 @@ export class SymbolicSimpleExample extends ExampleDescription {
             } 
             ci++;
         }
+
+        console.log("FIN")
+
         return M;
     }
 

@@ -85,6 +85,11 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     static readonly nbCards: number = 2;
 
     /**
+     * Number of cards in hand
+     */
+    readonly nbCardsInHand_Begin: number = 1;
+
+    /**
      * List of agents
      */
     private agents = ["a", "b", "c", "d"];
@@ -141,7 +146,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 his_cards.push(SimpleSymbolicHanabi.getVarName(agent, c));
             }
             for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                for (var i = 1; i < 6; i++) {
+                for (var i = 0; i < this.nbCardsInHand_Begin+1; i++) {
+                    console.log(i, his_cards)
                     liste_rel.push(new ExactlyFormula(i, his_cards));
                 };
             };
@@ -163,38 +169,31 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         }
         let rules = new AndFormula(liste_rules);
 
-       // console.log("Rules", rules);
-
-        let M = SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, variables, symbolicRelations, rules);
-
-        console.log("Fin SEM");
-
-        let cardInHand_Begin = 2;
+        // BEGIN WORLD
         let count = 0;
-
         let propositions: { [id: string]: boolean } = {};
-        this.agents.forEach((current_agent) => {
-            for (var c = 0; c < cardInHand_Begin; c++) {
-                propositions[SimpleSymbolicHanabi.getVarName(current_agent, count)] = true;
-                count += 1;
-            };
-        });
-        for (var c = count; c < count + cardInHand_Begin; c++) {
+        // distribution of cards between agents
+        while(count<SimpleSymbolicHanabi.nbCards && count< this.nbCardsInHand_Begin*this.agents.length){
+            let agent = this.agents[count%this.agents.length];
+            propositions[SimpleSymbolicHanabi.getVarName(agent, count)] = true;
+            count++;
+        }
+        // the rest in the draw
+        for (var c = count; c < SimpleSymbolicHanabi.nbCards; c++)
             propositions[SimpleSymbolicHanabi.getVarName("p", c)] = true;
-        };
-
-        //console.log("MapVal", propositions);
-
+        // others proposition as false
         variables.forEach((variable) => {
             if (!(variable in propositions)) {
                 propositions[variable] = false;
             }
         });
+        console.log("Valuation", new Valuation(propositions));
 
-        console.log("Valuation", propositions);
 
+        let M = SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, variables, symbolicRelations, rules);
         M.setPointedValuation(new Valuation(propositions));
 
+        console.log("Fin SEM");
 
         function test(M: SymbolicEpistemicModel) {
             console.log("TEST");

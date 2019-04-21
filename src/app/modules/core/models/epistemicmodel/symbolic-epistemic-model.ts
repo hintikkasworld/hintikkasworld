@@ -102,7 +102,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         let rulesPrime = rules.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
         let rulesAndRulesPrime = new AndFormula([rulesPrime, rules]);
 
-
         let bddRulesAndRulesPrime = BDD.buildFromFormula(rulesAndRulesPrime);
         console.log("INITIAL RULES", rulesAndRulesPrime, "=>", bddRulesAndRulesPrime);
 
@@ -150,11 +149,13 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     getSuccessors(w: World, a: string): World[] {
 
-        // console.log("getSucessors", this.getAgentSymbolicRelation(a))
+        console.log("getSucessors", a, this.getAgentSymbolicRelation(a))
 
         let props: Map<string, boolean> = SymbolicEpistemicModel.valuationToMap((<WorldValuation>w).valuation);
         //console.log("Props", props);
         let wBDD = BDD.bddService.createCube(props);
+
+        console.log("after cube")
 
         /**
          * in this method, we will use new this.worldClass(val) to instantiate world with valuation val
@@ -170,11 +171,15 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             BDD.bddService.createCopy(this.getAgentSymbolicRelation(a)),
             wBDD]);
 
+        console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))
+
         //console.log("AND", BDD.bddService.pickAllSolutions(bdd_and));
 
         let bddSetSuccessorsWithPrime = BDD.bddService.applyExistentialForget(
             bddRelationOnW,
             this.propositionalAtoms);
+
+        console.log("after forget", BDD.bddService.pickAllSolutions(bddSetSuccessorsWithPrime))
 
         //console.log("forget", this.propositionalAtoms, BDD.bddService.pickAllSolutions(forget));
 
@@ -182,7 +187,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             bddSetSuccessorsWithPrime,
             SymbolicEpistemicModel.getMapPrimeToNotPrime(this.propositionalAtoms));
 
-        //console.log("Calcul bdd sucessors", res);
+        console.log("Calcul bdd sucessors", BDD.bddService.pickAllSolutions(bddSetSuccessors));
 
         let sols: Valuation[] = BDD.bddService.pickSolutions(bddSetSuccessors, 4, this.propositionalAtoms);
         //console.log("Solutions", sols);
