@@ -32,8 +32,6 @@ class SimpleExampleWorld extends WorldValuation {
 
         this.agentPos["a"] = { x: 64, y: 16, r: 8 };
         this.agentPos["b"] = { x: 128 - SimpleExampleWorld.cardWidth - 10, y: 32, r: 8 };
-        //this.agentPos["c"] = { x: 64, y: 48, r: 8 };
-        //this.agentPos["d"] = { x: 20, y: 32, r: 8 };
 
     }
 

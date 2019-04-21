@@ -107,11 +107,14 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
         let relationsRestrictedToInitialFormula = new Map<string, BDDNode>();
         relations.forEach((value: SymbolicRelation, key: string) => {
+            console.log("Starting the computation of the BDD of the symbolic Relation for " + key + "...");
             let bddRelation = value.toBDD();
+            console.log("Computation of the BDD of the symbolic Relation for " + key + " finished!");
             relationsRestrictedToInitialFormula.set(key, BDD.bddService.applyAnd([BDD.bddService.createCopy(bddRulesAndRulesPrime), bddRelation]));
+            console.log("Computation of the BDD ofthe mix with the rules BDD for the symbolic Relation for " + key + " finished!");
         });
-        console.log("Symbolic Relations", relations, "=>", relationsRestrictedToInitialFormula);
-
+    //    console.log("Symbolic Relations", relations, "=>", relationsRestrictedToInitialFormula);
+        console.log("Symbolic relations processed!")
         return new SymbolicEpistemicModel(relationsRestrictedToInitialFormula, worldClass, agents, propositionalAtoms, propositionalPrimes, bddRulesAndRulesPrime);
 
     }
