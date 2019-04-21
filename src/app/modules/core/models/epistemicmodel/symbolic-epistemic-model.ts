@@ -30,6 +30,12 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     protected readonly worldClass: WorldValuationType;
 
     /**
+     * Store for each agent the correspondant BDDNode
+     */
+    protected symbolicRelations: Map<string, BDDNode>;
+
+    
+    /**
      * stores the worlds (that are of type WorldValuation) that the user already asked for.
      * keys are strings (from a valuation, you call valuation.toString() to get the key... hhmm.. still a bit weird
      * but I do not know how to improve it yet)
@@ -49,10 +55,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return this.worlds[key];
     }
 
-    /**
-     * Store for each agent the correspondant BDDNode
-     */
-    protected symbolicRelations: Map<string, BDDNode>;
+    
 
     getAgents(): string[] { return this.agents; }
 
@@ -192,7 +195,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
         //console.log("Calcul bdd sucessors", BDD.bddService.pickAllSolutions(bddSetSuccessors));
 
-        let sols: Valuation[] = BDD.bddService.pickSolutions(bddSetSuccessors, 4, this.propositionalAtoms);
+        let sols: Valuation[] = BDD.bddService.pickSolutions(bddSetSuccessors, 20, this.propositionalAtoms);
         console.log("Solutions", sols);
         return sols.map((val: Valuation) => this.getWorld(val));
     };

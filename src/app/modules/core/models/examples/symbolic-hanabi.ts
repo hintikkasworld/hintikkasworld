@@ -18,8 +18,6 @@ import { MyTestForBDD } from "./test_bdd";
  * */
 class SimpleHanabiWorld extends WorldValuation {
 
-    static readonly cardSuits = ["green", "blue", "orange", "red"];
-    static readonly cardValues = ["1", "2", "3", "4", "5"];
     static readonly cardWidth = 9;
     static readonly cardHeight = 8;
     static readonly cardNumber = 5;
@@ -42,20 +40,33 @@ class SimpleHanabiWorld extends WorldValuation {
         if (agent == "c") { x = 64 - SimpleHanabiWorld.cardNumber / 2 * SimpleHanabiWorld.cardWidth; y = 56; dx = SimpleHanabiWorld.cardWidth; dy = 0; }
         if (agent == "d") { x = 0; y = 10; dx = 0; dy = SimpleHanabiWorld.cardHeight; }
 
-        SimpleHanabiWorld.drawCard(context, { x: x + i * dx, y: y + i * dy, w: SimpleHanabiWorld.cardWidth, h: SimpleHanabiWorld.cardHeight, fontSize: 5, color: cardSuit, text: cardValue });
+        SimpleHanabiWorld.drawCard(context, { x: x + i * dx, y: y + i * dy, w: SimpleHanabiWorld.cardWidth,
+             h: SimpleHanabiWorld.cardHeight, fontSize: 6, background: cardSuit, text: cardValue });
 
     }
+
+
+
+
+    
 
     draw(context: CanvasRenderingContext2D) {
         for (let agent of environment.agents) {
             let i = 0;
             for (let card = 0; card < SimpleSymbolicHanabi.nbCards; card++)
                 if (this.modelCheck(SimpleSymbolicHanabi.getVarName(agent, card))) {
-                    SimpleHanabiWorld.drawHanabiCard(context, agent, i, "red", card.toString());
+                    
+                    SimpleHanabiWorld.drawHanabiCard(context, agent, i, SimpleHanabiWorld.getSuit(card), SimpleHanabiWorld.getValue(card));
                     i++;
                 }
             this.drawAgents(context);
         }
+    }
+    static getValue(card: number): string {
+        return [1, 1, 1, 2, 2, 3, 3, 4, 4, 5][card % 10].toString();
+    }
+    static getSuit(card: number): string {
+        return ["white", "red", "blue", "yellow", "green"][card / 10];
     }
 
 }

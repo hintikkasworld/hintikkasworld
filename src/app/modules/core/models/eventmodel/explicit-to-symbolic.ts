@@ -14,13 +14,14 @@ export type BDDNode = number;
  * Allows to transform an ExplicitEventModel into a SymbolicEventModel, using the translate() method.
  */
 export class ExplicitToSymbolic {
-    
+
     /**
      * Translate an ExplicitEventModel into a SymbolicEventModel
-     * @param explicit_em the ExplicitEventModel we want to transform
+     * @param E the ExplicitEventModel we want to transform
      * @param variables list of all variables which describe worlds
      * @param agents list of agents
      */
+
     static translate(explicit_em: ExplicitEventModel, variables: string[], agents: string[]): SymbolicEventModel{
         const BS = BDD.bddService;
         
@@ -57,9 +58,9 @@ export class ExplicitToSymbolic {
 
         console.log("Unique Event OK", explicit_em.getAgents());
 
-        for (let agent of agents){
+        for (let agent of agents) {
 
-            console.log("ExplicitToSymbolic.translate - agent",agent);
+            console.log("ExplicitToSymbolic.translate - agent", agent);
             //console.log("Nodes", explicit_em.getNodes());
             
             for(let node in explicit_em.getNodes()) {
@@ -89,7 +90,6 @@ export class ExplicitToSymbolic {
                 let new_or_action = BS.applyAnd([pointeur,BS.applyOr(others)]);
                 console.log("OR_ACTION", BS.nodeToString(new_or_action), BS.pickSolutions(new_or_action));
                 symb_em.addPlayerEvent(node, agent, new_or_action)
-
             }
         }
 
@@ -107,20 +107,20 @@ export class ExplicitToSymbolic {
      * @param pre Formula as precondition
      * @param post Poscondition as postcondition, like Map<atom, new value>
      */
-    static _event_to_bdd(pre: Formula, post: Postcondition): BDDNode{
+    static _event_to_bdd(pre: Formula, post: Postcondition): BDDNode {
 
         // console.log("event_to_bdd", pre, post, "->", post.getValuation().toString());
 
         let bdd_prec = BDD.buildFromFormula(pre);
         let bdd_post = null;
-        if( post instanceof TrivialPostcondition){
+        if (post instanceof TrivialPostcondition) {
             let transfert = SymbolicEventModel.varsToPosted(BDD.bddService.support(bdd_prec));
             // console.log("Post is Trivial", transfert);
             bdd_post = BDD.bddService.applyRenaming(BDD.bddService.createCopy(bdd_prec), transfert);
         } else {
             let transform: Map<string, boolean> = new Map();
-            for(let [key, value] of Object.entries(post.getValuation())){
-                transform.set(SymbolicEventModel.getPostedVarName(key), <boolean> value);
+            for (let [key, value] of Object.entries(post.getValuation())) {
+                transform.set(SymbolicEventModel.getPostedVarName(key), <boolean>value);
             }
             bdd_post = BDD.bddService.createCube(transform);
             // console.log("CUBE", transform, bdd_post);
@@ -142,13 +142,13 @@ export class ExplicitToSymbolic {
         // console.log("call frame", vars, prime)
 
         let pointeur = BDD.bddService.createTrue();
-        for(let vari of vars){
+        for (let vari of vars) {
             let var1 = vari;
-            if(SymbolicEventModel.isPosted(vari)){var1.replace("/" + SymbolicEventModel.getPostedString() +"/g",'');}
+            if (SymbolicEventModel.isPosted(vari)) { var1.replace("/" + SymbolicEventModel.getPostedString() + "/g", ''); }
 
             let var2 = SymbolicEventModel.getPostedVarName(vari); /* .getPosted(var); */
 
-            if(prime){ /* if primed : var1 = var1' , var2 = var2' */
+            if (prime) { /* if primed : var1 = var1' , var2 = var2' */
                 var1 = SymbolicEpistemicModel.getPrimedVarName(vari);
                 var2 = SymbolicEpistemicModel.getPrimedVarName(var2);
             }

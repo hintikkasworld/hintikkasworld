@@ -37,6 +37,8 @@ export class Environment {
     getExecutableActions(): Action[] {
         if (this.executableActions == undefined) {
             // console.log("memoized executable actions : ", this.executableActions);
+            // this.executableActions = []; //set to be true in case sbody else would like to compute it
+                                            // Alex: I removed this, this should be useless, the actual reason was not this
             console.log("we compute the set of executable actions");
             let M = this._epistemicModel;
             const actions = this.getActions();
