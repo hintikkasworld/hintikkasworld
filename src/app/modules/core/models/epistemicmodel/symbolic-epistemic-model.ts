@@ -190,10 +190,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             bddSetSuccessorsWithPrime,
             SymbolicEpistemicModel.getMapPrimeToNotPrime(this.propositionalAtoms));
 
-        console.log("Calcul bdd sucessors", BDD.bddService.pickAllSolutions(bddSetSuccessors));
+        //console.log("Calcul bdd sucessors", BDD.bddService.pickAllSolutions(bddSetSuccessors));
 
         let sols: Valuation[] = BDD.bddService.pickSolutions(bddSetSuccessors, 4, this.propositionalAtoms);
-        //console.log("Solutions", sols);
+        console.log("Solutions", sols);
         return sols.map((val: Valuation) => this.getWorld(val));
     };
 
