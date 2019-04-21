@@ -132,11 +132,9 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         this.agents.forEach((agent) => {
             let seenFormulas: (Formula | string)[] = [];
             /* Reciprocity of cards : agent does'nt see all variables of himself and draw */
-            this.owners.forEach((owner) => {
+            this.owners.filter(o => (o != agent && o != "p")).forEach((owner) => {
                 for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                    if (agent != owner && agent != "p") {
                         seenFormulas.push(SimpleSymbolicHanabi.getVarName(owner, c));
-                    };
                 };
             });
 
