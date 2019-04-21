@@ -30,10 +30,6 @@ export class Environment {
         return this._exampleDescription;
     }
 
-    getActions(): [Action] {
-        return this._exampleDescription.getActions();
-    }
-
     getExecutableActions(): [Action] {
         if (this.executableActions == undefined) {
             console.log("we compute the set of executable actions");
