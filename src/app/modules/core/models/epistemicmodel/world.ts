@@ -143,13 +143,15 @@ export abstract class World {
     if (card.color == undefined)
       card.color = "#000000";
 
+    if (card.background == undefined)
+      card.background = "#FFFFFF";
     context.font = card.fontSize + "px Verdana";
     let w2 = 2 + context.measureText(card.text).width / 2;
     let h2 = 10;
 
 
     context.lineWidth = 0.5;
-    context.fillStyle = "#FFFFFF";
+    context.fillStyle = card.background;
     context.strokeStyle = "#000000";
     let ROUNDRECT_RADIUS = 2;
     let YLINEBASIS = 5;
