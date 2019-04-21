@@ -292,7 +292,7 @@ export class ComicsComponent implements OnInit {
   @param level number of the level
   @description add a <div> to be fullfilled with possible worlds for a given agent
   */
-  private addLevelDiv(level) {
+  private addLevelDiv(level: number) {
     $('#level' + level).remove();
 
     let levelDiv = $("<div>");
@@ -368,7 +368,6 @@ export class ComicsComponent implements OnInit {
       left: levelLeft,
       width: levelWidth,
       top: this.getYLevelBulle(level),
-      position: 'absolute'
     });
   }
 

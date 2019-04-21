@@ -28,7 +28,11 @@ export abstract class World {
   }
 
   constructor() {
-
+    /*
+          example on how to initialize agents position:
+           this.agentPos["a"] = {x: 32, y:32, r: 16};
+          this.agentPos["b"] = {x: 64, y:32, r: 16};
+          this.agentPos["c"] = {x: 96, y:32, r: 16};*/
   }
 
 

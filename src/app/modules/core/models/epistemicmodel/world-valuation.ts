@@ -9,9 +9,7 @@ export class WorldValuation extends World {
           this.valuation = valuation;
       
           this.agentPos = {};
-          this.agentPos["a"] = {x: 32, y:32, r: 16};
-          this.agentPos["b"] = {x: 64, y:32, r: 16};
-          this.agentPos["c"] = {x: 96, y:32, r: 16};
+     
         
         }
       
