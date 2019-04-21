@@ -9,7 +9,7 @@ export class Environment {
 
     /*memoization : we store the set of executable actions. When it has the value undefined, it means 
     that it has to be recomputed*/
-    private executableActions: [Action] = undefined; 
+    private executableActions: Action[] = undefined; 
 
 
     constructor(exampleDescription: ExampleDescription) {
@@ -30,8 +30,9 @@ export class Environment {
         return this._exampleDescription;
     }
 
-    getExecutableActions(): [Action] {
+    getExecutableActions(): Action[] {
         if (this.executableActions == undefined) {
+            this.executableActions = []; //set to be true in case sbody else would like to compute it
             console.log("we compute the set of executable actions");
             let M = this._epistemicModel;
             this.executableActions = this._exampleDescription.getActions().filter((action: Action) => M.check(action.getPrecondition(M)));
