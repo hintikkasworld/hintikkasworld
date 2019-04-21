@@ -10,17 +10,17 @@ export class EventModelAction implements Action {
     _E: EventModel;
     _name: string;
 
-    constructor(description: {name: string, eventModel: EventModel}) {
+    constructor(description: { name: string, eventModel: EventModel }) {
         this._name = description.name;
         this._E = description.eventModel;
-        
+
     }
 
     getPrecondition(M: EpistemicModel): Formula {
-        if(this._E instanceof ExplicitEventModel) 
-         return (<any> this._E.getNode(this._E.getPointedAction())).pre;
-         else
-         throw "Unimplemented";
+        if (this._E instanceof ExplicitEventModel)
+            return (<any>this._E.getNode(this._E.getPointedAction())).pre;
+        else
+            throw "Unimplemented";
     }
     getName() {
         return this._name;

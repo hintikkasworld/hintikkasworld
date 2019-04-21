@@ -411,6 +411,6 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         //     }
         // } 
 
-        return [play("a", 1, "b")];
+        return [];//play("a", 1, "b")];
     }
 }
