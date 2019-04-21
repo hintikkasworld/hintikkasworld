@@ -87,7 +87,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     /**
      * Number of cards in hand
      */
-    readonly nbCardsInHand_Begin: number = 5;
+    readonly nbCardsInHand_Begin: number = 2;
 
     /**
      * List of agents
@@ -130,12 +130,12 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         /* Create Obs <<SymbolicRelation>> which represent relations of each agent like var_a_c <-> var_a_c_p */
         let symbolicRelations: Map<string, SymbolicRelation> = new Map();
         this.agents.forEach((agent) => {
-            let liste_rel: (Formula | string)[] = [];
+            let seenFormulas: (Formula | string)[] = [];
             /* Reciprocity of cards : agent does'nt see all variables of himself and draw */
-            this.owners.forEach((agentb) => {
+            this.owners.forEach((owner) => {
                 for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                    if (agent != agentb && agent != "p") {
-                        liste_rel.push(SimpleSymbolicHanabi.getVarName(agentb, c));
+                    if (agent != owner && agent != "p") {
+                        seenFormulas.push(SimpleSymbolicHanabi.getVarName(owner, c));
                     };
                 };
             });
@@ -148,11 +148,11 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                 for (var i = 0; i < this.nbCardsInHand_Begin+1; i++) {
                     console.log(i, his_cards)
-                    liste_rel.push(new ExactlyFormula(i, his_cards));
+                    seenFormulas.push(new ExactlyFormula(i, his_cards));
                 };
             };
          //   console.log("ListeRel", liste_rel);
-            symbolicRelations.set(agent, new Obs(liste_rel));
+            symbolicRelations.set(agent, new Obs(seenFormulas));
 
         });
 
