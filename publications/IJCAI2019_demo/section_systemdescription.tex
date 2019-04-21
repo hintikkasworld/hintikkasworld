@@ -18,7 +18,7 @@ The system is easy to use to provide new examples. Explicit epistemic models are
 
 \begin{figure}
 	\begin{center}
-		\scalebox{0.7}{
+		\scalebox{0.6}{
 			\begin{tikzpicture}[scale=0.75]
 			
 			\umlclass[x=0,y=2]{EpistemicModel}{
@@ -33,7 +33,7 @@ The system is easy to use to provide new examples. Explicit epistemic models are
 %			}{
 %			}
 
-	\umlclass[x=7,y=2.5]{BDD}{
+	\umlclass[x=8,y=2]{BDD}{
 }{
 }
 			
@@ -41,11 +41,11 @@ The system is easy to use to provide new examples. Explicit epistemic models are
 			}{
 			}
 			
-			\umlclass[x=4,y=-2.5]{Hanabi}{
+			\umlclass[x=4,y=-2.4]{Hanabi}{
 			}{
 			}
 			
-			\umlclass[x=-3,y=-2.5]{SallyAndAnne}{
+			\umlclass[x=-3,y=-2.4]{SallyAndAnne}{
 			}{
 			}
 			
@@ -61,13 +61,14 @@ The system is easy to use to provide new examples. Explicit epistemic models are
 			\umlinherit[geometry=|-]{ExplicitEpistemicModel}{Graph}
 			\umlinherit[geometry=|-]{SymbolicEpistemicModel}{EpistemicModel}
 			\umlinherit[geometry=|-]{ExplicitEpistemicModel}{EpistemicModel}
-			\umlassoc[geometry=--, arg1=, mult1=, arg2=, mult2=*]{SymbolicEpistemicModel}{BDD}			
+			\umlassoc[geometry=-|, arg1=, mult1=*, arg2=, mult2=]{SymbolicEpistemicModel}{BDD}			
 
 			
 			%\umlunicompo[geometry=-|, arg=titi, mult=*, pos=1.7, stereo=vector]{D}{C}
 			%\umlaggreg[arg=tutu, mult=1, pos=0.8, angle1=30, angle2=60, loopsize=2cm]{D}{D}
 			
 			\end{tikzpicture}}
+		\vspace{-3mm}
 	\end{center}
 	\caption{New architecture of \emph{Hintikka's world}.\label{figure:architecture}}
 \end{figure}
