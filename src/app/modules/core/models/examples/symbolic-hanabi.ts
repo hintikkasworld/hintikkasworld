@@ -141,13 +141,13 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             });
 
             /* Enumeration of agent's card : : agent see the number of his cards : 0 <-> 0p and 1 <-> 1p and ... */
-            let his_cards = [];
+           let his_cards = [];
             for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                 his_cards.push(SimpleSymbolicHanabi.getVarName(agent, c));
             }
             for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                 for (var i = 0; i < this.nbCardsInHand_Begin+1; i++) {
-                    console.log(i, his_cards)
+              //      console.log(i, his_cards)
                     seenFormulas.push(new ExactlyFormula(i, his_cards));
                 };
             };
