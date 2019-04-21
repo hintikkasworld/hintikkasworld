@@ -133,6 +133,12 @@ char *get_error() {
 	return msg;
 }
 
+EMSCRIPTEN_KEEPALIVE
+int get_size(DdNode *node) {
+	DEBUG_ENSURE_NONNULL(node, "get_size got null");
+	return Cudd_DagSize(node);
+}
+
 /**
  * Indicate whether the given node is a TRUE leaf.
  */
