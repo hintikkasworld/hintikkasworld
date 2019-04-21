@@ -141,22 +141,22 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             });
 
             /* Enumeration of agent's card : : agent see the number of his cards : 0 <-> 0p and 1 <-> 1p and ... */
-           let his_cards = [];
+            let his_cards = [];
             for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                 his_cards.push(SimpleSymbolicHanabi.getVarName(agent, c));
             }
             for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                for (var i = 0; i < this.nbCardsInHand_Begin+1; i++) {
-              //      console.log(i, his_cards)
+                for (var i = 0; i < this.nbCardsInHand_Begin + 1; i++) {
+                    //      console.log(i, his_cards)
                     seenFormulas.push(new ExactlyFormula(i, his_cards));
                 };
             };
-         //   console.log("ListeRel", liste_rel);
+            //   console.log("ListeRel", liste_rel);
             symbolicRelations.set(agent, new Obs(seenFormulas));
 
         });
 
-       // console.log("RelationsSymboliques", relationsSymboliques);
+        // console.log("RelationsSymboliques", relationsSymboliques);
 
         /* Unicity of cards : a card is here only once : a:1 but no b:1 ... */
         let liste_rules = [];
@@ -173,8 +173,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         let count = 0;
         let propositions: { [id: string]: boolean } = {};
         // distribution of cards between agents
-        while(count<SimpleSymbolicHanabi.nbCards && count< this.nbCardsInHand_Begin*this.agents.length){
-            let agent = this.agents[count%this.agents.length];
+        while (count < SimpleSymbolicHanabi.nbCards && count < this.nbCardsInHand_Begin * this.agents.length) {
+            let agent = this.agents[count % this.agents.length];
             propositions[SimpleSymbolicHanabi.getVarName(agent, count)] = true;
             count++;
         }
@@ -199,39 +199,38 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             console.log("TEST");
 
             console.log("InitialWorld", new Valuation(propositions));
-    
+
             console.log("Graphe a", M.getAgentSymbolicRelation("a"));
-    
+
             console.log("Pick one", BDD.bddService.pickOneSolution(M.getAgentSymbolicRelation("a")));
-    
+
             console.log(BDD.bddService.pickSolutions(M.getAgentSymbolicRelation("a"), 10));
-    
+
             let form = new KFormula("a", new AtomicFormula(SimpleSymbolicHanabi.getVarName("a", 0)));
             console.log(form.prettyPrint(), M.check(form));
             let form2 = new KFormula("a", new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)));
             console.log(form2.prettyPrint(), M.check(form2));
-    
+
             let form3 = new KFormula("b", new AtomicFormula(SimpleSymbolicHanabi.getVarName("a", 0)));
             console.log(form3.prettyPrint(), M.check(form3));
             let form4 = new KFormula("b", new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)));
             console.log(form4.prettyPrint(), M.check(form4));
-    
+
             let form5 = new KFormula("a", new OrFormula([
                 new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)),
                 new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 2))]));
             console.log(form5.prettyPrint(), M.check(form5));
-    
+
         }
 
 
         //test(M);
-      
+
         return M;
     }
 
 
     getActions() {
-        return [];
         console.log("BEGIN ACTION", SimpleSymbolicHanabi.ok);
 
         const that = this;
@@ -353,19 +352,17 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             return E;
         }
 
-        let list = [];
-
 
         /* DRAWS */
         //for (let agent of this.agents) {
-        console.log(this.agents[0]);
-        let ema = new EventModelAction(
-            {
-                name: "Agent " + this.agents[0] + " draws a card.",
-                eventModel: ExplicitToSymbolic.translate(draw(this.agents[0]), this.variables, this.agents)
-            }
-        );
-        list.push(ema);
+        /*     console.log(this.agents[0]);
+             let ema = new EventModelAction(
+                 {
+                     name: "Agent " + this.agents[0] + " draws a card.",
+                     eventModel: ExplicitToSymbolic.translate(draw(this.agents[0]), this.variables, this.agents)
+                 }
+             );
+             list.push(ema);*/
 
         // for (let agent of this.agents) {
         //     for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
@@ -414,6 +411,6 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         //     }
         // } 
 
-        return [];
+        return [play("a", 1, "b")];
     }
 }

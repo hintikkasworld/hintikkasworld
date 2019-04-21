@@ -38,7 +38,7 @@ export class Environment {
         if (this.executableActions == undefined) {
             console.log("we compute the set of executable actions");
             let M = this._epistemicModel;
-            this.executableActions = this._exampleDescription.getActions().filter((action) => M.check(action.getPrecondition()));
+            this.executableActions = this._exampleDescription.getActions().filter((action: Action) => M.check(action.getPrecondition(M)));
         }
         return this.executableActions;
 
