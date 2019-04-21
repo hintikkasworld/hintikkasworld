@@ -664,6 +664,10 @@ void init()
 // 	printf("p=%p\n", get_literal_as_bdd(3));
 // 	printf("p=%p\n", get_conjunction(get_literal_as_bdd(0), get_literal_as_bdd(1)));
 	printf("nb=%ld\n", peak_node_count());
+	Cudd_AutodynEnable(ddm, CUDD_REORDER_GROUP_SIFT);  // this is the method used in the Python implem we used [https://github.com/tulip-control/dd/blob/master/dd/cudd.pyx#L510]
+	Cudd_ReorderingType method;
+	int status = Cudd_ReorderingStatus(ddm, &method);
+	printf("Cudd reordering status: %d; method: %d\n", status, method);
 }
 
 void print_stats() {
@@ -782,7 +786,7 @@ void simpleformulatest() {
 int main() {
 	// for testing things
 	puts("*** THIS IS THE CUDDJS MAIN ***");
-	//tests();
+	tests();
 	//simpleformulatest();
 	//
 	//
