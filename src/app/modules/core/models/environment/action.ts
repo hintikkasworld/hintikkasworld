@@ -3,6 +3,6 @@ import { EpistemicModel } from './../epistemicmodel/epistemic-model';
 
 export interface Action {
     getName(): string;
-    getPrecondition(M: EpistemicModel): Formula;
+    isApplicableIn(M: EpistemicModel): boolean;
     perform(M: EpistemicModel): EpistemicModel;
 }

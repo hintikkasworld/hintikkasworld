@@ -7,20 +7,17 @@ import { EventModel } from '../eventmodel/event-model';
 import { __exportStar } from 'tslib';
 
 export class EventModelAction implements Action {
-    _E: EventModel;
+    _E: EventModel<any>;
     _name: string;
 
-    constructor(description: { name: string, eventModel: EventModel }) {
+    constructor(description: { name: string, eventModel: EventModel<any> }) {
         this._name = description.name;
         this._E = description.eventModel;
 
     }
-
-    getPrecondition(M: EpistemicModel): Formula {
-        if (this._E instanceof ExplicitEventModel)
-            return (<any>this._E.getNode(this._E.getPointedAction())).pre;
-        else
-            throw "Unimplemented";
+    
+    isApplicableIn(M: EpistemicModel): boolean {
+        return this._E.isApplicableIn(M);
     }
     getName() {
         return this._name;

@@ -8,7 +8,7 @@ import { EventModel } from './event-model';
 import { Graph } from './../graph';
 import { Event } from './event';
 
-export class ExplicitEventModel extends Graph implements EventModel {
+export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpistemicModel> {
 
     setPointedAction(e: string) {
         if (this.nodes[e] == undefined)
@@ -18,7 +18,7 @@ export class ExplicitEventModel extends Graph implements EventModel {
         this.setPointedNode(e);
     }
 
-    getPointedAction() {
+    getPointedAction(): string {
         return this.getPointedNode();
     }
 
@@ -86,6 +86,9 @@ export class ExplicitEventModel extends Graph implements EventModel {
     }
 
 
+    isApplicableIn(M: ExplicitEpistemicModel): boolean {
+        return M.check(this.getPrecondition(this.getPointedAction()));
+    }
 
     apply(M: ExplicitEpistemicModel): ExplicitEpistemicModel {
 

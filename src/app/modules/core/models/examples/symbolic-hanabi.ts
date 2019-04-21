@@ -82,12 +82,12 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     /**
      * Number of cards in the game Hanabi
      */
-    static readonly nbCards: number = 10;
+    static readonly nbCards: number = 7;
 
     /**
      * Number of cards in hand
      */
-    readonly nbCardsInHand_Begin: number = 2;
+    readonly nbCardsInHand_Begin: number = 1;
 
     /**
      * List of agents
@@ -101,6 +101,11 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
      * List of propositional variables
      */
     private variables: string[];
+    
+    /**
+     * List of actions; lazily computed (only on demand)
+     */
+    private actions?: EventModelAction[];
 
     getName() { return "SimpleSymbolicHanabi"; }
 
@@ -227,9 +232,12 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         return M;
     }
 
-
+    
     getActions() {
+        if (this.actions !== undefined) return this.actions;
         console.log("BEGIN ACTION", SimpleSymbolicHanabi.ok);
+        
+        const list = [];
 
         const that = this;
 
@@ -352,15 +360,19 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
 
         /* DRAWS */
-        //for (let agent of this.agents) {
-        /*     console.log(this.agents[0]);
+        for (let agent of this.agents) {
              let ema = new EventModelAction(
                  {
-                     name: "Agent " + this.agents[0] + " draws a card.",
-                     eventModel: ExplicitToSymbolic.translate(draw(this.agents[0]), this.variables, this.agents)
+                     name: "Agent " + agent + " draws a card.",
+                     eventModel: ExplicitToSymbolic.translate(draw(agent), this.variables, this.agents)
                  }
              );
-             list.push(ema);*/
+             list.push(ema);
+             
+             // DEBUG: we stop here for now
+             break;
+             
+        }
 
         // for (let agent of this.agents) {
         //     for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
@@ -407,8 +419,10 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         //         );
         //         list.push(ema2);
         //     }
-        // } 
+        // }
 
-        return [];//play("a", 1, "b")];
+        console.log(list);
+        this.actions = list;
+        return list;//play("a", 1, "b")];
     }
 }

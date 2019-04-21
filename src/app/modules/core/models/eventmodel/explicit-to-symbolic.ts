@@ -2,6 +2,7 @@ import { Formula } from './../formula/formula';
 import { ExplicitEventModel } from './explicit-event-model';
 import { SymbolicEventModel } from './symbolic-event-model';
 import { Event } from './event';
+import { SymbolicEvent } from './symbolic-event';
 import { BDD } from '../formula/bdd';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Postcondition } from './postcondition';
@@ -21,20 +22,37 @@ export class ExplicitToSymbolic {
      * @param agents list of agents
      */
     static translate(explicit_em: ExplicitEventModel, variables: string[], agents: string[]): SymbolicEventModel{
-
+        const BS = BDD.bddService;
+        
         console.log("==================================")
         console.log("ExplicitToSymbolic.translate");
 
         let symb_em = new SymbolicEventModel(agents, variables);
         
-        let event_bdd = new Map();
+        const event_framed_bdds = new Map<string, BDDNode>();
         
-        for(const [event, value] of <[string, {pre: Formula, post: Postcondition}][]>Object.entries(explicit_em.getNodes())){
-            console.log(event, value);
-            event_bdd.set(event, ExplicitToSymbolic._event_to_bdd(value.pre, value.post));
-            //console.log(event_bdd[event]);
-            symb_em.addUniqueEvent(event, event_bdd.get(event));
-            console.log(event, BDD.bddService.pickAllSolutions(event_bdd.get(event)));
+        for(const [eventName, ev] of <[string, Event][]>Object.entries(explicit_em.getNodes())){
+            console.log(eventName, ev);
+            const post_bdd = ExplicitToSymbolic._event_to_bdd(ev.pre, ev.post)
+            
+            /* === computation of the frame === */
+            /* Keep the precondition variables */
+            const support = BS.support(post_bdd)
+            console.log("support", support)
+            const liste = variables.filter(v => !(support.includes(v) || support.includes(SymbolicEventModel.getPostedVarName(v))));
+                /* TODO check this, I thought we had something better at some point */
+            console.log("variables to frame", liste);
+            const frame = ExplicitToSymbolic._frame(liste, false);
+            console.log("frame:", BS.nodeToString(frame), BS.pickSolutions(frame, 10));
+            console.log("supp of frame", BS.support(frame));
+            const framed_bdd = BS.applyAnd([BS.createCopy(post_bdd), frame]);
+            console.log("framed BDD:", BS.nodeToString(framed_bdd), BS.pickSolutions(framed_bdd, 10));
+            event_framed_bdds.set(eventName, framed_bdd);
+            
+            
+            const symEvent = new SymbolicEvent(ev.pre, framed_bdd);            
+            //console.log(symEvent);
+            symb_em.addUniqueEvent(eventName, symEvent);
         }
 
         console.log("Unique Event OK", explicit_em.getAgents());
@@ -44,52 +62,32 @@ export class ExplicitToSymbolic {
             console.log("ExplicitToSymbolic.translate - agent",agent);
             //console.log("Nodes", explicit_em.getNodes());
             
-            for(let node in explicit_em.getNodes()){
+            for(let node in explicit_em.getNodes()) {
 
                 console.log("Event", node);
                 
-                let action = event_bdd.get(node);
+                let pointeur = BS.createCopy(event_framed_bdds.get(node));
 
-                let liste = variables.slice(0);
-                /* Keep the precondition variables */
-                for(let variable of BDD.bddService.support(action)){
-                    if(!SymbolicEpistemicModel.isPrimed(variable) && !SymbolicEventModel.isPosted(variable)){
-                        liste.splice( liste.indexOf(variable), 1 );
-                    }
-                }
-                
-                // console.log("liste", liste);
-                let action_frame = BDD.bddService.applyAnd([BDD.bddService.createCopy(action), ExplicitToSymbolic._frame(liste, false)]);
-                let pointeur = action_frame;
-
-                let or_others = BDD.bddService.createFalse();
+                let others: BDDNode[] = [];
                 // console.log("begin succ")
                 for(let succ of explicit_em.getSuccessorsID(node, agent)){
-                    // console.log("Succ = ", succ)
-                    // console.log(BDD.bddService.pickAllSolutions(event_bdd.get(succ)))
-                    // console.log("  Succ", succ, event_bdd.get(succ), BDD.bddService.pickAllSolutions(event_bdd.get(succ)));
+                    console.log("Succ = ", succ)
+                    const succBdd = event_framed_bdds.get(succ);
+                    // console.log(BS.pickSolutions(succBdd, 10))
+                    // console.log("  Succ", succ, succBdd, BS.pickSolutions(succBdd, 10));
                 
-                    let toprime = SymbolicEpistemicModel.getMapNotPrimeToPrime(BDD.bddService.support(event_bdd.get(succ)));
+                    let toprime = SymbolicEpistemicModel.getMapNotPrimeToPrime(BS.support(succBdd));
                     // console.log("toprime", toprime);
-                    let bdd_action_prime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(event_bdd.get(succ)), toprime); 
-                    //console.log("bdd_action_prime", bdd_action_prime);
-                    // console.log("bdd_action_prime", BDD.bddService.pickAllSolutions(bdd_action_prime));
-                    let liste = variables.slice(0);
-                    let support = BDD.bddService.support(bdd_action_prime);
-                    // console.log("support", support)
-                    for(let variable of support){
-                        let var1 = variable.replace("/" + SymbolicEpistemicModel.getPrimedString() +"/g",'');
-                        var1 = var1.replace("/" + SymbolicEventModel.getPostedString() +"/g",'');
-                        if(var1 in liste){
-                            liste.slice( liste.indexOf(var1), 1);
-                        }
-                    }
-
-                    let action_prime_frame = BDD.bddService.applyAnd([bdd_action_prime, ExplicitToSymbolic._frame(liste, true)]);
-                    or_others = BDD.bddService.applyOr([BDD.bddService.createCopy(or_others), action_prime_frame]);
+                    let succBdd_prime = BS.applyRenaming(BS.createCopy(succBdd), toprime); 
+                    // console.log("succBdd_prime", BS.nodeToString(succBdd_prime));
+                    // console.log("succBdd_prime", BS.pickSolutions(succBdd_prime, 10));
+                    //alert("seen one succ");
+                    others.push(succBdd_prime);
                 }
-                let new_or_action = BDD.bddService.applyAnd([pointeur, or_others]);
-                // console.log("OR_ACTION", BDD.bddService.pickAllSolutions(new_or_action));
+                // alert("seen all succ");
+                /* building result */
+                let new_or_action = BS.applyAnd([pointeur,BS.applyOr(others)]);
+                console.log("OR_ACTION", BS.nodeToString(new_or_action), BS.pickSolutions(new_or_action));
                 symb_em.addPlayerEvent(node, agent, new_or_action)
 
             }
@@ -119,7 +117,7 @@ export class ExplicitToSymbolic {
             let transfert = SymbolicEventModel.varsToPosted(BDD.bddService.support(bdd_prec));
             // console.log("Post is Trivial", transfert);
             bdd_post = BDD.bddService.applyRenaming(BDD.bddService.createCopy(bdd_prec), transfert);
-        }else{
+        } else {
             let transform: Map<string, boolean> = new Map();
             for(let [key, value] of Object.entries(post.getValuation())){
                 transform.set(SymbolicEventModel.getPostedVarName(key), <boolean> value);
@@ -130,7 +128,7 @@ export class ExplicitToSymbolic {
         // console.log("end event_to_bdd", bdd_prec, bdd_post);
         // console.log("prec", BDD.bddService.pickAllSolutions(bdd_prec))
         // console.log("post", BDD.bddService.pickAllSolutions(bdd_post))
-        let res = BDD.bddService.applyAnd([BDD.bddService.createCopy(bdd_prec), BDD.bddService.createCopy(bdd_post)]);
+        let res = BDD.bddService.applyAnd([bdd_prec, bdd_post]);
         // console.log("and", BDD.bddService.pickAllSolutions(res))
         return res;
     }
@@ -161,7 +159,7 @@ export class ExplicitToSymbolic {
 
             pointeur = BDD.bddService.applyAnd([BDD.bddService.createCopy(pointeur), BDD.bddService.createCopy(equiv)]);
         }
-        // console.log("end frame", vars, prime, BDD.bddService.pickAllSolutions(pointeur));
+        // console.log("end frame", vars, prime, BDD.bddService.pickSolutions(pointeur, 10));
         return pointeur;
     }
 

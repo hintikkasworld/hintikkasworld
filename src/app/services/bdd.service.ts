@@ -161,8 +161,7 @@ export class BddService {
     // console.log("Will apply and to this array of BDDs:", b.map(b => this.nodeToString(b)));
     let result = this.createTrue();
     for (let i = 0; i < b.length; i++) {
-      // const [sRes, sNext] = [this.getSize(result), this.getSize(b[i])];
-      // console.log(`Will conjoin ${this.nodeToString(result)} (size ${sRes}) with ${this.nodeToString(b[i])} (size ${sNext})`);
+      // console.log(`Will conjoin ${this.nodeToString(result)} with ${this.nodeToString(b[i])}`);
       result = this.bddModule._apply_and(result, b[i]);
       // console.log("applied ", i+1, " ANDs out of ", b.length);
     }
@@ -170,9 +169,12 @@ export class BddService {
   }
 
   applyOr(b: BDDNode[]): BDDNode {
+    // console.log("Will apply OR to this array of BDDs:", b.map(b => this.nodeToString(b)));
     let result = this.createFalse();
     for (let i = 0; i < b.length; i++) {
+      // console.log(`Will disjoin ${this.nodeToString(result)} with ${this.nodeToString(b[i])}`);
       result = this.bddModule._apply_or(result, b[i]);
+      // console.log("applied ", i+1, " ORs out of ", b.length);
     }
     return result;
   }
@@ -283,19 +285,49 @@ export class BddService {
     if (sols.length !== 1) throw new Error("Too many solutions: this is a bug in pickSolutions()!");
     return sols[0];
   }
+  
+  countSolutions(bddNode: BDDNode, atoms?: string[]): number {
+    const cache = new Map<BDDNode, {count: number, support: string[]}>();
+    const rec = (n: BDDNode): {count: number, support: string[]} => {
+      if (this.isFalse(n)) return {count: 0, support: []};
+      if (this.isTrue(n)) return {count: 1, support: []};
+      if (cache.has(n)) return cache.get(n);
+      const x = this.getAtomOf(n);
+      const {count: tC, support: tS} = rec(this.getThenOf(n));
+      const {count: eC, support: eS} = rec(this.getElseOf(n));
+      const tAtomsToAdd = eS.filter(a => !tS.includes(a));
+      const tNbAtomsToAdd = tAtomsToAdd.length;
+      const eNbAtomsToAdd = tS.filter(a => !eS.includes(a)).length;
+      const count = tC * 2**tNbAtomsToAdd + eC * 2**eNbAtomsToAdd;
+      const support = tS.concat(tAtomsToAdd);
+      support.push(x);
+      const res = {count, support};
+      cache.set(n, res);
+      return res;
+    }
+    const {count, support} = rec(bddNode);
+    const atomsToAdd = new Set();
+    if (atoms !== undefined) {
+	  support.forEach(a => {
+	    if ( ! atoms.includes(a)) throw new Error(`Relevant atom ${a} is not in given support`);
+	    else atomsToAdd.add(a);
+	  });
+	}
+    return count * 2**(atomsToAdd.size);      
+  }
 
 
   nodeToString(bddNode: BDDNode, full: boolean = false): string {
     const childrenToString = n => {
       if (this.isFalse(n)) return "FALSE";
       if (this.isTrue(n)) return "TRUE";
-      return full ? this.nodeToString(n, true) : "#" + n;
+      return full ? this.nodeToString(n, true) : `#${n}(${this.getSize(n)}n;${this.countSolutions(n)}s)`;
     };
     if (this.isInternalNode(bddNode)) {
       const v = this.getAtomOf(bddNode);
       const t = childrenToString(this.getThenOf(bddNode));
       const e = childrenToString(this.getElseOf(bddNode));
-      const id = full ? `#${bddNode}: ` : '';
+      const id = full ? '' : `#${bddNode}: `;
       return `[${id}IF ${v} THEN ${t} ELSE ${e}]`;
     } else return "[" + childrenToString(bddNode) + "]";
   }
@@ -306,7 +338,7 @@ export class BddService {
   /**
    * NB: this is not efficient at all
    */
-  pickSolutions(bddNode: BDDNode, max: number, atoms?: string[]): Valuation[] {
+  pickSolutions(bddNode: BDDNode, max: number = 10, atoms?: string[]): Valuation[] {
     if (atoms === undefined) atoms = this.support(bddNode);
     const combineSols = (x: string, t: BDDNode, e: BDDNode, max: number, atoms: string[]) => {
       const sols = getSetOfTrueAtomsOf(e, max, atoms).slice();
