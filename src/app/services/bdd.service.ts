@@ -121,6 +121,13 @@ export class BddService {
   private getAtomFromIndex(i: BDDAtom): string {
     return this.indexAtom.get(i);
   }
+  
+  /**
+   * @return the number of nodes in the given BDD
+   */
+  getSize(b: BDDNode): number {
+    return this.bddModule._get_size(b);
+  }
 
   isTrue(b: BDDNode): boolean {
     return this.bddModule._is_true(b);
@@ -151,9 +158,13 @@ export class BddService {
   }
 
   applyAnd(b: BDDNode[]): BDDNode {
+    // console.log("Will apply and to this array of BDDs:", b.map(b => this.nodeToString(b)));
     let result = this.createTrue();
     for (let i = 0; i < b.length; i++) {
+      // const [sRes, sNext] = [this.getSize(result), this.getSize(b[i])];
+      // console.log(`Will conjoin ${this.nodeToString(result)} (size ${sRes}) with ${this.nodeToString(b[i])} (size ${sNext})`);
       result = this.bddModule._apply_and(result, b[i]);
+      // console.log("applied ", i+1, " ANDs out of ", b.length);
     }
     return result;
   }
