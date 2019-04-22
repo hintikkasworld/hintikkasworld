@@ -88,6 +88,12 @@ export class Belote extends ExampleDescription {
 
         return M;
     }
+    static getRandomInitialValuation(): Valuation {
+        throw new Error("Method not implemented.");
+    }
+    static getInitialSetWorldsFormula(): import("../formula/formula").Formula {
+        throw new Error("Method not implemented.");
+    }
     static getInitialRelations(): Map<string, SymbolicRelation> {
         let R = new Map();
         for(let a of environment.agents)
