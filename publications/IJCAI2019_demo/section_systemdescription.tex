@@ -9,7 +9,7 @@ In order to show possible worlds for a given agent $a$ in some world $w$, we fir
 
 \subsection{Class Architecture}
 
-Figure \ref{figure:architecture} shows the new architecture of \emph{Hintikka's world}. \texttt{EpistemicModel} is an abstract class, used by the graphical user interface (GUI), that is independent from the concrete example (``Muddy Children'', ``Sally and Anne'', ``Hanabi'', etc.) but also, more interestingly, independent from the representation of the epistemic model itself. In particular, an epistemic model can be an \texttt{ExplicitEpistemicModel} (a graph) or a \texttt{SymbolicEpistemicModel} that relies on BDDs, depending on the example: it suffices to implement a few methods, such as \texttt{draw} of a class that inherits from class \texttt{World}.
+Figure \ref{figure:architecture} shows the new architecture of \emph{Hintikka's world}. \texttt{EpistemicModel} is an abstract class, used by the graphical user interface (GUI), that is independent from the concrete example (``Muddy Children'', ``Sally and Anne'', ``Hanabi'', etc.) but also, more interestingly, independent from the representation of the epistemic model itself. In particular, an epistemic model can be an \texttt{ExplicitEpistemicModel} (a graph) or a \texttt{SymbolicEpistemicModel} that relies on BDDs. To obtain a comic strips for a given example, it suffices to implement the method \texttt{draw} of a class that inherits from class \texttt{World}, that tells how a possible world is drawn.
 
 
 \subsection{Adding new examples}

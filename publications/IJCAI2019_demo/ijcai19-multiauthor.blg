@@ -6,45 +6,45 @@ Database file #1: biblio.bib
 A bad cross reference---entry "DBLP:conf/aiml/CharrierS18"
 refers to entry "DBLP:conf/aiml/2018", which doesn't exist
 Warning--I didn't find a database entry for "DBLP:conf/aiml/2018"
-You've used 16 entries,
+You've used 15 entries,
             2439 wiz_defined-function locations,
-            665 strings with 8630 characters,
-and the built_in function-call counts, 7749 in all, are:
-= -- 785
-> -- 354
+            657 strings with 8496 characters,
+and the built_in function-call counts, 7398 in all, are:
+= -- 746
+> -- 347
 < -- 7
-+ -- 127
-- -- 124
-* -- 613
-:= -- 1195
-add.period$ -- 49
-call.type$ -- 16
-change.case$ -- 125
-chr.to.int$ -- 16
-cite$ -- 16
-duplicate$ -- 316
-empty$ -- 569
-format.name$ -- 144
-if$ -- 1632
++ -- 125
+- -- 122
+* -- 583
+:= -- 1139
+add.period$ -- 46
+call.type$ -- 15
+change.case$ -- 120
+chr.to.int$ -- 15
+cite$ -- 15
+duplicate$ -- 302
+empty$ -- 539
+format.name$ -- 141
+if$ -- 1561
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 17
-newline$ -- 83
-num.names$ -- 48
-pop$ -- 130
+missing$ -- 16
+newline$ -- 78
+num.names$ -- 45
+pop$ -- 128
 preamble$ -- 1
-purify$ -- 142
+purify$ -- 136
 quote$ -- 0
-skip$ -- 272
+skip$ -- 261
 stack$ -- 0
-substring$ -- 440
-swap$ -- 106
+substring$ -- 410
+swap$ -- 104
 text.length$ -- 7
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 124
+type$ -- 116
 warning$ -- 0
-while$ -- 63
-width$ -- 18
-write$ -- 209
+while$ -- 59
+width$ -- 17
+write$ -- 196
 (There was 1 error message)
