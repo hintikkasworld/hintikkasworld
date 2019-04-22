@@ -98,8 +98,8 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
      * @param M1 SymbolicEpistemicModel
      */
     apply(M: SymbolicEpistemicModel): SymbolicEpistemicModel{
-        const DEBUGLOG = (msg, n) => {};
-        //const DEBUGLOG = (msg, n) => console.log(msg, BDD.bddService.nodeToString(n), BDD.bddService.countSolutions(n) + " solutions", BDD.bddService.pickSolutions(n));
+        //const DEBUGLOG = (msg, n) => {};
+        const DEBUGLOG = (msg, n) => console.log(msg, BDD.bddService.nodeToString(n), BDD.bddService.countSolutions(n) + " solutions", BDD.bddService.pickSolutions(n));
         
         let agentMap = new Map<string, BDDNode>();
 

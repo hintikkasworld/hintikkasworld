@@ -318,19 +318,23 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             let nbcardsbyvalue = [3, 2, 2, 2, 1]
             let sum = [0, 4, 6, 8, 9]
 
-            for (var color = 0; color < nbcolors; color++) {
+            for (var color = 0; color < nbcolors+1; color++) {
                 for (var c = 0; c < nbcardsbyvalue[value - 1]; c++) {
-                    liste_var.push(SimpleSymbolicHanabi.getVarName(agent, c + (10 * nbcolors) + sum[value]));
+                    const n = c + (10 * color) + sum[value-1]
+                    console.log(nbCards, value, n)
+                    if(n<SimpleSymbolicHanabi.nbCards)
+                        liste_var.push(SimpleSymbolicHanabi.getVarName(agent, n));
                 };
             }
 
             let pre = new ExactlyFormula(nbCards, liste_var);
-            let name = nbCards + " out of " + value;
+            let name = "agent " + agent + " has " + nbCards + " out of " + value;
             E.addAction(name, pre);
 
             for (let agent in that.agents) {
                 E.makeReflexiveRelation(agent);
             }
+            E.setPointedAction(name)
             return E;
         }
 
@@ -364,6 +368,17 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             listActions.push(new EventModelAction({
                 name: "Agent " + agent + " draws a card.",
                 eventModel: ExplicitToSymbolic.translate(draw(agent), this.variables, this.agents)
+            }));
+            // DEBUG: we stop here for now
+            break;
+
+        }
+
+        /* Value announce */
+        for (let agent of this.agents) {
+            listActions.push(new EventModelAction({
+                name: "Agent " + agent + " has 1 out of 1.",
+                eventModel: ExplicitToSymbolic.translate(valueAnnoucement(agent, 1, 1), this.variables, this.agents)
             }));
             // DEBUG: we stop here for now
             break;

@@ -50,7 +50,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         let key = valuation.toString();
         if (this.worlds[key] == undefined)
             this.worlds[key] = new this.worldClass(valuation);
-
+        console.log("GET WORLD", this.worlds[key], this.worlds[key].valuation)
         return this.worlds[key];
     }
 
@@ -150,7 +150,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     @param a valuation
     Makes that valuation to be the pointed one
     **/
-    setPointedValuation(valuation: Valuation) { this.pointedValuation = valuation; }
+    setPointedValuation(valuation: Valuation) { this.pointedValuation = valuation; console.log("SET VALUATION", valuation); }
 
     getSuccessors(w: World, a: string): SymbolicSuccessorSet {
 
@@ -346,6 +346,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             }
 
         }
+        console.log("VALUATION TO FORMULA", valuation, literals)
         return new AndFormula(literals);
     }
 
