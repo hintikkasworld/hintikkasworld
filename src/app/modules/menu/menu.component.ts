@@ -1,6 +1,6 @@
+import { NanoHanabi } from './../core/models/examples/nanohanabi';
 import { Flatland } from './../core/models/examples/flatland';
 import { SimpleSymbolicHanabi } from './../core/models/examples/symbolic-hanabi';
-import { Hanabi } from './../core/models/examples/hanabi';
 import { CellularAutomaton } from './../core/models/examples/cellular-automaton';
 import { Simple } from './../core/models/examples/simple';
 import { LinesBirthday } from './../core/models/examples/lines-birthday';
@@ -25,7 +25,7 @@ import { SymbolicSimpleExample } from '../core/models/examples/symbolic-small-ex
 })
 export class MenuComponent implements OnInit {
 
-  examples = [new Simple(), new MuddyChildren(), new SallyAndAnn(), new MineSweeper(), new ConsecutiveNumbers(), new Hanabi(), new Belote(),
+  examples = [new Simple(), new MuddyChildren(), new SallyAndAnn(), new MineSweeper(), new ConsecutiveNumbers(), new NanoHanabi(), new Belote(),
     new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton(), new SymbolicSimpleExample(), new SimpleSymbolicHanabi(), new Flatland()];
 
   openExampleDescription(exampleDescription: ExampleDescription ) {

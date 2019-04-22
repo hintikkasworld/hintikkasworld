@@ -107,7 +107,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
      */
     private actions?: EventModelAction[];
 
-    getName() { return "SimpleSymbolicHanabi"; }
+    getName() { return "Hanabi"; }
 
     static getVarName(agent: string, card: number) { return "var_" + agent + "_" + card; }
 
@@ -361,14 +361,10 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         /* DRAWS */
         for (let agent of this.agents) {
-            let ema = new EventModelAction(
-                {
-                    name: "Agent " + agent + " draws a card.",
-                    eventModel: ExplicitToSymbolic.translate(draw(agent), this.variables, this.agents)
-                }
-            );
-            listActions.push(ema);
-
+            listActions.push(new EventModelAction({
+                name: "Agent " + agent + " draws a card.",
+                eventModel: ExplicitToSymbolic.translate(draw(agent), this.variables, this.agents)
+            }));
             // DEBUG: we stop here for now
             break;
 
