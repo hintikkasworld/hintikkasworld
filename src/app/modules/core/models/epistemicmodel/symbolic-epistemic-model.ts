@@ -162,15 +162,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         let wBDD = BDD.bddService.createCube(props);
 
     //    console.log("after cube")
-
-        /**
-         * in this method, we will use new this.worldClass(val) to instantiate world with valuation val
-         */
-        /* Caution : w must be a BDD, need rename function.
-        // François says: w is a World, more precisely a ValuationWorld. You should extract a BDD from it. */
-
         //console.log("cube", BDD.bddService.pickAllSolutions(bdd));
-
         //console.log("graphe", BDD.bddService.pickAllSolutions(this.getAgentGraphe(a)));
 
         let bddRelationOnW = BDD.bddService.applyAnd([
