@@ -121,7 +121,7 @@ export class BddService {
   private getAtomFromIndex(i: BDDAtom): string {
     return this.indexAtom.get(i);
   }
-  
+
   /**
    * @return the number of nodes in the given BDD
    */
@@ -285,35 +285,35 @@ export class BddService {
     if (sols.length !== 1) throw new Error("Too many solutions: this is a bug in pickSolutions()!");
     return sols[0];
   }
-  
+
   countSolutions(bddNode: BDDNode, atoms?: string[]): number {
-    const cache = new Map<BDDNode, {count: number, support: string[]}>();
-    const rec = (n: BDDNode): {count: number, support: string[]} => {
-      if (this.isFalse(n)) return {count: 0, support: []};
-      if (this.isTrue(n)) return {count: 1, support: []};
+    const cache = new Map<BDDNode, { count: number, support: string[] }>();
+    const rec = (n: BDDNode): { count: number, support: string[] } => {
+      if (this.isFalse(n)) return { count: 0, support: [] };
+      if (this.isTrue(n)) return { count: 1, support: [] };
       if (cache.has(n)) return cache.get(n);
       const x = this.getAtomOf(n);
-      const {count: tC, support: tS} = rec(this.getThenOf(n));
-      const {count: eC, support: eS} = rec(this.getElseOf(n));
+      const { count: tC, support: tS } = rec(this.getThenOf(n));
+      const { count: eC, support: eS } = rec(this.getElseOf(n));
       const tAtomsToAdd = eS.filter(a => !tS.includes(a));
       const tNbAtomsToAdd = tAtomsToAdd.length;
       const eNbAtomsToAdd = tS.filter(a => !eS.includes(a)).length;
-      const count = tC * 2**tNbAtomsToAdd + eC * 2**eNbAtomsToAdd;
+      const count = tC * 2 ** tNbAtomsToAdd + eC * 2 ** eNbAtomsToAdd;
       const support = tS.concat(tAtomsToAdd);
       support.push(x);
-      const res = {count, support};
+      const res = { count, support };
       cache.set(n, res);
       return res;
     }
-    const {count, support} = rec(bddNode);
+    const { count, support } = rec(bddNode);
     const atomsToAdd = new Set();
     if (atoms !== undefined) {
-	  support.forEach(a => {
-	    if ( ! atoms.includes(a)) throw new Error(`Relevant atom ${a} is not in given support`);
-	    else atomsToAdd.add(a);
-	  });
-	}
-    return count * 2**(atomsToAdd.size);      
+      support.forEach(a => {
+        if (!atoms.includes(a)) throw new Error(`Relevant atom ${a} is not in given support`);
+        else atomsToAdd.add(a);
+      });
+    }
+    return count * 2 ** (atomsToAdd.size);
   }
 
 
@@ -332,6 +332,9 @@ export class BddService {
     } else return "[" + childrenToString(bddNode) + "]";
   }
 
+  /**
+   * CAUTION: use it only on small BDDs. Most used for debug.
+   */
   pickAllSolutions(bddNode: BDDNode, atoms?: string[]): Valuation[] {
     return this.pickSolutions(bddNode, Infinity, atoms);
   }
@@ -342,7 +345,7 @@ export class BddService {
     if (atoms === undefined) atoms = this.support(bddNode);
     const combineSols = (x: string, t: BDDNode, e: BDDNode, max: number, atoms: string[]) => {
       const sols = getSetOfTrueAtomsOf(e, max, atoms).slice();
-      for (let trueAtoms of getSetOfTrueAtomsOf(t, max-sols.length, atoms)) {
+      for (let trueAtoms of getSetOfTrueAtomsOf(t, max - sols.length, atoms)) {
         trueAtoms = trueAtoms.slice();
         trueAtoms.push(x);
         sols.push(trueAtoms);
