@@ -443,9 +443,7 @@ export class ComicsComponent implements OnInit {
           let M = comics.env.getEpistemicModel();
           this.perspectiveWorlds = M.getSuccessors(M.getPointedWorld(), comics.env.agentPerspective);
           let loop = function () {
-
-            this.perspectiveWorlds.getRandomSuccessor().then((world) => { world.draw(context) });
-
+            comics.perspectiveWorlds.getRandomSuccessor().then((world) => { world.draw(context) });
             if ((comics.env.agentPerspective != undefined)) {
               setTimeout(loop, 500);
             }
