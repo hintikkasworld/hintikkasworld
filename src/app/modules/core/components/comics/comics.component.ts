@@ -433,8 +433,7 @@ export class ComicsComponent implements OnInit {
       this.canvasFromWorld[0].set(this.env.getEpistemicModel().getPointedWorld(), <HTMLCanvasElement>canvas);
       (<any>canvas).draw = () => {
         let context = this.getContext((<HTMLCanvasElement>document.getElementById("canvasRealWorld")));
-
-
+        
         if (this.env.agentPerspective != undefined) {
           let comics = this;
           let M = comics.env.getEpistemicModel();
