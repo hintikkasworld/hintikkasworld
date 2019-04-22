@@ -22,11 +22,14 @@ export class SymbolicSuccessorSet implements SuccessorSet {
         return BDD.bddService.countSolutions(this.bdd, this.atoms);;
     }
 
-    getSomeSuccessors(): World[] {
-        let sols: Valuation[] = BDD.bddService.pickSolutions(this.bdd, 20, this.atoms);
+    async getSomeSuccessors(): Promise<World[]> {
+        let sols: Valuation[] = BDD.bddService.pickSolutions(this.bdd, 5, this.atoms);
         return sols.map((val: Valuation) => this.M.getWorld(val));
     }
 
-
+    async getRandomSuccessor(): Promise<World> {
+        let val: Valuation = BDD.bddService.pickOneSolution(this.bdd, this.atoms);
+        return this.M.getWorld(val);
+    }
 
 }

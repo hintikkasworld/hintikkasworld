@@ -4,6 +4,7 @@ import { World } from './world';
 export class ExplicitSuccessorSet implements SuccessorSet {
 
     private readonly successors: World[];
+    private done: boolean = false;
     constructor(successors: World[]) {
         this.successors = successors;
     }
@@ -12,10 +13,19 @@ export class ExplicitSuccessorSet implements SuccessorSet {
         return this.successors.length;
     }
        
-    getSomeSuccessors(): World[] {
-        return this.successors;
+    async getSomeSuccessors(): Promise<World[]> {
+        if(this.done)
+            return [];
+        else {
+            this.done = true;
+            return this.successors;
+        }
+            
     }
 
 
+    async getRandomSuccessor(): Promise<World> {
+        return this.successors[Math.floor(Math.random() * this.successors.length)];
+    }
 
 }

@@ -180,7 +180,7 @@ export class SymbolicSimpleExample extends ExampleDescription {
 
         M.setPointedValuation(new Valuation(propositions));
 
-
+        return M;
         /**
          * Francois : HERE TRY ALL TESTS :
          * getSucessors
@@ -188,7 +188,7 @@ export class SymbolicSimpleExample extends ExampleDescription {
          * apply
          */
 
-         
+   /*      
         console.log("Graphe a", M.getAgentSymbolicRelation("a"));
 
         console.log("InitialWorld", new Valuation(propositions).toString());
@@ -227,7 +227,7 @@ export class SymbolicSimpleExample extends ExampleDescription {
         console.log("new world", newSEM.getPointedWorld().valuation.toString())
         
         let ci = 0;
-        for(let val of newSEM.getSuccessors(newSEM.getPointedWorld(), "a").getSomeSuccessors()){
+        for(let val of newSEM.getSuccessors(newSEM.getPointedWorld(), "a").getSomeSuccessors().then()){
             console.log("A successors", val.toString());
             if(ci > 10){
                 break;
@@ -243,7 +243,7 @@ export class SymbolicSimpleExample extends ExampleDescription {
             ci++;
         }
 
-        console.log("FIN")
+        console.log("FIN")*/
 
         return M;
     }

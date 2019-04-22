@@ -125,19 +125,16 @@ class FlatlandSuccessorSet implements SuccessorSet {
         this.a = a;
     }
 
-    getNumber() {
+    getNumber(): number {
         if (this.isSingleSuccessor())
             return 1;
         else
             return Infinity;
     }
 
-    getSomeSuccessors() {
-        /**
-                 * @param w 
-                 * @param a 
-                 * @returns a possible world of w for agent a, or undefined (if it fails)
-                 */
+
+
+    async getRandomSuccessor(): Promise<FlatlandWorld> {
         function getSuccessor(w: FlatlandWorld, a: string): FlatlandWorld {
             function testIfSuccessor(w: FlatlandWorld, u: FlatlandWorld) {
                 for (let agent in w.positions) {
@@ -171,21 +168,27 @@ class FlatlandSuccessorSet implements SuccessorSet {
 
 
         if (this.isSingleSuccessor())
-            return [this.w];
+            return this.w;
         else {
-            console.log('w.isSee(a, "a") : ' + this.w.isSee(this.a, "a"));
-            console.log('w.isSee(a, "b") : ' + this.w.isSee(this.a, "b"));
-            console.log('w.isSee(a, "c") : ' + this.w.isSee(this.a, "c"));
-            let succs = [];
-            for (let i = 0; i < 50; i++) {
+            while (true) {
                 let u = getSuccessor(this.w, this.a);
                 if (u != undefined)
-                    succs.push(u);
+                    return u;
             }
-            return succs;
         }
-
     }
+
+    async getSomeSuccessors() {
+        let succs = [];
+        for (let i = 0; i < 5; i++) {
+            let u: FlatlandWorld = await this.getRandomSuccessor();
+            if (u != undefined)
+                succs.push(u);
+        }
+        return succs;
+    }
+
+
     isSingleSuccessor(): boolean {
         return this.w.isSee(this.a, "a") && this.w.isSee(this.a, "b") && this.w.isSee(this.a, "c");
     }

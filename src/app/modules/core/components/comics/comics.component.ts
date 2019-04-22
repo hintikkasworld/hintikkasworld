@@ -16,6 +16,7 @@ import { World } from '../../models/epistemicmodel/world';
 export class ComicsComponent implements OnInit {
 
   private _env: Environment;
+  private perspectiveWorlds: SuccessorSet = undefined;
   @Input() obsEnv: Observable<Environment>;
 
   constructor() {
@@ -300,9 +301,9 @@ export class ComicsComponent implements OnInit {
     levelDiv.attr('id', "level" + level);
     levelDiv.addClass("bulle");
 
-    if(successorSet.getNumber() > 10)
+    if (successorSet.getNumber() > 10)
       levelDiv.append(`<div class="count">${successorSet.getNumber()} possible worlds</div>`);
-      
+
     let levelDivContent = $("<div>");
     levelDivContent.attr('id', "level-content" + level);
     levelDivContent.addClass("worldcontainer");
@@ -329,24 +330,34 @@ export class ComicsComponent implements OnInit {
     else
       $('#level' + level).removeClass("error");
 
-    let firstSuccessor = true;
-    for (let u of successorSet.getSomeSuccessors()) {
-      if (!firstSuccessor)
-        levelContainer.append('<div class="orBetweenWorlds"> or </div>');
+    let comics = this;
+    function callForNewSuccessors() {
+      successorSet.getSomeSuccessors().then((succs) => {
+        for (let u of succs) {
+          if (levelContainer.children().length != 0)
+            levelContainer.append('<div class="orBetweenWorlds"> or </div>');
 
-      let canvasWorld = this.getNewCanvas();
-      this.canvasFromWorld[level].set(u, canvasWorld);
-      levelContainer.append(canvasWorld);
+          let canvasWorld = comics.getNewCanvas();
+          comics.canvasFromWorld[level].set(u, canvasWorld);
+          levelContainer.append(canvasWorld);
 
-      (<any>canvasWorld).draw = () => {
-        let context = this.getContext(canvasWorld);
-        u.draw(context);
-      };
-      canvasWorld.addEventListener('mouseup',
-        this.modifyOpenWorldsClick(level, canvasWorld, u), false);
-
-      firstSuccessor = false;
+          (<any>canvasWorld).draw = () => {
+            let context = comics.getContext(canvasWorld);
+            u.draw(context);
+          };
+          (<any>canvasWorld).draw();
+          canvasWorld.addEventListener('mouseup',
+            comics.modifyOpenWorldsClick(level, canvasWorld, u), false);
+        }
+      });
     }
+
+    callForNewSuccessors();
+    levelContainer.on('scroll', function () {
+      if (levelContainer.scrollTop() + levelContainer.innerHeight() >= levelContainer[0].scrollHeight) {
+        callForNewSuccessors();
+      }
+    })
   }
 
 
@@ -429,11 +440,12 @@ export class ComicsComponent implements OnInit {
 
         if (this.env.agentPerspective != undefined) {
           let comics = this;
+          let M = comics.env.getEpistemicModel();
+          this.perspectiveWorlds = M.getSuccessors(M.getPointedWorld(), comics.env.agentPerspective);
           let loop = function () {
-            let M = comics.env.getEpistemicModel();
-            let worlds = M.getSuccessors(M.getPointedWorld(), comics.env.agentPerspective);
-            world = getRandomElementInArray(worlds);
-            world.draw(context);
+
+            this.perspectiveWorlds.getRandomSuccessor().then((world) => { world.draw(context) });
+
             if ((comics.env.agentPerspective != undefined)) {
               setTimeout(loop, 500);
             }
@@ -517,44 +529,5 @@ export class ComicsComponent implements OnInit {
         (<any>canvas).draw(this);
     });
   }
-
-
-
-
-  /**
-   @param openWorlds: list of "possible worlds"
-   @returns the new list of possible worlds that are shown, after the execution
-  of an action.
-  */
-  private getOpenWorldsAfterAction(lastOpenWorlds) {
-
-    function pickACompatibleWorld(lastWorldID, worlds) {
-      for (let w of worlds) {
-        if (this.env.getEpistemicModel().getNode(w).lastWorldID == lastWorldID)
-          return w;
-      }
-      return undefined;
-    }
-
-    var openWorlds = [];
-    var worlds = [this.env.getEpistemicModel().getPointedWorld()];
-
-    for (let lastOW of lastOpenWorlds) {
-      let worldID = pickACompatibleWorld(lastOW.world, worlds);
-
-      if (worldID == undefined)
-        return openWorlds;
-
-      openWorlds.push({ world: worldID, agent: lastOW.agent });
-
-      worlds = this.env.getEpistemicModel().getSuccessors(worldID, lastOW.agent).getSomeSuccessors();
-    }
-
-    return openWorlds;
-
-  }
-
-
-
 
 }

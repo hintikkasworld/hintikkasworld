@@ -2,7 +2,8 @@ import { World } from './world';
 
 export interface SuccessorSet {
     getNumber(): number;
-    getSomeSuccessors(): World[];
+    getSomeSuccessors(): Promise<World[]>;
+    getRandomSuccessor(): Promise<World>;
 }
 
 
