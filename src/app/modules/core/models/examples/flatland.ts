@@ -117,11 +117,12 @@ class FlatlandWorld extends World {
 
 
 class FlatlandSuccessorSet implements SuccessorSet {
-    w: FlatlandWorld;
-    a: string;
+    private readonly w: FlatlandWorld;
+    private readonly a: string;
 
     constructor(w: FlatlandWorld, a: string) {
-
+        this.w = w;
+        this.a = a;
     }
 
     getNumber() {

@@ -1,3 +1,4 @@
+import { SuccessorSet } from './../../models/epistemicmodel/successor-set';
 import { environment } from './../../../../../environments/environment';
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { Environment } from '../../models/environment/environment';
@@ -292,13 +293,16 @@ export class ComicsComponent implements OnInit {
   @param level number of the level
   @description add a <div> to be fullfilled with possible worlds for a given agent
   */
-  private addLevelDiv(level: number) {
+  private addLevelDiv(level: number, successorSet: SuccessorSet) {
     $('#level' + level).remove();
 
     let levelDiv = $("<div>");
     levelDiv.attr('id', "level" + level);
     levelDiv.addClass("bulle");
 
+    if(successorSet.getNumber() > 10)
+      levelDiv.append(`<div class="count">${successorSet.getNumber()} possible worlds</div>`);
+      
     let levelDivContent = $("<div>");
     levelDivContent.attr('id', "level-content" + level);
     levelDivContent.addClass("worldcontainer");
@@ -313,20 +317,20 @@ export class ComicsComponent implements OnInit {
   @param worlds an array of worlds
   @description it fills the GUI level with images of worlds in worlds
   */
-  private levelFillWithWorlds(level, worlds: Array<World>) {
+  private levelFillWithWorlds(level, successorSet: SuccessorSet) {
 
     let levelContainer = $('#level-content' + level);
 
     this.canvasFromWorld[level] = new Map();
     levelContainer.empty();
 
-    if (worlds.length == 0)
+    if (successorSet.getNumber() == 0)
       $('#level' + level).addClass("error");
     else
       $('#level' + level).removeClass("error");
 
     let firstSuccessor = true;
-    for (let u of worlds) {
+    for (let u of successorSet.getSomeSuccessors()) {
       if (!firstSuccessor)
         levelContainer.append('<div class="orBetweenWorlds"> or </div>');
 
@@ -470,8 +474,8 @@ export class ComicsComponent implements OnInit {
 
       if (level > fromlevel) {
         let successors = this.env.getEpistemicModel().getSuccessors(worldagent.world, worldagent.agent);
-        this.addLevelDiv(level);
-        this.levelFillWithWorlds(level, successors.getSomeSuccessors());
+        this.addLevelDiv(level, successors);
+        this.levelFillWithWorlds(level, successors);
         this.levelAdjustPosition(x1, level, 20 * this.getCanvasWorldInBubbleWidth() + 64); //FIX ME
       }
       //    else

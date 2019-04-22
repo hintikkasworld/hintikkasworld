@@ -40,6 +40,12 @@
   display: inline-block;
 }
 
+
+.count {
+  font-size:6pt;
+
+}
+
 /**
 * intermediate circle
 */
@@ -70,7 +76,7 @@
 .worldcontainer    {
   position:absolute;
   max-width:480px;
-  height:calc(100% - 16px);
+  height:calc(100% - 20px);
   overflow:auto;
 }
 
