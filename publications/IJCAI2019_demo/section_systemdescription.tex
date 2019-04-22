@@ -1,20 +1,20 @@
 
-Whereas the first version was written in Javascript In order to ease the development, the new version is written in TypeScript and Angular 7.
+Whereas the first version was written in JavaScript, in order to ease the development, the new version is written in TypeScript and relies on the Angular~7 framework.
 
 \subsection{Binary decision diagrams}
 
-As shown in \cite{DBLP:conf/atal/CharrierS17}, the symbolic model checking of DEL is PSPACE-complete, thus is critical. We manipulate set of worlds, and relations by means of Binary decision diagrams. To this aim, we wrote a wrap-up in C of the library CUDD (Colorado University Decision Diagram Package) \cite{DBLP:journals/sttt/Somenzi01}, that produces a Web Assembly library and a Javascript module.
+As shown by \citet{DBLP:conf/atal/CharrierS17}, the symbolic model checking of DEL is PSPACE-complete, thus is critical. We manipulate sets of worlds as well as relations by means of Binary Decision Diagrams. To this aim, we wrote a JavaScript wrapper of the C library CUDD (Colorado University Decision Diagram Package)~\cite{DBLP:journals/sttt/Somenzi01}: we wrote a thin wrapper in C, which we compiled into Web Assembly using Emscripten, in order to be usable from our JavaScript module.
 
-In order to show possible worlds for a given agent $a$ in some world $w$, we first construct the BDD of $\succinctrelation a(descr(w), \vec x')$ where $descr(w)$ are the Boolean values of $\vec x$ corresponding to world $w$. We then count the number of possible valuations $\vec x'$ than makes for randomly values for $\vec x'$ that makes $\succinctrelation a(descr(w), \vec x')$ true (BDDs are a convenient representation for counting valuations satisfying a Boolean formula). If the number of such valuations is small, we show all the possible worlds, otherwise we randomly generate valuations for $\vec x'$ that makes $\succinctrelation a(descr(w), \vec x')$ true (we randomly select a branch that leads to the true-leaf in the BDD of $\succinctrelation a(descr(w), \vec x')$).
+In order to show possible worlds for a given agent $a$ in some world $w$, we first construct the BDD of $\succinctrelation a(descr(w), \vec x')$ where $descr(w)$ are the Boolean values of $\vec x$ corresponding to world $w$. We then count the number of possible valuations $\vec x'$ that make $\succinctrelation a(descr(w), \vec x')$ true (BDDs are an efficient representation for counting valuations satisfying a Boolean formula). If the number of such valuations is small, we show all possible worlds, otherwise we randomly generate valuations for $\vec x'$ that makes $\succinctrelation a(descr(w), \vec x')$ true (we randomly select a branch that leads to the ``true'' leaf in the BDD of $\succinctrelation a(descr(w), \vec x')$).
 
 \subsection{Class Architecture}
 
-Figure \ref{figure:architecture} shows the new architecture of \emph{Hintikka's world}. \texttt{EpistemicModel} is an abstract class used by the graphical user interface (GUI), that is independent from the current runnin example (muddy children, Sally and Anne, Hanabi, etc.) but more interestingly independent from the representation of the epistemic model itself. In particular, an epistemic model can be an \texttt{ExplicitEpistemicModel} (a graph) or a \texttt{SymbolicEpistemicModel} that relies on BDDs, depending on the examples: it suffices to implement the method \texttt{draw} of a class that inherits from class \texttt{World}.
+Figure \ref{figure:architecture} shows the new architecture of \emph{Hintikka's world}. \texttt{EpistemicModel} is an abstract class, used by the graphical user interface (GUI), that is independent from the concrete example (``Muddy Children'', ``Sally and Anne'', ``Hanabi'', etc.) but also, more interestingly, independent from the representation of the epistemic model itself. In particular, an epistemic model can be an \texttt{ExplicitEpistemicModel} (a graph) or a \texttt{SymbolicEpistemicModel} that relies on BDDs, depending on the example: it suffices to implement a few methods, such as \texttt{draw} of a class that inherits from class \texttt{World}.
 
 
 \subsection{Adding new examples}
 
-The system is easy to use to provide new examples. Explicit epistemic models are directly described (set of nodes and of edges). Symbolic epistemic models are described by a Boolean formula $\succinctsetworlds$, or Boolean formulas for $\succinctrelation{a}$. The system provides a way to easily describe how worlds are displayed in the comic strips.
+Providing new examples is easy with our system. Explicit epistemic models are simply directly described (sets of nodes and of edges). Symbolic epistemic models are described by a Boolean formula $\succinctsetworlds$, or Boolean formulas for $\succinctrelation{a}$. The system provides a way to easily describe how worlds are displayed in the comic strips.
 
 \begin{figure}
 	\begin{center}
