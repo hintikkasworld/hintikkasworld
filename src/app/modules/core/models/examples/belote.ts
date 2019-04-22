@@ -76,7 +76,7 @@ class BeloteWorld extends WorldValuation {
 
 export class Belote extends ExampleDescription {
     static readonly cardSuits = ["♦", "♣", "♥", "♠"];
-    static readonly cardValues = ["1", "9"]; //["1", "7", "8", "9", "10", "J", "Q", "K"];
+    static readonly cardValues = ["1", "7", "K"];//["1", "7", "8", "9", "10", "J", "Q", "K"];
 
     getName() { return "Belote"; }
 
@@ -90,7 +90,7 @@ export class Belote extends ExampleDescription {
         let relations = new Map();
 
         let M = SymbolicEpistemicModel.build(BeloteWorld, ["a", "b", "c", "d"],
-            Belote.getAtoms(), Belote.getInitialRelations(), Belote.getInitialSetWorldsFormula());
+            Belote.getVars(), Belote.getInitialRelations(), Belote.getInitialSetWorldsFormula());
         M.setPointedValuation(Belote.getRandomInitialValuation());
 
         return M;
@@ -135,8 +135,8 @@ export class Belote extends ExampleDescription {
 
     static getInitialSetWorldsFormula(): Formula {
         let formula = new AndFormula(environment.agents.map((a) => new ExactlyFormula(Belote.getInitialNumberOfCardsByAgent(), Belote.getVarsOfAgent(a))));
-
-        return formula;
+        let formula2 = new AndFormula(Belote.getCardNames().map((card) => new ExactlyFormula(1, ['a' + card, 'b' + card, 'c' + card, 'd' + card])));
+        return new AndFormula([formula, formula2]);
     }
 
     static getInitialRelations(): Map<string, SymbolicRelation> {
@@ -145,16 +145,14 @@ export class Belote extends ExampleDescription {
             R.set(agent, Belote.getInitialRelation(agent));
         return R;
     }
+
     static getInitialRelation(agent: string): SymbolicRelation {
-
-
         return new Obs(Belote.getVarsOfAgent(agent));
     }
 
     static getVar(agent: String, cardSuit: string, cardValue: string): string {
         return agent + cardSuit + cardValue;
     }
-
 
     static getVarsOfAgent(a: string): string[] {
         let A = [];
@@ -164,7 +162,7 @@ export class Belote extends ExampleDescription {
         return A;
     }
 
-    static getAtoms(): string[] {
+    static getVars(): string[] {
         let A = [];
         for (let agent of environment.agents)
             for (let cardSuit of Belote.cardSuits)
@@ -182,18 +180,8 @@ export class Belote extends ExampleDescription {
         return A;
     }
 
-
     getWorldExample() { return new BeloteWorld(Belote.getRandomInitialValuation()); };
 
     getActions() { return []; }
-
-    /*
-        agents.forEach(a =>
-            M.addEdgeIf(a,
-                (w1, w2) =>
-                    getBeloteWorldCardNames().map((i) => a + i)
-                        .every((p) => (w1.modelCheck(p) == w2.modelCheck(p)))));
-    
-    */
 
 }
