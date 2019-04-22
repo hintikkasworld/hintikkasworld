@@ -1,3 +1,4 @@
+import { SuccessorSet } from './successor-set';
 import { Formula } from './../formula/formula';
 import { World } from './world';
 
@@ -25,7 +26,7 @@ export interface EpistemicModel {
      * for an explicit representation). Otherwise, for a symbolic representation, and if there
      * are many successors, we expect this method to return *some* possible worlds.
      */
-    getSuccessors(w: World, a: string): World[];
+    getSuccessors(w: World, a: string): SuccessorSet;
     
     /**
      * 

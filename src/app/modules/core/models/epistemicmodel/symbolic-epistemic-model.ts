@@ -1,3 +1,4 @@
+import { SymbolicSuccessorSet } from './symbolic-successor-set';
 import { EpistemicModel } from './epistemic-model';
 import { WorldValuation } from './world-valuation';
 import { Valuation } from './valuation';
@@ -8,12 +9,10 @@ import { Formula, AndFormula, ExactlyFormula, NotFormula, EquivFormula, AtomicFo
 import { BDD } from '../formula/bdd';
 import * as types from './../formula/formula';
 import { BddService, BDDNode } from '../../../../services/bdd.service';
+import { WorldValuationType } from './world-valuation-type';
 
 
-/**
- * this interface implements a super type of WorldValuation
- */
-interface WorldValuationType extends Function { new(val: Valuation): WorldValuation; }
+
 
 /**
  * it implements an epistemic model described symbolically by means of BDDs
@@ -47,7 +46,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * @param valuation 
      * @retuns the world that has this valuation (PS : we suppose unicity of the current world in symbolic model)
      */
-    private getWorld(valuation: Valuation): WorldValuation {
+    public getWorld(valuation: Valuation): WorldValuation {
         let key = valuation.toString();
         if (this.worlds[key] == undefined)
             this.worlds[key] = new this.worldClass(valuation);
@@ -153,7 +152,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     **/
     setPointedValuation(valuation: Valuation) { this.pointedValuation = valuation; }
 
-    getSuccessors(w: World, a: string): World[] {
+    getSuccessors(w: World, a: string): SymbolicSuccessorSet {
 
         console.log("getSucessors", a, this.getAgentSymbolicRelation(a))
 
@@ -170,7 +169,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             wBDD]);
 
       //  console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))
-
         //console.log("AND", BDD.bddService.pickAllSolutions(bdd_and));
 
         let bddSetSuccessorsWithPrime = BDD.bddService.applyExistentialForget(
@@ -178,7 +176,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             this.propositionalAtoms);
 
         //console.log("after forget", BDD.bddService.pickAllSolutions(bddSetSuccessorsWithPrime))
-
         //console.log("forget", this.propositionalAtoms, BDD.bddService.pickAllSolutions(forget));
 
         let bddSetSuccessors = BDD.bddService.applyRenaming(
@@ -187,9 +184,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
         //console.log("Calcul bdd sucessors", BDD.bddService.pickAllSolutions(bddSetSuccessors));
 
-        let sols: Valuation[] = BDD.bddService.pickSolutions(bddSetSuccessors, 20, this.propositionalAtoms);
+        
         //console.log("Solutions", sols);
-        return sols.map((val: Valuation) => this.getWorld(val));
+        return new SymbolicSuccessorSet(this, bddSetSuccessors, this.propositionalAtoms); 
     };
 
     getAgentSymbolicRelation(agent: string): BDDNode {

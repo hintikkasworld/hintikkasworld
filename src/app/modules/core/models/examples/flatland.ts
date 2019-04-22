@@ -1,3 +1,4 @@
+import { SuccessorSet } from './../epistemicmodel/successor-set';
 import { environment } from 'src/environments/environment';
 import { Formula } from './../formula/formula';
 import { EpistemicModel } from './../epistemicmodel/epistemic-model';
@@ -40,13 +41,17 @@ class FlatlandWorld extends World {
         function drawVisionCone(agent: string, pos: Point, angle: number) {
             let coneLength = 200;
 
-            let p1: Point = {x: pos.x + coneLength * Math.cos(angle + FlatlandWorld.angleCone),
-                y: pos.y + coneLength * Math.sin(angle + FlatlandWorld.angleCone)};
+            let p1: Point = {
+                x: pos.x + coneLength * Math.cos(angle + FlatlandWorld.angleCone),
+                y: pos.y + coneLength * Math.sin(angle + FlatlandWorld.angleCone)
+            };
 
-            let p2: Point = {x: pos.x + coneLength * Math.cos(angle - FlatlandWorld.angleCone),
-                y: pos.y + coneLength * Math.sin(angle - FlatlandWorld.angleCone)};
-            
-                
+            let p2: Point = {
+                x: pos.x + coneLength * Math.cos(angle - FlatlandWorld.angleCone),
+                y: pos.y + coneLength * Math.sin(angle - FlatlandWorld.angleCone)
+            };
+
+
             context.strokeStyle = environment.agentColor[agent];
             context.beginPath();
             context.moveTo(pos.x, pos.y);
@@ -56,7 +61,7 @@ class FlatlandWorld extends World {
             context.lineTo(p2.x, p2.y);
             context.stroke();
 
-            
+
             context.fillStyle = environment.agentColor[agent];
             context.beginPath();
             context.moveTo(pos.x, pos.y);
@@ -82,13 +87,13 @@ class FlatlandWorld extends World {
      * @returns true if agent sees agentb (agentb is in the cone of vision of agent) 
      */
     isSee(agent: string, agentb: string): boolean {
-        if(agent == agentb)
+        if (agent == agentb)
             return true;
 
         let dist = Math.sqrt((this.positions[agentb].x - this.positions[agent].x) ^ 2
-                      + (this.positions[agentb].y - this.positions[agent].y) ^ 2);
+            + (this.positions[agentb].y - this.positions[agent].y) ^ 2);
 
-        if(dist == 0)
+        if (dist == 0)
             return true;
 
         let scalarProduct = (this.positions[agentb].x - this.positions[agent].x) * Math.cos(this.angle[agent]) +
@@ -111,22 +116,27 @@ class FlatlandWorld extends World {
 }
 
 
+class FlatlandSuccessorSet implements SuccessorSet {
+    w: FlatlandWorld;
+    a: string;
 
+    constructor(w: FlatlandWorld, a: string) {
 
-class FlatlandEpistemicModel implements EpistemicModel {
-    static pointedWorld = new FlatlandWorld(
-        { a: { x: 10, y: 30 }, b: { x: 50, y: 30 }, c: { x: 70, y: 50 } },
-        { a: 0, b: Math.PI / 4, c: Math.PI / 2 });
+    }
 
-    getPointedWorld(): World { return FlatlandEpistemicModel.pointedWorld; }
-    getAgents(): string[] { return ["a", "b", "c"]; }
+    getNumber() {
+        if (this.isSingleSuccessor())
+            return 1;
+        else
+            return Infinity;
+    }
 
-    getSuccessors(w: FlatlandWorld, a: string) {
+    getSomeSuccessors() {
         /**
-         * @param w 
-         * @param a 
-         * @returns a possible world of w for agent a, or undefined (if it fails)
-         */
+                 * @param w 
+                 * @param a 
+                 * @returns a possible world of w for agent a, or undefined (if it fails)
+                 */
         function getSuccessor(w: FlatlandWorld, a: string): FlatlandWorld {
             function testIfSuccessor(w: FlatlandWorld, u: FlatlandWorld) {
                 for (let agent in w.positions) {
@@ -159,22 +169,38 @@ class FlatlandEpistemicModel implements EpistemicModel {
         }
 
 
-        if (w.isSee(a, "a") && w.isSee(a, "b") && w.isSee(a, "c"))
-            return [w];
+        if (this.isSingleSuccessor())
+            return [this.w];
         else {
-            console.log('w.isSee(a, "a") : '+ w.isSee(a, "a") );
-            console.log('w.isSee(a, "b") : '+ w.isSee(a, "b") );
-            console.log('w.isSee(a, "c") : '+ w.isSee(a, "c") );
+            console.log('w.isSee(a, "a") : ' + this.w.isSee(this.a, "a"));
+            console.log('w.isSee(a, "b") : ' + this.w.isSee(this.a, "b"));
+            console.log('w.isSee(a, "c") : ' + this.w.isSee(this.a, "c"));
             let succs = [];
             for (let i = 0; i < 50; i++) {
-                let u = getSuccessor(w, a);
+                let u = getSuccessor(this.w, this.a);
                 if (u != undefined)
                     succs.push(u);
             }
             return succs;
         }
 
+    }
+    isSingleSuccessor(): boolean {
+        return this.w.isSee(this.a, "a") && this.w.isSee(this.a, "b") && this.w.isSee(this.a, "c");
+    }
 
+}
+
+class FlatlandEpistemicModel implements EpistemicModel {
+    static pointedWorld = new FlatlandWorld(
+        { a: { x: 10, y: 30 }, b: { x: 50, y: 30 }, c: { x: 70, y: 50 } },
+        { a: 0, b: Math.PI / 4, c: Math.PI / 2 });
+
+    getPointedWorld(): World { return FlatlandEpistemicModel.pointedWorld; }
+    getAgents(): string[] { return ["a", "b", "c"]; }
+
+    getSuccessors(w: FlatlandWorld, a: string): SuccessorSet {
+        return new FlatlandSuccessorSet(w, a);
     }
 
     check(formula: Formula) {

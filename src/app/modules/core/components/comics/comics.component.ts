@@ -471,8 +471,8 @@ export class ComicsComponent implements OnInit {
       if (level > fromlevel) {
         let successors = this.env.getEpistemicModel().getSuccessors(worldagent.world, worldagent.agent);
         this.addLevelDiv(level);
-        this.levelFillWithWorlds(level, successors);
-        this.levelAdjustPosition(x1, level, successors.length * this.getCanvasWorldInBubbleWidth() + 64);
+        this.levelFillWithWorlds(level, successors.getSomeSuccessors());
+        this.levelAdjustPosition(x1, level, 20 * this.getCanvasWorldInBubbleWidth() + 64); //FIX ME
       }
       //    else
       //      $('#level' + level).css({top: getYLevelBulle(level)});
@@ -543,7 +543,7 @@ export class ComicsComponent implements OnInit {
 
       openWorlds.push({ world: worldID, agent: lastOW.agent });
 
-      worlds = this.env.getEpistemicModel().getSuccessors(worldID, lastOW.agent);
+      worlds = this.env.getEpistemicModel().getSuccessors(worldID, lastOW.agent).getSomeSuccessors();
     }
 
     return openWorlds;
