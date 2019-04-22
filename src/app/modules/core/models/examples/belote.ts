@@ -1,8 +1,10 @@
+import { SymbolicEpistemicModel } from './../epistemicmodel/symbolic-epistemic-model';
 import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { environment } from 'src/environments/environment';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
+import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
 /**
  * @param truePropositions an array of true propositions
  * @returns a possible combination of cards
@@ -11,8 +13,6 @@ import { Valuation } from '../epistemicmodel/valuation';
 
 class BeloteWorld extends WorldValuation {
 
-    static readonly cardSuits = ["♦", "♣", "♥", "♠"];
-    static readonly cardValues = ["1", "7", "8", "9", "10", "J", "Q", "K"];
     static readonly cardWidth = 9;
     static readonly cardHeight = 8;
 
@@ -48,9 +48,9 @@ class BeloteWorld extends WorldValuation {
     draw(context: CanvasRenderingContext2D) {
         for (let agent of environment.agents) {
             let i = 0;
-            for (let cardSuit of BeloteWorld.cardSuits)
-                for (let cardValue of BeloteWorld.cardValues)
-                    if (this.modelCheck(agent + cardValue + cardSuit)) {
+            for (let cardSuit of Belote.cardSuits)
+                for (let cardValue of Belote.cardValues)
+                    if (this.modelCheck(Belote.getVar(agent, cardValue, cardSuit)) {
                         this.drawBeloteCard(context, agent, i, cardSuit, cardValue);
                         i++;
                     }
@@ -74,73 +74,49 @@ class BeloteWorld extends WorldValuation {
 
 
 export class Belote extends ExampleDescription {
+    static readonly cardSuits = ["♦", "♣", "♥", "♠"];
+    static readonly cardValues = ["1", "7", "8", "9", "10", "J", "Q", "K"];
+
     getName() { return "Belote"; }
     getInitialEpistemicModel() {
 
+        let relations = new Map
 
-        function addRandomBeloteWorld(M: ExplicitEpistemicModel) {
-
-
-            function getBeloteWorldCardNames() {
-                let A = [];
-                for (let cardSuit of BeloteWorld.cardSuits)
-                    for (let cardValue of BeloteWorld.cardValues)
-                        A.push(cardValue + cardSuit);
-                return A;
-            }
-
-
-            function arrayShuffle(rsort) {
-                for (var idx = 0; idx < rsort.length; idx++) {
-                    var swpIdx = idx + Math.floor(Math.random() * (rsort.length - idx));
-                    // now swap elements at idx and swpIdx
-                    var tmp = rsort[idx];
-                    rsort[idx] = rsort[swpIdx];
-                    rsort[swpIdx] = tmp;
-                }
-                return rsort;
-            }
-
-
-
-
-
-            function beloteArrayToListPropositions(A): string[] {
-                let listPropositions: string[] = [];
-                for (let i = 0; i < 8; i++)
-                    listPropositions.push("a" + A[i]);
-
-                for (let i = 8; i < 16; i++)
-                    listPropositions.push("b" + A[i]);
-
-                for (let i = 16; i < 24; i++)
-                    listPropositions.push("c" + A[i]);
-
-                for (let i = 24; i < 32; i++)
-                    listPropositions.push("d" + A[i]);
-
-                return listPropositions;
-            }
-
-
-            let A = arrayShuffle(getBeloteWorldCardNames());
-
-            let listPropositions = beloteArrayToListPropositions(A);
-
-            let worldName = "w" + listPropositions.join();
-            M.addWorld(worldName, new BeloteWorld(new Valuation(listPropositions)));
-
-            return worldName;
-        }
-
-        let M = new ExplicitEpistemicModel();
-
-        let w = addRandomBeloteWorld(M);
-
-
-        M.setPointedWorld(w);
+        let M = SymbolicEpistemicModel.build(BeloteWorld, ["a", "b", "c", "d"],
+            Belote.getAtoms(), Belote.getInitialRelations(), Belote.getInitialSetWorldsFormula());
+        M.setPointedValuation(Belote.getRandomInitialValuation());
 
         return M;
+    }
+    static getInitialRelations(): Map<string, SymbolicRelation> {
+        let R = new Map();
+        for(let a of environment.agents)
+            R.set(a, Belote.getInitialRelation(a));
+        return R;
+    }
+    static getInitialRelation(a: string): SymbolicRelation {
+        function getVarsObservedBy(a: string) : string[] {
+            let A = [];
+            for (let cardSuit of Belote.cardSuits)
+                for (let cardValue of Belote.cardValues)
+                    A.push(Belote.getVar(a, cardSuit, cardValue));
+            return A;
+        }
+
+        return new Obs(getVarsObservedBy(a));
+    }
+
+    static getVar(agent: String, cardSuit: string, cardValue: string): string {
+        return agent + cardSuit + cardValue;
+    }
+
+    static getAtoms(): string[] {
+        let A = [];
+        for (let agent of environment.agents)
+            for (let cardSuit of Belote.cardSuits)
+                for (let cardValue of Belote.cardValues)
+                    A.push(Belote.getVar(agent, cardSuit, cardValue));
+        return A;
     }
 
 
