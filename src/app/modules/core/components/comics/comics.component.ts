@@ -434,27 +434,23 @@ export class ComicsComponent implements OnInit {
       (<any>canvas).draw = () => {
         let context = this.getContext((<HTMLCanvasElement>document.getElementById("canvasRealWorld")));
 
-        let world: World;
-        world = this.env.getEpistemicModel().getPointedWorld();
-
 
         if (this.env.agentPerspective != undefined) {
           let comics = this;
           let M = comics.env.getEpistemicModel();
           this.perspectiveWorlds = M.getSuccessors(M.getPointedWorld(), comics.env.agentPerspective);
           let loop = function () {
-            comics.perspectiveWorlds.getRandomSuccessor().then((world) => { world.draw(context) });
-            if ((comics.env.agentPerspective != undefined)) {
+            comics.perspectiveWorlds.getRandomSuccessor().then((world) => {
+              if ((comics.env.agentPerspective != undefined))
+                world.draw(context)
+            });
+            if ((comics.env.agentPerspective != undefined))
               setTimeout(loop, 500);
-            }
-
           }
           loop();
         }
         else
-
-          world.draw(context);
-
+          this.env.getEpistemicModel().getPointedWorld().draw(context);
       }
 
 

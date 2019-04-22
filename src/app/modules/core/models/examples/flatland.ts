@@ -90,8 +90,8 @@ class FlatlandWorld extends World {
         if (agent == agentb)
             return true;
 
-        let dist = Math.sqrt((this.positions[agentb].x - this.positions[agent].x) ^ 2
-            + (this.positions[agentb].y - this.positions[agent].y) ^ 2);
+        let dist = Math.sqrt((this.positions[agentb].x - this.positions[agent].x) ** 2
+            + (this.positions[agentb].y - this.positions[agent].y) ** 2);
 
         if (dist == 0)
             return true;
