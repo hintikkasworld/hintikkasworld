@@ -1,3 +1,4 @@
+import { Action } from './../environment/action';
 
 import { environment } from './../../../../../environments/environment';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
@@ -24,50 +25,38 @@ class SimpleHanabiWorld extends WorldValuation {
 
     constructor(valuation: Valuation) {
         super(valuation);
-
         this.agentPos["a"] = { x: 64, y: 16, r: 8 };
         this.agentPos["b"] = { x: 128 - SimpleHanabiWorld.cardWidth - 10, y: 32, r: 8 };
         this.agentPos["c"] = { x: 64, y: 48, r: 8 };
         this.agentPos["d"] = { x: 20, y: 32, r: 8 };
-
     }
 
-
-    static drawHanabiCard(context: CanvasRenderingContext2D, agent: string, i: number, cardSuit: string, cardValue: string) {
+    static drawHanabiCard(context: CanvasRenderingContext2D, agent: string, posInHand: number, cardSuit: string, cardValue: string) {
         let x, y, dx, dy;
         if (agent == "a") { x = 64 - SimpleHanabiWorld.cardNumber / 2 * SimpleHanabiWorld.cardWidth; y = 0; dx = SimpleHanabiWorld.cardWidth; dy = 0; }
         if (agent == "b") { x = 128 - SimpleHanabiWorld.cardWidth; y = 10; dx = 0; dy = SimpleHanabiWorld.cardHeight; }
         if (agent == "c") { x = 64 - SimpleHanabiWorld.cardNumber / 2 * SimpleHanabiWorld.cardWidth; y = 56; dx = SimpleHanabiWorld.cardWidth; dy = 0; }
         if (agent == "d") { x = 0; y = 10; dx = 0; dy = SimpleHanabiWorld.cardHeight; }
 
-        SimpleHanabiWorld.drawCard(context, { x: x + i * dx, y: y + i * dy, w: SimpleHanabiWorld.cardWidth,
-             h: SimpleHanabiWorld.cardHeight, fontSize: 6, background: cardSuit, text: cardValue });
-
+        SimpleHanabiWorld.drawCard(context, {
+            x: x + posInHand * dx, y: y + posInHand * dy, w: SimpleHanabiWorld.cardWidth,
+            h: SimpleHanabiWorld.cardHeight, fontSize: 6, background: cardSuit, text: cardValue
+        });
     }
-
-
-
-
-    
 
     draw(context: CanvasRenderingContext2D) {
         for (let agent of environment.agents) {
-            let i = 0;
+            let posInHand = 0;
             for (let card = 0; card < SimpleSymbolicHanabi.nbCards; card++)
                 if (this.modelCheck(SimpleSymbolicHanabi.getVarName(agent, card))) {
-                    
-                    SimpleHanabiWorld.drawHanabiCard(context, agent, i, SimpleHanabiWorld.getSuit(card), SimpleHanabiWorld.getValue(card));
-                    i++;
+                    SimpleHanabiWorld.drawHanabiCard(context, agent, posInHand, SimpleHanabiWorld.getSuit(card), SimpleHanabiWorld.getValue(card));
+                    posInHand++;
                 }
             this.drawAgents(context);
         }
     }
-    static getValue(card: number): string {
-        return [1, 1, 1, 2, 2, 3, 3, 4, 4, 5][card % 10].toString();
-    }
-    static getSuit(card: number): string {
-        return ["white", "red", "blue", "yellow", "green"][card / 10];
-    }
+    static getValue(card: number): string { return [1, 1, 1, 2, 2, 3, 3, 4, 4, 5][card % 10].toString(); }
+    static getSuit(card: number): string { return ["white", "red", "blue", "yellow", "green"][card / 10]; }
 
 }
 
@@ -112,7 +101,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
      * List of propositional variables
      */
     private variables: string[];
-    
+
     /**
      * List of actions; lazily computed (only on demand)
      */
@@ -150,7 +139,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             /* Reciprocity of cards : agent does'nt see all variables of himself and draw */
             this.owners.filter(o => (o != agent && o != "p")).forEach((owner) => {
                 for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                        seenFormulas.push(SimpleSymbolicHanabi.getVarName(owner, c));
+                    seenFormulas.push(SimpleSymbolicHanabi.getVarName(owner, c));
                 };
             });
 
@@ -243,12 +232,12 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         return M;
     }
 
-    
+
     getActions() {
         if (this.actions !== undefined) return this.actions;
         console.log("BEGIN ACTION", SimpleSymbolicHanabi.ok);
-        
-        const list = [];
+
+        const listActions: EventModelAction[] = [];
 
         const that = this;
 
@@ -372,17 +361,17 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         /* DRAWS */
         for (let agent of this.agents) {
-             let ema = new EventModelAction(
-                 {
-                     name: "Agent " + agent + " draws a card.",
-                     eventModel: ExplicitToSymbolic.translate(draw(agent), this.variables, this.agents)
-                 }
-             );
-             list.push(ema);
-             
-             // DEBUG: we stop here for now
-             break;
-             
+            let ema = new EventModelAction(
+                {
+                    name: "Agent " + agent + " draws a card.",
+                    eventModel: ExplicitToSymbolic.translate(draw(agent), this.variables, this.agents)
+                }
+            );
+            listActions.push(ema);
+
+            // DEBUG: we stop here for now
+            break;
+
         }
 
         // for (let agent of this.agents) {
@@ -432,8 +421,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         //     }
         // }
 
-        console.log(list);
-        this.actions = list;
-        return list;//play("a", 1, "b")];
+        console.log(listActions);
+        this.actions = listActions;
+        return listActions;//play("a", 1, "b")];
     }
 }
