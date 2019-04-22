@@ -76,9 +76,15 @@ class BeloteWorld extends WorldValuation {
 
 export class Belote extends ExampleDescription {
     static readonly cardSuits = ["♦", "♣", "♥", "♠"];
-    static readonly cardValues = ["1", "9", "K"]; //["1", "7", "8", "9", "10", "J", "Q", "K"];
+    static readonly cardValues = ["1", "9"]; //["1", "7", "8", "9", "10", "J", "Q", "K"];
 
     getName() { return "Belote"; }
+
+    static getInitialNumberOfCardsByAgent() {
+        return Belote.cardSuits.length * Belote.cardValues.length / 4;
+    }
+
+
     getInitialEpistemicModel() {
 
         let relations = new Map();
@@ -106,18 +112,18 @@ export class Belote extends ExampleDescription {
 
     static getRandomInitialValuation(): Valuation {
         function beloteArrayToListPropositions(A) {
-            let nbCardsPerAgent = A.length / 4;
+            let nbCardsPerAgent = Belote.getInitialNumberOfCardsByAgent();
             let listPropositions = [];
             for (let i = 0; i < nbCardsPerAgent; i++)
                 listPropositions.push("a" + A[i]);
 
-            for (let i = nbCardsPerAgent; i < nbCardsPerAgent*2; i++)
+            for (let i = nbCardsPerAgent; i < nbCardsPerAgent * 2; i++)
                 listPropositions.push("b" + A[i]);
 
-            for (let i = nbCardsPerAgent*2; i < nbCardsPerAgent*3; i++)
+            for (let i = nbCardsPerAgent * 2; i < nbCardsPerAgent * 3; i++)
                 listPropositions.push("c" + A[i]);
 
-            for (let i = nbCardsPerAgent*3; i < nbCardsPerAgent*4; i++)
+            for (let i = nbCardsPerAgent * 3; i < nbCardsPerAgent * 4; i++)
                 listPropositions.push("d" + A[i]);
 
             return listPropositions;
@@ -128,7 +134,7 @@ export class Belote extends ExampleDescription {
     }
 
     static getInitialSetWorldsFormula(): Formula {
-        let formula = new AndFormula( environment.agents.map( (a) => new ExactlyFormula(3, Belote.getVarsOfAgent(a))));
+        let formula = new AndFormula(environment.agents.map((a) => new ExactlyFormula(Belote.getInitialNumberOfCardsByAgent(), Belote.getVarsOfAgent(a))));
 
         return formula;
     }

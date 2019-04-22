@@ -161,7 +161,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         //console.log("Props", props);
         let wBDD = BDD.bddService.createCube(props);
 
-        console.log("after cube")
+    //    console.log("after cube")
 
         /**
          * in this method, we will use new this.worldClass(val) to instantiate world with valuation val
@@ -177,7 +177,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             BDD.bddService.createCopy(this.getAgentSymbolicRelation(a)),
             wBDD]);
 
-        console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))
+      //  console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))
 
         //console.log("AND", BDD.bddService.pickAllSolutions(bdd_and));
 
@@ -185,7 +185,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             bddRelationOnW,
             this.propositionalAtoms);
 
-        console.log("after forget", BDD.bddService.pickAllSolutions(bddSetSuccessorsWithPrime))
+        //console.log("after forget", BDD.bddService.pickAllSolutions(bddSetSuccessorsWithPrime))
 
         //console.log("forget", this.propositionalAtoms, BDD.bddService.pickAllSolutions(forget));
 
@@ -196,7 +196,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         //console.log("Calcul bdd sucessors", BDD.bddService.pickAllSolutions(bddSetSuccessors));
 
         let sols: Valuation[] = BDD.bddService.pickSolutions(bddSetSuccessors, 20, this.propositionalAtoms);
-        console.log("Solutions", sols);
+        //console.log("Solutions", sols);
         return sols.map((val: Valuation) => this.getWorld(val));
     };
 
