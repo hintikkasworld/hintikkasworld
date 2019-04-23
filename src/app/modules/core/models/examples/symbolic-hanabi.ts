@@ -6,12 +6,15 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
-import { Formula, ExactlyFormula, AndFormula, AtomicFormula, NotFormula, KFormula, OrFormula } from '../formula/formula';
+import { Formula, ExactlyFormula, AndFormula, AtomicFormula, NotFormula, KFormula, OrFormula, EquivFormula } from '../formula/formula';
 import { ExplicitToSymbolic } from '../eventmodel/explicit-to-symbolic';
 import { EventModelAction } from './../environment/event-model-action';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
+import { SymbolicEventModel } from '../eventmodel/symbolic-event-model';
+import { SymbolicEvent } from '../eventmodel/symbolic-event';
 import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositional-assignments-postcondition';
 import { BDD } from './../formula/bdd';
+import { BDDNode, BddService } from './../../../../services/bdd.service';
 import { MyTestForBDD } from "./test_bdd";
 
 /**
@@ -277,6 +280,93 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         }
 
+        /**
+         * Get Formula var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value
+         * This formula swap two variables between worlds and posted world.
+         * @param pos1 first possessor
+         * @param pos2 second possessor
+         * @param value value of card
+         * @param prime if a use primed variables
+         */
+        function precondition_symbolic_transfert(pos1: string, pos2: string, value: number, prime=false): Formula {
+            let var1 = SimpleSymbolicHanabi.getVarName(pos1, value)
+            let var2 = SimpleSymbolicHanabi.getVarName(pos2, value)
+            if(prime){
+                var1 = SymbolicEpistemicModel.getPrimedVarName(var1)
+                var2 = SymbolicEpistemicModel.getPrimedVarName(var2)
+            }
+            return new AndFormula([new AtomicFormula(var1), new NotFormula(new AtomicFormula(var2))])
+        }
+
+       /**
+         * Get BDDNode Equivalent to : "var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value"
+         * This formula swap two variables between worlds and posted world.
+         * @param pos1 first possessor
+         * @param pos2 second possessor
+         * @param value value of card
+         * @param prime if a use primed variables
+         */
+        function symbolic_transfert_card(pos1: string, pos2: string, value: number, prime=false): BDDNode{
+            // var_pos1_value && not var_post2_value
+            let var1 = SimpleSymbolicHanabi.getVarName(pos1, value)
+            let var2 = SimpleSymbolicHanabi.getVarName(pos2, value)
+            if(prime){
+                var1 = SymbolicEpistemicModel.getPrimedVarName(var1)
+                var2 = SymbolicEpistemicModel.getPrimedVarName(var2)
+            }
+            let pre = precondition_symbolic_transfert(pos1, pos2, value, prime)
+            // not +_var_pos1_value && +_var_post2_value
+            let post = new AndFormula([
+                new AtomicFormula(SymbolicEventModel.getPostedVarName(var1)),
+                new NotFormula(new AtomicFormula(SymbolicEventModel.getPostedVarName(var2)))
+            ])
+            return BDD.buildFromFormula(new AndFormula([pre, post]))
+        }
+
+        /**
+         * return the SymbolicEventModel for "agent current_agent draws."
+         * @param current_agent string for the agent
+         */
+        function draw_symbolic(current_agent: string): SymbolicEventModel{
+            console.log(current_agent + " draws (symbolic.");
+
+            var E = new SymbolicEventModel(that.agents, that.variables);
+
+            function getName(agent, card){
+                return agent + " draws " + card;
+            }
+
+            let events_bdd:  Map<string, BDDNode> = new Map<string, BDDNode>();
+            for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
+                const pre = precondition_symbolic_transfert("p", current_agent, c)
+                const bdd_transfert = symbolic_transfert_card("p", current_agent, c)
+                const name = getName(current_agent, c);
+                E.addUniqueEvent(name, new SymbolicEvent(pre, bdd_transfert));
+                events_bdd.set(name, bdd_transfert)
+                console.log("Unique", pre);
+            }
+
+            let list_equiv = []
+            for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++)
+                list_equiv.push(symbolic_transfert_card("p", current_agent, c, true))
+            const or_equiv = BDD.bddService.applyOr(list_equiv)
+
+            for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
+                const name = getName(current_agent, c);
+                const bdd_event = events_bdd.get(name)
+                E.addPlayerEvent(name, current_agent, 
+                    BDD.bddService.applyAnd([BDD.bddService.createCopy(bdd_event), BDD.bddService.createCopy(or_equiv)])
+                )
+
+                for(let agent of that.agents)
+                    E.addPlayerEvent(name, agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(bdd_event), symbolic_transfert_card("p", current_agent, c, true)]))
+            }
+
+            E.setPointedAction(getName(current_agent, SimpleSymbolicHanabi.nbCards - 1));
+            console.log("end draw (symbolic)");
+            return E;
+        }
+
         function play(agent, card, destination) {
 
             console.log(agent + " " + destination + " " + card);
@@ -371,7 +461,16 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             }));
             // DEBUG: we stop here for now
             break;
+        }
 
+        /* DRAWS */
+        for (let agent of this.agents) {
+            listActions.push(new EventModelAction({
+                name: "Agent " + agent + " draws a card (symb err:withoutframe).",
+                eventModel: draw_symbolic(agent)
+            }));
+            // DEBUG: we stop here for now
+            break;
         }
 
         /* Value announce */
