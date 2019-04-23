@@ -256,48 +256,55 @@ export class BddService {
 
   /**
    * 
-   * @param bddNode 
-   * @param atoms 
+   * @param bddNode, supposed to be a BDD that is not the FALSE leaf
+   * @param atoms, supposed to be a superset of the support of bddNode
    * @returns a random valuation that satisfies bddNode
    */
   pickRandomSolution(bddNode: BDDNode, atoms?: string[]): Valuation {
     if (atoms === undefined) atoms = [];
+    /**
+     * @param bddNode 
+     * @returns an random array of atoms, such that if they are set to true and 
+     * the missing atoms to false, the resulting valuation satisfies bddNode.
+     */
     const pickRandomSolutionArray = (bddNode: BDDNode): string[] => {
       if (this.isFalse(bddNode)) throw new Error("Cannot pick a solution from FALSE");
-      if (this.isTrue(bddNode)) return [];
-      const x = this.getAtomOf(bddNode);
-      const yes = this.getThenOf(bddNode);
-      const no = this.getElseOf(bddNode)
-      if (this.isFalse(yes))
-        return pickRandomSolutionArray(no);
-      else if (this.isFalse(no))
-        return [x].concat(pickRandomSolutionArray(yes));
-      else if (Math.random() < 0.5)
-        return [x].concat(pickRandomSolutionArray(yes));
-      else
-        return pickRandomSolutionArray(no);
+      else if (this.isTrue(bddNode)) return [];
+      else {
+        const x = this.getAtomOf(bddNode);
+        const yes = this.getThenOf(bddNode);
+        const no = this.getElseOf(bddNode)
+        if (this.isFalse(yes))
+          return pickRandomSolutionArray(no);
+        else if (this.isFalse(no))
+          return [x].concat(pickRandomSolutionArray(yes));
+        else if (Math.random() < 0.5)
+          return [x].concat(pickRandomSolutionArray(yes));
+        else
+          return pickRandomSolutionArray(no);
+      }
     }
-    /*
-        const sol = [];
-            for (const a of atoms) {
-              if (Math.random() < 0.5) sol.push(a);
-            }
-            */
+
+    /*add randomly variables that are in atoms but not in the support of bddNode (their values is not relevant)
+    */
+    const addRandomlyVariablesInAtomsNotInSupport = (A: string[]) => {
+      const support = this.support(bddNode);
+      if (atoms !== undefined)
+        atoms.forEach((atom: string) => {
+          if (!support.includes(atom) && Math.random() < 0.5)
+            A.push(atom);
+        });
+    }
+
     const A = pickRandomSolutionArray(bddNode);
-    const support = this.support(bddNode);
-    if (atoms !== undefined)
-      atoms.forEach((atom: string) => {
-        if (!support.includes(atom) && Math.random() < 0.5)
-          A.push(atom);
-      });
-    
+    addRandomlyVariablesInAtomsNotInSupport(A);
     return new Valuation(A);
   }
 
   /**
    * 
    * @param bddNode 
-   * @param atoms 
+   * @param atoms an array of atoms, supposed to be a superset of the support of bddNode
    * @returns the number of solutions/valuations, whose support is atoms, that satisfies (i.e. makes it true) the bddNode
    *    */
   countSolutions(bddNode: BDDNode, atoms?: string[]): number {
@@ -321,7 +328,7 @@ export class BddService {
     }
     const { count, support } = countSolutionsRec(bddNode);
     const atomsMinusSupport = new Set();
-    if (atoms !== undefined) 
+    if (atoms !== undefined)
       atoms.forEach((atom: string) => {
         if (!support.includes(atom)) atomsMinusSupport.add(atom);
       });
