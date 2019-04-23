@@ -286,6 +286,12 @@ export class BddService {
     return sols[0];
   }
 
+  /**
+   * 
+   * @param bddNode 
+   * @param atoms 
+   * @returns the number of solutions/valuations, whose support is atoms, that satisfies (i.e. makes it true) the bddNode
+   *    */
   countSolutions(bddNode: BDDNode, atoms?: string[]): number {
     const cache = new Map<BDDNode, { count: number, support: string[] }>();
     const rec = (n: BDDNode): { count: number, support: string[] } => {
