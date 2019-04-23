@@ -312,14 +312,20 @@ export class BddService {
       return res;
     }
     const { count, support } = countSolutionsRec(bddNode);
-    const atomsToAdd = new Set();
+  /*  const atomsToAdd = new Set();
     if (atoms !== undefined) {
-      support.forEach(a => {
-        if (!atoms.includes(a)) throw new Error(`Relevant atom ${a} is not in given support`);
-        else atomsToAdd.add(a);
+      support.forEach((atom: string) => {
+        if (!atoms.includes(atom)) throw new Error(`Relevant atom ${atom} is not in given support`);
+        else if (!support.includes(atom)) atomsToAdd.add(atom);
+      });
+    }*/
+    const atomsMinusSupport = new Set();
+    if (atoms !== undefined) {
+      atoms.forEach((atom: string) => {
+        if (!support.includes(atom)) atomsMinusSupport.add(atom);
       });
     }
-    return count * 2 ** (atomsToAdd.size);
+    return count * (2 ** atomsMinusSupport.size);
   }
 
 
