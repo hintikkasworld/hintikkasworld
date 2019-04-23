@@ -11,6 +11,11 @@ export class Valuation {
     else
       this.propositions = truePropositions;
   }
+  
+  static buildFromMap(A: Map<string, boolean>): Valuation {
+      const trueProp = Array.from(A.keys()).filter(p => A.get(p));
+      return new Valuation(trueProp);
+  }
 
   isPropositionTrue(p: string) { return (this.propositions[p] == true); }
 

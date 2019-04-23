@@ -267,38 +267,38 @@ export class BddService {
      * @returns an random array of atoms, such that if they are set to true and 
      * the missing atoms to false, the resulting valuation satisfies bddNode.
      */
-    const pickRandomSolutionArray = (bddNode: BDDNode): string[] => {
+    const pickRandomSolutionMap = (bddNode: BDDNode): Map<string, boolean> => {
       if (this.isFalse(bddNode)) throw new Error("Cannot pick a solution from FALSE");
-      else if (this.isTrue(bddNode)) return [];
+      else if (this.isTrue(bddNode)) return new Map();
       else {
         const x = this.getAtomOf(bddNode);
         const yes = this.getThenOf(bddNode);
         const no = this.getElseOf(bddNode)
-        if (this.isFalse(yes))
-          return pickRandomSolutionArray(no);
-        else if (this.isFalse(no))
-          return [x].concat(pickRandomSolutionArray(yes));
-        else if (Math.random() < 0.5)
-          return [x].concat(pickRandomSolutionArray(yes));
-        else
-          return pickRandomSolutionArray(no);
+        
+        let pickYes: boolean;
+        if (this.isFalse(yes)) pickYes = false;
+        else if (this.isFalse(no)) pickYes = true;
+        else pickYes = !!(Math.random() < 0.5);
+        
+        const sol = pickRandomSolutionMap(pickYes ? yes : no);
+        sol.set(x, pickYes);
+        return sol;
       }
     }
 
     /*add randomly variables that are in atoms but not in the support of bddNode (their values is not relevant)
     */
-    const addRandomlyVariablesInAtomsNotInSupport = (A: string[]) => {
-      const support = this.support(bddNode);
-      if (atoms !== undefined)
-        atoms.forEach((atom: string) => {
-          if (!support.includes(atom) && Math.random() < 0.5)
-            A.push(atom);
+    const addRandomlyVariablesInAtomsNotInSupport = (A: Map<string, boolean>) => {
+      if (atoms !== undefined) {
+        atoms.filter(a => !A.has(a)).forEach((atom: string) => {
+            A.set(atom, !!(Math.random() < 0.5));
         });
+      }
     }
 
-    const A = pickRandomSolutionArray(bddNode);
+    const A = pickRandomSolutionMap(bddNode);
     addRandomlyVariablesInAtomsNotInSupport(A);
-    return new Valuation(A);
+    return Valuation.buildFromMap(A);
   }
 
   /**
