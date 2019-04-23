@@ -7,7 +7,7 @@ import { LinesBirthday } from './../core/models/examples/lines-birthday';
 import { Cherylsbirthday } from './../core/models/examples/cherylsbirthday';
 import { MineSweeper } from './../core/models/examples/mine-sweeper';
 import { Belote } from './../core/models/examples/belote';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 import { ConsecutiveNumbers } from './../core/models/examples/consecutive-numbers';
 import { MuddyChildren } from './../core/models/examples/muddy-children';
 import { ExampleDescription } from './../core/models/environment/exampledescription';
@@ -25,10 +25,13 @@ import { SymbolicSimpleExample } from '../core/models/examples/symbolic-small-ex
 })
 export class MenuComponent implements OnInit {
 
-  examples = [new Simple(), new MuddyChildren(), new SallyAndAnn(), new MineSweeper(), new ConsecutiveNumbers(), new NanoHanabi(), new Belote(),
-    new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton(), new SymbolicSimpleExample(), new SimpleSymbolicHanabi(), new Flatland()];
+  explicitExamples = [new Simple(), new MuddyChildren(), new SallyAndAnn(), new MineSweeper(),
+  new ConsecutiveNumbers(), new NanoHanabi(),
+  new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton()];
 
-  openExampleDescription(exampleDescription: ExampleDescription ) {
+  symbolicExamples = [new SymbolicSimpleExample(), new Belote(), new SimpleSymbolicHanabi(), new Flatland()];
+  
+  openExampleDescription(exampleDescription: ExampleDescription) {
     this.exampleService.setExampleDescription(exampleDescription);
     this.router.navigate(['core']);
   }
