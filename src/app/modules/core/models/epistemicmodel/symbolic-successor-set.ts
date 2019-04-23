@@ -11,8 +11,8 @@ export class SymbolicSuccessorSet implements SuccessorSet {
     private readonly bdd: BDDNode;
     private readonly atoms: string[];
     private readonly M: SymbolicEpistemicModel;
-    private number: number = undefined;
-
+    private number: number = undefined; // number of successors (memoization)
+    private finished: boolean = false;
 
 
     /**
@@ -58,7 +58,13 @@ export class SymbolicSuccessorSet implements SuccessorSet {
 
 
         if (this.getNumber() < 10)
-            return arrayValToArrayWorlds(BDD.bddService.pickAllSolutions(this.bdd, this.atoms));
+            if(this.finished)
+                return [];
+            else {
+                this.finished = true;
+                return arrayValToArrayWorlds(BDD.bddService.pickAllSolutions(this.bdd, this.atoms));
+            }
+            
         else {
             const sols = [];
             for (let i = 0; i < 5; i++) {
