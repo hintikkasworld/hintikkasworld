@@ -294,13 +294,13 @@ export class BddService {
    *    */
   countSolutions(bddNode: BDDNode, atoms?: string[]): number {
     const cache = new Map<BDDNode, { count: number, support: string[] }>();
-    const rec = (n: BDDNode): { count: number, support: string[] } => {
+    const countSolutionsRec = (n: BDDNode): { count: number, support: string[] } => {
       if (this.isFalse(n)) return { count: 0, support: [] };
       if (this.isTrue(n)) return { count: 1, support: [] };
       if (cache.has(n)) return cache.get(n);
       const x = this.getAtomOf(n);
-      const { count: tC, support: tS } = rec(this.getThenOf(n));
-      const { count: eC, support: eS } = rec(this.getElseOf(n));
+      const { count: tC, support: tS } = countSolutionsRec(this.getThenOf(n));
+      const { count: eC, support: eS } = countSolutionsRec(this.getElseOf(n));
       const tAtomsToAdd = eS.filter(a => !tS.includes(a));
       const tNbAtomsToAdd = tAtomsToAdd.length;
       const eNbAtomsToAdd = tS.filter(a => !eS.includes(a)).length;
@@ -311,7 +311,7 @@ export class BddService {
       cache.set(n, res);
       return res;
     }
-    const { count, support } = rec(bddNode);
+    const { count, support } = countSolutionsRec(bddNode);
     const atomsToAdd = new Set();
     if (atoms !== undefined) {
       support.forEach(a => {
