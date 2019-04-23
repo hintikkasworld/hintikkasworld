@@ -170,6 +170,8 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
         DEBUGLOG("renamed new world", res)
         let newSEM = new SymbolicEpistemicModel(agentMap, M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula())
         newSEM.setPointedValuation(BDD.bddService.toValuation(res));
+        console.log("example new sucessors")
+        newSEM.getSuccessors(newSEM.getPointedWorld(), "a")
         return newSEM;
     };
 
@@ -232,4 +234,34 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
         console.log(this.agentsEvents.get(agent))
         return this.agentsEvents.get(agent).get(key);
     }    
+
+    /**
+     * Method to calculate the BDDNode of the frame axiom : for all vars BigAnd[var<->+_var]
+     * @param vars list of atoms.
+     * @param prime if prime, add prime to calculation : BigAnd[var_p<->+_var_p]
+     */
+    static frame(vars: string[], prime: boolean): BDDNode {
+        console.log("call frame", vars, prime)
+
+        let pointeur = BDD.bddService.createTrue();
+        for (let vari of vars) {
+            let var1 = vari;
+            if (SymbolicEventModel.isPosted(vari)) { var1.replace("/" + SymbolicEventModel.getPostedString() + "/g", ''); }
+
+            let var2 = SymbolicEventModel.getPostedVarName(vari); /* .getPosted(var); */
+
+            if (prime) { /* if primed : var1 = var1' , var2 = var2' */
+                var1 = SymbolicEpistemicModel.getPrimedVarName(vari);
+                var2 = SymbolicEpistemicModel.getPrimedVarName(var2);
+            }
+
+            let equiv = BDD.bddService.applyEquiv(
+                BDD.bddService.createLiteral(var1),
+                BDD.bddService.createLiteral(var2));
+
+            pointeur = BDD.bddService.applyAnd([BDD.bddService.createCopy(pointeur), BDD.bddService.createCopy(equiv)]);
+        }
+        // console.log("end frame", vars, prime, BDD.bddService.pickSolutions(pointeur, 10));
+        return pointeur;
+    }
 }

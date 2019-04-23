@@ -317,10 +317,16 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             let pre = precondition_symbolic_transfert(pos1, pos2, value, prime)
             // not +_var_pos1_value && +_var_post2_value
             let post = new AndFormula([
-                new AtomicFormula(SymbolicEventModel.getPostedVarName(var1)),
-                new NotFormula(new AtomicFormula(SymbolicEventModel.getPostedVarName(var2)))
+                new AtomicFormula(SymbolicEventModel.getPostedVarName(var2)),
+                new NotFormula(new AtomicFormula(SymbolicEventModel.getPostedVarName(var1)))
             ])
-            return BDD.buildFromFormula(new AndFormula([pre, post]))
+            const list_var: string[] = that.variables.filter(
+                vari => (vari != SimpleSymbolicHanabi.getVarName(pos1, value) && vari != SimpleSymbolicHanabi.getVarName(pos2, value))
+            )
+            let frame = SymbolicEventModel.frame(list_var, prime);
+            let res = BDD.bddService.applyAnd([BDD.buildFromFormula(new AndFormula([pre, post])), frame])
+            console.log("symbolic transfert", new AndFormula([pre, post]).prettyPrint(), BDD.bddService.pickSolutions(res, 20))
+            return res;
         }
 
         /**
@@ -343,23 +349,30 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 const name = getName(current_agent, c);
                 E.addUniqueEvent(name, new SymbolicEvent(pre, bdd_transfert));
                 events_bdd.set(name, bdd_transfert)
-                console.log("Unique", pre);
+                console.log("Unique", pre, BDD.bddService.pickSolutions(bdd_transfert, 10));
             }
 
-            let list_equiv = []
+            let transfert = SymbolicEpistemicModel.getMapNotPrimeToPrime(that.variables);
+
+            let list_or = []
             for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++)
-                list_equiv.push(symbolic_transfert_card("p", current_agent, c, true))
-            const or_equiv = BDD.bddService.applyOr(list_equiv)
+                list_or.push(symbolic_transfert_card("p", current_agent, c))
+            const or_equiv = BDD.bddService.applyOr(list_or)
+            const or_equiv_prime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(or_equiv), transfert)
+            const agent_draws = BDD.bddService.applyAnd([or_equiv, or_equiv_prime]);
+
+            console.log("OR LA ", name, BDD.bddService.pickSolutions(or_equiv, 10))
 
             for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                 const name = getName(current_agent, c);
-                const bdd_event = events_bdd.get(name)
-                E.addPlayerEvent(name, current_agent, 
-                    BDD.bddService.applyAnd([BDD.bddService.createCopy(bdd_event), BDD.bddService.createCopy(or_equiv)])
-                )
+                E.addPlayerEvent(name, current_agent, agent_draws);
+
+                console.log("ICI", name, BDD.bddService.pickSolutions(E.getPlayerEvent(name, current_agent), 10))
 
                 for(let agent of that.agents)
-                    E.addPlayerEvent(name, agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(bdd_event), symbolic_transfert_card("p", current_agent, c, true)]))
+                    E.addPlayerEvent(name, agent, 
+                        BDD.bddService.applyAnd([BDD.bddService.createCopy(events_bdd.get(name)), 
+                            BDD.bddService.applyRenaming(BDD.bddService.createCopy(events_bdd.get(name)), transfert)]))
             }
 
             E.setPointedAction(getName(current_agent, SimpleSymbolicHanabi.nbCards - 1));
@@ -454,9 +467,10 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
 
         /* DRAWS */
+        
         for (let agent of this.agents) {
             listActions.push(new EventModelAction({
-                name: "Agent " + agent + " draws a card.",
+                name: "Agent " + agent + " draws a card. (explicite, err:Nonclique)",
                 eventModel: ExplicitToSymbolic.translate(draw(agent), this.variables, this.agents)
             }));
             // DEBUG: we stop here for now
