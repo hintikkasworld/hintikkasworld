@@ -208,7 +208,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
             console.log("Graphe a", M.getAgentSymbolicRelation("a"));
 
-            console.log("Pick one", BDD.bddService.pickOneSolution(M.getAgentSymbolicRelation("a")));
+            //console.log("Pick one", BDD.bddService.pickOneSolution(M.getAgentSymbolicRelation("a")));
 
             console.log(BDD.bddService.pickSolutions(M.getAgentSymbolicRelation("a"), 10));
 

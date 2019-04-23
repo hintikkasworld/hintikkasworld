@@ -254,36 +254,44 @@ export class BddService {
     return this.bddModule._get_else_of(b);
   }
 
+  /**
+   * 
+   * @param bddNode 
+   * @param atoms 
+   * @returns a random valuation that satisfies bddNode
+   */
   pickRandomSolution(bddNode: BDDNode, atoms?: string[]): Valuation {
-    const pickRandomSolutionArray = (bddNode: BDDNode, atoms?: string[]): string[] => {
-      if (atoms === undefined) atoms = this.support(bddNode);
+    if (atoms === undefined) atoms = [];
+    const pickRandomSolutionArray = (bddNode: BDDNode): string[] => {
       if (this.isFalse(bddNode)) throw new Error("Cannot pick a solution from FALSE");
-      if (this.isTrue(bddNode)) {
-        const sol = [];
-        for (const a of atoms) {
-          if (Math.random() < 0.5) sol.push(a);
-        }
-        return sol;
-      }
+      if (this.isTrue(bddNode)) return [];
       const x = this.getAtomOf(bddNode);
-      let next;
-      const sol = [];
-      if (Math.random() < 0.5) {
-        next = this.getThenOf(bddNode);
-        sol.push(x);
-      } else {
-        next = this.getElseOf(bddNode);
-      }
-      return sol.concat(this.pickRandomSolution(next, atoms.filter(v => (v !== x))));
+      const yes = this.getThenOf(bddNode);
+      const no = this.getElseOf(bddNode)
+      if (this.isFalse(yes))
+        return pickRandomSolutionArray(no);
+      else if (this.isFalse(no))
+        return [x].concat(pickRandomSolutionArray(yes));
+      else if (Math.random() < 0.5)
+        return [x].concat(pickRandomSolutionArray(yes));
+      else
+        return pickRandomSolutionArray(no);
     }
-    return new Valuation(pickRandomSolutionArray(bddNode, atoms));
-  }
-
-  pickOneSolution(bddNode: BDDNode, atoms?: string[]): Valuation {
-    const sols = this.pickSolutions(bddNode, 1, atoms);
-    if (sols.length === 0) throw new Error("No solution to pick!");
-    if (sols.length !== 1) throw new Error("Too many solutions: this is a bug in pickSolutions()!");
-    return sols[0];
+    /*
+        const sol = [];
+            for (const a of atoms) {
+              if (Math.random() < 0.5) sol.push(a);
+            }
+            */
+    const A = pickRandomSolutionArray(bddNode);
+    const support = this.support(bddNode);
+    if (atoms !== undefined)
+      atoms.forEach((atom: string) => {
+        if (!support.includes(atom) && Math.random() < 0.5)
+          A.push(atom);
+      });
+    
+    return new Valuation(A);
   }
 
   /**
@@ -312,19 +320,11 @@ export class BddService {
       return res;
     }
     const { count, support } = countSolutionsRec(bddNode);
-  /*  const atomsToAdd = new Set();
-    if (atoms !== undefined) {
-      support.forEach((atom: string) => {
-        if (!atoms.includes(atom)) throw new Error(`Relevant atom ${atom} is not in given support`);
-        else if (!support.includes(atom)) atomsToAdd.add(atom);
-      });
-    }*/
     const atomsMinusSupport = new Set();
-    if (atoms !== undefined) {
+    if (atoms !== undefined) 
       atoms.forEach((atom: string) => {
         if (!support.includes(atom)) atomsMinusSupport.add(atom);
       });
-    }
     return count * (2 ** atomsMinusSupport.size);
   }
 
