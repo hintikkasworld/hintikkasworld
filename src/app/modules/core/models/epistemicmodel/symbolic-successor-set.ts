@@ -58,13 +58,13 @@ export class SymbolicSuccessorSet implements SuccessorSet {
 
 
         if (this.getNumber() < 10)
-            if(this.finished)
+            if (this.finished)
                 return [];
             else {
                 this.finished = true;
                 return arrayValToArrayWorlds(BDD.bddService.pickAllSolutions(this.bdd, this.atoms));
             }
-            
+
         else {
             const sols = [];
             for (let i = 0; i < 5; i++) {
