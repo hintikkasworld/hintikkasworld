@@ -28,10 +28,10 @@ export class ExplicitToSymbolic {
         console.log("==================================")
         console.log("ExplicitToSymbolic.translate");
 
-        let symb_em = new SymbolicEventModel(agents, variables);
         
         const event_framed_bdds = new Map<string, BDDNode>();
         
+        const events = new Map();
         for(const [eventName, ev] of <[string, Event][]>Object.entries(explicit_em.getNodes())){
             console.log(eventName, ev);
             const post_bdd = ExplicitToSymbolic._event_to_bdd(ev.pre, ev.post)
@@ -53,27 +53,28 @@ export class ExplicitToSymbolic {
             
             const symEvent = new SymbolicEvent(ev.pre, framed_bdd);            
             //console.log(symEvent);
-            symb_em.addUniqueEvent(eventName, symEvent);
+            events.set(eventName, symEvent);
         }
 
         console.log("Unique Event OK", explicit_em.getAgents());
 
+        const agentRelations = new Map();
         for (let agent of agents) {
 
             console.log("ExplicitToSymbolic.translate - agent", agent);
             //console.log("Nodes", explicit_em.getNodes());
             
+            let arcs: BDDNode[] = [];
             for(let node in explicit_em.getNodes()) {
 
                 console.log("Event", node);
                 
-                let pointeur = BS.createCopy(event_framed_bdds.get(node));
 
-                let others: BDDNode[] = [];
                 // console.log("begin succ")
                 for(let succ of explicit_em.getSuccessorsID(node, agent)){
+                    let currentEvent = BS.createCopy(event_framed_bdds.get(node));
                     console.log("Succ = ", succ)
-                    const succBdd = event_framed_bdds.get(succ);
+                    const succBdd = BS.createCopy(event_framed_bdds.get(succ));
                     // console.log(BS.pickSolutions(succBdd, 10))
                     // console.log("  Succ", succ, succBdd, BS.pickSolutions(succBdd, 10));
                 
@@ -83,17 +84,19 @@ export class ExplicitToSymbolic {
                     // console.log("succBdd_prime", BS.nodeToString(succBdd_prime));
                     // console.log("succBdd_prime", BS.pickSolutions(succBdd_prime, 10));
                     //alert("seen one succ");
-                    others.push(succBdd_prime);
+                    arcs.push(BS.applyAnd([currentEvent,succBdd_prime]));
                 }
                 // alert("seen all succ");
                 /* building result */
-                let new_or_action = BS.applyAnd([pointeur,BS.applyOr(others)]);
-                console.log("OR_ACTION", BS.nodeToString(new_or_action), BS.pickSolutions(new_or_action));
-                symb_em.addPlayerEvent(node, agent, new_or_action)
             }
+            const arcsBdd = BS.applyOr(arcs);
+            console.log("relation for agent", agent, BS.nodeToString(arcsBdd), BS.pickSolutions(arcsBdd));
+            agentRelations.set(agent, arcsBdd);
         }
 
-        symb_em.setPointedAction(explicit_em.getPointedAction());
+        
+        let symb_em = new SymbolicEventModel(agents, variables,
+            events, agentRelations, explicit_em.getPointedAction());
 
         console.log("END ExplicitToSymbolic.translate");
         console.log("==================================")
