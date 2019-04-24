@@ -67,6 +67,21 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
         return liste;
     }
 
+    static removePost(variable: string): string {
+        return variable.replace(SymbolicEventModel.getPostedString(),'');
+    }
+
+    static removePrime(variable: string): string {
+        return variable.replace(SymbolicEpistemicModel.getPrimedString(),'');
+    }
+
+    static getMapPostedToNotPosted(variables: string[]): Map<string, string>{
+        let map = new Map<string, string>();
+        for(const vari of variables)
+            map.set(SymbolicEventModel.getPostedVarName(vari), vari);
+        return map;
+    }
+
     private agents: string[];
     private variables: string[];
     private uniqueEvents: Map<EventId, SymbolicEvent<BDDNode>>;
@@ -104,41 +119,42 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
         let agentMap = new Map<string, BDDNode>();
 
         console.log("APPLY", this.pointed, M.getPointedWorld().valuation)
-        
-        /* Get the minus variables */
-		const var_minus: string[] = M.getPropositionalAtoms().concat(M.getPropositionalPrimes());
-		
-		/* Get the posted variables */
-		const var_plus: string[] = [];
-		for(const vari of var_minus){
-			var_plus.push(SymbolicEventModel.getPostedVarName(vari));
-		}
-		
-		/* transition var_plus to var_minus */
-		let transfert = new Map<string, string>();
-		for (var i=0; i < var_plus.length; i++){
-			transfert.set(var_plus[i], var_minus[i]);
-		}
-        
-        
+        DEBUGLOG("this.pointed", this.getUniqueEvent(this.pointed).post);
 
         for(let agent of this.agents){
-            console.log("applying to agent " + agent);
-            
-            // TODO manage preconditions that are not propositional
-            
-            // TODO why do we only apply this on the pointed event??
+
             const ev_for_agent = this.getPlayerEvent(this.pointed, agent);
+
+            console.log("applying to agent " + agent);
+
+            /* Get the minus variables of the support */
+            const var_minus: string[] = [];
+            for(const vari of BDD.bddService.support(ev_for_agent))
+                var_minus.push(SymbolicEventModel.removePost(vari));
+            
+            /* Get the posted variables */
+            const var_plus: string[] = [];
+            for(const vari of var_minus)
+                var_plus.push(SymbolicEventModel.getPostedVarName(vari));
+            
+            /* transition var_plus to var_minus */
+            // [var <= +_var, var_p <= +_var_p]
+            let transfert = new Map<string, string>();
+            for (var i=0; i < var_plus.length; i++)
+                transfert.set(var_plus[i], var_minus[i]);
+            
+            
             DEBUGLOG("bdd event for current agent", ev_for_agent);
             
             let support: string[] = BDD.bddService.support(ev_for_agent);
-
-           
 
             console.log("support", support)
             console.log("var_minus", var_minus)
             console.log("var_plus", var_plus)
             console.log("transfert", transfert)
+
+            // Forget(bdd_event AND bdd_agent, var U var_p)[var <= +_var, var_p <= +_var_p]
+            // Renaming(forget(And(event, bdd_agent), var_minus), transfert)
 
             let pointeur: BDDNode = BDD.bddService.createCopy(M.getAgentSymbolicRelation(agent));
             pointeur = BDD.bddService.applyAnd([pointeur, BDD.bddService.createCopy(ev_for_agent)]);
@@ -149,11 +165,11 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
             DEBUGLOG("renamed, to get normal arrows, without '+'", pointeur);
             
             agentMap.set(agent, pointeur);
+
             
         }
         
         /* Find the new true world */
-
         const bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation));
         DEBUGLOG("pointed world bdd", bdd_valuation);        
         const bdd_pointed_framed_post: BDDNode = this.getPointedAction().post;
@@ -162,16 +178,32 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
         DEBUGLOG("and new world", w)
 
         if(BDD.bddService.isFalse(w)) throw new Error("An error has occured in the application of SymbolicEventModel on SymbolicEpistemicModel. Are sure that event '" +
-            this.getPointedAction() + "' can be apply on valuation " + M.getPointedWorld().valuation);
+            this.pointed + "' can be apply on valuation " + M.getPointedWorld().valuation);
         
-        let res = BDD.bddService.applyExistentialForget(w, var_minus);  //  Projection on + variables
+        let res = BDD.bddService.applyExistentialForget(w, M.getPropositionalAtoms().concat(M.getPropositionalPrimes()));  //  Projection on + variables
         DEBUGLOG("forget new world", res)
-        res = BDD.bddService.applyRenaming(res, transfert);  // Renaming to get normal variables
+        let listTransfert = []
+        for(let vari of M.getPropositionalAtoms())
+            listTransfert.push(vari)
+        // console.log("LISTES", listTransfert, SymbolicEventModel.getMapPostedToNotPosted(listTransfert))
+        res = BDD.bddService.applyRenaming(res, SymbolicEventModel.getMapPostedToNotPosted(listTransfert));  // Renaming + var into normal variables
         DEBUGLOG("renamed new world", res)
         let newSEM = new SymbolicEpistemicModel(agentMap, M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula())
         newSEM.setPointedValuation(BDD.bddService.toValuation(res));
         console.log("example new sucessors")
-        newSEM.getSuccessors(newSEM.getPointedWorld(), "a")
+
+        for(let agent of M.getAgents()){
+            console.log("successors", agent, newSEM.getAgentSymbolicRelation(agent))
+            DEBUGLOG("successors of " + agent,
+            BDD.bddService.applyRenaming(
+                BDD.bddService.applyExistentialForget(
+                    BDD.bddService.applyAnd(
+                        [BDD.bddService.createCopy(newSEM.getAgentSymbolicRelation(agent)), BDD.bddService.createCopy(BDD.bddService.createCube(SymbolicEpistemicModel.valuationToMap((<WorldValuation>newSEM.getPointedWorld()).valuation)))]),
+                    newSEM.getPropositionalAtoms()), 
+                SymbolicEpistemicModel.getMapPrimeToNotPrime(newSEM.getPropositionalAtoms()))
+            )
+        }
+
         return newSEM;
     };
 

@@ -299,7 +299,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         }
 
        /**
-         * Get BDDNode Equivalent to : "var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value"
+         * Get BDDNode Equivalent to : "var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value", with frame
          * This formula swap two variables between worlds and posted world.
          * @param pos1 first possessor
          * @param pos2 second possessor
@@ -347,32 +347,38 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 const pre = precondition_symbolic_transfert("p", current_agent, c)
                 const bdd_transfert = symbolic_transfert_card("p", current_agent, c)
                 const name = getName(current_agent, c);
+                // just "var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value"
                 E.addUniqueEvent(name, new SymbolicEvent(pre, bdd_transfert));
                 events_bdd.set(name, bdd_transfert)
                 console.log("Unique", pre, BDD.bddService.pickSolutions(bdd_transfert, 10));
             }
 
             let transfert = SymbolicEpistemicModel.getMapNotPrimeToPrime(that.variables);
+            console.log("transfert draw", transfert)
 
             let list_or = []
             for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++)
                 list_or.push(symbolic_transfert_card("p", current_agent, c))
-            const or_equiv = BDD.bddService.applyOr(list_or)
-            const or_equiv_prime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(or_equiv), transfert)
-            const agent_draws = BDD.bddService.applyAnd([or_equiv, or_equiv_prime]);
+            const or_bdd = BDD.bddService.applyOr(list_or)
+            const or_bdd_prime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(or_bdd), transfert)
+            const agent_draws = BDD.bddService.applyAnd([or_bdd, or_bdd_prime]);
 
-            console.log("OR LA ", name, BDD.bddService.pickSolutions(or_equiv, 10))
-
+            console.log("OR LA ", name, BDD.bddService.pickSolutions(agent_draws, 10))
             for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                 const name = getName(current_agent, c);
+                // same event for the agent current_agent
                 E.addPlayerEvent(name, current_agent, agent_draws);
 
-                console.log("ICI", name, BDD.bddService.pickSolutions(E.getPlayerEvent(name, current_agent), 10))
-
-                for(let agent of that.agents)
-                    E.addPlayerEvent(name, agent, 
-                        BDD.bddService.applyAnd([BDD.bddService.createCopy(events_bdd.get(name)), 
-                            BDD.bddService.applyRenaming(BDD.bddService.createCopy(events_bdd.get(name)), transfert)]))
+                // "var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value"
+                // AND idem_prime
+                let copy_for_others_prime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(events_bdd.get(name)), transfert)
+                let copy_for_others = BDD.bddService.applyAnd([BDD.bddService.createCopy(events_bdd.get(name)), copy_for_others_prime]) 
+                for(let agent of that.agents){
+                    if(!(agent == current_agent)){
+                        E.addPlayerEvent(name, agent, copy_for_others)
+                        console.log("ICI", name, BDD.bddService.pickSolutions(E.getPlayerEvent(name, agent), 10))
+                    }
+                }
             }
 
             E.setPointedAction(getName(current_agent, SimpleSymbolicHanabi.nbCards - 1));
@@ -467,7 +473,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
 
         /* DRAWS */
-        
+        /*
         for (let agent of this.agents) {
             listActions.push(new EventModelAction({
                 name: "Agent " + agent + " draws a card. (explicite, err:Nonclique)",
@@ -475,12 +481,12 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             }));
             // DEBUG: we stop here for now
             break;
-        }
+        }*/
 
         /* DRAWS */
         for (let agent of this.agents) {
             listActions.push(new EventModelAction({
-                name: "Agent " + agent + " draws a card (symb err:withoutframe).",
+                name: "Agent " + agent + " draws a card (symb).",
                 eventModel: draw_symbolic(agent)
             }));
             // DEBUG: we stop here for now
