@@ -786,8 +786,10 @@ void simpleformulatest() {
 int main() {
 	// for testing things
 	puts("*** THIS IS THE CUDDJS MAIN ***");
+#ifndef __EMSCRIPTEN__
 	tests();
-	//simpleformulatest();
+	simpleformulatest();
+#endif
 	//
 	//
 	// DONE: decide how refs are handled.
