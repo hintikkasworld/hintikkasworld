@@ -76,19 +76,13 @@ class NanoHanabiWorld extends WorldValuation {
 
 export class NanoHanabi extends ExampleDescription {
 
-
     al;
     ar;
     bl;
     br;
 
+    getName() { return "Nano Hanabi"; }
 
-
-
-
-
-
-    getName() { return "Nano Hnabi"; }
     getInitialEpistemicModel() {
         const permutator = (inputArr) => {
             let result = [];
@@ -105,8 +99,7 @@ export class NanoHanabi extends ExampleDescription {
                 }
             }
 
-            permute(inputArr)
-
+            permute(inputArr);
             return result;
         }
         let M = new ExplicitEpistemicModel();

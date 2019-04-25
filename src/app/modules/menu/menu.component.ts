@@ -25,16 +25,17 @@ import { SymbolicSimpleExample } from '../core/models/examples/symbolic-small-ex
 })
 export class MenuComponent implements OnInit {
 
-  explicitExamples = [new Simple(), new MuddyChildren(), new SallyAndAnn(), new MineSweeper(),
+  explicitExamples = [new Simple(), new MuddyChildren(), new SallyAndAnn(),
   new ConsecutiveNumbers(), new NanoHanabi(),
   new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton()];
 
-  symbolicExamples = [new SymbolicSimpleExample(), new Belote(), new SimpleSymbolicHanabi(), new Flatland()];
+  symbolicExamples = [new SymbolicSimpleExample(),  new MineSweeper(8, 10, 3), new Belote(), new SimpleSymbolicHanabi(), new Flatland()];
   
   openExampleDescription(exampleDescription: ExampleDescription) {
     this.exampleService.setExampleDescription(exampleDescription);
     this.router.navigate(['core']);
   }
+
   constructor(private exampleService: ExampleService, private router: Router) { }
 
   ngOnInit() {

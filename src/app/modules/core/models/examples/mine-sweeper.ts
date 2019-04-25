@@ -1,13 +1,18 @@
+import { ExactlyFormula, TrueFormula } from './../formula/formula';
 import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Environment } from '../environment/environment';
 import { Valuation } from '../epistemicmodel/valuation';
+import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
+import { Obs } from '../epistemicmodel/symbolic-relation';
 
 class MineSweeperWorld extends WorldValuation {
+    readonly nbcols: number;
+    readonly nbrows: number;
     xt = 38;
     yt = 0;
-    cellSize = 16;
+    readonly cellSize;
     static imgExplosion = function () {
         let imgExplosion = new Image();
         imgExplosion.src = "assets/img/bomb.png";
@@ -15,40 +20,41 @@ class MineSweeperWorld extends WorldValuation {
     }();
 
 
-    constructor(propositions) {
-        super(new Valuation(propositions));
+    constructor(valuation: Valuation) {
+        super(valuation);
+        this.nbrows = 8;
+        this.nbcols = 10;
+        this.cellSize = 8;
         this.agentPos["a"] = { x: 16, y: 32, r: 16 };
         this.agentPos["b"] = undefined;
         this.agentPos["c"] = undefined;
-
-
     }
 
 
 
-    draw(context) {
+    draw(context: CanvasRenderingContext2D) {
         this.drawAgents(context);
 
         context.strokeStyle = "black";
         context.fillStyle = "lightgray";
-        context.fillRect(this.xt, 0, 3 * this.cellSize, 4 * this.cellSize);
-        for (let x = 0; x <= 3; x++) {
+        context.fillRect(this.xt, 0, this.nbcols * this.cellSize, this.nbrows * this.cellSize);
+        for (let x = 0; x <= this.nbcols; x++) {
             context.beginPath();
             context.moveTo(this.xt + x * this.cellSize, this.yt);
-            context.lineTo(this.xt + x * this.cellSize, this.yt + 4 * this.cellSize);
+            context.lineTo(this.xt + x * this.cellSize, this.yt + this.nbrows * this.cellSize);
             context.stroke();
         }
-        for (let y = 0; y <= 4; y++) {
+        for (let y = 0; y <= this.nbrows; y++) {
             context.beginPath();
             context.moveTo(this.xt, this.yt + y * this.cellSize);
-            context.lineTo(this.xt + 3 * this.cellSize, this.yt + y * this.cellSize);
+            context.lineTo(this.xt + this.nbcols * this.cellSize, this.yt + y * this.cellSize);
             context.stroke();
         }
 
-        context.font = "8px Verdana";
+        context.font = "6px Verdana";
         let imgExplosionPadding = 2;
-        for (let x = 1; x <= 3; x++)
-            for (let y = 1; y <= 4; y++) {
+        for (let x = 1; x <= this.nbcols; x++)
+            for (let y = 1; y <= this.nbrows; y++) {
                 if (this.modelCheck("m" + y + x))
                     context.drawImage(MineSweeperWorld.imgExplosion,
                         this.xt + (x - 1) * this.cellSize + imgExplosionPadding,
@@ -61,7 +67,7 @@ class MineSweeperWorld extends WorldValuation {
                     if (hint > 0) {
                         if (hint == 1) context.strokeStyle = "#0000FF";
                         if (hint == 2) context.strokeStyle = "#008800";
-                        context.strokeText(hint, this.xt + (x - 1) * this.cellSize + this.cellSize / 3,
+                        context.strokeText(hint.toString(), this.xt + (x - 1) * this.cellSize + this.cellSize / 3,
                             (y) * this.cellSize - this.cellSize / 3);
                     }
 
@@ -74,9 +80,9 @@ class MineSweeperWorld extends WorldValuation {
      */
     getCell(point) {
         if (point.x < this.xt) return undefined;
-        if (point.x > this.xt + 3 * this.cellSize) return undefined;
+        if (point.x > this.xt + this.nbcols * this.cellSize) return undefined;
         if (point.y < this.yt) return undefined;
-        if (point.y > this.yt + 4 * this.cellSize) return undefined;
+        if (point.y > this.yt + this.nbrows * this.cellSize) return undefined;
 
         return {
             x: Math.floor((point.x - this.xt) / this.cellSize) + 1,
@@ -89,8 +95,8 @@ class MineSweeperWorld extends WorldValuation {
      */
     getHint(cell) {
         let c = 0;
-        for (let y = Math.max(1, cell.y - 1); y <= Math.min(4, cell.y + 1); y++)
-            for (let x = Math.max(1, cell.x - 1); x <= Math.min(3, cell.x + 1); x++)
+        for (let y = Math.max(1, cell.y - 1); y <= Math.min(this.nbrows, cell.y + 1); y++)
+            for (let x = Math.max(1, cell.x - 1); x <= Math.min(this.nbcols, cell.x + 1); x++)
                 if (this.modelCheck("m" + y + x))
                     c++;
         return c;
@@ -109,56 +115,86 @@ class MineSweeperWorld extends WorldValuation {
 
 
 export class MineSweeper extends ExampleDescription {
+    readonly nbcols: number;
+    readonly nbrows: number;
+    readonly nbmines: number;
+
+
+    constructor(nbrows: number, nbcols: number, nbmines: number) {
+        super();
+        this.nbcols = nbcols;
+        this.nbrows = nbrows;
+        this.nbmines = nbmines;
+    }
+
+
     getName() {
         return "Mine Sweeper";
     }
 
 
+    getAtoms() {
+        let A = [];
+        for (let y = 1; y <= this.nbrows; y++)
+            for (let x = 1; x <= this.nbcols; x++)
+                A.push("m" + y.toString() + x.toString());
+        return A;
+    }
+
     /*
      * @returns the initial Kripke model of MineSweeper
      * where agent 2 only knows there are exactly two bombs.
      */
-    getInitialEpistemicModel(): ExplicitEpistemicModel {
-        let M = new ExplicitEpistemicModel();
-        for (let y = 1; y <= 4; y++)
-            for (let x = 1; x <= 3; x++)
-                for (let y2 = 1; y2 <= 4; y2++)
-                    for (let x2 = 1; x2 <= 3; x2++)
-                        if ((y < y2) || (y == y2) && (x < x2))
-                            M.addWorld("w" + y + x + y2 + x2, new MineSweeperWorld(["m" + y + x, "m" + y2 + x2]));
-        M.makeCompleteRelation("a");
+    getInitialEpistemicModel(): SymbolicEpistemicModel {
+        let rels = new Map();
+        rels.set("a", new Obs([]));
 
-        /*select randomly one of the worlds as the pointed world*/
-        var randomKey = function (obj) {
-            var keys = Object.keys(obj)
-            return keys[keys.length * Math.random() << 0];
-        };
+        let M = SymbolicEpistemicModel.build(MineSweeperWorld, ["a"],
+            this.getAtoms(), rels, new ExactlyFormula(this.nbmines, this.getAtoms()));
 
-        let idNode = randomKey(M.getNodes());
-        M.setPointedWorld(idNode);
+        M.setPointedValuation(this.getValuationExample());
         return M;
     }
 
     /* @returns the Kripke model where the agent looses*/
     getMineSweeperGameOverKripkeModel() {
+        //we do not care the model to be explicit :) It is a fake single world model
         let M = new ExplicitEpistemicModel();
         let A = [];
-        for (let y = 1; y <= 4; y++)
-            for (let x = 1; x <= 3; x++)
+        for (let y = 1; y <= this.nbrows; y++)
+            for (let x = 1; x <= this.nbcols; x++)
                 A.push("m" + y + x);
 
-        M.addWorld("w", new MineSweeperWorld(A));
+        M.addWorld("w", new MineSweeperWorld(new Valuation(A)));
         M.makeCompleteRelation("a");
         M.setPointedWorld("w");
         return M;
     }
 
+
+    getValuationExample(): Valuation {
+        let V = []
+        for (let i = 1; i <= this.nbmines; i++) {
+            while (true) {
+                const x = 1 + Math.round(Math.random() * (this.nbcols - 1));
+                const y = 1 + Math.round(Math.random() * (this.nbrows - 1));
+                if (!V.includes("m" + y + x)) {
+                    V.push("m" + y + x);
+                    break;
+                }
+            }
+        }
+        return new Valuation(V);
+    }
+    getWorldExample() { return new MineSweeperWorld(this.getValuationExample()); }
+
     /*
      * event when the player clicks on the real world
      */
     onRealWorldClick(env: Environment, point) {
-        let M: ExplicitEpistemicModel = <ExplicitEpistemicModel>env.getEpistemicModel();
+        let M: SymbolicEpistemicModel = <SymbolicEpistemicModel>env.getEpistemicModel();
         let pointedWorld: MineSweeperWorld = <MineSweeperWorld>M.getPointedWorld();
+
         let cell = pointedWorld.getCell(point);
 
         if (cell == undefined) return;
@@ -170,15 +206,8 @@ export class MineSweeper extends ExampleDescription {
         else {
             let hint = pointedWorld.getHint(cell);
 
-            /* remove worlds in which the hint is different or
-             worlds for which there is a bomb at cell*/
-            for (let id in M.getNodes()) {
-                let world: MineSweeperWorld = <MineSweeperWorld>M.getNode(id);
-                if (world.isMine(cell) || (world.getHint(cell) !== hint))
-                    M.removeNode(id);
-            }
+            //TODO SYMBOLIC PUBLIC ANNOUNCEMENT that the number of mines around cell is hint
 
-            env.setEpistemicModel(M);
         }
     }
 

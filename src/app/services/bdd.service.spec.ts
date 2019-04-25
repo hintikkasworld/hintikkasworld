@@ -10,7 +10,7 @@ describe('BddService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('true should work', () => {
+  it('true should work', (done) => {
 
     expect(
       function test() {
@@ -36,6 +36,7 @@ describe('BddService', () => {
           console.log("the node for p is: " + bP);
 
           console.log("END OF BDD SERVICE TESTS");
+          done();
         });
       }()      
     ).toBeTruthy();

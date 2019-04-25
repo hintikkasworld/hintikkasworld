@@ -32,7 +32,11 @@ export class SymbolicSuccessorSet implements SuccessorSet {
         return (this.alreadyOutput[key] != undefined);
     }
 
-
+    /**
+     * 
+     * @param valuation 
+     * declare that the (world corresponding to) valuation has already been output by getSomeSuccessors
+     */
     private declareAlreadyOutput(valuation: Valuation) {
         let key = valuation.toString();
         this.alreadyOutput[key] = true;
@@ -45,9 +49,12 @@ export class SymbolicSuccessorSet implements SuccessorSet {
         this.atoms = atoms;
     }
 
+
+    /**
+     * @returns the number of successors
+     */
     getNumber(): number {
-        if (this.number == undefined)
-            this.number = BDD.bddService.countSolutions(this.bdd, this.atoms);
+        if (this.number == undefined) this.number = BDD.bddService.countSolutions(this.bdd, this.atoms); //memoization
         return this.number;
     }
 
@@ -56,7 +63,6 @@ export class SymbolicSuccessorSet implements SuccessorSet {
             return A.map((val: Valuation) => this.M.getWorld(val));
         }
 
-
         if (this.getNumber() < 10)
             if (this.finished)
                 return [];
@@ -64,11 +70,10 @@ export class SymbolicSuccessorSet implements SuccessorSet {
                 this.finished = true;
                 return arrayValToArrayWorlds(BDD.bddService.pickAllSolutions(this.bdd, this.atoms));
             }
-
         else {
             const sols = [];
             for (let i = 0; i < 5; i++) {
-                let val: Valuation = BDD.bddService.pickRandomSolution(this.bdd, this.atoms);
+                const val: Valuation = BDD.bddService.pickRandomSolution(this.bdd, this.atoms);
                 if (!this.isAlreadyBeenOutput(val)) {
                     sols.push(val);
                     this.declareAlreadyOutput(val);
