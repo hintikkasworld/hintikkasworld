@@ -102,7 +102,6 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
         this.agentRelations = agentRelations;
         this.pointed = pointedEvent;
 
-        console.log("AGENTS", agents);
     }
 
     /**
@@ -230,16 +229,24 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
         return this.uniqueEvents.get(key);
     }
 
+    getUniqueEvents(): Map<string, SymbolicEvent<BDDNode>> {
+        return this.uniqueEvents;
+    }
+
     /**
      * Return the Player relation, i.e., its vision of the event model
      * @param agent the name of the agent
      */
     getPlayerRelation(agent: AgentId): BDDNode {
-        console.log("getPlayerEvent", agent)
+        // console.log("getPlayerEvent", agent)
 //         console.log("agentRelations", this.agentRelations, this.agentRelations.keys())
 //         console.log("uniqueEvents", this.uniqueEvents, this.uniqueEvents.keys())
         return this.agentRelations.get(agent);
     }    
+
+    getPlayerRelations(): Map<AgentId, BDDNode> {
+        return this.agentRelations;
+    }
 
     /**
      * Method to calculate the BDDNode of the frame axiom : for all vars BigAnd[var<->+_var]
@@ -247,7 +254,7 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
      * @param prime if prime, add prime to calculation : BigAnd[var_p<->+_var_p]
      */
     static frame(vars: string[], prime: boolean): BDDNode {
-        console.log("call frame", vars, prime)
+        //console.log("call frame", vars, prime)
 
         let pointeur = BDD.bddService.createTrue();
         for (let vari of vars) {

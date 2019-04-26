@@ -88,7 +88,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     /**
      * Number of cards in the game Hanabi
      */
-    static readonly nbCards: number = 7;
+    static readonly nbCards: number = 10;
 
     /**
      * Number of cards in hand
@@ -107,6 +107,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
      * List of propositional variables
      */
     private variables: string[];
+
+    private colors = ["white", "red", "blue", "yellow", "green"]
 
     /**
      * List of actions; lazily computed (only on demand)
@@ -239,6 +241,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     }
 
 
+
     getActions() {
         if (this.actions !== undefined) return this.actions;
         console.log("BEGIN ACTION", SimpleSymbolicHanabi.ok);
@@ -315,18 +318,19 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 new NotFormula(new AtomicFormula(SymbolicEventModel.getPostedVarName(var1)))
             ])
             const postBdd = BDD.buildFromFormula(new AndFormula([pre, post]));
-            console.log("postBdd = ", BDD.bddService.pickAllSolutions(postBdd));
+            //console.log("postBdd = ", BDD.bddService.pickAllSolutions(postBdd));
 
             const list_var: string[] = that.variables.filter(
                 vari => (vari != var1 && vari != var2)
             )
             let frame = SymbolicEventModel.frame(list_var, false);
             let res = BDD.bddService.applyAnd([postBdd, frame])
-            console.log("symbolic transfert", new AndFormula([pre, post]).prettyPrint(), BDD.bddService.pickSolutions(res, 20))
+            //console.log("symbolic transfert", new AndFormula([pre, post]).prettyPrint(), BDD.bddService.pickSolutions(res, 20))
             return res;
         }
 
         const cacheDrawSymbolic = new Map<string, SymbolicEventModel>();
+        let cacheDrawAction = new Map<string, SymbolicEventModel>();
 
         /**
          * return the SymbolicEventModel for "agent current_agent draws."
@@ -336,108 +340,167 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
           function getName(agent, card){
               return agent + " draws " + card;
           }
+          function putInMapInTwoWays(map, vari1, vari2){
+              map.set(vari1, vari2)
+          }
+
+          var t0 = performance.now();
 
           console.log("computing event model for " + current_agent + " draws (symbolic).");
           let sem: SymbolicEventModel;
           if (cacheDrawSymbolic.has(current_agent)) sem = cacheDrawSymbolic.get(current_agent);
           else {
-            const events = new Map<string, SymbolicEvent<BDDNode>>();
-            const agentRelations = new Map<string, BDDNode>();
+                console.log("read cache", cacheDrawAction, cacheDrawAction.size)
+                if(cacheDrawAction.size>0){
+                    // Draw has already been calculated, so we will rename variables
+                    let tmp_sem;
+                    let transfert_agent;
 
+                    // we take the first existing BDDNode we find...
+                    cacheDrawAction.forEach((value: SymbolicEventModel, key: string) => {
+                        tmp_sem = value;
+                        transfert_agent = key;
+                    });
 
-            let events_bdd:  Map<string, BDDNode> = new Map<string, BDDNode>();
-            for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                const pre = precondition_symbolic_transfert("p", current_agent, c)
-                const bdd_transfert = symbolic_transfert_card("p", current_agent, c)
-                const name = getName(current_agent, c);
-                // just "var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value"
-                events.set(name, new SymbolicEvent(pre, bdd_transfert));
-                events_bdd.set(name, bdd_transfert)
-                console.log("Created event", name, "prec=", pre, "bdd=", BDD.bddService.pickSolutions(bdd_transfert));
-            }
+                    console.log("tmp_sem", tmp_sem, tmp_sem.getUniqueEvents())
 
-            let transfert = SymbolicEpistemicModel.getMapNotPrimeToPrime(that.variables.concat(that.variables.map(v => SymbolicEventModel.getPostedVarName(v))));
-            console.log("transfert draw", transfert)
+                    let renamingMap = new Map<string, string>()
 
-            let list_or = []
-            for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                list_or.push(BDD.bddService.createCopy(events_bdd.get(getName(current_agent, c))));
-            }
-            const or_bdd = BDD.bddService.applyOr(list_or)
-            const or_bdd_prime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(or_bdd), transfert)
-            const agent_draws = BDD.bddService.applyAnd([or_bdd, or_bdd_prime]);
-            agentRelations.set(current_agent, agent_draws);
-
-            console.log("OR LA ", BDD.bddService.nodeToString(agent_draws), BDD.bddService.pickSolutions(agent_draws))
-
-            /* Relation for other players */
-            const arcsForOthers = [];
-            for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                const name = getName(current_agent, c);
-                // "var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value"
-                const event = events_bdd.get(name);
-                const eventPrime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(event), transfert);
-                const arc = BDD.bddService.applyAnd([BDD.bddService.createCopy(event), eventPrime]) 
-                arcsForOthers.push(arc);
-
-            }
-            const relationForOthers = BDD.bddService.applyOr(arcsForOthers);
-            for(let agent of that.agents){
-                    if(agent != current_agent){
-                        agentRelations.set(agent, relationForOthers);
+                    for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
+                        const var_a = SimpleSymbolicHanabi.getVarName(current_agent, c)
+                        const var_t_a = SimpleSymbolicHanabi.getVarName(transfert_agent, c)
+                        putInMapInTwoWays(renamingMap, var_a, var_t_a)
+                        putInMapInTwoWays(renamingMap, SymbolicEpistemicModel.getPrimedVarName(var_a), SymbolicEpistemicModel.getPrimedVarName(var_t_a))
+                        putInMapInTwoWays(renamingMap, SymbolicEventModel.getPostedVarName(var_a), SymbolicEventModel.getPostedVarName(var_t_a))
+                        putInMapInTwoWays(renamingMap, SymbolicEventModel.getPrimedPostedVarName(var_a), SymbolicEventModel.getPrimedPostedVarName(var_t_a))
                     }
+                    console.log("renamingMap", renamingMap)
+
+                    const events = new Map<string, SymbolicEvent<BDDNode>>();
+                    const agentRelations = new Map<string, BDDNode>();
+                    
+                    tmp_sem.getUniqueEvents().forEach((value: SymbolicEvent<BDDNode>, key: string) => {
+                        console.log("uniqueEvents", key, value)
+                        if(key==current_agent || key==transfert_agent){
+                            const bdd = BDD.bddService.applyRenaming(BDD.bddService.createCopy(value.post), renamingMap)
+                            const pre = value.pre.renameAtoms(vari => renamingMap.get(vari))
+                            events.set(key, new SymbolicEvent(pre, bdd))
+                        }else{
+                            events.set(key, new SymbolicEvent(value.pre, BDD.bddService.createCopy(value.post)))
+                        }
+
+                    });
+                    
+                    tmp_sem.getPlayerRelations().forEach((value: BDDNode, key: string) => {
+                        console.log("playerRelatons", key, value)
+                        if(key==current_agent || key==transfert_agent){
+                            agentRelations.set(key, BDD.bddService.applyRenaming(BDD.bddService.createCopy(value), renamingMap))
+                        }else{
+                            agentRelations.set(key, BDD.bddService.createCopy(value))
+                        }
+                    });
+                    sem = new SymbolicEventModel(that.agents, that.variables, events, agentRelations, getName(current_agent, SimpleSymbolicHanabi.nbCards - 1))
+
+                }else{
+                    const events = new Map<string, SymbolicEvent<BDDNode>>();
+                    const agentRelations = new Map<string, BDDNode>();
+
+                    let events_bdd:  Map<string, BDDNode> = new Map<string, BDDNode>();
+                    for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
+                        const pre = precondition_symbolic_transfert("p", current_agent, c)
+                        const bdd_transfert = symbolic_transfert_card("p", current_agent, c)
+                        const name = getName(current_agent, c);
+                        // just "var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value"
+                        events.set(name, new SymbolicEvent(pre, bdd_transfert));
+                        events_bdd.set(name, bdd_transfert)
+                        //console.log("Created event", name, "prec=", pre, "bdd=", BDD.bddService.pickSolutions(bdd_transfert));
+                    }
+
+                    let transfert = SymbolicEpistemicModel.getMapNotPrimeToPrime(that.variables.concat(that.variables.map(v => SymbolicEventModel.getPostedVarName(v))));
+                    //console.log("transfert draw", transfert)
+
+                    let list_or = []
+                    for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
+                        list_or.push(BDD.bddService.createCopy(events_bdd.get(getName(current_agent, c))));
+                    }
+                    const or_bdd = BDD.bddService.applyOr(list_or)
+                    const or_bdd_prime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(or_bdd), transfert)
+                    const agent_draws = BDD.bddService.applyAnd([or_bdd, or_bdd_prime]);
+                    agentRelations.set(current_agent, agent_draws);
+
+                    //console.log("OR LA ", BDD.bddService.nodeToString(agent_draws), BDD.bddService.pickSolutions(agent_draws))
+
+                    /* Relation for other players */
+                    const arcsForOthers = [];
+                    for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
+                        const name = getName(current_agent, c);
+                        // "var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value"
+                        const event = events_bdd.get(name);
+                        const eventPrime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(event), transfert);
+                        const arc = BDD.bddService.applyAnd([BDD.bddService.createCopy(event), eventPrime]) 
+                        arcsForOthers.push(arc);
+
+                    }
+                    const relationForOthers = BDD.bddService.applyOr(arcsForOthers);
+                    for(let agent of that.agents){
+                            if(agent != current_agent){
+                                agentRelations.set(agent, relationForOthers);
+                            }
+                    }
+                    //console.log("ICI", BDD.bddService.nodeToString(relationForOthers), BDD.bddService.pickSolutions(relationForOthers));
+
+                    sem = new SymbolicEventModel(that.agents, that.variables, events,
+                        agentRelations, null);
+
+                    cacheDrawSymbolic.set(current_agent, sem);
+                }
+                
             }
-            console.log("ICI", BDD.bddService.nodeToString(relationForOthers), BDD.bddService.pickSolutions(relationForOthers));
+            // TODO the pointed event should be drawn randomly ?
+            // the current implem cannot work more than once
+            const E = sem.copyWithAnotherPointedEvent(getName(current_agent, SimpleSymbolicHanabi.nbCards - 1));
 
-            sem = new SymbolicEventModel(that.agents, that.variables, events,
-                agentRelations, null);
-            cacheDrawSymbolic.set(current_agent, sem);
+            // PUT IN THE CACHE TO USE IT, AND RENAME
+            // cacheDrawAction.set(current_agent, sem)
 
-
-          }
-
-          // TODO the pointed event should be drawn randomly ?
-          // the current implem cannot work more than once
-          console.log(sem);
-          const E = sem.copyWithAnotherPointedEvent(getName(current_agent, SimpleSymbolicHanabi.nbCards - 1));
-          console.log("end draw (symbolic)");
-          return E;
-        }
-
-        function play(agent, card, destination) {
-
-            console.log(agent + " " + destination + " " + card);
-
-            var E = new ExplicitEventModel();
-
-            let post = {};
-
-            post[SimpleSymbolicHanabi.getVarName(agent, card)] = false;
-            post[SimpleSymbolicHanabi.getVarName(destination, card)] = true;
-
-            let pre = new AndFormula([
-                new AtomicFormula(SimpleSymbolicHanabi.getVarName(agent, card)),
-                new NotFormula(
-                    new AtomicFormula(SimpleSymbolicHanabi.getVarName(destination, card))
-                )]
-            );
-
-            let name = agent + " play " + card;
-
-            E.addAction(name, pre, new PropositionalAssignmentsPostcondition(post));
-
-            for (let agent in that.agents) {
-                E.makeReflexiveRelation(agent);
-            }
-
+            var t1 = performance.now();
+            console.log("Call DRAW took " + (t1 - t0) + " milliseconds for agent " + current_agent)
+            
             return E;
         }
 
-        function valueAnnoucement(agent, nbCards, value) {
+        function play(agent: string, card: number, destination: string): SymbolicEventModel {
+            function getName(agent, card){
+                if(destination=="p")
+                    return agent + " plays " + card;
+                return agent + " discards " + card;
+            }
 
-            console.log(agent + " " + nbCards + " " + value)
+            const events = new Map<string, SymbolicEvent<BDDNode>>();
+            const agentRelations = new Map<string, BDDNode>();
+            let events_bdd:  Map<string, BDDNode> = new Map<string, BDDNode>();
 
-            var E = new ExplicitEventModel();
+            const pre = precondition_symbolic_transfert(agent, destination, card)
+            const bdd_transfert = symbolic_transfert_card(agent, destination, card)
+            const name = getName(agent, card);
+
+            events.set(name, new SymbolicEvent(pre, bdd_transfert));
+            events_bdd.set(name, bdd_transfert)
+
+            let transfert = SymbolicEpistemicModel.getMapNotPrimeToPrime(that.variables.concat(that.variables.map(v => SymbolicEventModel.getPostedVarName(v))));
+            
+            const eventPrime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(events_bdd.get(name)), transfert);
+            const arc = BDD.bddService.applyAnd([BDD.bddService.createCopy(events_bdd.get(name)), eventPrime]) 
+
+            for(let agent of that.agents)
+                agentRelations.set(agent, arc);
+            
+            return new SymbolicEventModel(that.agents, that.variables, events, agentRelations, name);
+        }
+
+        function valueAnnoucement(agent:string, nbCards:number, value:number): SymbolicEventModel{
+
+            //console.log(agent + " " + nbCards + " " + value)
 
             let liste_var = [];
 
@@ -448,46 +511,80 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             for (var color = 0; color < nbcolors+1; color++) {
                 for (var c = 0; c < nbcardsbyvalue[value - 1]; c++) {
                     const n = c + (10 * color) + sum[value-1]
-                    console.log(nbCards, value, n)
                     if(n<SimpleSymbolicHanabi.nbCards)
                         liste_var.push(SimpleSymbolicHanabi.getVarName(agent, n));
                 };
             }
 
-            let pre = new ExactlyFormula(nbCards, liste_var);
             let name = "agent " + agent + " has " + nbCards + " out of " + value;
-            E.addAction(name, pre);
 
-            for (let agent in that.agents) {
-                E.makeReflexiveRelation(agent);
-            }
-            E.setPointedAction(name)
-            return E;
+            const events = new Map<string, SymbolicEvent<BDDNode>>();
+            const agentRelations = new Map<string, BDDNode>();
+            let events_bdd:  Map<string, BDDNode> = new Map<string, BDDNode>();
+
+            let pre = new ExactlyFormula(nbCards, liste_var);
+            let pre_bdd = BDD.buildFromFormula(pre);
+            //let support = BDD.bddService.support(pre_bdd)
+
+            const list_var: string[] = that.variables;
+            let frame = SymbolicEventModel.frame(list_var, false);
+            const bdd_transfert = BDD.bddService.applyAnd([frame, pre_bdd])
+
+            events.set(name, new SymbolicEvent(pre, bdd_transfert));
+            events_bdd.set(name, bdd_transfert)
+
+            let transfert = SymbolicEpistemicModel.getMapNotPrimeToPrime(that.variables.concat(that.variables.map(v => SymbolicEventModel.getPostedVarName(v))));
+            
+            const eventPrime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(events_bdd.get(name)), transfert);
+            const arc = BDD.bddService.applyAnd([BDD.bddService.createCopy(events_bdd.get(name)), eventPrime]) 
+
+            for(let agent of that.agents)
+                agentRelations.set(agent, arc);
+            
+            return new SymbolicEventModel(that.agents, that.variables, events, agentRelations, name);
         }
 
-        function colorAnnoucement(agent, nbCards, color) {
+        function colorAnnoucement(agent:string, nbCards:number, color:string): SymbolicEventModel{
 
-            console.log(agent + " " + nbCards + " " + color)
-
-            var E = new ExplicitEventModel();
+            //console.log(agent + " " + nbCards + " " + color)
 
             let liste_var = [];
 
-            let nbcolors = SimpleSymbolicHanabi.nbCards / 10;
+            
+            const id_c = that.colors.indexOf(color)
+            for (var c = 0; c < 10; c++)
+                liste_var.push(SimpleSymbolicHanabi.getVarName(agent, id_c*10+c));
+            
+            //console.log(colorAnnoucement, agent, nbCards, color, liste_var)
 
-            for (var c = (nbcolors - 1) * 10; c < ((nbcolors - 1) * 10) + 10; c++) {
-                liste_var.push(SimpleSymbolicHanabi.getVarName(agent, c));
-            };
+            let name = "agent " + agent + " has " + nbCards + " out of " + color;
+
+            const events = new Map<string, SymbolicEvent<BDDNode>>();
+            const agentRelations = new Map<string, BDDNode>();
+            let events_bdd:  Map<string, BDDNode> = new Map<string, BDDNode>();
 
             let pre = new ExactlyFormula(nbCards, liste_var);
-            let name = nbCards + " out of " + color;
-            E.addAction(name, pre);
+            let pre_bdd = BDD.buildFromFormula(pre);
+            //let support = BDD.bddService.support(pre_bdd)
 
-            for (let agent in that.agents) {
-                E.makeReflexiveRelation(agent);
-            }
-            return E;
+            const list_var: string[] = that.variables;
+            let frame = SymbolicEventModel.frame(list_var, false);
+            const bdd_transfert = BDD.bddService.applyAnd([frame, pre_bdd])
+
+            events.set(name, new SymbolicEvent(pre, bdd_transfert));
+            events_bdd.set(name, bdd_transfert)
+
+            let transfert = SymbolicEpistemicModel.getMapNotPrimeToPrime(that.variables.concat(that.variables.map(v => SymbolicEventModel.getPostedVarName(v))));
+            
+            const eventPrime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(events_bdd.get(name)), transfert);
+            const arc = BDD.bddService.applyAnd([BDD.bddService.createCopy(events_bdd.get(name)), eventPrime]) 
+
+            for(let agent of that.agents)
+                agentRelations.set(agent, arc);
+            
+            return new SymbolicEventModel(that.agents, that.variables, events, agentRelations, name);
         }
+        
 
 
         /* DRAWS */
@@ -504,22 +601,57 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         /* DRAWS */
         for (let agent of this.agents) {
             listActions.push(new EventModelAction({
-                name: "Agent " + agent + " draws a card (symb).",
+                name: "Agent " + agent + " draws a card.",
                 eventModel: draw_symbolic(agent)
             }));
             // DEBUG: we stop here for now
-            break;
+            // break;
+        }
+
+        /* play */
+        for (let agent of this.agents) {
+            for (var nb = 0; nb < SimpleSymbolicHanabi.nbCards; nb++) { 
+                listActions.push(new EventModelAction({
+                    name: "Agent " + agent + " plays " + nb + ".",
+                    eventModel: play(agent, nb, "p")
+                }));
+            }
+        }
+
+        /* discard */
+        for (let agent of this.agents) {
+            for (var nb = 0; nb < SimpleSymbolicHanabi.nbCards; nb++) { 
+                listActions.push(new EventModelAction({
+                    name: "Agent " + agent + " discards " + nb + ".",
+                    eventModel: play(agent, nb, "e")
+                }));
+            }
         }
 
         /* Value announce */
         for (let agent of this.agents) {
-            listActions.push(new EventModelAction({
-                name: "Agent " + agent + " has 1 out of 1.",
-                eventModel: ExplicitToSymbolic.translate(valueAnnoucement(agent, 1, 1), this.variables, this.agents)
-            }));
-            // DEBUG: we stop here for now
-            break;
+            for (var value = 1; value < 6; value++) { 
+                for (var nb = 1; nb < 6; nb++) { 
+                    listActions.push(new EventModelAction({
+                        name: "Agent " + agent + " has " + nb + " out of " + value + ".",
+                        eventModel: valueAnnoucement(agent, nb, value)
+                    }));
+                    // DEBUG: we stop here for now
+                    // break;
+                }
+            }
+        }
 
+        /* Color annouce */
+        for (let agent of this.agents) {
+            for(let color of this.colors){
+                for (var nb = 1; nb < 6; nb++) { 
+                    listActions.push(new EventModelAction({
+                        name: "Agent " + agent + " has " + nb + " out of " + color + ".",
+                        eventModel: colorAnnoucement(agent, nb, color)
+                    }));
+                }
+            }
         }
 
         // for (let agent of this.agents) {
@@ -571,6 +703,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         console.log(listActions);
         this.actions = listActions;
-        return listActions;//play("a", 1, "b")];
+        return listActions; //play("a", 1, "b")];
+        
     }
 }
