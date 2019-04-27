@@ -12,7 +12,7 @@ class MineSweeperWorld extends WorldValuation {
     readonly nbrows: number;
     xt = 38;
     yt = 0;
-    readonly cellSize;
+    readonly cellSize: number;
     static imgExplosion = function () {
         let imgExplosion = new Image();
         imgExplosion.src = "assets/img/bomb.png";
@@ -210,10 +210,6 @@ export class MineSweeper extends ExampleDescription {
 
         }
     }
-
-
-
-
 
     getActions() {
         return [];

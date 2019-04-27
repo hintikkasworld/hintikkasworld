@@ -51,9 +51,9 @@ export class ExplicitToSymbolic {
             event_framed_bdds.set(eventName, framed_bdd);
             
             
-            const symEvent = new SymbolicEvent(ev.pre, framed_bdd, eventName);            
+      //      const symEvent = new SymbolicEvent(ev.pre, framed_bdd, eventName);            
             //console.log(symEvent);
-            events.set(eventName, symEvent);
+        //    events.set(eventName, symEvent);
         }
 
         console.log("Unique Event OK", explicit_em.getAgents());
