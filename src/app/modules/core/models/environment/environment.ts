@@ -43,7 +43,7 @@ export class Environment {
             let M = this._epistemicModel;
             const actions = this.getActions();
             // console.log("computed: ", actions);                
-            this.executableActions = actions.filter(a => a.isApplicableIn);
+            this.executableActions = actions.filter(a => a.isApplicableIn(M));
         }
         return this.executableActions;
 
