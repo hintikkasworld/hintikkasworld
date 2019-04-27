@@ -288,7 +288,9 @@ export class FormulaFactory{
         return new TrueFormula();
     }
 
-
+    static createFalse() {
+        return new FalseFormula();
+    }
     static createFormula(schemeExpression: string | Array<any>) {
         let ast;
         if (typeof schemeExpression == "string")

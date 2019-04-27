@@ -1,3 +1,5 @@
+import { DiningCryptographersProblem } from './../core/models/examples/dining-cryptographers-problem';
+import { Hats } from './../core/models/examples/hats';
 import { NanoHanabi } from './../core/models/examples/nanohanabi';
 import { Flatland } from './../core/models/examples/flatland';
 import { SimpleSymbolicHanabi } from './../core/models/examples/symbolic-hanabi';
@@ -25,7 +27,7 @@ import { SymbolicSimpleExample } from '../core/models/examples/symbolic-small-ex
 })
 export class MenuComponent implements OnInit {
 
-  explicitExamples = [new Simple(), new MuddyChildren(), new SallyAndAnn(),
+  explicitExamples = [new Simple(), new MuddyChildren(), new SallyAndAnn(), new Hats(), new DiningCryptographersProblem(),
   new ConsecutiveNumbers(), new NanoHanabi(),
   new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton()];
 
