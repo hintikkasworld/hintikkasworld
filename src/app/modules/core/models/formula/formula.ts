@@ -253,6 +253,29 @@ export class ExactlyFormula implements Formula {
     get variables() {
         return this._variables;
     }
+    convertToNormalFormula(): Formula {
+        const cache = new Map<string, Formula>();
+        const rec = (n, k) => {
+            const key = [n,k].join(";");
+            if (cache.has(key)) return cache.get(key);
+            if (n == 0) {
+                return new AndFormula(
+                    this.variables.slice(0, k).map(v => new NotFormula(new AtomicFormula(v)))
+                );
+            }
+            if (k == 0) return new FalseFormula();
+            const x = this.variables[k-1];
+            const subform_if_x = rec(n-1, k-1);
+            const subform_if_not_x = rec(n, k-1);
+            const res = new OrFormula([
+                new AndFormula([new AtomicFormula(x), subform_if_x]),
+                new AndFormula([new NotFormula(new AtomicFormula(x)), subform_if_not_x])
+            ]);
+            cache.set(key, res);
+            return res;
+        }
+        return rec(this.count, this.variables.length);
+    }
 
 }
 /* export enum FormulaType {

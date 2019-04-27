@@ -256,6 +256,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     private _query(all_worlds: BDDNode, phi: Formula): BDDNode {
+        //
+        // TODO this should be memoized!!!
+        //
+        
         // console.log("Query", bdd, phi)
 
         if (phi instanceof types.TrueFormula) { return BDD.bddService.createCopy(all_worlds); }
@@ -324,11 +328,13 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             );
             return this._query(all_worlds, new types.OrFormula([Knp, Kp]));
         }
+        if (phi instanceof types.ExactlyFormula) {
+            return this._query(all_worlds, <types.ExactlyFormula>phi.convertToNormalFormula());
+        }
 
         /* else */
-        throw new Error("Unknown instance of phi.");
+        throw new Error("Unknown instance of phi:" + JSON.stringify(phi));
     }
-
 
     /**
      * 
