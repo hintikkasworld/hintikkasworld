@@ -178,7 +178,7 @@ export class DiningCryptographersProblem implements ExampleDescription {
                     if (M.check(FormulaFactory.createFormula(agent + "p")))
                         assignment[atomicProposition] = M.check(FormulaFactory.createFormula("(not " + xorExpression + ")"));
                     else
-                        assignment[atomicProposition] = M..check(FormulaFactory.createFormula(xorExpression));
+                        assignment[atomicProposition] = M.check(FormulaFactory.createFormula(xorExpression));
 
                     let formula = FormulaFactory.createFormula("(" + agent + "p equiv (" +
                         assignment[atomicProposition] + " equiv (not " + xorExpression + ")))");
@@ -202,7 +202,7 @@ export class DiningCryptographersProblem implements ExampleDescription {
 
         return [new ActionFlipBitFor(), new ActionAnnouncements()];
     }
-    
+
     getWorldExample(): import("../epistemicmodel/world").World {
         return new DiningCryptographersWorld(new Valuation(["ap"]));
     }
