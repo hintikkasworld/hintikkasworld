@@ -260,28 +260,39 @@ export class BddService {
    * @param atoms, supposed to be a superset of the support of bddNode
    * @returns a random valuation that satisfies bddNode
    */
-  pickRandomSolution(bddNode: BDDNode, atoms?: string[]): Valuation {
-    if (atoms === undefined) atoms = [];
+  pickRandomSolution(bddNode: BDDNode, atoms: string[] = []): Valuation {
+    //const DEBUGLOG = (msg, n?) => console.log(msg, n ? this.nodeToString(n) : null);
     /**
      * @param bddNode 
      * @returns an random array of atoms, such that if they are set to true and 
      * the missing atoms to false, the resulting valuation satisfies bddNode.
      */
     const pickRandomSolutionMap = (bddNode: BDDNode): Map<string, boolean> => {
+      //DEBUGLOG("pick random sol from", bddNode);
       if (this.isFalse(bddNode)) throw new Error("Cannot pick a solution from FALSE");
       else if (this.isTrue(bddNode)) return new Map();
       else {
+        //console.group("will recurse" + this.nodeToString(bddNode));
         const x = this.getAtomOf(bddNode);
         const yes = this.getThenOf(bddNode);
         const no = this.getElseOf(bddNode)
         
-        let pickYes: boolean;
-        if (this.isFalse(yes)) pickYes = false;
-        else if (this.isFalse(no)) pickYes = true;
-        else pickYes = !!(Math.random() < 0.5);
+        //DEBUGLOG("x=" + x);
+        //DEBUGLOG("then=",yes);
+        //DEBUGLOG("else=",no);
+
+        const supportTot = this.support(bddNode);
+        const nbYes = this.countSolutions(yes, supportTot);
+        const nbNo = this.countSolutions(no, supportTot);
+        const ratioYes = nbYes / (nbYes + nbNo);
+        //DEBUGLOG("ratioYes="+ratioYes);
+
+        const pickYes = !!(Math.random() < ratioYes);
         
         const sol = pickRandomSolutionMap(pickYes ? yes : no);
         sol.set(x, pickYes);
+        //         console.log("current partial sol: ", sol);
+        //         console.groupEnd();
         return sol;
       }
     }
@@ -289,11 +300,9 @@ export class BddService {
     /*add randomly variables that are in atoms but not in the support of bddNode (their values is not relevant)
     */
     const addRandomlyVariablesInAtomsNotInSupport = (A: Map<string, boolean>) => {
-      if (atoms !== undefined) {
         atoms.filter(a => !A.has(a)).forEach((atom: string) => {
             A.set(atom, !!(Math.random() < 0.5));
         });
-      }
     }
 
     const A = pickRandomSolutionMap(bddNode);

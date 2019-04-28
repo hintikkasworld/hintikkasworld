@@ -17,6 +17,7 @@ export class MyTestForBDD {
         MyTestForBDD.simpleFormula();
         MyTestForBDD.someBDDMethod();
         MyTestForBDD.testPick();
+        MyTestForBDD.testPickRandom();
         console.log(" ==> " + MyTestForBDD.n + " success.")
         console.log(" === End tests ===")
     }
@@ -197,6 +198,46 @@ export class MyTestForBDD {
 
 
 
+    }
+    private static testPickRandom(){
+        const service = BDD.bddService;
+        const nbRunsPerSol = 1000;
+        function testPickRandomOnBdd(node, scope: string[]) {
+            const counts = new Map<string, number>();
+            const increm = (sol: string) => {
+                const cur_count = counts.has(sol) ? counts.get(sol) : 0;
+                counts.set(sol, cur_count + 1);
+            }
+            console.group("test pick random on " + service.nodeToString(node) + " with scope " + scope.join(";"));
+            const nbSols = service.countSolutions(node, scope);
+            console.log("nb sols: ", nbSols);
+            const nbRuns = nbRunsPerSol*nbSols;
+            for (let i = 0; i < nbRuns; i++) {
+                increm(service.pickRandomSolution(node, scope).toString());
+            }
+            console.log(counts);
+            MyTestForBDD.assert(counts.size == nbSols, "all solutions where found");
+            const averageDev = Array.from(counts.values()).reduce((acc, v) => acc + Math.abs(v-nbRunsPerSol), 0) / nbRuns;
+            console.log("avg: ", averageDev);
+            MyTestForBDD.assert(averageDev < 0.2, "solutions are “reasonably” distributed");
+            console.groupEnd();
+        }
+        console.group("TEST PICK RANDOM");
+        testPickRandomOnBdd(service.createTrue(), []);
+        testPickRandomOnBdd(service.createTrue(), ["p"]);
+        testPickRandomOnBdd(service.createTrue(), ["p", "q"]);
+        testPickRandomOnBdd(service.createLiteral("p"), ["p"]);
+        testPickRandomOnBdd(service.createLiteral("p"), ["p", "q"]);
+        testPickRandomOnBdd(service.applyNot(service.createLiteral("p")), ["p"]);
+        testPickRandomOnBdd(service.applyNot(service.createLiteral("p")), ["p", "q"]);
+        {
+            const scope = ["p", "q", "r", "s"];
+            const bdd = BDD.buildFromFormula(new ExactlyFormula(3, scope));
+            testPickRandomOnBdd(bdd, scope);
+            testPickRandomOnBdd(bdd, scope.concat(["t"]));
+            testPickRandomOnBdd(bdd, scope.concat(["t", "u"]));
+        }
+        console.groupEnd();
     }
 
 
