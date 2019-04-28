@@ -255,7 +255,14 @@ export class BddService {
   }
 
 
-  private randomSolutionRatioCache = new Map<BDDNode, number>();
+  private nodeForWhichRatioCacheIsValid = null;
+  private randomSolutionRatioCache = null;
+  private initRatioCache(node: BDDNode) {
+    if (node !== this.nodeForWhichRatioCacheIsValid) {
+      this.randomSolutionRatioCache = new Map<BDDNode, number>();
+      this.nodeForWhichRatioCacheIsValid = node;
+    }
+  }
   private getRatioYes(n: BDDNode): number {
     if ( ! this.isInternalNode(n)) throw new Error("No ratio of yes for constant node");
     if (this.randomSolutionRatioCache.has(n)) return this.randomSolutionRatioCache.get(n);
@@ -274,6 +281,7 @@ export class BddService {
    * @returns a random valuation that satisfies bddNode
    */
   pickRandomSolution(bddNode: BDDNode, atoms: string[] = []): Valuation {
+    this.initRatioCache(bddNode);
     //const DEBUGLOG = (msg, n?) => console.log(msg, n ? this.nodeToString(n) : null);
     /**
      * @param bddNode 
