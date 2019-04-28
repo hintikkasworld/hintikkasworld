@@ -254,6 +254,19 @@ export class BddService {
     return this.bddModule._get_else_of(b);
   }
 
+
+  private randomSolutionRatioCache = new Map<BDDNode, number>();
+  private getRatioYes(n: BDDNode): number {
+    if ( ! this.isInternalNode(n)) throw new Error("No ratio of yes for constant node");
+    if (this.randomSolutionRatioCache.has(n)) return this.randomSolutionRatioCache.get(n);
+    const supportTot = this.support(n);
+    const nbYes = this.countSolutions(this.getThenOf(n), supportTot);
+    const nbNo = this.countSolutions(this.getElseOf(n), supportTot);
+    const ratioYes = nbYes / (nbYes + nbNo);
+    this.randomSolutionRatioCache.set(n, ratioYes);
+    return ratioYes;
+  }
+
   /**
    * 
    * @param bddNode, supposed to be a BDD that is not the FALSE leaf
@@ -276,19 +289,11 @@ export class BddService {
         const x = this.getAtomOf(bddNode);
         const yes = this.getThenOf(bddNode);
         const no = this.getElseOf(bddNode)
-        
         //DEBUGLOG("x=" + x);
         //DEBUGLOG("then=",yes);
         //DEBUGLOG("else=",no);
 
-        const supportTot = this.support(bddNode);
-        const nbYes = this.countSolutions(yes, supportTot);
-        const nbNo = this.countSolutions(no, supportTot);
-        const ratioYes = nbYes / (nbYes + nbNo);
-        //DEBUGLOG("ratioYes="+ratioYes);
-
-        const pickYes = !!(Math.random() < ratioYes);
-        
+        const pickYes = !!(Math.random() < this.getRatioYes(bddNode));
         const sol = pickRandomSolutionMap(pickYes ? yes : no);
         sol.set(x, pickYes);
         //         console.log("current partial sol: ", sol);
