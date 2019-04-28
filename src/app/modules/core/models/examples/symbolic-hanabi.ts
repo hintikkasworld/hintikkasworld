@@ -16,6 +16,7 @@ import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositi
 import { BDD } from './../formula/bdd';
 import { BDDNode, BddService } from './../../../../services/bdd.service';
 import { MyTestForBDD } from "./test_bdd";
+import { CachedSource } from 'webpack-sources';
 
 /**
  * @param valuation a valuation
@@ -26,45 +27,106 @@ class SimpleHanabiWorld extends WorldValuation {
     static readonly cardHeight = 8;
     static readonly cardNumber = 5;
 
+    private state: HanabiState;
+    private agentHandPos = {};
+
     constructor(valuation: Valuation) {
         super(valuation);
+        this.state = new HanabiState(valuation, environment.agents, SimpleSymbolicHanabi.colors); // note Alex: this is kinda weird to get the env agents here
+
+        // and what follows seems more like static things:
         this.agentPos["a"] = { x: 64, y: 16, r: 8 };
         this.agentPos["b"] = { x: 128 - SimpleHanabiWorld.cardWidth - 10, y: 32, r: 8 };
         this.agentPos["c"] = { x: 64, y: 48, r: 8 };
         this.agentPos["d"] = { x: 20, y: 32, r: 8 };
+
+        this.agentHandPos["a"] = { x: 64 - SimpleHanabiWorld.cardNumber / 2 * SimpleHanabiWorld.cardWidth, y: 0, horizontal: true};
+        this.agentHandPos["b"] = { x: 128 - SimpleHanabiWorld.cardWidth, y: 10, horizontal: false};
+        this.agentHandPos["c"] = { x: 64 - SimpleHanabiWorld.cardNumber / 2 * SimpleHanabiWorld.cardWidth, y: 56, horizontal: true };
+        this.agentHandPos["d"] = { x: 0, y: 10, horizontal: false };
     }
 
-    static drawHanabiCard(context: CanvasRenderingContext2D, agent: string, posInHand: number, cardSuit: string, cardValue: string) {
-        let x, y, dx, dy;
-        if (agent == "a") { x = 64 - SimpleHanabiWorld.cardNumber / 2 * SimpleHanabiWorld.cardWidth; y = 0; dx = SimpleHanabiWorld.cardWidth; dy = 0; }
-        if (agent == "b") { x = 128 - SimpleHanabiWorld.cardWidth; y = 10; dx = 0; dy = SimpleHanabiWorld.cardHeight; }
-        if (agent == "c") { x = 64 - SimpleHanabiWorld.cardNumber / 2 * SimpleHanabiWorld.cardWidth; y = 56; dx = SimpleHanabiWorld.cardWidth; dy = 0; }
-        if (agent == "d") { x = 0; y = 10; dx = 0; dy = SimpleHanabiWorld.cardHeight; }
-
+    static drawHanabiCardArray(context: CanvasRenderingContext2D, pos: {x: number, y: number, horizontal: boolean}, cards: number[], allVisible: boolean = true) {
+      const dx = pos.horizontal ? (allVisible ? 2 * SimpleHanabiWorld.cardWidth : SimpleHanabiWorld.cardWidth / 2) : 0;
+      const dy = pos.horizontal ? 0 : (allVisible ? SimpleHanabiWorld.cardHeight : SimpleHanabiWorld.cardHeight / 2);
+      console.log("drawing cards: ", cards);
+      for (const [posInHand, card] of Array.from(cards.entries())) {
         SimpleHanabiWorld.drawCard(context, {
-            x: x + posInHand * dx, y: y + posInHand * dy, w: SimpleHanabiWorld.cardWidth,
-            h: SimpleHanabiWorld.cardHeight, fontSize: 6, background: cardSuit, text: cardValue
+            x: pos.x + posInHand * dx, y: pos.y + posInHand * dy, w: SimpleHanabiWorld.cardWidth,
+            h: SimpleHanabiWorld.cardHeight, fontSize: 6, background: SimpleSymbolicHanabi.getCardSuit(card), text: SimpleSymbolicHanabi.getCardValue(card),
         });
+      }
+
     }
 
     draw(context: CanvasRenderingContext2D) {
-        for (let agent of environment.agents) {
-            let posInHand = 0;
-            for (let card = 0; card < SimpleSymbolicHanabi.nbCards; card++)
-                if (this.modelCheck(SimpleSymbolicHanabi.getVarName(agent, card))) {
-                    SimpleHanabiWorld.drawHanabiCard(context, agent, posInHand, SimpleHanabiWorld.getSuit(card), SimpleHanabiWorld.getValue(card));
-                    posInHand++;
-                }
-            this.drawAgents(context);
-        }
+      console.log("DBRAWING WORLD with state", this.state);
+      SimpleHanabiWorld.drawHanabiCardArray(context, {x: 200, y: 0, horizontal: false},  this.state.discardedCards);
+      const colorDy = SimpleHanabiWorld.cardHeight;
+      let colorY = 200;
+      for (const color of SimpleSymbolicHanabi.colors) {
+        SimpleHanabiWorld.drawHanabiCardArray(context, {x: 80, y: colorY, horizontal: true},  this.state.playedCardsByColor.get(color), false);
+        colorY += colorDy;
+      }
+      SimpleHanabiWorld.drawHanabiCardArray(context, {x: 0, y: colorY, horizontal: true},  this.state.stackCards);
+      
+      for (let agent of environment.agents) {
+        const hand = this.state.handCardsByAgent.get(agent);
+        SimpleHanabiWorld.drawHanabiCardArray(context, this.agentHandPos[agent], hand);
+      }
+      this.drawAgents(context);
     }
-  static getValue(card: number): string {
-    //return [1, 1, 1, 2, 2, 3, 3, 4, 4, 5][card % 10].toString();
-    return card.toString();
-  }
-    static getSuit(card: number): string { return ["white", "red", "blue", "yellow", "green"][card / 10]; }
 
 }
+
+
+/**
+ * Represent a state of the world, with easy-to-process data structures.
+ */
+class HanabiState {
+
+  /**
+   * Assume that the valuation given does not encode an impossible state, e.g. a card being in two hands at once.
+   * If true, the construction is more efficient (we do not loop over all owners
+   * for each card), but for debugging purposes it is useful to set it to false,
+   * in which case the state built will be an impossible state and an error will be logged (but not thrown).
+   */
+  public static readonly ASSUME_STATE_IS_POSSIBLE = false;
+
+  public playedCardsByColor = new Map<string, number[]>();
+  public discardedCards = new Array<number>();
+  public stackCards = new Array<number>();
+  public handCardsByAgent = new Map<string, number[]>();
+
+  constructor(world: Valuation, agents: string[], colors: string[]) {
+    for (const a of agents) this.handCardsByAgent.set(a, []);
+    for (const c of colors) this.playedCardsByColor.set(c, []);
+    const ownerHasCard = (owner: string, card: number) => world.isPropositionTrue(SimpleSymbolicHanabi.getVarName(owner, card));
+    for (let card = 0; card < SimpleSymbolicHanabi.nbCards; card++) {
+      if (ownerHasCard("p", card)) {
+        this.stackCards.push(card);
+        if (HanabiState.ASSUME_STATE_IS_POSSIBLE) continue;
+      }
+      if (ownerHasCard("e", card)) {
+        this.discardedCards.push(card);
+        if (HanabiState.ASSUME_STATE_IS_POSSIBLE) continue;
+      }
+      if (ownerHasCard("t", card)) {
+        const suit = SimpleSymbolicHanabi.getCardSuit(card);
+        if ( ! this.playedCardsByColor.has(suit)) this.playedCardsByColor.set(suit, []);
+        this.playedCardsByColor.get(suit).push(card);
+        if (HanabiState.ASSUME_STATE_IS_POSSIBLE) continue;
+      }
+      for (const a of agents) {
+        if (ownerHasCard(a, card)) {
+          this.handCardsByAgent.get(a).push(card);
+          if (HanabiState.ASSUME_STATE_IS_POSSIBLE) break;
+        }
+      }
+    }
+  }
+}
+
 
 /**
  * Description of atomic variables :
@@ -88,7 +150,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     /**
      * Number of cards in the game Hanabi
      */
-    static readonly nbCards: number = 10;
+    static readonly nbCards: number = 6;
 
     /**
      * Number of cards in hand
@@ -108,7 +170,13 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
      */
     private variables: string[];
 
-    private colors = ["white", "red", "blue", "yellow", "green"]
+    public static readonly colors = ["white", "red", "blue", "yellow", "green"]
+
+    static getCardValue(card: number): string {
+      //return [1, 1, 1, 2, 2, 3, 3, 4, 4, 5][card % 10].toString();
+      return card.toString();
+    }
+    static getCardSuit(card: number): string { return SimpleSymbolicHanabi.colors[card / 10]; }
 
     /**
      * List of actions; lazily computed (only on demand)
@@ -551,7 +619,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             let liste_var = [];
 
             
-            const id_c = that.colors.indexOf(color)
+            const id_c = SimpleSymbolicHanabi.colors.indexOf(color)
             for (var c = 0; c < 10; c++)
                 liste_var.push(SimpleSymbolicHanabi.getVarName(agent, id_c*10+c));
             
@@ -644,7 +712,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         /* Color annouce */
         for (let agent of this.agents) {
-            for(let color of this.colors){
+            for(let color of SimpleSymbolicHanabi.colors){
                 for (var nb = 1; nb < 6; nb++) { 
                     listActions.push(new EventModelAction({
                         name: "Agent " + agent + " has " + nb + " out of " + color + ".",

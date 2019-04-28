@@ -10,7 +10,7 @@ export abstract class ExampleDescription {
 
     getWorldExample(): World {
         let M = this.getInitialEpistemicModel(); 
-        return <World> (<ExplicitEpistemicModel> M).getPointedWorld();
+        return M.getPointedWorld();
     }
 
     
