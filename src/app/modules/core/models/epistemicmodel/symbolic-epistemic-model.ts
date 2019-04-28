@@ -121,7 +121,17 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     }
 
-    constructor(relations: Map<string, BDDNode>, worldClass: WorldValuationType, agents: string[],
+    public clone(): SymbolicEpistemicModel {
+        const clone = new SymbolicEpistemicModel(
+            this.symbolicRelations, this.worldClass,
+            this.agents, this.propositionalAtoms,
+            this.propositionalPrimes, this.formulaSetWorlds
+        );
+        clone.setPointedValuation(this.pointedValuation);
+        return clone;
+    }
+
+    private constructor(relations: Map<string, BDDNode>, worldClass: WorldValuationType, agents: string[],
         propositionalAtoms: string[], propositionalsPrimes: string[], formulaSetWorlds: BDDNode) {
 
         // console.log("Agents of SymbolicEpistemicModel", agents);
@@ -232,14 +242,14 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * @returns true if the formula is true in the real world (the pointed one)
      */
     check(formula: Formula): boolean {
-        let bddFormulaSemantics = this._queryWorlds(formula);
+        let bddFormulaSemantics = this.queryWorldsSatisfying(formula);
         // console.log("check middle", BDD.bddService.pickAllSolutions(pointeur), SymbolicEpistemicModel.valuationToMap(this.pointed));
         let res = BDD.bddService.applyConditioning(bddFormulaSemantics, SymbolicEpistemicModel.valuationToMap(this.pointedValuation));
         //console.log("check end",  BDD.bddService.pickAllSolutions(res))
         return BDD.bddService.isConsistent(res)
     }
 
-    private _queryWorlds(phi: Formula): BDDNode {
+    public queryWorldsSatisfying(phi: Formula): BDDNode {
 
         let allWorlds = BDD.bddService.createFalse();
         this.symbolicRelations.forEach((value: BDDNode, key: string) => {

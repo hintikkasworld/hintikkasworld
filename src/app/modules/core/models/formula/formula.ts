@@ -83,12 +83,16 @@ export class AndFormula implements Formula {
     }
 }
 
-export class KFormula implements Formula {
+abstract class ModalOperatorFormula implements Formula {
+    abstract clone(): ModalOperatorFormula;
+    abstract opString(): string;
     renameAtoms(f: (s: string) => string): Formula {
-        return new KFormula(this._agent, this._formula.renameAtoms(f));
+        const clone: ModalOperatorFormula =  this.clone();
+        clone._formula = this._formula.renameAtoms(f);
+        return clone;
     }
     prettyPrint(): string {
-        return "(K "+this._agent+" "+this._formula.prettyPrint()+")"
+        return "(" + this.opString() + " "+this._agent+" "+this._formula.prettyPrint()+")"
     }
     private _agent: string;
     private _formula: Formula;
@@ -104,45 +108,33 @@ export class KFormula implements Formula {
     }
 }
 
-export class KposFormula implements Formula {
-    renameAtoms(f: (s: string) => string): Formula {
-        return new KposFormula(this._agent, this._formula.renameAtoms(f));
+export class KFormula extends ModalOperatorFormula {
+    clone(): ModalOperatorFormula {
+        return new KFormula(this.agent, this.formula);
     }
-    prettyPrint(): string {
-        return "(Kpos "+this._agent+" "+this._formula.prettyPrint()+")"
-    }
-    private _agent: string;
-    private _formula: Formula;
-    constructor(a: string, f: Formula) {
-        this._agent = a;
-        this._formula = f;
-    }
-    get agent() {
-        return this._agent;
-    }
-    get formula() {
-        return this._formula;
+    
+    opString(): string {
+        return "K";
     }
 }
 
-export class KwFormula implements Formula {
-    renameAtoms(f: (s: string) => string): Formula {
-        return new KwFormula(this._agent, this._formula.renameAtoms(f));
+export class KposFormula extends ModalOperatorFormula {
+    clone(): ModalOperatorFormula {
+        return new KposFormula(this.agent, this.formula);
     }
-    prettyPrint(): string {
-        return "(Kw "+this._agent+" "+this._formula.prettyPrint()+")"
+    
+    opString(): string {
+        return "Kpos";
     }
-    private _agent: string;
-    private _formula: Formula;
-    constructor(a: string, f: Formula) {
-        this._agent = a;
-        this._formula = f;
+}
+
+export class KwFormula extends ModalOperatorFormula {
+    clone(): ModalOperatorFormula {
+        return new KwFormula(this.agent, this.formula);
     }
-    get agent() {
-        return this._agent;
-    }
-    get formula() {
-        return this._formula;
+    
+    opString(): string {
+        return "Kw";
     }
 }
 
