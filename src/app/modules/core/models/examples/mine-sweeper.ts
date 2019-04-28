@@ -185,16 +185,17 @@ export class MineSweeper extends ExampleDescription {
         let V = []
         for (let i = 1; i <= this.nbmines; i++) {
             while (true) {
-                const x = 1 + Math.round(Math.random() * (this.nbcols - 1));
-                const y = 1 + Math.round(Math.random() * (this.nbrows - 1));
-                if (!V.includes("m" + y + x)) {
-                    V.push("m" + y + x);
+                const col = 1 + Math.round(Math.random() * (this.nbcols - 1));
+                const row = 1 + Math.round(Math.random() * (this.nbrows - 1));
+                if (!V.includes("m" + row + col)) {
+                    V.push("m" + row + col);
                     break;
                 }
             }
         }
         return new Valuation(V);
     }
+    
     getWorldExample() { return new MineSweeperWorld(this.getValuationExample()); }
 
     /*
