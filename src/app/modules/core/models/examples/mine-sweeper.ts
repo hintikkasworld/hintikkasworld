@@ -1,4 +1,6 @@
-import { ExactlyFormula, TrueFormula } from './../formula/formula';
+import { EventModelAction } from './../environment/event-model-action';
+import { SymbolicPublicAnnouncement } from './../eventmodel/symbolic-public-announcement';
+import { ExactlyFormula, TrueFormula, AndFormula, AtomicFormula, NotFormula } from './../formula/formula';
 import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
@@ -22,31 +24,31 @@ class Point2D {
 
 function curryClass(SourceClass, arg1, arg2) {
     var curriedArgs = Array.prototype.slice.call(arguments, 1);
-  
+
     return function curriedConstructor() {
-      var combinedArgs = curriedArgs.concat(Array.prototype.slice.call(arguments, 0));
-  
-      // Create an object that inherits from `proto`
-      var hasOwnProto = Object(SourceClass.prototype) === SourceClass.prototype;
-      var obj = Object.create(hasOwnProto ? SourceClass.prototype : Object.prototype);
-  
-      // Apply the function setting `obj` as the `this` value
-      var ret = SourceClass.apply(obj, combinedArgs);
-  
-      if (Object(ret) === ret) { // the result is an object?
-        return ret;
-      }
-  
-      return obj;
+        var combinedArgs = curriedArgs.concat(Array.prototype.slice.call(arguments, 0));
+
+        // Create an object that inherits from `proto`
+        var hasOwnProto = Object(SourceClass.prototype) === SourceClass.prototype;
+        var obj = Object.create(hasOwnProto ? SourceClass.prototype : Object.prototype);
+
+        // Apply the function setting `obj` as the `this` value
+        var ret = SourceClass.apply(obj, combinedArgs);
+
+        if (Object(ret) === ret) { // the result is an object?
+            return ret;
+        }
+
+        return obj;
     };
-  };
+};
 
 
 class MineSweeperWorld extends WorldValuation {
     readonly nbcols: number;
     readonly nbrows: number;
-    xt = 38;
-    yt = 0;
+    static readonly xt = 38;
+    static readonly yt = 0;
     readonly cellSize: number;
     static imgExplosion = MineSweeperWorld.getImage("bomb.png");
 
@@ -54,7 +56,7 @@ class MineSweeperWorld extends WorldValuation {
         super(valuation);
         this.nbrows = nbrows;
         this.nbcols = nbcols;
-        this.cellSize = 5;
+        this.cellSize = Math.min(16, Math.min((64 - MineSweeperWorld.yt) / nbrows, (128 - MineSweeperWorld.xt) / nbcols));
         this.agentPos["a"] = { x: 16, y: 32, r: 16 };
     }
 
@@ -63,27 +65,27 @@ class MineSweeperWorld extends WorldValuation {
 
         context.strokeStyle = "black";
         context.fillStyle = "lightgray";
-        context.fillRect(this.xt, 0, this.nbcols * this.cellSize, this.nbrows * this.cellSize);
+        context.fillRect(MineSweeperWorld.xt, 0, this.nbcols * this.cellSize, this.nbrows * this.cellSize);
         for (let x = 0; x <= this.nbcols; x++) {
             context.beginPath();
-            context.moveTo(this.xt + x * this.cellSize, this.yt);
-            context.lineTo(this.xt + x * this.cellSize, this.yt + this.nbrows * this.cellSize);
+            context.moveTo(MineSweeperWorld.xt + x * this.cellSize, MineSweeperWorld.yt);
+            context.lineTo(MineSweeperWorld.xt + x * this.cellSize, MineSweeperWorld.yt + this.nbrows * this.cellSize);
             context.stroke();
         }
         for (let y = 0; y <= this.nbrows; y++) {
             context.beginPath();
-            context.moveTo(this.xt, this.yt + y * this.cellSize);
-            context.lineTo(this.xt + this.nbcols * this.cellSize, this.yt + y * this.cellSize);
+            context.moveTo(MineSweeperWorld.xt, MineSweeperWorld.yt + y * this.cellSize);
+            context.lineTo(MineSweeperWorld.xt + this.nbcols * this.cellSize, MineSweeperWorld.yt + y * this.cellSize);
             context.stroke();
         }
 
-        context.font = (this.cellSize-2) + "px Verdana";
+        context.font = (this.cellSize - 2) + "px Verdana";
         let imgExplosionPadding = 0;
         for (let col = 1; col <= this.nbcols; col++)
             for (let row = 1; row <= this.nbrows; row++) {
                 if (this.modelCheck("m" + row + col))
                     context.drawImage(MineSweeperWorld.imgExplosion,
-                        this.xt + (col - 1) * this.cellSize + imgExplosionPadding,
+                        MineSweeperWorld.xt + (col - 1) * this.cellSize + imgExplosionPadding,
                         (row - 1) * this.cellSize + imgExplosionPadding,
                         this.cellSize - 2 * imgExplosionPadding,
                         this.cellSize - 2 * imgExplosionPadding);
@@ -93,7 +95,7 @@ class MineSweeperWorld extends WorldValuation {
                     if (hint > 0) {
                         if (hint == 1) context.strokeStyle = "#0000FF";
                         if (hint == 2) context.strokeStyle = "#008800";
-                        context.strokeText(hint.toString(), this.xt + (col - 1) * this.cellSize + this.cellSize / 3,
+                        context.strokeText(hint.toString(), MineSweeperWorld.xt + (col - 1) * this.cellSize + this.cellSize / 3,
                             (row) * this.cellSize - this.cellSize / 3);
                     }
 
@@ -105,14 +107,14 @@ class MineSweeperWorld extends WorldValuation {
      * returns the cell under the point (in point, x and y are in pixels)
      */
     getCell(point: Point2D): Cell {
-        if (point.x < this.xt) return undefined;
-        if (point.x > this.xt + this.nbcols * this.cellSize) return undefined;
-        if (point.y < this.yt) return undefined;
-        if (point.y > this.yt + this.nbrows * this.cellSize) return undefined;
+        if (point.x < MineSweeperWorld.xt) return undefined;
+        if (point.x > MineSweeperWorld.xt + this.nbcols * this.cellSize) return undefined;
+        if (point.y < MineSweeperWorld.yt) return undefined;
+        if (point.y > MineSweeperWorld.yt + this.nbrows * this.cellSize) return undefined;
 
         return {
-            col: Math.floor((point.x - this.xt) / this.cellSize) + 1,
-            row: Math.floor((point.y - this.yt) / this.cellSize) + 1
+            col: Math.floor((point.x - MineSweeperWorld.xt) / this.cellSize) + 1,
+            row: Math.floor((point.y - MineSweeperWorld.yt) / this.cellSize) + 1
         };
     }
 
@@ -153,7 +155,7 @@ export class MineSweeper extends ExampleDescription {
 
 
     getName() {
-        return "Mine Sweeper";
+        return "Mine Sweeper " + this.nbrows + "×" + this.nbcols + " with " + this.nbmines + " mines";
     }
 
 
@@ -176,8 +178,8 @@ export class MineSweeper extends ExampleDescription {
 
 
 
-    getWorldClass() : WorldValuationType {
-        return <WorldValuationType> <unknown> curryClass(MineSweeperWorld,  this.nbrows, this.nbcols);
+    getWorldClass(): WorldValuationType {
+        return <WorldValuationType><unknown>curryClass(MineSweeperWorld, this.nbrows, this.nbcols);
     }
     /*
      * @returns the initial Kripke model of MineSweeper
@@ -187,7 +189,7 @@ export class MineSweeper extends ExampleDescription {
         let rels = new Map();
         rels.set("a", new Obs([]));
 
-        let M = SymbolicEpistemicModel.build(this.getWorldClass(), ["a"], 
+        let M = SymbolicEpistemicModel.build(this.getWorldClass(), ["a"],
             this.getAtoms(), rels, new ExactlyFormula(this.nbmines, this.getAtoms()));
 
         M.setPointedValuation(this.getValuationExample());
@@ -245,9 +247,13 @@ export class MineSweeper extends ExampleDescription {
         else {
             let hint = pointedWorld.getHint(cell);
 
-            new ExactlyFormula(hint, this.getPropositionsNeightbor(cell));
+            const phi = new AndFormula([new ExactlyFormula(hint, this.getPropositionsNeightbor(cell)),
+            new NotFormula(new AtomicFormula("m" + cell.row + cell.col))]);
             //TODO SYMBOLIC PUBLIC ANNOUNCEMENT that the number of mines around cell is hint
-            //     env.perform();
+            env.perform(new EventModelAction({
+                name: "give hint",
+                eventModel: new SymbolicPublicAnnouncement(phi)
+            }));
         }
     }
 

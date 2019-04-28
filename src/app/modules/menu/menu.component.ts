@@ -23,7 +23,7 @@ import { SymbolicSimpleExample } from '../core/models/examples/symbolic-small-ex
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css']
+  styleUrls: ['./menu.component.css'] 
 })
 export class MenuComponent implements OnInit {
 
@@ -31,7 +31,7 @@ export class MenuComponent implements OnInit {
   new ConsecutiveNumbers(), new NanoHanabi(),
   new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton()];
 
-  symbolicExamples = [new SymbolicSimpleExample(),  new MineSweeper(8, 10, 3), new MineSweeper(12, 15, 20), new Belote(), new SimpleSymbolicHanabi(), new Flatland()];
+  symbolicExamples = [new SymbolicSimpleExample(), new MineSweeper(2, 2, 1),  new MineSweeper(5, 6, 15), new MineSweeper(8, 10, 3), new MineSweeper(10, 10, 6), new MineSweeper(12, 15, 20), new Belote(), new SimpleSymbolicHanabi(), new Flatland()];
   
   openExampleDescription(exampleDescription: ExampleDescription) {
     this.exampleService.setExampleDescription(exampleDescription);
