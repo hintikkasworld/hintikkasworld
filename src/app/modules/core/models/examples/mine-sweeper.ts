@@ -7,6 +7,17 @@ import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Obs } from '../epistemicmodel/symbolic-relation';
 
+class Cell {
+    row: number;
+    col: number;
+}
+
+
+class Point2D {
+    x: number;
+    y: number;
+}
+
 class MineSweeperWorld extends WorldValuation {
     readonly nbcols: number;
     readonly nbrows: number;
@@ -22,8 +33,6 @@ class MineSweeperWorld extends WorldValuation {
         this.cellSize = 8;
         this.agentPos["a"] = { x: 16, y: 32, r: 16 };
     }
-
-
 
     draw(context: CanvasRenderingContext2D) {
         this.drawAgents(context);
@@ -46,22 +55,22 @@ class MineSweeperWorld extends WorldValuation {
 
         context.font = "6px Verdana";
         let imgExplosionPadding = 2;
-        for (let x = 1; x <= this.nbcols; x++)
-            for (let y = 1; y <= this.nbrows; y++) {
-                if (this.modelCheck("m" + y + x))
+        for (let col = 1; col <= this.nbcols; col++)
+            for (let row = 1; row <= this.nbrows; row++) {
+                if (this.modelCheck("m" + row + col))
                     context.drawImage(MineSweeperWorld.imgExplosion,
-                        this.xt + (x - 1) * this.cellSize + imgExplosionPadding,
-                        (y - 1) * this.cellSize + imgExplosionPadding,
+                        this.xt + (col - 1) * this.cellSize + imgExplosionPadding,
+                        (row - 1) * this.cellSize + imgExplosionPadding,
                         this.cellSize - 2 * imgExplosionPadding,
                         this.cellSize - 2 * imgExplosionPadding);
                 else {
-                    let hint = this.getHint({ x: x, y: y });
+                    let hint = this.getHint({ col: col, row: row });
 
                     if (hint > 0) {
                         if (hint == 1) context.strokeStyle = "#0000FF";
                         if (hint == 2) context.strokeStyle = "#008800";
-                        context.strokeText(hint.toString(), this.xt + (x - 1) * this.cellSize + this.cellSize / 3,
-                            (y) * this.cellSize - this.cellSize / 3);
+                        context.strokeText(hint.toString(), this.xt + (col - 1) * this.cellSize + this.cellSize / 3,
+                            (row) * this.cellSize - this.cellSize / 3);
                     }
 
                 }
@@ -71,25 +80,25 @@ class MineSweeperWorld extends WorldValuation {
     /*
      * returns the cell under the point (in point, x and y are in pixels)
      */
-    getCell(point) {
+    getCell(point: Point2D): Cell {
         if (point.x < this.xt) return undefined;
         if (point.x > this.xt + this.nbcols * this.cellSize) return undefined;
         if (point.y < this.yt) return undefined;
         if (point.y > this.yt + this.nbrows * this.cellSize) return undefined;
 
         return {
-            x: Math.floor((point.x - this.xt) / this.cellSize) + 1,
-            y: Math.floor((point.y - this.yt) / this.cellSize) + 1
+            col: Math.floor((point.x - this.xt) / this.cellSize) + 1,
+            row: Math.floor((point.y - this.yt) / this.cellSize) + 1
         };
     }
 
     /*
      * @returns the number of bombs in the neighborhood of cell
      */
-    getHint(cell) {
+    getHint(cell: Cell): number {
         let c = 0;
-        for (let y = Math.max(1, cell.y - 1); y <= Math.min(this.nbrows, cell.y + 1); y++)
-            for (let x = Math.max(1, cell.x - 1); x <= Math.min(this.nbcols, cell.x + 1); x++)
+        for (let y = Math.max(1, cell.row - 1); y <= Math.min(this.nbrows, cell.row + 1); y++)
+            for (let x = Math.max(1, cell.col - 1); x <= Math.min(this.nbcols, cell.col + 1); x++)
                 if (this.modelCheck("m" + y + x))
                     c++;
         return c;
@@ -98,9 +107,7 @@ class MineSweeperWorld extends WorldValuation {
     /*
      * @returns true iff there is a bomb at cell
      */
-    isMine(cell) {
-        return this.modelCheck("m" + cell.y + cell.x);
-    }
+    isMine(cell: Cell) { return this.modelCheck("m" + cell.row + cell.col); }
 }
 
 
@@ -131,6 +138,15 @@ export class MineSweeper extends ExampleDescription {
         for (let y = 1; y <= this.nbrows; y++)
             for (let x = 1; x <= this.nbcols; x++)
                 A.push("m" + y.toString() + x.toString());
+        return A;
+    }
+
+
+    getPropositionsNeightbor(cell: Cell): string[] {
+        let A = [];
+        for (let y = Math.max(1, cell.row - 1); y <= Math.min(this.nbrows, cell.row + 1); y++)
+            for (let x = Math.max(1, cell.col - 1); x <= Math.min(this.nbcols, cell.col + 1); x++)
+                A.push("m" + y + x);
         return A;
     }
 
@@ -188,7 +204,7 @@ export class MineSweeper extends ExampleDescription {
         let M: SymbolicEpistemicModel = <SymbolicEpistemicModel>env.getEpistemicModel();
         let pointedWorld: MineSweeperWorld = <MineSweeperWorld>M.getPointedWorld();
 
-        let cell = pointedWorld.getCell(point);
+        let cell: Cell = pointedWorld.getCell(point);
 
         if (cell == undefined) return;
 
@@ -199,14 +215,13 @@ export class MineSweeper extends ExampleDescription {
         else {
             let hint = pointedWorld.getHint(cell);
 
+            new ExactlyFormula(hint, this.getPropositionsNeightbor(cell));
             //TODO SYMBOLIC PUBLIC ANNOUNCEMENT that the number of mines around cell is hint
-
+            //     env.perform();
         }
     }
 
-    getActions() {
-        return [];
-    }
+    getActions() { return []; }
 
 
 }
