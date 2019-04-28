@@ -5,8 +5,9 @@ import { Formula } from './../formula/formula';
  * and the postcondition is encoded as a propositional formula.
  */
 export class SymbolicEvent<PropRepr> {
-    pre: Formula;
-    post: PropRepr;
+    readonly pre: Formula;
+    readonly post: PropRepr;
+    
     constructor(pre: Formula, post: PropRepr) {
       this.pre = pre;
       this.post = post;

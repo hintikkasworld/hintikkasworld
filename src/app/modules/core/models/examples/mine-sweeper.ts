@@ -13,12 +13,7 @@ class MineSweeperWorld extends WorldValuation {
     xt = 38;
     yt = 0;
     readonly cellSize: number;
-    static imgExplosion = function () {
-        let imgExplosion = new Image();
-        imgExplosion.src = "assets/img/bomb.png";
-        return imgExplosion;
-    }();
-
+    static imgExplosion = MineSweeperWorld.getImage("bomb.png");
 
     constructor(valuation: Valuation) {
         super(valuation);
@@ -26,8 +21,6 @@ class MineSweeperWorld extends WorldValuation {
         this.nbcols = 10;
         this.cellSize = 8;
         this.agentPos["a"] = { x: 16, y: 32, r: 16 };
-        this.agentPos["b"] = undefined;
-        this.agentPos["c"] = undefined;
     }
 
 
