@@ -6,6 +6,7 @@ import { Environment } from '../environment/environment';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Obs } from '../epistemicmodel/symbolic-relation';
+import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
 
 class Cell {
     row: number;
@@ -18,6 +19,29 @@ class Point2D {
     y: number;
 }
 
+
+function curryClass(SourceClass, arg1, arg2) {
+    var curriedArgs = Array.prototype.slice.call(arguments, 1);
+  
+    return function curriedConstructor() {
+      var combinedArgs = curriedArgs.concat(Array.prototype.slice.call(arguments, 0));
+  
+      // Create an object that inherits from `proto`
+      var hasOwnProto = Object(SourceClass.prototype) === SourceClass.prototype;
+      var obj = Object.create(hasOwnProto ? SourceClass.prototype : Object.prototype);
+  
+      // Apply the function setting `obj` as the `this` value
+      var ret = SourceClass.apply(obj, combinedArgs);
+  
+      if (Object(ret) === ret) { // the result is an object?
+        return ret;
+      }
+  
+      return obj;
+    };
+  };
+
+
 class MineSweeperWorld extends WorldValuation {
     readonly nbcols: number;
     readonly nbrows: number;
@@ -26,11 +50,11 @@ class MineSweeperWorld extends WorldValuation {
     readonly cellSize: number;
     static imgExplosion = MineSweeperWorld.getImage("bomb.png");
 
-    constructor(valuation: Valuation) {
+    constructor(nbrows, nbcols, valuation: Valuation) {
         super(valuation);
-        this.nbrows = 8;
-        this.nbcols = 10;
-        this.cellSize = 8;
+        this.nbrows = nbrows;
+        this.nbcols = nbcols;
+        this.cellSize = 5;
         this.agentPos["a"] = { x: 16, y: 32, r: 16 };
     }
 
@@ -53,8 +77,8 @@ class MineSweeperWorld extends WorldValuation {
             context.stroke();
         }
 
-        context.font = "6px Verdana";
-        let imgExplosionPadding = 2;
+        context.font = (this.cellSize-2) + "px Verdana";
+        let imgExplosionPadding = 0;
         for (let col = 1; col <= this.nbcols; col++)
             for (let row = 1; row <= this.nbrows; row++) {
                 if (this.modelCheck("m" + row + col))
@@ -150,6 +174,11 @@ export class MineSweeper extends ExampleDescription {
         return A;
     }
 
+
+
+    getWorldClass() : WorldValuationType {
+        return <WorldValuationType> <unknown> curryClass(MineSweeperWorld,  this.nbrows, this.nbcols);
+    }
     /*
      * @returns the initial Kripke model of MineSweeper
      * where agent 2 only knows there are exactly two bombs.
@@ -158,7 +187,7 @@ export class MineSweeper extends ExampleDescription {
         let rels = new Map();
         rels.set("a", new Obs([]));
 
-        let M = SymbolicEpistemicModel.build(MineSweeperWorld, ["a"],
+        let M = SymbolicEpistemicModel.build(this.getWorldClass(), ["a"], 
             this.getAtoms(), rels, new ExactlyFormula(this.nbmines, this.getAtoms()));
 
         M.setPointedValuation(this.getValuationExample());
@@ -174,7 +203,7 @@ export class MineSweeper extends ExampleDescription {
             for (let col = 1; col <= this.nbcols; col++)
                 A.push("m" + row + col);
 
-        M.addWorld("w", new MineSweeperWorld(new Valuation(A)));
+        M.addWorld("w", new MineSweeperWorld(this.nbrows, this.nbcols, new Valuation(A)));
         M.makeCompleteRelation("a");
         M.setPointedWorld("w");
         return M;
@@ -195,8 +224,8 @@ export class MineSweeper extends ExampleDescription {
         }
         return new Valuation(V);
     }
-    
-    getWorldExample() { return new MineSweeperWorld(this.getValuationExample()); }
+
+    getWorldExample() { return new MineSweeperWorld(this.nbrows, this.nbcols, this.getValuationExample()); }
 
     /*
      * event when the player clicks on the real world

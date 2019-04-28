@@ -31,7 +31,7 @@ export class MenuComponent implements OnInit {
   new ConsecutiveNumbers(), new NanoHanabi(),
   new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton()];
 
-  symbolicExamples = [new SymbolicSimpleExample(),  new MineSweeper(8, 10, 3), new Belote(), new SimpleSymbolicHanabi(), new Flatland()];
+  symbolicExamples = [new SymbolicSimpleExample(),  new MineSweeper(8, 10, 3), new MineSweeper(12, 15, 20), new Belote(), new SimpleSymbolicHanabi(), new Flatland()];
   
   openExampleDescription(exampleDescription: ExampleDescription) {
     this.exampleService.setExampleDescription(exampleDescription);
