@@ -170,9 +170,9 @@ export class MineSweeper extends ExampleDescription {
         //we do not care the model to be explicit :) It is a fake single world model
         let M = new ExplicitEpistemicModel();
         let A = [];
-        for (let y = 1; y <= this.nbrows; y++)
-            for (let x = 1; x <= this.nbcols; x++)
-                A.push("m" + y + x);
+        for (let row = 1; row <= this.nbrows; row++)
+            for (let col = 1; col <= this.nbcols; col++)
+                A.push("m" + row + col);
 
         M.addWorld("w", new MineSweeperWorld(new Valuation(A)));
         M.makeCompleteRelation("a");
