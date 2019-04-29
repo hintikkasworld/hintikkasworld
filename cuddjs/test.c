@@ -139,6 +139,22 @@ int get_size(DdNode *node) {
 	return Cudd_DagSize(node);
 }
 
+EMSCRIPTEN_KEEPALIVE
+double count_solutions(DdNode *node, int nbvars) {
+	DEBUG_ENSURE_NONNULL(node, "count_solutions got null");
+	int nb_relevant_vars = Cudd_SupportSize(ddm, node);
+	if (nbvars == -1) {
+		nbvars = nb_relevant_vars;
+	} else if (nbvars < nb_relevant_vars) {
+		die("not enough variables to cover support");
+	}
+	double res = Cudd_CountMinterm(ddm, node, nbvars);
+	if (res == (double)CUDD_OUT_OF_MEM) {
+		die("cannot count solutions; out of memory");
+	}
+	return res;
+}
+
 /**
  * Indicate whether the given node is a TRUE leaf.
  */
@@ -188,6 +204,8 @@ Bdd support(Bdd f) {
 	Cudd_Ref(res);
 	return res;
 }
+
+
 
 /**
  * Indicate whether the given node is an internal node.
@@ -545,12 +563,40 @@ void destroy(Bdd f) {
 	DEBUG("destroy end");
 }
 
-// removed, simpler to do in JS
-// EMSCRIPTEN_KEEPALIVE
-// DdNode *pick_random_solution(Bdd f) {
-// 	die("TO BE IMPLEMENTED");
-// 	return NULL;
-// }
+/**
+ * Return a pointer to a dynamically allocated array of variables
+ * which is the support of f.
+ * The BDD must not be constant.
+ * WARNING: the pointer must be freed afterwards!!
+ * This is useful in conjunction with pick_random_solution.
+ */
+EMSCRIPTEN_KEEPALIVE
+DdNode **get_pointer_to_support(Bdd f) {
+	DEBUG_ENSURE_NONNULL(f, "get_pointer_to_support got NULL");
+	int *indices;
+	int nbvars = Cudd_SupportIndices(ddm, f, &indices);
+	if (nbvars == 0) die("called get_pointer_to_support on constant");
+	if (nbvars == CUDD_OUT_OF_MEM) die("CUDD went out of memory");
+	DdNode **vars = malloc(nbvars * sizeof(*vars));
+	for (int i = 0; i < nbvars; i++) {
+		vars[i] = Cudd_bddIthVar(ddm, indices[i]);
+	}
+	free(indices);  /* an array was allocated since we're sure that f is not a constant */
+	return vars;
+}
+
+/**
+ * Return a random solution, in the support, as a cube.
+ * The BDD must not be constant.
+ * WARNING: the cube must be destroyed afterwards!
+ */
+EMSCRIPTEN_KEEPALIVE
+DdNode *pick_random_solution(Bdd f, DdNode **vars, int nbvars) {
+	DdNode *res = Cudd_bddPickOneMinterm(ddm, f, vars, nbvars);
+	ABORT_ON_NULL(res, "pick_random");
+	Cudd_Ref(res);
+	return res;
+}
 
 /******************************************************************************/
 /******************************************************************************/

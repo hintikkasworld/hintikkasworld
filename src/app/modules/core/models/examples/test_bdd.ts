@@ -18,6 +18,7 @@ export class MyTestForBDD {
         MyTestForBDD.someBDDMethod();
         MyTestForBDD.testPick();
         MyTestForBDD.testPickRandom();
+        MyTestForBDD.testCount();
         console.log(" ==> " + MyTestForBDD.n + " success.")
         console.log(" === End tests ===")
     }
@@ -199,6 +200,37 @@ export class MyTestForBDD {
 
 
     }
+    private static testCount(){
+        const service = BDD.bddService;
+        function test(node, scope, exp) {
+          const nbsols = service.countSolutions_JS(node, scope);
+          const nbsolsCudd = service.countSolutions(node, scope);
+          const scopestring = scope !== undefined ? scope.join(";") : "undefined";
+          MyTestForBDD.assert(nbsols == exp, `correct nb of solutions for ${service.nodeToString(node)} with scope ${scopestring}`);
+          MyTestForBDD.assert(nbsolsCudd == exp, `correct nb of solutions from CUDD for ${service.nodeToString(node)} with scope ${scopestring}`);
+        }
+        console.group("TEST COUNT SOLS");
+        test(service.createTrue(), [], 1);
+        test(service.createTrue(), undefined, 1);
+        test(service.createTrue(), ["p"], 2);
+        test(service.createTrue(), ["p", "q"], 4);
+        test(service.createLiteral("p"), ["p"], 1);
+        test(service.createLiteral("p"), undefined, 1);
+        test(service.createLiteral("p"), ["p", "q"], 2);
+        test(service.applyNot(service.createLiteral("p")), ["p"], 1);
+        test(service.applyNot(service.createLiteral("p")), undefined, 1);
+        test(service.applyNot(service.createLiteral("p")), ["p", "q"], 2);
+        {
+            const scope = ["p", "q", "r", "s"];
+            const bdd = BDD.buildFromFormula(new ExactlyFormula(3, scope));
+            test(bdd, undefined, 4);
+            test(bdd, scope, 4);
+            test(bdd, scope.concat(["t"]), 8);
+            test(bdd, scope.concat(["t", "u"]), 16);
+        }
+        console.groupEnd();
+    }
+
     private static testPickRandom(){
         const service = BDD.bddService;
         const nbRunsPerSol = 1000;
@@ -239,6 +271,5 @@ export class MyTestForBDD {
         }
         console.groupEnd();
     }
-
 
 }

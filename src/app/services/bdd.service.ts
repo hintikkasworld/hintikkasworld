@@ -304,11 +304,12 @@ export class BddService {
         const pickYes = !!(Math.random() < this.getRatioYes(bddNode));
         const sol = pickRandomSolutionMap(pickYes ? yes : no);
         sol.set(x, pickYes);
-        //         console.log("current partial sol: ", sol);
-        //         console.groupEnd();
+        //                  console.log("current partial sol: ", sol);
+        //                 console.groupEnd();
         return sol;
       }
     }
+
 
     /*add randomly variables that are in atoms but not in the support of bddNode (their values is not relevant)
     */
@@ -323,13 +324,46 @@ export class BddService {
     return Valuation.buildFromMap(A);
   }
 
+  // THIS USES CUDD, but the results do not seem uniform??
+  //   // actually this is not bulletproof
+  //   private randomPickerInfo = {validForNode: null, supportPointer: null, support: null };
+  //   private initCuddRandomSolutionPicker(n: BDDNode) {
+  //     if (n !== this.randomPickerInfo.validForNode) {
+  //       this.bddModule._free(this.randomPickerInfo.supportPointer);
+  //       this.randomPickerInfo.supportPointer = this.bddModule._get_pointer_to_support(n);
+  //       this.randomPickerInfo.support = this.support(n);  // not very efficient… whatever
+  //       this.randomPickerInfo.validForNode = n;
+  //     }
+  //   }
+  //   //   /** this one uses cudd */
+  //   pickRandomSolution(bddNode: BDDNode, atoms: string[] = []): Valuation {
+  //     if (this.isFalse(bddNode)) throw new Error("Cannot pick a solution from FALSE");
+  //     let sol, atomsNotInSupport;
+  //     if (this.isTrue(bddNode)) {
+  //       sol = new Map();
+  //       atomsNotInSupport = atoms;
+  //     } else {
+  //       this.initCuddRandomSolutionPicker(bddNode);
+  //       const cube = this.bddModule._pick_random_solution(bddNode, this.randomPickerInfo.supportPointer, this.randomPickerInfo.support.length);
+  //       sol = this.cubeToAssignment(cube);
+  //       this.destroy(cube);
+  //       atomsNotInSupport = atoms.filter(a => ! this.randomPickerInfo.support.includes(a));
+  //     }
+  //     for (const a of atomsNotInSupport) {
+  //       sol.set(a, !!(Math.random() < 0.5));
+  //     }
+  //     return Valuation.buildFromMap(sol);
+  //   }
+
+
+
   /**
    * 
    * @param bddNode 
    * @param atoms an array of atoms, supposed to be a superset of the support of bddNode
    * @returns the number of solutions/valuations, whose support is atoms, that satisfies (i.e. makes it true) the bddNode
    *    */
-  countSolutions(bddNode: BDDNode, atoms?: string[]): number {
+  countSolutions_JS(bddNode: BDDNode, atoms?: string[]): number {
     const cache = new Map<BDDNode, { count: number, support: string[] }>();
     const countSolutionsRec = (n: BDDNode): { count: number, support: string[] } => {
       if (this.isFalse(n)) return { count: 0, support: [] };
@@ -354,7 +388,19 @@ export class BddService {
       atoms.forEach((atom: string) => {
         if (!support.includes(atom)) atomsMinusSupport.add(atom);
       });
-    return count * (2 ** atomsMinusSupport.size);
+    const res = count * (2 ** atomsMinusSupport.size);
+
+    //     /**** DEBUG ****/
+    //     console.log("comparing result with cudd:");
+    //     if (res !== this.countSolutionsCudd(bddNode, atoms)) throw new Error("PB!!!");
+    //     /***************/
+
+    return res;
+  }
+
+  countSolutions(bddNode: BDDNode, atoms?: string[]): number {
+    const nbvars = atoms !== undefined ? atoms.length : -1;
+    return this.bddModule._count_solutions(bddNode, nbvars);
   }
 
 
@@ -436,7 +482,26 @@ export class BddService {
     return this.applyAnd(literals);
   }
 
+  cubeToAssignment(n: BDDNode): Map<string, boolean> {
+    if (this.isFalse(n)) throw new Error("FALSE is not a cube");
+    if (this.isTrue(n)) return new Map<string, boolean>();
+    const x = this.getAtomOf(n);
+    const yes = this.getThenOf(n);
+    const no = this.getElseOf(n);
+    let sol;
+    if (this.isFalse(yes)) {
+      sol = this.cubeToAssignment(no); // it cannot be FALSE
+      sol.set(x, false);
+    } else {
+      if ( ! this.isFalse(no)) throw new Error("Too many solutions: this is not a cube");
+      sol = this.cubeToAssignment(yes); // it cannot be FALSE
+      sol.set(x, true);
+    }
+    return sol;
+  }
+
   toValuation(bddNode: BDDNode, atoms?: string[]): Valuation {
+    // TODO use cubeToAssignment ?…
     const sols = this.pickSolutions(bddNode, 2, atoms);
     if (sols.length === 0) throw new Error("FALSE is not a valuation");
     if (sols.length === 1) return sols[0];
