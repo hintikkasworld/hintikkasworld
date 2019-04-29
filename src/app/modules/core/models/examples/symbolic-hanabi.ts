@@ -11,6 +11,7 @@ import { ExplicitToSymbolic } from '../eventmodel/explicit-to-symbolic';
 import { EventModelAction } from './../environment/event-model-action';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
 import { SymbolicEventModel } from '../eventmodel/symbolic-event-model';
+import { SymbolicPublicAnnouncement } from '../eventmodel/symbolic-public-announcement'
 import { SymbolicEvent } from '../eventmodel/symbolic-event';
 import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositional-assignments-postcondition';
 import { BDD } from './../formula/bdd';
@@ -150,7 +151,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     /**
      * Number of cards in the game Hanabi
      */
-    static readonly nbCards: number = 6;
+    static readonly nbCards: number = 10;
 
     /**
      * Number of cards in hand
@@ -566,7 +567,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             return new SymbolicEventModel(that.agents, that.variables, events, agentRelations, name);
         }
 
-        function valueAnnoucement(agent:string, nbCards:number, value:number): SymbolicEventModel{
+        function valueAnnoucement(agent:string, nbCards:number, value:number): SymbolicPublicAnnouncement{
 
             //console.log(agent + " " + nbCards + " " + value)
 
@@ -591,6 +592,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             let events_bdd:  Map<string, BDDNode> = new Map<string, BDDNode>();
 
             let pre = new ExactlyFormula(nbCards, liste_var);
+            /*
             let pre_bdd = BDD.buildFromFormula(pre);
             //let support = BDD.bddService.support(pre_bdd)
 
@@ -607,12 +609,13 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             const arc = BDD.bddService.applyAnd([BDD.bddService.createCopy(events_bdd.get(name)), eventPrime]) 
 
             for(let agent of that.agents)
-                agentRelations.set(agent, arc);
+                agentRelations.set(agent, arc);*/
             
-            return new SymbolicEventModel(that.agents, that.variables, events, agentRelations, name);
+            return new SymbolicPublicAnnouncement(pre, that.agents)
+            //return new SymbolicEventModel(that.agents, that.variables, events, agentRelations, name);
         }
 
-        function colorAnnoucement(agent:string, nbCards:number, color:string): SymbolicEventModel{
+        function colorAnnoucement(agent:string, nbCards:number, color:string): SymbolicPublicAnnouncement{
 
             //console.log(agent + " " + nbCards + " " + color)
 
@@ -632,6 +635,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             let events_bdd:  Map<string, BDDNode> = new Map<string, BDDNode>();
 
             let pre = new ExactlyFormula(nbCards, liste_var);
+            /*
             let pre_bdd = BDD.buildFromFormula(pre);
             //let support = BDD.bddService.support(pre_bdd)
 
@@ -648,9 +652,10 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             const arc = BDD.bddService.applyAnd([BDD.bddService.createCopy(events_bdd.get(name)), eventPrime]) 
 
             for(let agent of that.agents)
-                agentRelations.set(agent, arc);
+                agentRelations.set(agent, arc);*/
             
-            return new SymbolicEventModel(that.agents, that.variables, events, agentRelations, name);
+            return new SymbolicPublicAnnouncement(pre, that.agents)
+            //return new SymbolicEventModel(that.agents, that.variables, events, agentRelations, name);
         }
         
 

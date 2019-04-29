@@ -325,11 +325,13 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             return this._query(all_worlds, new types.OrFormula([Knp, Kp]));
         }
         if (phi instanceof types.ExactlyFormula){
-            return BDD.bddService.applyAnd([BDD.buildFromFormula(phi), BDD.bddService.createCopy(all_worlds)])
+            //return BDD.bddService.applyAnd([BDD.buildFromFormula(phi), BDD.bddService.createCopy(all_worlds)])
+            return this._query(all_worlds, <types.ExactlyFormula>phi.convertToNormalFormula());
+
         }
 
         /* else */
-        throw new Error("Unknown instance of phi.");
+        throw new Error("Unknown instance of phi:" + JSON.stringify(phi));
     }
 
 
@@ -373,8 +375,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             relations.set(key, BDD.bddService.createCopy(value));
         });
         let formula = BDD.bddService.createCopy(this.formulaSetWorlds);
-        return new SymbolicEpistemicModel(relations, this.worldClass, this.agents, this.propositionalAtoms, this.propositionalPrimes, formula)
-
+        let clone = new SymbolicEpistemicModel(relations, this.worldClass, this.agents, this.propositionalAtoms, this.propositionalPrimes, formula)
+        clone.setPointedValuation(this.pointedValuation);
+        return clone;
     }
 
 }
