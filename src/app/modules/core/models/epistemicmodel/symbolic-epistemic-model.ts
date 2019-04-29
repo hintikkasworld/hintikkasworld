@@ -50,7 +50,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         let key = valuation.toString();
         if (this.worlds[key] == undefined)
             this.worlds[key] = new this.worldClass(valuation);
-        console.log("GET WORLD", this.worlds[key], this.worlds[key].valuation)
+        // console.log("GET WORLD", this.worlds[key], this.worlds[key].valuation)
         return this.worlds[key];
     }
 
@@ -121,17 +121,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     }
 
-    public clone(): SymbolicEpistemicModel {
-        const clone = new SymbolicEpistemicModel(
-            this.symbolicRelations, this.worldClass,
-            this.agents, this.propositionalAtoms,
-            this.propositionalPrimes, this.formulaSetWorlds
-        );
-        clone.setPointedValuation(this.pointedValuation);
-        return clone;
-    }
-
-    private constructor(relations: Map<string, BDDNode>, worldClass: WorldValuationType, agents: string[],
+    constructor(relations: Map<string, BDDNode>, worldClass: WorldValuationType, agents: string[],
         propositionalAtoms: string[], propositionalsPrimes: string[], formulaSetWorlds: BDDNode) {
 
         // console.log("Agents of SymbolicEpistemicModel", agents);
@@ -164,7 +154,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     getSuccessors(w: World, a: string): SymbolicSuccessorSet {
 
-        console.log("getSucessors", a, this.getAgentSymbolicRelation(a))
+        // console.log("getSucessors", a, this.getAgentSymbolicRelation(a))
 
         let props: Map<string, boolean> = SymbolicEpistemicModel.valuationToMap((<WorldValuation>w).valuation);
         //console.log("Props", props);
@@ -249,7 +239,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return BDD.bddService.isConsistent(res)
     }
 
-    public queryWorldsSatisfying(phi: Formula): BDDNode {
+    queryWorldsSatisfying(phi: Formula): BDDNode {
 
         let allWorlds = BDD.bddService.createFalse();
         this.symbolicRelations.forEach((value: BDDNode, key: string) => {
@@ -266,10 +256,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     private _query(all_worlds: BDDNode, phi: Formula): BDDNode {
-        //
-        // TODO this should be memoized!!!
-        //
-        
         // console.log("Query", bdd, phi)
 
         if (phi instanceof types.TrueFormula) { return BDD.bddService.createCopy(all_worlds); }
@@ -338,13 +324,14 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             );
             return this._query(all_worlds, new types.OrFormula([Knp, Kp]));
         }
-        if (phi instanceof types.ExactlyFormula) {
-            return this._query(all_worlds, <types.ExactlyFormula>phi.convertToNormalFormula());
+        if (phi instanceof types.ExactlyFormula){
+            return BDD.bddService.applyAnd([BDD.buildFromFormula(phi), BDD.bddService.createCopy(all_worlds)])
         }
 
         /* else */
-        throw new Error("Unknown instance of phi:" + JSON.stringify(phi));
+        throw new Error("Unknown instance of phi.");
     }
+
 
     /**
      * 
@@ -362,7 +349,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             }
 
         }
-        console.log("VALUATION TO FORMULA", valuation, literals)
+        // console.log("VALUATION TO FORMULA", valuation, literals)
         return new AndFormula(literals);
     }
 
@@ -377,6 +364,17 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             map.set(element, valuation.propositions[element]);
 
         return map;
+    }
+
+    clone(): SymbolicEpistemicModel{
+
+        let relations = new Map();
+        this.symbolicRelations.forEach((value: BDDNode, key: string) => {
+            relations.set(key, BDD.bddService.createCopy(value));
+        });
+        let formula = BDD.bddService.createCopy(this.formulaSetWorlds);
+        return new SymbolicEpistemicModel(relations, this.worldClass, this.agents, this.propositionalAtoms, this.propositionalPrimes, formula)
+
     }
 
 }
