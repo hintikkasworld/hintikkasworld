@@ -1,6 +1,6 @@
 import { EventModelAction } from './../environment/event-model-action';
 import { SymbolicPublicAnnouncement } from './../eventmodel/symbolic-public-announcement';
-import { ExactlyFormula, TrueFormula, AndFormula, AtomicFormula, NotFormula } from './../formula/formula';
+import { ExactlyFormula, TrueFormula, AndFormula, AtomicFormula, NotFormula, Formula } from './../formula/formula';
 import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
@@ -22,7 +22,7 @@ class Point2D {
 }
 
 
-function curryClass(SourceClass, arg1, arg2) {
+function curryClass(SourceClass, arg1, arg2, arg3) {
     var curriedArgs = Array.prototype.slice.call(arguments, 1);
 
     return function curriedConstructor() {
@@ -51,13 +51,19 @@ class MineSweeperWorld extends WorldValuation {
     static readonly yt = 0;
     readonly cellSize: number;
     static imgExplosion = MineSweeperWorld.getImage("bomb.png");
+    readonly clicked;
 
-    constructor(nbrows, nbcols, valuation: Valuation) {
+    constructor(nbrows, nbcols, clicked, valuation: Valuation) {
         super(valuation);
         this.nbrows = nbrows;
         this.nbcols = nbcols;
+        this.clicked = clicked;
         this.cellSize = Math.min(16, Math.min((64 - MineSweeperWorld.yt) / nbrows, (128 - MineSweeperWorld.xt) / nbcols));
         this.agentPos["a"] = { x: 16, y: 32, r: 16 };
+    }
+
+    isClicked(row, col) {
+        return this.clicked[row * (this.nbcols+1) + col];
     }
 
     draw(context: CanvasRenderingContext2D) {
@@ -66,18 +72,27 @@ class MineSweeperWorld extends WorldValuation {
         context.strokeStyle = "black";
         context.fillStyle = "lightgray";
         context.fillRect(MineSweeperWorld.xt, 0, this.nbcols * this.cellSize, this.nbrows * this.cellSize);
-        for (let x = 0; x <= this.nbcols; x++) {
+        for (let col = 0; col <= this.nbcols; col++) {
             context.beginPath();
-            context.moveTo(MineSweeperWorld.xt + x * this.cellSize, MineSweeperWorld.yt);
-            context.lineTo(MineSweeperWorld.xt + x * this.cellSize, MineSweeperWorld.yt + this.nbrows * this.cellSize);
+            context.moveTo(MineSweeperWorld.xt + col * this.cellSize, MineSweeperWorld.yt);
+            context.lineTo(MineSweeperWorld.xt + col * this.cellSize, MineSweeperWorld.yt + this.nbrows * this.cellSize);
             context.stroke();
         }
-        for (let y = 0; y <= this.nbrows; y++) {
+        for (let row = 0; row <= this.nbrows; row++) {
             context.beginPath();
-            context.moveTo(MineSweeperWorld.xt, MineSweeperWorld.yt + y * this.cellSize);
-            context.lineTo(MineSweeperWorld.xt + this.nbcols * this.cellSize, MineSweeperWorld.yt + y * this.cellSize);
+            context.moveTo(MineSweeperWorld.xt, MineSweeperWorld.yt + row * this.cellSize);
+            context.lineTo(MineSweeperWorld.xt + this.nbcols * this.cellSize, MineSweeperWorld.yt + row * this.cellSize);
             context.stroke();
         }
+
+        context.fillStyle = "orange";
+        for (let col = 1; col <= this.nbcols; col++) 
+        for (let row = 1; row <= this.nbrows; row++) 
+            if(this.isClicked(row, col))
+                context.fillRect(MineSweeperWorld.xt + (col-1) * this.cellSize, MineSweeperWorld.yt + (row-1) * this.cellSize,
+                    this.cellSize,
+                    this.cellSize);
+
 
         context.font = (this.cellSize - 2) + "px Verdana";
         let imgExplosionPadding = 0;
@@ -144,6 +159,7 @@ export class MineSweeper extends ExampleDescription {
     readonly nbcols: number;
     readonly nbrows: number;
     readonly nbmines: number;
+    clicked;
 
 
     constructor(nbrows: number, nbcols: number, nbmines: number) {
@@ -151,11 +167,15 @@ export class MineSweeper extends ExampleDescription {
         this.nbcols = nbcols;
         this.nbrows = nbrows;
         this.nbmines = nbmines;
+        this.clicked = {};
     }
 
 
     getName() {
-        return "Mine Sweeper " + this.nbrows + "×" + this.nbcols + " with " + this.nbmines + " mines";
+        if(this.nbrows == 8 && this.nbcols == 8 && this.nbmines == 10)
+            return "Minesweeper easy";
+        else
+            return "Minesweeper " + this.nbrows + "×" + this.nbcols + " with " + this.nbmines + " mines";
     }
 
 
@@ -176,16 +196,23 @@ export class MineSweeper extends ExampleDescription {
         return A;
     }
 
-
+    getCellsNeightbor(cell: Cell): Cell[] {
+        let A = [];
+        for (let y = Math.max(1, cell.row - 1); y <= Math.min(this.nbrows, cell.row + 1); y++)
+            for (let x = Math.max(1, cell.col - 1); x <= Math.min(this.nbcols, cell.col + 1); x++)
+                A.push({row: y, col: x});
+        return A;
+    }
 
     getWorldClass(): WorldValuationType {
-        return <WorldValuationType><unknown>curryClass(MineSweeperWorld, this.nbrows, this.nbcols);
+        return <WorldValuationType><unknown>curryClass(MineSweeperWorld, this.nbrows, this.nbcols, this.clicked);
     }
     /*
      * @returns the initial Kripke model of MineSweeper
      * where agent 2 only knows there are exactly two bombs.
      */
     getInitialEpistemicModel(): SymbolicEpistemicModel {
+        this.clicked = {};
         let rels = new Map();
         rels.set("a", new Obs([]));
 
@@ -205,7 +232,7 @@ export class MineSweeper extends ExampleDescription {
             for (let col = 1; col <= this.nbcols; col++)
                 A.push("m" + row + col);
 
-        M.addWorld("w", new MineSweeperWorld(this.nbrows, this.nbcols, new Valuation(A)));
+        M.addWorld("w", new MineSweeperWorld(this.nbrows, this.nbcols, {}, new Valuation(A)));
         M.makeCompleteRelation("a");
         M.setPointedWorld("w");
         return M;
@@ -227,12 +254,46 @@ export class MineSweeper extends ExampleDescription {
         return new Valuation(V);
     }
 
-    getWorldExample() { return new MineSweeperWorld(this.nbrows, this.nbcols, this.getValuationExample()); }
+    getWorldExample() { return new MineSweeperWorld(this.nbrows, this.nbcols, {}, this.getValuationExample()); }
 
     /*
      * event when the player clicks on the real world
      */
     onRealWorldClick(env: Environment, point) {
+        let getAnnouncement = (initCell: Cell) => {
+            let phis = [];
+            let visited = {};
+            let queue = [];
+            queue.push(initCell);
+            
+            while(queue.length > 0) {
+                let cell = queue.pop();
+                
+
+                if(visited[cell.row * (this.nbcols+1) + cell.col] == undefined) {
+                    visited[cell.row * (this.nbcols+1) + cell.col] = true;
+                    const hint = pointedWorld.getHint(cell);
+                    this.clicked[cell.row * (this.nbcols+1) + cell.col] = true;
+
+                    const phi = new AndFormula([new ExactlyFormula(hint, this.getPropositionsNeightbor(cell)),
+                        new NotFormula(new AtomicFormula("m" + cell.row + cell.col))]);
+
+                    phis.push(phi);
+                    if(hint == 0) {
+                        queue = queue.concat(this.getCellsNeightbor(cell));
+                       
+                    }
+                }
+            }
+
+            return new AndFormula(phis);
+        }
+        
+        
+        
+
+
+
         let M: SymbolicEpistemicModel = <SymbolicEpistemicModel>env.getEpistemicModel();
         let pointedWorld: MineSweeperWorld = <MineSweeperWorld>M.getPointedWorld();
 
@@ -245,10 +306,7 @@ export class MineSweeper extends ExampleDescription {
             env.setEpistemicModel(this.getMineSweeperGameOverKripkeModel());
         }
         else {
-            let hint = pointedWorld.getHint(cell);
-
-            const phi = new AndFormula([new ExactlyFormula(hint, this.getPropositionsNeightbor(cell)),
-            new NotFormula(new AtomicFormula("m" + cell.row + cell.col))]);
+            let phi = getAnnouncement(cell);
             //TODO SYMBOLIC PUBLIC ANNOUNCEMENT that the number of mines around cell is hint
             env.perform(new EventModelAction({
                 name: "give hint",

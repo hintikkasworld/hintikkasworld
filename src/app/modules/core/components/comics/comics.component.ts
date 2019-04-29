@@ -21,26 +21,26 @@ export class ComicsComponent implements OnInit {
 
   constructor() {
 
-    let comics = this;
-
-    function initGui() {
+ 
+    const initGui = () => {
       $('#explanationGUI').css({ top: 150, left: 50 });
       $('#canvasRealWorld').css({ top: 250, left: $('#canvas').width() / 2 - $('#canvasRealWorld').width() / 2 });
 
-      let comics = this;
+      
       let canvasRealWorld = (<HTMLCanvasElement>$('#canvasRealWorld')[0]);
 
-      canvasRealWorld.addEventListener("click", function (evt) {
+      canvasRealWorld.addEventListener("click", (evt) => {
 
-        if (!comics.modifyOpenWorldsClick.bind(comics)(0, canvasRealWorld, comics.env.getEpistemicModel().getPointedWorld())(evt)) {
-          let point = comics.getMousePos(canvasRealWorld, evt);
-          comics.env.getExampleDescription().onRealWorldClick(comics.env, point);
+        if (!this.modifyOpenWorldsClick(0, canvasRealWorld, this.env.getEpistemicModel().getPointedWorld())(evt)) {
+          let point = this.getMousePos(canvasRealWorld, evt);
+          this.env.getExampleDescription().onRealWorldClick(this.env, point);
+          
         }
       });
 
 
-      $('#canvasBackground').click(function () {
-        comics.openWorlds = []; comics.compute(0);
+      $('#canvasBackground').click( () => {
+        this.openWorlds = []; this.compute(0);
       });
     }
 
