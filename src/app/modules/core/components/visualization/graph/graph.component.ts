@@ -21,7 +21,7 @@ export class GraphComponent implements OnInit {
 
   graph: Graph;
 
-  private _options: { width, height } = { width: 500, height: 400 };
+  private readonly _options: { width, height } = { width: 500, height: 400 };
   constructor(private d3Service: D3Service) { }
 
   ngOnInit() {
@@ -64,10 +64,10 @@ export class GraphComponent implements OnInit {
   }
 
   get options() {
-    return this._options = {
+    return this._options;/* = {
       width: window.innerWidth,
       height: window.innerHeight
-    };
+    };*/
   }
 
 }

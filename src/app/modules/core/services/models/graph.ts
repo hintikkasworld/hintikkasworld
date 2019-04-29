@@ -15,11 +15,13 @@ export class Graph {
     public simulation: d3.Simulation<any, any>;
     public nodes: Node[] = [];
     public edges: Edge[] = [];
+    options;
 
 
     constructor(nodes, edges, options: { width, height} ){
         this.nodes = nodes;
         this.edges = edges;
+        this.options = options;
         this.initSimulation(options);
     }
 
