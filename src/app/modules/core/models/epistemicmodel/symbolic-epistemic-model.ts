@@ -1,3 +1,4 @@
+import { ExplicitEpistemicModel } from './explicit-epistemic-model';
 import { SymbolicSuccessorSet } from './symbolic-successor-set';
 import { EpistemicModel } from './epistemic-model';
 import { WorldValuation } from './world-valuation';
@@ -380,5 +381,17 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return clone;
     }
 
+    /**
+     * @returns an explicit epistemic model that is equivalent to the symbolic one.
+     * remark: should be called only if you know that the number of worlds in the symbolic model is small
+     */
+    toExplicit() : ExplicitEpistemicModel {
+        let M = new ExplicitEpistemicModel();
+        BDD.bddService.pickAllSolutions(this.formulaSetWorlds, this.propositionalAtoms);
+        return M;
+        }
+
+            
+            
 }
 

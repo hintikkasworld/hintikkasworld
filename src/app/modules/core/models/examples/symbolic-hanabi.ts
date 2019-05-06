@@ -151,7 +151,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     /**
      * Number of cards in the game Hanabi
      */
-    static readonly nbCards: number = 10;
+    static readonly nbCards: number = 6;
 
     /**
      * Number of cards in hand

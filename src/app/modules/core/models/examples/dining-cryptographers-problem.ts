@@ -18,9 +18,23 @@ class DiningCryptographersWorld extends WorldValuation {
         this.agentPos["c"] = { x: 128 - 16, y: 48, r: 16 };
     }
 
+    drawPaid(context: CanvasRenderingContext2D, x, y) {
+        context.beginPath();
+        context.strokeStyle = 'black';
+        context.fillStyle = "rgb(230, 230, 200)";
+        context.arc(x, y, 8, 0, Math.PI * 2);
+        context.stroke();
+        context.fill();
 
-    draw(context) {
+        context.fillStyle = 'black';
+        context.font = "12px Verdana";
+        context.fillText("$", x - 4, y +4);
 
+    }
+
+
+    draw(context: CanvasRenderingContext2D) {
+        context.clearRect(0, 0, 128, 64);
         context.fillStyle = 'blue';
         context.strokeStyle = 'blue';
         context.font = "10px Verdana";
@@ -28,7 +42,7 @@ class DiningCryptographersWorld extends WorldValuation {
             for (let b of ["a", "b", "c"])
                 if (a < b) {
                     if (this.modelCheck("flipDone")) {
-                        let bit = this.modelCheck("p" + a + b) ? 1 : 0;
+                        let bit = this.modelCheck("p" + a + b) ? "1" : "0";
                         context.fillText(bit, (this.agentPos[a].x + this.agentPos[b].x) / 2, (this.agentPos[a].y + this.agentPos[b].y) / 2 + 8);
                     }
                     context.beginPath();
@@ -39,16 +53,22 @@ class DiningCryptographersWorld extends WorldValuation {
 
 
         this.drawAgents(context);
+        context.fillStyle = 'black';
+        context.font = "8px Verdana";
+        for (let a of ["a", "b", "c"]) 
+            if (this.modelCheck(a + "p"))
+                this.drawPaid(context, this.agentPos[a].x , this.agentPos[a].y - 18);
 
+                if (this.modelCheck("nsa" + "p")) {
+                    context.fillText("NSA", 16, 8);
+
+                    this.drawPaid(context, 8 , 8);
+                }
         if (this.modelCheck("announcementDone")) {
-            context.fillStyle = 'black';
-            context.font = "12px Verdana";
+            
             for (let a of ["a", "b", "c"]) {
-                let bit = this.modelCheck(a + "ann") ? 1 : 0;
+                let bit = this.modelCheck(a + "ann") ? "1" : "0";
                 context.fillText(bit, this.agentPos[a].x - this.agentPos[a].r + 16, this.agentPos[a].y - 16);
-
-                if (this.modelCheck(a + "p"))
-                    context.fillText("$", this.agentPos[a].x - this.agentPos[a].r + 8, this.agentPos[a].y + 8);
             }
         }
 
@@ -60,7 +80,7 @@ class DiningCryptographersWorld extends WorldValuation {
 
 export class DiningCryptographersProblem implements ExampleDescription {
     getName() {
-        return "Dinon cryptographers Problem";
+        return "Dining cryptographers problem";
     }
 
 
@@ -88,7 +108,7 @@ export class DiningCryptographersProblem implements ExampleDescription {
 
         class ActionFlipBitFor implements Action {
             getName(): string {
-                return "Flip the blue bits shared by two bits.";
+                return "Flip the blue bits shared by two consecutive agents.";
             }
 
 
