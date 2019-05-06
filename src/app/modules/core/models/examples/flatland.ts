@@ -120,6 +120,7 @@ class FlatlandSuccessorSet implements SuccessorSet {
     private readonly w: FlatlandWorld;
     private readonly a: string;
     private readonly ckPositions: boolean;
+    private done : boolean;
 
     constructor(w: FlatlandWorld, a: string, ckPositions: boolean) {
         this.w = w;
@@ -137,7 +138,7 @@ class FlatlandSuccessorSet implements SuccessorSet {
 
 
     async getRandomSuccessor(): Promise<FlatlandWorld> {
-        function getSuccessor(w: FlatlandWorld, a: string): FlatlandWorld {
+        let getSuccessor = (w: FlatlandWorld, a: string): FlatlandWorld => {
             function testIfSuccessor(w: FlatlandWorld, u: FlatlandWorld) {
                 for (let agent in w.positions) {
                     if (!w.isSee(a, agent) && u.isSee(a, agent))
@@ -159,7 +160,8 @@ class FlatlandSuccessorSet implements SuccessorSet {
                         newPos[agent] = w.positions[agent];
                     else
                         newPos[agent] = { x: Math.random() * 128, y: Math.random() * 64 };
-                    newDir[agent] = Math.random() * 3.14 * 2;
+
+                    newDir[agent] = Math.random() * 3.14 * 2.0;
                 }
             }
 
@@ -184,6 +186,12 @@ class FlatlandSuccessorSet implements SuccessorSet {
     }
 
     async getSomeSuccessors() {
+        if (this.isSingleSuccessor()) {
+            if(this.done) return [];
+            this.done = true;
+            return [this.w];
+        }
+            
         let succs = [];
         for (let i = 0; i < 5; i++) {
             let u: FlatlandWorld = await this.getRandomSuccessor();
