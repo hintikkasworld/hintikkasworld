@@ -86,6 +86,11 @@
   background-color: #F7D64F;
 }
 
+
+.copyRealWorld {
+  border-bottom: solid 2px black;
+}
+
 .canvasWorld:hover {
   opacity: 0.9;
 }

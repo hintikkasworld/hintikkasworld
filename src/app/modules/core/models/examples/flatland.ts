@@ -119,10 +119,12 @@ class FlatlandWorld extends World {
 class FlatlandSuccessorSet implements SuccessorSet {
     private readonly w: FlatlandWorld;
     private readonly a: string;
+    private readonly ckPositions: boolean;
 
-    constructor(w: FlatlandWorld, a: string) {
+    constructor(w: FlatlandWorld, a: string, ckPositions: boolean) {
         this.w = w;
         this.a = a;
+        this.ckPositions = ckPositions;
     }
 
     getNumber(): number {
@@ -153,7 +155,10 @@ class FlatlandSuccessorSet implements SuccessorSet {
                     newDir[agent] = w.angle[agent];
                 }
                 else {
-                    newPos[agent] = { x: Math.random() * 128, y: Math.random() * 64 };
+                    if (this.ckPositions)
+                        newPos[agent] = w.positions[agent];
+                    else
+                        newPos[agent] = { x: Math.random() * 128, y: Math.random() * 64 };
                     newDir[agent] = Math.random() * 3.14 * 2;
                 }
             }
@@ -200,11 +205,16 @@ class FlatlandEpistemicModel implements EpistemicModel {
         { a: { x: 10, y: 30 }, b: { x: 50, y: 30 }, c: { x: 70, y: 50 } },
         { a: 0, b: Math.PI / 4, c: Math.PI / 2 });
 
+    readonly ckPositions: boolean;
+    constructor(ckPositions: boolean) {
+        this.ckPositions = ckPositions;
+    }
+
     getPointedWorld(): World { return FlatlandEpistemicModel.pointedWorld; }
     getAgents(): string[] { return ["a", "b", "c"]; }
 
     getSuccessors(w: FlatlandWorld, a: string): SuccessorSet {
-        return new FlatlandSuccessorSet(w, a);
+        return new FlatlandSuccessorSet(w, a, this.ckPositions);
     }
 
     check(formula: Formula) {
@@ -216,8 +226,19 @@ class FlatlandEpistemicModel implements EpistemicModel {
 
 
 export class Flatland implements ExampleDescription {
-    getName() { return "Flatland"; }
-    getInitialEpistemicModel(): EpistemicModel { return new FlatlandEpistemicModel(); }
+    readonly ckPositions: boolean;
+
+    constructor(ckPositions: boolean) {
+        this.ckPositions = ckPositions;
+    }
+
+    getName() {
+        if (this.ckPositions)
+            return "Flatland with common knowledge of the positions";
+        else
+            return "Flatland";
+    }
+    getInitialEpistemicModel(): EpistemicModel { return new FlatlandEpistemicModel(this.ckPositions); }
     getActions() { return []; }
     getWorldExample(): World { return FlatlandEpistemicModel.pointedWorld; }
     onRealWorldClick(env: Environment, point: any): void { }

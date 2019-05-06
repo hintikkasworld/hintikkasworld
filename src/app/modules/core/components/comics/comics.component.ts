@@ -337,7 +337,11 @@ export class ComicsComponent implements OnInit {
           if (levelContainer.children().length != 0)
             levelContainer.append('<div class="orBetweenWorlds"> or </div>');
 
+          
           let canvasWorld = comics.getNewCanvas();
+
+          if(u == comics.openWorlds[level-1].world)
+            $(canvasWorld).addClass("copyRealWorld");
           comics.canvasFromWorld[level].set(u, canvasWorld);
           levelContainer.append(canvasWorld);
 

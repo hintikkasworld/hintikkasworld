@@ -1,3 +1,4 @@
+import { CommonknowledgeStrictlyMoreExpressive } from './../core/models/examples/commonknowledge-strictly-more-expressive';
 import { DiningCryptographersProblem } from './../core/models/examples/dining-cryptographers-problem';
 import { Hats } from './../core/models/examples/hats';
 import { NanoHanabi } from './../core/models/examples/nanohanabi';
@@ -29,12 +30,14 @@ export class MenuComponent implements OnInit {
 
   explicitExamples = [new Simple(), new MuddyChildren(), new SallyAndAnn(), new Hats(), new DiningCryptographersProblem(),
   new ConsecutiveNumbers(), new NanoHanabi(),
-  new Cherylsbirthday(), new LinesBirthday(), new CellularAutomaton()];
+  new Cherylsbirthday(), new LinesBirthday()];
 
   symbolicExamples = [new SymbolicSimpleExample(), new MineSweeper(2, 2, 1),  new MineSweeper(5, 6, 15), new MineSweeper(8, 8, 10), new MineSweeper(8, 10, 3), 
     new MineSweeper(10, 10, 6),
     new MineSweeper(16,16, 40), 
-    new MineSweeper(12, 15, 20), new Belote(), new SimpleSymbolicHanabi(), new Flatland()];
+    new MineSweeper(12, 15, 20), new Belote(), new SimpleSymbolicHanabi(),  new Flatland(false), new Flatland(true)];
+
+  technicalExamples = [new CommonknowledgeStrictlyMoreExpressive(), new CellularAutomaton()];
   
   openExampleDescription(exampleDescription: ExampleDescription) {
     this.exampleService.setExampleDescription(exampleDescription);

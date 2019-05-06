@@ -14,7 +14,7 @@ import { World } from '../epistemicmodel/world';
  * @returns a state corresponding to the muddy children puzzle
  * @example new MuddyChildrenWorld(["ma", "mb"])
  * */
-class SimpleWorld extends WorldValuation {
+export class SimpleWorld extends WorldValuation {
     static basketImg = SimpleWorld.getImage("basket.svg");
     static basketWithMarbleImg = SimpleWorld.getImage("basket_with_marble.svg");
     static proposition = "p";
