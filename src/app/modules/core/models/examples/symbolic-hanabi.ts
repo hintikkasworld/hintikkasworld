@@ -114,7 +114,7 @@ class SimpleHanabiWorld extends WorldValuation {
         for (let agent of environment.agents) {
             const hand = this.state.handCardsByAgent.get(agent);
             const cardGUI = SimpleHanabiWorld.getCardUnderCursor(cursor, agent, this.agentHandPos[agent], hand);
-            
+
             if (cardGUI)
                 return cardGUI;
         }
@@ -390,7 +390,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     * @param value value of card
     * @param prime if a use primed variables
     */
-        function precondition_symbolic_transfert(pos1: string, pos2: string, value: number): Formula {
+        let precondition_symbolic_transfert = (pos1: string, pos2: string, value: number): Formula => {
             let var1 = SimpleSymbolicHanabi.getVarName(pos1, value)
             let var2 = SimpleSymbolicHanabi.getVarName(pos2, value)
             return new AndFormula([new AtomicFormula(var1), new NotFormula(new AtomicFormula(var2))])
@@ -403,7 +403,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
           * @param pos2 second possessor
           * @param value value of card
           */
-        function symbolic_transfert_card(pos1: string, pos2: string, value: number): BDDNode {
+        let symbolic_transfert_card = (pos1: string, pos2: string, value: number): BDDNode => {
             // var_pos1_value && not var_post2_value
             let var1 = SimpleSymbolicHanabi.getVarName(pos1, value)
             let var2 = SimpleSymbolicHanabi.getVarName(pos2, value)
@@ -469,7 +469,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
 
 
-        
+
 
         function valueAnnoucement(agent: string, nbCards: number, value: number): SymbolicPublicAnnouncement {
 
@@ -541,7 +541,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         }*/
 
 
-       
+
 
         /* Value announce */
         for (let agent of this.agents) {
@@ -578,22 +578,24 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
 
     onRealWorldClick(env: Environment, point: { x: number; y: number; }) {
-        let w = <SimpleHanabiWorld> env.getEpistemicModel().getPointedWorld();
+        let w = <SimpleHanabiWorld>env.getEpistemicModel().getPointedWorld();
         let card = w.getCardUnderCursor(point);
-        env.perform(new EventModelAction({
-            name: "Agent " + card.agent + " plays " + card.nb + ".",
-            eventModel: this.getEventModelPlay(card.agent, card.nb, "p")
+        if (card != undefined)
+            env.perform(new EventModelAction({
+                name: "Agent " + card.agent + " plays " + card.nb + ".",
+                eventModel: this.getEventModelPlay(card.agent, card.nb, "p")
             }));
     }
 
 
     onRealWorldClickRight(env: Environment, point: { x: number; y: number; }) {
-        let w = <SimpleHanabiWorld> env.getEpistemicModel().getPointedWorld();
+        let w = <SimpleHanabiWorld>env.getEpistemicModel().getPointedWorld();
         let card = w.getCardUnderCursor(point);
 
-        env.perform(new EventModelAction({
-            name: "Agent " + card.agent + " discards " + card.nb + ".",
-            eventModel: this.getEventModelPlay(card.agent, card.nb, "e")
+        if (card != undefined)
+            env.perform(new EventModelAction({
+                name: "Agent " + card.agent + " discards " + card.nb + ".",
+                eventModel: this.getEventModelPlay(card.agent, card.nb, "e")
             }));
     }
 }
