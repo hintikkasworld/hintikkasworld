@@ -50,8 +50,8 @@ class SimpleHanabiWorld extends WorldValuation {
         this.agentPos["c"] = { x: 64, y: 48, r: 8 };
         this.agentPos["d"] = { x: 20, y: 32, r: 8 };
 
-        this.agentHandPos["a"] = { x: 64 - SimpleHanabiWorld.cardNumber / 2 * SimpleHanabiWorld.cardWidth, y: 0, horizontal: true};
-        this.agentHandPos["b"] = { x: 128 - SimpleHanabiWorld.cardWidth, y: 10, horizontal: false};
+        this.agentHandPos["a"] = { x: 64 - SimpleHanabiWorld.cardNumber / 2 * SimpleHanabiWorld.cardWidth, y: 0, horizontal: true };
+        this.agentHandPos["b"] = { x: 128 - SimpleHanabiWorld.cardWidth, y: 10, horizontal: false };
         this.agentHandPos["c"] = { x: 64 - SimpleHanabiWorld.cardNumber / 2 * SimpleHanabiWorld.cardWidth, y: 56, horizontal: true };
         this.agentHandPos["d"] = { x: 0, y: 10, horizontal: false };
 
@@ -61,61 +61,63 @@ class SimpleHanabiWorld extends WorldValuation {
 
     }
 
-    static drawHanabiCardArray(context: CanvasRenderingContext2D, pos: {x: number, y: number, horizontal: boolean}, cards: number[], allVisible: boolean = true) {
-      const dx = pos.horizontal ? (allVisible ? 2 * SimpleHanabiWorld.cardWidth : SimpleHanabiWorld.cardWidth / 2) : 0;
-      const dy = pos.horizontal ? 0 : (allVisible ? SimpleHanabiWorld.cardHeight : SimpleHanabiWorld.cardHeight / 2);
-      console.log("drawing cards: ", cards);
-      for (const [posInHand, card] of Array.from(cards.entries())) {
-        SimpleHanabiWorld.drawCard(context, {
-            x: pos.x + posInHand * dx, y: pos.y + posInHand * dy, w: SimpleHanabiWorld.cardWidth,
-            h: SimpleHanabiWorld.cardHeight, fontSize: 6, background: SimpleSymbolicHanabi.getCardSuit(card), text: SimpleSymbolicHanabi.getCardValue(card),
-        });
-      }
-    }
-
-    draw(context: CanvasRenderingContext2D) {
-      console.log("DBRAWING WORLD with state", this.state);
-      SimpleHanabiWorld.drawHanabiCardArray(context, {x: 200, y: 0, horizontal: false},  this.state.discardedCards);
-      const colorDy = SimpleHanabiWorld.cardHeight;
-      let colorY = 200;
-      for (const color of SimpleSymbolicHanabi.colors) {
-        SimpleHanabiWorld.drawHanabiCardArray(context, {x: 80, y: colorY, horizontal: true},  this.state.playedCardsByColor.get(color), false);
-        colorY += colorDy;
-      }
-      SimpleHanabiWorld.drawHanabiCardArray(context, {x: 0, y: colorY, horizontal: true},  this.state.stackCards);
-      
-      for (let agent of environment.agents) {
-        const hand = this.state.handCardsByAgent.get(agent);
-        SimpleHanabiWorld.drawHanabiCardArray(context, this.agentHandPos[agent], hand);
-      }
-      this.drawAgents(context);
-    }
-
-    static getCardUnderCursor(cursor: Point, pos: {x: number, y: number, horizontal: boolean}, cards: number[], allVisible: boolean = true) {
+    static drawHanabiCardArray(context: CanvasRenderingContext2D, pos: { x: number, y: number, horizontal: boolean }, cards: number[], allVisible: boolean = true) {
         const dx = pos.horizontal ? (allVisible ? 2 * SimpleHanabiWorld.cardWidth : SimpleHanabiWorld.cardWidth / 2) : 0;
         const dy = pos.horizontal ? 0 : (allVisible ? SimpleHanabiWorld.cardHeight : SimpleHanabiWorld.cardHeight / 2);
         console.log("drawing cards: ", cards);
         for (const [posInHand, card] of Array.from(cards.entries())) {
-            
-          let cardGUI = {
-              x: pos.x + posInHand * dx, y: pos.y + posInHand * dy, w: SimpleHanabiWorld.cardWidth,
-              h: SimpleHanabiWorld.cardHeight, fontSize: 6, background: SimpleSymbolicHanabi.getCardSuit(card), text: SimpleSymbolicHanabi.getCardValue(card),
-          };
-          if(cardGUI.x <= cursor.x && cursor.x < cardGUI.x + cardGUI.w && 
-            cardGUI.y <= cursor.y && cursor.y < cardGUI.y + cardGUI.h ) 
-            return cardGUI;
+            SimpleHanabiWorld.drawCard(context, {
+                x: pos.x + posInHand * dx, y: pos.y + posInHand * dy, w: SimpleHanabiWorld.cardWidth,
+                h: SimpleHanabiWorld.cardHeight, fontSize: 6, background: SimpleSymbolicHanabi.getCardSuit(card), text: SimpleSymbolicHanabi.getCardValue(card),
+            });
         }
-        return undefined;
-      }
+    }
 
+    draw(context: CanvasRenderingContext2D) {
+        console.log("DBRAWING WORLD with state", this.state);
+        SimpleHanabiWorld.drawHanabiCardArray(context, { x: 200, y: 0, horizontal: false }, this.state.discardedCards);
+        const colorDy = SimpleHanabiWorld.cardHeight;
+        let colorY = 200;
+        for (const color of SimpleSymbolicHanabi.colors) {
+            SimpleHanabiWorld.drawHanabiCardArray(context, { x: 80, y: colorY, horizontal: true }, this.state.playedCardsByColor.get(color), false);
+            colorY += colorDy;
+        }
+        SimpleHanabiWorld.drawHanabiCardArray(context, { x: 0, y: colorY, horizontal: true }, this.state.stackCards);
 
-    getActionUnderCursor(cursor : Point) {
         for (let agent of environment.agents) {
             const hand = this.state.handCardsByAgent.get(agent);
-            const cardGUI = SimpleHanabiWorld.getCardUnderCursor(cursor, this.agentHandPos[agent], hand);
-            if(cardGUI)
+            SimpleHanabiWorld.drawHanabiCardArray(context, this.agentHandPos[agent], hand);
+        }
+        this.drawAgents(context);
+    }
+
+    static getCardUnderCursor(cursor: Point, agent: string, pos: { x: number, y: number, horizontal: boolean }, cards: number[], allVisible: boolean = true) {
+        const dx = pos.horizontal ? (allVisible ? 2 * SimpleHanabiWorld.cardWidth : SimpleHanabiWorld.cardWidth / 2) : 0;
+        const dy = pos.horizontal ? 0 : (allVisible ? SimpleHanabiWorld.cardHeight : SimpleHanabiWorld.cardHeight / 2);
+        console.log("drawing cards: ", cards);
+        for (const [posInHand, card] of Array.from(cards.entries())) {
+
+            let cardGUI = {
+                agent: agent,
+                x: pos.x + posInHand * dx, y: pos.y + posInHand * dy, w: SimpleHanabiWorld.cardWidth,
+                h: SimpleHanabiWorld.cardHeight, fontSize: 6, background: SimpleSymbolicHanabi.getCardSuit(card), text: SimpleSymbolicHanabi.getCardValue(card), nb: card
+            };
+            if (cardGUI.x <= cursor.x && cursor.x < cardGUI.x + cardGUI.w &&
+                cardGUI.y <= cursor.y && cursor.y < cardGUI.y + cardGUI.h)
                 return cardGUI;
-          } 
+        }
+        return undefined;
+    }
+
+
+    getCardUnderCursor(cursor: Point) {
+        for (let agent of environment.agents) {
+            const hand = this.state.handCardsByAgent.get(agent);
+            const cardGUI = SimpleHanabiWorld.getCardUnderCursor(cursor, agent, this.agentHandPos[agent], hand);
+            
+            if (cardGUI)
+                return cardGUI;
+        }
         return undefined;
     }
 
@@ -127,46 +129,46 @@ class SimpleHanabiWorld extends WorldValuation {
  */
 class HanabiState {
 
-  /**
-   * Assume that the valuation given does not encode an impossible state, e.g. a card being in two hands at once.
-   * If true, the construction is more efficient (we do not loop over all owners
-   * for each card), but for debugging purposes it is useful to set it to false,
-   * in which case the state built will be an impossible state and an error will be logged (but not thrown).
-   */
-  public static readonly ASSUME_STATE_IS_POSSIBLE = false;
+    /**
+     * Assume that the valuation given does not encode an impossible state, e.g. a card being in two hands at once.
+     * If true, the construction is more efficient (we do not loop over all owners
+     * for each card), but for debugging purposes it is useful to set it to false,
+     * in which case the state built will be an impossible state and an error will be logged (but not thrown).
+     */
+    public static readonly ASSUME_STATE_IS_POSSIBLE = false;
 
-  public playedCardsByColor = new Map<string, number[]>();
-  public discardedCards = new Array<number>();
-  public stackCards = new Array<number>();
-  public handCardsByAgent = new Map<string, number[]>();
+    public playedCardsByColor = new Map<string, number[]>();
+    public discardedCards = new Array<number>();
+    public stackCards = new Array<number>();
+    public handCardsByAgent = new Map<string, number[]>();
 
-  constructor(world: Valuation, agents: string[], colors: string[]) {
-    for (const a of agents) this.handCardsByAgent.set(a, []);
-    for (const c of colors) this.playedCardsByColor.set(c, []);
-    const ownerHasCard = (owner: string, card: number) => world.isPropositionTrue(SimpleSymbolicHanabi.getVarName(owner, card));
-    for (let card = 0; card < SimpleSymbolicHanabi.nbCards; card++) {
-      if (ownerHasCard("p", card)) {
-        this.stackCards.push(card);
-        if (HanabiState.ASSUME_STATE_IS_POSSIBLE) continue;
-      }
-      if (ownerHasCard("e", card)) {
-        this.discardedCards.push(card);
-        if (HanabiState.ASSUME_STATE_IS_POSSIBLE) continue;
-      }
-      if (ownerHasCard("t", card)) {
-        const suit = SimpleSymbolicHanabi.getCardSuit(card);
-        if ( ! this.playedCardsByColor.has(suit)) this.playedCardsByColor.set(suit, []);
-        this.playedCardsByColor.get(suit).push(card);
-        if (HanabiState.ASSUME_STATE_IS_POSSIBLE) continue;
-      }
-      for (const a of agents) {
-        if (ownerHasCard(a, card)) {
-          this.handCardsByAgent.get(a).push(card);
-          if (HanabiState.ASSUME_STATE_IS_POSSIBLE) break;
+    constructor(world: Valuation, agents: string[], colors: string[]) {
+        for (const a of agents) this.handCardsByAgent.set(a, []);
+        for (const c of colors) this.playedCardsByColor.set(c, []);
+        const ownerHasCard = (owner: string, card: number) => world.isPropositionTrue(SimpleSymbolicHanabi.getVarName(owner, card));
+        for (let card = 0; card < SimpleSymbolicHanabi.nbCards; card++) {
+            if (ownerHasCard("p", card)) {
+                this.stackCards.push(card);
+                if (HanabiState.ASSUME_STATE_IS_POSSIBLE) continue;
+            }
+            if (ownerHasCard("e", card)) {
+                this.discardedCards.push(card);
+                if (HanabiState.ASSUME_STATE_IS_POSSIBLE) continue;
+            }
+            if (ownerHasCard("t", card)) {
+                const suit = SimpleSymbolicHanabi.getCardSuit(card);
+                if (!this.playedCardsByColor.has(suit)) this.playedCardsByColor.set(suit, []);
+                this.playedCardsByColor.get(suit).push(card);
+                if (HanabiState.ASSUME_STATE_IS_POSSIBLE) continue;
+            }
+            for (const a of agents) {
+                if (ownerHasCard(a, card)) {
+                    this.handCardsByAgent.get(a).push(card);
+                    if (HanabiState.ASSUME_STATE_IS_POSSIBLE) break;
+                }
+            }
         }
-      }
     }
-  }
 }
 
 
@@ -226,8 +228,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     public static readonly colors = ["white", "red", "blue", "yellow", "green"]
 
     static getCardValue(card: number): string {
-      //return [1, 1, 1, 2, 2, 3, 3, 4, 4, 5][card % 10].toString();
-      return card.toString();
+        //return [1, 1, 1, 2, 2, 3, 3, 4, 4, 5][card % 10].toString();
+        return card.toString();
     }
     static getCardSuit(card: number): string { return SimpleSymbolicHanabi.colors[card / 10]; }
 
@@ -302,11 +304,11 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         let rules = new AndFormula(liste_rules);
 
         // BEGIN WORLD
-        
+
         let propositions: { [id: string]: boolean } = {};
         // distribution of cards between agents
         let cards: number[] = []
-        for(let c=0; c<SimpleSymbolicHanabi.nbCards; c++)
+        for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++)
             cards.push(c)
 
         function shuffleArray(array) {
@@ -316,20 +318,20 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             }
         }
 
-        if(this.random_distribution)
+        if (this.random_distribution)
             shuffleArray(cards)
 
-        for(let i=0; i<cards.length; i++){
+        for (let i = 0; i < cards.length; i++) {
             let c = cards[i]
-            if(i<this.nbCardsInHand_Begin * this.agents.length){
+            if (i < this.nbCardsInHand_Begin * this.agents.length) {
                 let agent = this.agents[i % this.agents.length];
                 propositions[SimpleSymbolicHanabi.getVarName(agent, c)] = true;
-            }else{
+            } else {
                 // in the draw
                 propositions[SimpleSymbolicHanabi.getVarName("p", c)] = true;
             }
         }
-        
+
         // others proposition as false
         variables.forEach((variable) => {
             if (!(variable in propositions)) {
@@ -379,38 +381,29 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     }
 
 
-
-    getActions() {
-        if (this.actions !== undefined) return this.actions;
-
-        const listActions: EventModelAction[] = [];
-
-        const that = this;
-
-        
-
+    getEventModelPlay(agent: string, card: number, destination: string): SymbolicEventModel {
         /**
-         * Get Formula var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value
-         * This formula swap two variables between worlds and posted world.
-         * @param pos1 first possessor
-         * @param pos2 second possessor
-         * @param value value of card
-         * @param prime if a use primed variables
-         */
+    * Get Formula var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value
+    * This formula swap two variables between worlds and posted world.
+    * @param pos1 first possessor
+    * @param pos2 second possessor
+    * @param value value of card
+    * @param prime if a use primed variables
+    */
         function precondition_symbolic_transfert(pos1: string, pos2: string, value: number): Formula {
             let var1 = SimpleSymbolicHanabi.getVarName(pos1, value)
             let var2 = SimpleSymbolicHanabi.getVarName(pos2, value)
             return new AndFormula([new AtomicFormula(var1), new NotFormula(new AtomicFormula(var2))])
         }
 
-       /**
-         * Get BDDNode Equivalent to : "var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value", with frame
-         * This formula swap two variables between worlds and posted world.
-         * @param pos1 first possessor
-         * @param pos2 second possessor
-         * @param value value of card
-         */
-        function symbolic_transfert_card(pos1: string, pos2: string, value: number): BDDNode{
+        /**
+          * Get BDDNode Equivalent to : "var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value", with frame
+          * This formula swap two variables between worlds and posted world.
+          * @param pos1 first possessor
+          * @param pos2 second possessor
+          * @param value value of card
+          */
+        function symbolic_transfert_card(pos1: string, pos2: string, value: number): BDDNode {
             // var_pos1_value && not var_post2_value
             let var1 = SimpleSymbolicHanabi.getVarName(pos1, value)
             let var2 = SimpleSymbolicHanabi.getVarName(pos2, value)
@@ -423,7 +416,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             const postBdd = BDD.buildFromFormula(new AndFormula([pre, post]));
             //console.log("postBdd = ", BDD.bddService.pickAllSolutions(postBdd));
 
-            const list_var: string[] = that.variables.filter(
+            const list_var: string[] = this.variables.filter(
                 vari => (vari != var1 && vari != var2)
             )
             let frame = SymbolicEventModel.frame(list_var, false);
@@ -432,41 +425,53 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             return res;
         }
 
+        function getName(agent, card) {
+            if (destination == "p")
+                return agent + " plays " + card;
+            return agent + " discards " + card;
+        }
+
+        const events = new Map<string, SymbolicEvent<BDDNode>>();
+        const agentRelations = new Map<string, BDDNode>();
+        let events_bdd: Map<string, BDDNode> = new Map<string, BDDNode>();
+
+        const pre = precondition_symbolic_transfert(agent, destination, card)
+        const bdd_transfert = symbolic_transfert_card(agent, destination, card)
+        const name = getName(agent, card);
+
+        events.set(name, new SymbolicEvent(pre, bdd_transfert));
+        events_bdd.set(name, bdd_transfert)
+
+        let transfert = SymbolicEpistemicModel.getMapNotPrimeToPrime(this.variables.concat(this.variables.map(v => SymbolicEventModel.getPostedVarName(v))));
+
+        const eventPrime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(events_bdd.get(name)), transfert);
+        const arc = BDD.bddService.applyAnd([BDD.bddService.createCopy(events_bdd.get(name)), eventPrime])
+
+        for (let agent of this.agents)
+            agentRelations.set(agent, arc);
+
+        return new SymbolicEventModel(this.agents, this.variables, events, agentRelations, name);
+    }
+
+    getActions() {
+        if (this.actions !== undefined) return this.actions;
+
+        const listActions: EventModelAction[] = [];
+
+        const that = this;
+
+
+
+
+
         const cacheDrawSymbolic = new Map<string, SymbolicEventModel>();
         let cacheDrawAction = new Map<string, SymbolicEventModel>();
 
-       
 
-        function play(agent: string, card: number, destination: string): SymbolicEventModel {
-            function getName(agent, card){
-                if(destination=="p")
-                    return agent + " plays " + card;
-                return agent + " discards " + card;
-            }
 
-            const events = new Map<string, SymbolicEvent<BDDNode>>();
-            const agentRelations = new Map<string, BDDNode>();
-            let events_bdd:  Map<string, BDDNode> = new Map<string, BDDNode>();
+        
 
-            const pre = precondition_symbolic_transfert(agent, destination, card)
-            const bdd_transfert = symbolic_transfert_card(agent, destination, card)
-            const name = getName(agent, card);
-
-            events.set(name, new SymbolicEvent(pre, bdd_transfert));
-            events_bdd.set(name, bdd_transfert)
-
-            let transfert = SymbolicEpistemicModel.getMapNotPrimeToPrime(that.variables.concat(that.variables.map(v => SymbolicEventModel.getPostedVarName(v))));
-            
-            const eventPrime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(events_bdd.get(name)), transfert);
-            const arc = BDD.bddService.applyAnd([BDD.bddService.createCopy(events_bdd.get(name)), eventPrime]) 
-
-            for(let agent of that.agents)
-                agentRelations.set(agent, arc);
-            
-            return new SymbolicEventModel(that.agents, that.variables, events, agentRelations, name);
-        }
-
-        function valueAnnoucement(agent:string, nbCards:number, value:number): SymbolicPublicAnnouncement{
+        function valueAnnoucement(agent: string, nbCards: number, value: number): SymbolicPublicAnnouncement {
 
             // console.log("ValueAnnoucement " + agent + " has " + nbCards + " card(s) of value '" + value + "'")
 
@@ -475,8 +480,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             let sum = [0, 3, 5, 7, 9]
             for (var color = 0; color < that.nb_colors; color++) {
                 for (var c = 0; c < nbcardsbyvalue[value - 1]; c++) {
-                    const n = c + (10 * color) + sum[value-1]
-                    if(n<SimpleSymbolicHanabi.nbCards)
+                    const n = c + (10 * color) + sum[value - 1]
+                    if (n < SimpleSymbolicHanabi.nbCards)
                         liste_var.push(SimpleSymbolicHanabi.getVarName(agent, n));
                 };
             }
@@ -484,25 +489,25 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             let pre = new ExactlyFormula(nbCards, liste_var);
 
             // console.log(liste_var)
-            
+
             return new SymbolicPublicAnnouncement(pre, that.agents)
             //return new SymbolicEventModel(that.agents, that.variables, events, agentRelations, name);
         }
 
-        function colorAnnoucement(agent:string, nbCards:number, color:string): SymbolicPublicAnnouncement{
+        function colorAnnoucement(agent: string, nbCards: number, color: string): SymbolicPublicAnnouncement {
 
             //console.log(agent + " " + nbCards + " " + color)
 
             let liste_var = [];
 
-            
+
             const id_c = SimpleSymbolicHanabi.colors.indexOf(color)
-            for (var c = 0; c < 10; c++){
-                let n = id_c*10+c;
-                if(n<SimpleSymbolicHanabi.nbCards)
+            for (var c = 0; c < 10; c++) {
+                let n = id_c * 10 + c;
+                if (n < SimpleSymbolicHanabi.nbCards)
                     liste_var.push(SimpleSymbolicHanabi.getVarName(agent, n));
             }
-            
+
             // console.log("colorAnnoucement", agent, nbCards, color, liste_var)
 
             let pre = new ExactlyFormula(nbCards, liste_var);
@@ -510,7 +515,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             return new SymbolicPublicAnnouncement(pre, that.agents)
             //return new SymbolicEventModel(that.agents, that.variables, events, agentRelations, name);
         }
-        
+
 
 
         /* DRAWS */
@@ -535,31 +540,13 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             // break;
         }*/
 
-        
-        /* play */
-        for (let agent of this.agents) {
-            for (var nb = 0; nb < SimpleSymbolicHanabi.nbCards; nb++) { 
-                listActions.push(new EventModelAction({
-                    name: "Agent " + agent + " plays " + nb + ".",
-                    eventModel: play(agent, nb, "p")
-                }));
-            }
-        }
 
-        /* discard */
-        for (let agent of this.agents) {
-            for (var nb = 0; nb < SimpleSymbolicHanabi.nbCards; nb++) { 
-                listActions.push(new EventModelAction({
-                    name: "Agent " + agent + " discards " + nb + ".",
-                    eventModel: play(agent, nb, "e")
-                }));
-            }
-        }
+       
 
         /* Value announce */
         for (let agent of this.agents) {
-            for (var value = 1; value < 6; value++) { 
-                for (var nb = 1; nb < 2; nb++) { 
+            for (var value = 1; value < 6; value++) {
+                for (var nb = 1; nb < 2; nb++) {
                     listActions.push(new EventModelAction({
                         name: "Agent " + agent + " has " + nb + "  '" + value + "' card(s).",
                         eventModel: valueAnnoucement(agent, nb, value)
@@ -572,9 +559,9 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         /* Color annouce */
         for (let agent of this.agents) {
-            for (var color = 0; color < this.nb_colors; color++) { 
+            for (var color = 0; color < this.nb_colors; color++) {
                 let color_string = SimpleSymbolicHanabi.colors[color]
-                for (var nb = 1; nb < 6; nb++) { 
+                for (var nb = 1; nb < 6; nb++) {
                     listActions.push(new EventModelAction({
                         name: "Agent " + agent + " has " + nb + " " + color_string + " card(s).",
                         eventModel: colorAnnoucement(agent, nb, color_string)
@@ -585,17 +572,28 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         console.log(listActions);
         this.actions = listActions;
         return listActions;
-        
+
     }
 
 
 
-    onRealWorldClick(env: Environment, point: { x: number; y: number; })  {
-
+    onRealWorldClick(env: Environment, point: { x: number; y: number; }) {
+        let w = <SimpleHanabiWorld> env.getEpistemicModel().getPointedWorld();
+        let card = w.getCardUnderCursor(point);
+        env.perform(new EventModelAction({
+            name: "Agent " + card.agent + " plays " + card.nb + ".",
+            eventModel: this.getEventModelPlay(card.agent, card.nb, "p")
+            }));
     }
 
 
     onRealWorldClickRight(env: Environment, point: { x: number; y: number; }) {
+        let w = <SimpleHanabiWorld> env.getEpistemicModel().getPointedWorld();
+        let card = w.getCardUnderCursor(point);
 
+        env.perform(new EventModelAction({
+            name: "Agent " + card.agent + " discards " + card.nb + ".",
+            eventModel: this.getEventModelPlay(card.agent, card.nb, "e")
+            }));
     }
 }
