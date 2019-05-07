@@ -33,7 +33,10 @@ export class ComicsComponent implements OnInit {
 
         if (!this.modifyOpenWorldsClick(0, canvasRealWorld, this.env.getEpistemicModel().getPointedWorld())(evt)) {
           let point = this.getMousePos(canvasRealWorld, evt);
-          this.env.getExampleDescription().onRealWorldClick(this.env, point);
+          if(evt.button == 2)
+            this.env.getExampleDescription().onRealWorldClickRightButton(this.env, point);
+          else
+            this.env.getExampleDescription().onRealWorldClick(this.env, point);
           
         }
       });

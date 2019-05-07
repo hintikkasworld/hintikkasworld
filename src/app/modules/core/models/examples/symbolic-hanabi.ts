@@ -1,3 +1,4 @@
+import { Environment } from './../environment/environment';
 import { Action } from './../environment/action';
 
 import { environment } from './../../../../../environments/environment';
@@ -18,6 +19,14 @@ import { BDD } from './../formula/bdd';
 import { BDDNode, BddService } from './../../../../services/bdd.service';
 import { MyTestForBDD } from "./test_bdd";
 import { CachedSource } from 'webpack-sources';
+
+
+
+class Point {
+    x: number;
+    y: number;
+}
+
 
 /**
  * @param valuation a valuation
@@ -45,6 +54,11 @@ class SimpleHanabiWorld extends WorldValuation {
         this.agentHandPos["b"] = { x: 128 - SimpleHanabiWorld.cardWidth, y: 10, horizontal: false};
         this.agentHandPos["c"] = { x: 64 - SimpleHanabiWorld.cardNumber / 2 * SimpleHanabiWorld.cardWidth, y: 56, horizontal: true };
         this.agentHandPos["d"] = { x: 0, y: 10, horizontal: false };
+
+
+
+
+
     }
 
     static drawHanabiCardArray(context: CanvasRenderingContext2D, pos: {x: number, y: number, horizontal: boolean}, cards: number[], allVisible: boolean = true) {
@@ -57,7 +71,6 @@ class SimpleHanabiWorld extends WorldValuation {
             h: SimpleHanabiWorld.cardHeight, fontSize: 6, background: SimpleSymbolicHanabi.getCardSuit(card), text: SimpleSymbolicHanabi.getCardValue(card),
         });
       }
-
     }
 
     draw(context: CanvasRenderingContext2D) {
@@ -76,6 +89,34 @@ class SimpleHanabiWorld extends WorldValuation {
         SimpleHanabiWorld.drawHanabiCardArray(context, this.agentHandPos[agent], hand);
       }
       this.drawAgents(context);
+    }
+
+    static getCardUnderCursor(cursor: Point, pos: {x: number, y: number, horizontal: boolean}, cards: number[], allVisible: boolean = true) {
+        const dx = pos.horizontal ? (allVisible ? 2 * SimpleHanabiWorld.cardWidth : SimpleHanabiWorld.cardWidth / 2) : 0;
+        const dy = pos.horizontal ? 0 : (allVisible ? SimpleHanabiWorld.cardHeight : SimpleHanabiWorld.cardHeight / 2);
+        console.log("drawing cards: ", cards);
+        for (const [posInHand, card] of Array.from(cards.entries())) {
+            
+          let cardGUI = {
+              x: pos.x + posInHand * dx, y: pos.y + posInHand * dy, w: SimpleHanabiWorld.cardWidth,
+              h: SimpleHanabiWorld.cardHeight, fontSize: 6, background: SimpleSymbolicHanabi.getCardSuit(card), text: SimpleSymbolicHanabi.getCardValue(card),
+          };
+          if(cardGUI.x <= cursor.x && cursor.x < cardGUI.x + cardGUI.w && 
+            cardGUI.y <= cursor.y && cursor.y < cardGUI.y + cardGUI.h ) 
+            return cardGUI;
+        }
+        return undefined;
+      }
+
+
+    getActionUnderCursor(cursor : Point) {
+        for (let agent of environment.agents) {
+            const hand = this.state.handCardsByAgent.get(agent);
+            const cardGUI = SimpleHanabiWorld.getCardUnderCursor(cursor, this.agentHandPos[agent], hand);
+            if(cardGUI)
+                return cardGUI;
+          } 
+        return undefined;
     }
 
 }
@@ -712,7 +753,18 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         }
         console.log(listActions);
         this.actions = listActions;
-        return listActions; //play("a", 1, "b")];
+        return listActions;
         
+    }
+
+
+
+    onRealWorldClick(env: Environment, point: { x: number; y: number; })  {
+
+    }
+
+
+    onRealWorldClickRight(env: Environment, point: { x: number; y: number; }) {
+
     }
 }

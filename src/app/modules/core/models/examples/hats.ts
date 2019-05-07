@@ -37,7 +37,7 @@ class HatsWorld extends WorldValuation {
 }
 
 
-export class Hats implements ExampleDescription {
+export class Hats extends ExampleDescription {
     getWorldExample(): import("../epistemicmodel/world").World {
         return new HatsWorld(new Valuation(["aR","bB","cB"]));
     }

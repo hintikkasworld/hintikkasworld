@@ -3,7 +3,14 @@ import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-m
 import { EpistemicModel } from './../epistemicmodel/epistemic-model';
 import { World } from '../epistemicmodel/world';
 
+
+class Point {
+    x: number;
+    y: number;
+}
+
 export abstract class ExampleDescription {
+  
     abstract getName();
     abstract getInitialEpistemicModel(): EpistemicModel;
     abstract getActions();
@@ -14,5 +21,6 @@ export abstract class ExampleDescription {
     }
 
     
-    onRealWorldClick(env: Environment, point) {};
+    public onRealWorldClick(env: Environment, point: Point): void {return};
+    public onRealWorldClickRightButton(env: Environment, point: Point): void {return};
 }

@@ -152,7 +152,7 @@ class CellularAutomatonPostcondition extends Postcondition {
 
 
 
-export class CellularAutomaton implements ExampleDescription {
+export class CellularAutomaton extends ExampleDescription {
     getName() { return "Simulation of rule 110 cellular automaton"; }
 
     getInitialEpistemicModel(): EpistemicModel {

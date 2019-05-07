@@ -81,7 +81,7 @@ class BirthdayWorld extends WorldValuation {
 
 
 
-export class Birthday implements ExampleDescription {
+export class Birthday extends ExampleDescription {
 
     private readonly dates: Date[];
     private readonly date: Date;
@@ -89,6 +89,7 @@ export class Birthday implements ExampleDescription {
 
 
     constructor(personName: string, dates: Date[], date: Date) {
+        super();
         this.dates = dates;
         this.date = date;
         this.personName = personName;

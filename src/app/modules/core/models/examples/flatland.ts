@@ -233,10 +233,11 @@ class FlatlandEpistemicModel implements EpistemicModel {
 
 
 
-export class Flatland implements ExampleDescription {
+export class Flatland extends ExampleDescription {
     readonly ckPositions: boolean;
 
     constructor(ckPositions: boolean) {
+        super();
         this.ckPositions = ckPositions;
     }
 

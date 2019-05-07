@@ -78,7 +78,7 @@ function setExampleSimple() {
 }
 */
 
-export class Simple implements ExampleDescription {
+export class Simple extends ExampleDescription {
     getName() {
         return "Simple example";
     }
@@ -116,8 +116,7 @@ export class Simple implements ExampleDescription {
     getWorldExample(): World {
         return new SimpleWorld(new Valuation(["p"]));
     }
-    onRealWorldClick(env: Environment, point: any): void {
-    }
+
 
 
 }

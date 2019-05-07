@@ -8,7 +8,7 @@ import { SimpleWorld } from './simple';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 import { World } from '../epistemicmodel/world';
 
-export class CommonknowledgeStrictlyMoreExpressive implements ExampleDescription {
+export class CommonknowledgeStrictlyMoreExpressive extends ExampleDescription {
 
     readonly d = 4;
     getName() {

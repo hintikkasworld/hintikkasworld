@@ -78,7 +78,7 @@ class DiningCryptographersWorld extends WorldValuation {
 
 
 
-export class DiningCryptographersProblem implements ExampleDescription {
+export class DiningCryptographersProblem extends ExampleDescription {
     getName() {
         return "Dining cryptographers problem";
     }
