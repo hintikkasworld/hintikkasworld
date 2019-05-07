@@ -30,7 +30,49 @@ export class ClassOfModels  extends ExampleDescription {
         return M;
     }
 
-    
+
+    getModelKD45() {
+        let M = this.getModelK();
+        M.addWorld("wb", new SimpleWorld(new Valuation(["p"])));
+        M.addWorld("wb'", new SimpleWorld(new Valuation([])));
+        M.addEdge("b", "w", "wb");
+        M.addEdge("b", "w", "wb'");
+        M.addEdge("b", "wb", "wb'");
+        M.addEdge("b", "wb", "wb");
+        M.addEdge("b", "wb'", "wb'");
+        M.addEdge("b", "wb'", "wb");
+
+        M.addEdge("a","wa", "wa");
+
+        
+        M.addEdge("a","wa", "wa");
+        M.addEdge("b","wa", "wa");
+
+        M.addEdge("a","wb", "wb");
+        M.addEdge("a","wb'", "wb'");
+        
+        return M;
+    }
+
+    getModelS5() {
+        let M = this.getModelK();
+        M.addWorld("wb", new SimpleWorld(new Valuation(["p"])));
+        M.addWorld("wb'", new SimpleWorld(new Valuation([])));
+        M.addEdge("b", "w", "wb");
+        M.addEdge("b", "w", "wb'");
+        M.addEdge("b", "wb", "wb'");
+        M.addEdge("b", "wb", "wb");
+        M.addEdge("b", "wb'", "wb'");
+        M.addEdge("b", "wb'", "wb");
+
+        M.makeReflexiveRelation("a");
+        M.makeReflexiveRelation("b");
+        M.makeSymmetricRelation("a");
+        M.makeSymmetricRelation("b");
+
+        return M;
+    }
+
     getInitialEpistemicModel() {
         return this.getModelK();
     }
@@ -43,6 +85,14 @@ export class ClassOfModels  extends ExampleDescription {
         new ActionSetEpistemicModel({
             name: "KT",
             epistemicModel: this.getModelKT()
+        }),
+        new ActionSetEpistemicModel({
+            name: "KD45",
+            epistemicModel: this.getModelKD45()
+        }),
+        new ActionSetEpistemicModel({
+            name: "S5",
+            epistemicModel: this.getModelS5()
         })];
     }
     getWorldExample(): World {
