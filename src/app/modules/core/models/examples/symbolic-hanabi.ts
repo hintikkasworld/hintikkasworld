@@ -54,11 +54,6 @@ class SimpleHanabiWorld extends WorldValuation {
         this.agentHandPos["b"] = { x: 128 - SimpleHanabiWorld.cardWidth, y: 10, horizontal: false };
         this.agentHandPos["c"] = { x: 64 - SimpleHanabiWorld.cardNumber / 2 * SimpleHanabiWorld.cardWidth, y: 56, horizontal: true };
         this.agentHandPos["d"] = { x: 0, y: 10, horizontal: false };
-
-
-
-
-
     }
 
     static drawHanabiCardArray(context: CanvasRenderingContext2D, pos: { x: number, y: number, horizontal: boolean }, cards: number[], allVisible: boolean = true) {
@@ -109,7 +104,10 @@ class SimpleHanabiWorld extends WorldValuation {
         return undefined;
     }
 
-
+    /**
+     * @param cursor a point in the screen (with fields x and y)
+     * @returns an object that gives information of the card under the cursor if there is one, undefined otherwise.
+     */
     getCardUnderCursor(cursor: Point) {
         for (let agent of environment.agents) {
             const hand = this.state.handCardsByAgent.get(agent);
@@ -126,6 +124,7 @@ class SimpleHanabiWorld extends WorldValuation {
 
 /**
  * Represent a state of the world, with easy-to-process data structures.
+ * This is class to avoid directly using a valuation
  */
 class HanabiState {
 
