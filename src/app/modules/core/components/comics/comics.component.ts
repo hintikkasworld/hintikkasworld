@@ -25,7 +25,11 @@ export class ComicsComponent implements OnInit {
     const initGui = () => {
       $('#explanationGUI').css({ top: 150, left: 50 });
       $('#canvasRealWorld').css({ top: 250, left: $('#canvas').width() / 2 - $('#canvasRealWorld').width() / 2 });
-
+      
+      /*to prevent the use of contestmenu (right-click)*/
+     /* document.addEventListener("contextmenu", function(e){
+        e.preventDefault();
+      }, false);*/
       
       let canvasRealWorld = (<HTMLCanvasElement>$('#canvasRealWorld')[0]);
 
@@ -33,12 +37,21 @@ export class ComicsComponent implements OnInit {
 
         if (!this.modifyOpenWorldsClick(0, canvasRealWorld, this.env.getEpistemicModel().getPointedWorld())(evt)) {
           let point = this.getMousePos(canvasRealWorld, evt);
+          console.log(evt.button);
           if(evt.button == 2)
             this.env.getExampleDescription().onRealWorldClickRightButton(this.env, point);
           else
             this.env.getExampleDescription().onRealWorldClick(this.env, point);
           
         }
+      });
+
+      canvasRealWorld.addEventListener("contextmenu", (evt) => {
+        
+        let point = this.getMousePos(canvasRealWorld, evt);
+        console.log("right click : " + point.x + "," + point.y);
+        this.env.getExampleDescription().onRealWorldClickRightButton(this.env, point);
+        evt.preventDefault();
       });
 
 
