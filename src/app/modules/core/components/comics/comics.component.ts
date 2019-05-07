@@ -21,33 +21,33 @@ export class ComicsComponent implements OnInit {
 
   constructor() {
 
- 
+
     const initGui = () => {
       $('#explanationGUI').css({ top: 150, left: 50 });
       $('#canvasRealWorld').css({ top: 250, left: $('#canvas').width() / 2 - $('#canvasRealWorld').width() / 2 });
-      
+
       /*to prevent the use of contestmenu (right-click)*/
-     /* document.addEventListener("contextmenu", function(e){
-        e.preventDefault();
-      }, false);*/
-      
+      /* document.addEventListener("contextmenu", function(e){
+         e.preventDefault();
+       }, false);*/
+
       let canvasRealWorld = (<HTMLCanvasElement>$('#canvasRealWorld')[0]);
 
       canvasRealWorld.addEventListener("click", (evt) => {
 
         if (!this.modifyOpenWorldsClick(0, canvasRealWorld, this.env.getEpistemicModel().getPointedWorld())(evt)) {
           let point = this.getMousePos(canvasRealWorld, evt);
-          console.log(evt.button);
+          /*console.log(evt.button); // the right button like this does not work
           if(evt.button == 2)
             this.env.getExampleDescription().onRealWorldClickRightButton(this.env, point);
-          else
-            this.env.getExampleDescription().onRealWorldClick(this.env, point);
-          
+          else*/
+          this.env.getExampleDescription().onRealWorldClick(this.env, point);
+
         }
       });
 
       canvasRealWorld.addEventListener("contextmenu", (evt) => {
-        
+
         let point = this.getMousePos(canvasRealWorld, evt);
         console.log("right click : " + point.x + "," + point.y);
         this.env.getExampleDescription().onRealWorldClickRightButton(this.env, point);
@@ -55,7 +55,7 @@ export class ComicsComponent implements OnInit {
       });
 
 
-      $('#canvasBackground').click( () => {
+      $('#canvasBackground').click(() => {
         this.openWorlds = []; this.compute(0);
       });
     }
@@ -353,10 +353,10 @@ export class ComicsComponent implements OnInit {
           if (levelContainer.children().length != 0)
             levelContainer.append('<div class="orBetweenWorlds"> or </div>');
 
-          
+
           let canvasWorld = comics.getNewCanvas();
 
-          if(u == comics.openWorlds[level-1].world)
+          if (u == comics.openWorlds[level - 1].world)
             $(canvasWorld).addClass("copyRealWorld");
           comics.canvasFromWorld[level].set(u, canvasWorld);
           levelContainer.append(canvasWorld);
@@ -453,7 +453,7 @@ export class ComicsComponent implements OnInit {
       this.canvasFromWorld[0].set(this.env.getEpistemicModel().getPointedWorld(), <HTMLCanvasElement>canvas);
       (<any>canvas).draw = () => {
         let context = this.getContext((<HTMLCanvasElement>document.getElementById("canvasRealWorld")));
-        
+
         if (this.env.agentPerspective != undefined) {
           let comics = this;
           let M = comics.env.getEpistemicModel();

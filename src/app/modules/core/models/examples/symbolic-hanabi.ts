@@ -590,7 +590,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     onRealWorldClickRight(env: Environment, point: { x: number; y: number; }) {
         let w = <SimpleHanabiWorld>env.getEpistemicModel().getPointedWorld();
         let card = w.getCardUnderCursor(point);
-
+        console.log(card)
         if (card != undefined)
             env.perform(new EventModelAction({
                 name: "Agent " + card.agent + " discards " + card.nb + ".",
