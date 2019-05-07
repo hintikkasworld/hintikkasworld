@@ -387,41 +387,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         const that = this;
 
-        function draw(current_agent) {
-
-            console.log(current_agent + " draws.");
-
-            var E = new ExplicitEventModel();
-
-            for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                let post = {};
-                post[SimpleSymbolicHanabi.getVarName(current_agent, c)] = true;
-                post[SimpleSymbolicHanabi.getVarName("p", c)] = false;
-
-                let pre = new AndFormula([
-                    new AtomicFormula(SimpleSymbolicHanabi.getVarName("p", c)),
-                    new NotFormula(
-                        new AtomicFormula(SimpleSymbolicHanabi.getVarName(current_agent, c))
-                    )]
-                );
-                console.log(pre, post);
-                E.addAction(current_agent + " draws " + c, pre, new PropositionalAssignmentsPostcondition(post));
-            }
-
-            for (let agent of that.agents) {
-                E.makeReflexiveRelation(agent);
-            }
-
-            for (let event in E.getNodes()) {
-                for (let event2 in E.getNodes()) {
-                    E.addEdge(current_agent, event, event2);
-                }
-            }
-            E.setPointedAction(current_agent + " draws " + (SimpleSymbolicHanabi.nbCards - 1));
-            console.log("end draw");
-            return E;
-
-        }
+        
 
         /**
          * Get Formula var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value
