@@ -11,7 +11,7 @@
         <a href="menu"><button id="chooseExample" title="Choose an other example">
             <img width=24px src="assets/img/examples.png" />
           </button></a>
-        <button (click)="bsEnv.value.reset()" title="Reset">
+        <button (click)="reset()" title="Reset">
           <img width=24px src="assets/img/reset.png" />
         </button>
 
@@ -37,10 +37,10 @@
         <a hidden class="roundButton" target="_blank" href="displayMEstar.html" title="Advanced mode">A</a>
 
 
-        φ = <input id="formula" title="Type a formula." value="(K a p)" />
-        <button id="modelCheckingButton" title="Model checking of the formula" onclick="modelChecking()"><img width=24px
-            src="assets/img/ok.png"></button>
-        <button title="Public announcement of the formula." onclick="performAnnouncement()"><img width=24px src="assets/img/announce.png" /></button>
+        φ = <input id="formula" (input)="initModelChecking()" title="Type a formula." value="(K a p)" />
+        <button id="modelCheckingButton" title="Model checking of the formula" (click)="modelChecking()"><img id="modelCheckingButtonImage" width=24px
+            src="assets/img/mc.png"></button>
+        <button title="Public announcement of the formula." (click)="performPublicAnnouncement()"><img width=24px src="assets/img/announce.png" /></button>
 
 
         <div class="vr"></div>

@@ -42,7 +42,7 @@ export class ComicsComponent implements OnInit {
             this.env.getExampleDescription().onRealWorldClickRightButton(this.env, point);
           else*/
           this.env.getExampleDescription().onRealWorldClick(this.env, point);
-
+          this.drawCanvasWorld();
         }
       });
 
@@ -52,6 +52,7 @@ export class ComicsComponent implements OnInit {
         console.log("right click : " + point.x + "," + point.y);
         this.env.getExampleDescription().onRealWorldClickRightButton(this.env, point);
         evt.preventDefault();
+        this.drawCanvasWorld();
       });
 
 
@@ -77,7 +78,7 @@ export class ComicsComponent implements OnInit {
 
 
   ngOnInit() {
-    this.obsEnv.subscribe((env) => this.env = env); //pas bon... pas besoin de compute
+    this.obsEnv.subscribe((env) => this.env = env);       //pas bon... pas besoin de compute
   }
 
   private openWorlds: { world: World, agent: string }[] = [];
