@@ -117,6 +117,9 @@ class SallyAndAnneWorld extends WorldValuation {
 
 
 export class SallyAndAnn extends ExampleDescription {
+    getAtomicPropositions(): string[] {
+        return ["ahere", "bhere", "marbleb", "bspy", "marbleBasket"]
+    }
     getName() { return "Sally and Ann"; }
 
     getInitialEpistemicModel(): EpistemicModel {
@@ -218,7 +221,7 @@ export class SallyAndAnn extends ExampleDescription {
             var E = new ExplicitEventModel();
 
             var assignmentTransfer = new PropositionalAssignmentsPostcondition({ "marbleBasket": "bottom", "marbleBox": FormulaFactory.createTrue() });
-            E.addAction("e", FormulaFactory.createFormula("((not bhere) and marbleBasket and bspying)"), assignmentTransfer);
+            E.addAction("e", FormulaFactory.createFormula("((not bhere) and marbleBasket and bspy)"), assignmentTransfer);
             E.addAction("f", FormulaFactory.createTrue(), assignmentTransfer);
             E.addAction("t", FormulaFactory.createTrue());
 
@@ -239,7 +242,7 @@ export class SallyAndAnn extends ExampleDescription {
         function actionAnneTransfersMarbleFromBasketToBoxWhenBOutsideNotSpying() {
             var E = new ExplicitEventModel();
 
-            E.addAction("e", FormulaFactory.createFormula("((not bhere) and marbleBasket and (not bspying))"),
+            E.addAction("e", FormulaFactory.createFormula("((not bhere) and marbleBasket and (not bspy))"),
                 new PropositionalAssignmentsPostcondition({ "marbleBasket": "bottom", "marbleBox": FormulaFactory.createTrue() }));
             E.addAction("t", FormulaFactory.createTrue());
             E.addEdge("a", "e", "e");

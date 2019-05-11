@@ -79,6 +79,9 @@ function setExampleSimple() {
 */
 
 export class Simple extends ExampleDescription {
+    getAtomicPropositions(): string[] {
+        return ["p"];
+    }
     getName() {
         return "Simple example";
     }

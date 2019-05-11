@@ -9,6 +9,9 @@ import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-mod
 import { World } from '../epistemicmodel/world';
 
 export class CommonknowledgeStrictlyMoreExpressive extends ExampleDescription {
+    getAtomicPropositions(): string[] {
+        return ["p"];
+    }
 
     readonly d = 4;
     getName() {

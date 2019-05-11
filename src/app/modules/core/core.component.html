@@ -37,9 +37,10 @@
         <a hidden class="roundButton" target="_blank" href="displayMEstar.html" title="Advanced mode">A</a>
 
 
-        φ = <input id="formula" (input)="initModelChecking()" title="Type a formula." value="(K a p)" />
+        φ = <input id="formula" (input)="initModelChecking()" (keydown.enter)="modelChecking()" title="Type a formula." value="(K a p)" />
         <button id="modelCheckingButton" title="Model checking of the formula" (click)="modelChecking()"><img id="modelCheckingButtonImage" width=24px
             src="assets/img/mc.png"></button>
+            <span id="error"></span>
         <button title="Public announcement of the formula." (click)="performPublicAnnouncement()"><img width=24px src="assets/img/announce.png" /></button>
 
 
@@ -68,6 +69,11 @@
       </td>
 
       <td id="hintikkasWorldKripkeModel" valign="top">
+          Atomic propositions:
+        <div id="atomicPropositionList">
+          
+          <div class="proposition" *ngFor="let proposition of getAtomicPropositions()">{{proposition}}</div>
+        </div>
         <div id="divGraphVisualizationEpistemicModel">
           Epistemic state:<br />
           <app-graph [obsEnv]='bsEnv.asObservable()'></app-graph>

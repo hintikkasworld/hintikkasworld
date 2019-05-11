@@ -90,7 +90,7 @@ export class Belote extends ExampleDescription {
         let relations = new Map();
 
         let M = SymbolicEpistemicModel.build(BeloteWorld, ["a", "b", "c", "d"],
-            Belote.getVars(), Belote.getInitialRelations(), Belote.getInitialSetWorldsFormula());
+            this.getAtomicPropositions(), Belote.getInitialRelations(), Belote.getInitialSetWorldsFormula());
         M.setPointedValuation(Belote.getRandomInitialValuation());
 
         return M;
@@ -162,7 +162,7 @@ export class Belote extends ExampleDescription {
         return A;
     }
 
-    static getVars(): string[] {
+    getAtomicPropositions(): string[] {
         let A = [];
         for (let agent of environment.agents)
             for (let cardSuit of Belote.cardSuits)

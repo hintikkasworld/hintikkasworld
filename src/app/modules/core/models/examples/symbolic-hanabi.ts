@@ -244,6 +244,16 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
     getWorldExample() { return new SimpleHanabiWorld(new Valuation([SimpleSymbolicHanabi.getVarName("a", 2)])); }
 
+    getAtomicPropositions() {
+        let variables: string[] = [];
+        this.owners.forEach((agent) => {
+            for (let i = 0; i < SimpleSymbolicHanabi.nbCards; i++) {
+                variables.push(SimpleSymbolicHanabi.getVarName(agent, i));
+            }
+        });
+        this.variables = variables;
+        return variables;
+    }
 
     getInitialEpistemicModel() {
 
@@ -252,15 +262,10 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
 
         /* Creation of all variables getVarName */
-        let variables: string[] = [];
-        this.owners.forEach((agent) => {
-            for (let i = 0; i < SimpleSymbolicHanabi.nbCards; i++) {
-                variables.push(SimpleSymbolicHanabi.getVarName(agent, i));
-            }
-        });
-        this.variables = variables;
+        
+        this.variables = this.getAtomicPropositions();
 
-        console.log("Variables", variables);
+        console.log("Variables", this.variables);
 
         /* Create Obs <<SymbolicRelation>> which represent relations of each agent like var_a_c <-> var_a_c_p */
         let symbolicRelations: Map<string, SymbolicRelation> = new Map();
@@ -332,7 +337,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         }
 
         // others proposition as false
-        variables.forEach((variable) => {
+        this.variables.forEach((variable) => {
             if (!(variable in propositions)) {
                 propositions[variable] = false;
             }
@@ -340,7 +345,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         console.log("Valuation", new Valuation(propositions));
 
 
-        let M = SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, variables, symbolicRelations, rules);
+        let M = SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, this.variables, symbolicRelations, rules);
         M.setPointedValuation(new Valuation(propositions));
 
         console.log("Fin SEM");

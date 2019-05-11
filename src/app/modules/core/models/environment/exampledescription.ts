@@ -13,6 +13,7 @@ export abstract class ExampleDescription {
   
     abstract getName();
     abstract getInitialEpistemicModel(): EpistemicModel;
+    
     abstract getActions();
 
     getWorldExample(): World {
@@ -23,4 +24,6 @@ export abstract class ExampleDescription {
     
     public onRealWorldClick(env: Environment, point: Point): void {return};
     public onRealWorldClickRightButton(env: Environment, point: Point): void {return};
+
+    getAtomicPropositions(): string[] {return []}; //should be abstract and implemented in every subclass
 }

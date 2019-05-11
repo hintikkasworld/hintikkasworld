@@ -153,6 +153,11 @@ class CellularAutomatonPostcondition extends Postcondition {
 
 
 export class CellularAutomaton extends ExampleDescription {
+    getAtomicPropositions(): string[] {
+        return ["r", "1", "0"];
+    }
+    
+
     getName() { return "Simulation of rule 110 cellular automaton"; }
 
     getInitialEpistemicModel(): EpistemicModel {

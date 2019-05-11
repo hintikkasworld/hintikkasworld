@@ -41,6 +41,9 @@ class MuddyChildrenWorld extends WorldValuation {
 
 
 export class MuddyChildren extends ExampleDescription {
+    getAtomicPropositions(): string[] {
+        return ["ma", "mb"];
+    }
     getName() {return "Muddy Children"};
 
     getInitialEpistemicModel() {

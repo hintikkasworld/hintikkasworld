@@ -53,14 +53,20 @@ export class CoreComponent implements OnInit {
   }
 
   modelChecking(): boolean {
-    const result = this.bsEnv.value.getEpistemicModel().check(this.getFormulaGUI());
-    console.log(result);
-    $('#modelCheckingButtonImage').attr("src", result ? "assets/img/ok.png" : "assets/img/notok.png");
-    return result;
+    try {
+      const result = this.bsEnv.value.getEpistemicModel().check(this.getFormulaGUI());
+      console.log(result);
+      $('#modelCheckingButtonImage').attr("src", result ? "assets/img/ok.png" : "assets/img/notok.png");
+      return result;
+    }
+    catch(error) {
+      $("#error").html(error);
+    }
   }
 
   initModelChecking() {
     $('#modelCheckingButtonImage').attr("src", "assets/img/mc.png");
+    $("#error").html("");
   }
 
 
@@ -104,5 +110,10 @@ export class CoreComponent implements OnInit {
 
   getAgents(): string[] {
     return this.bsEnv.value.getEpistemicModel().getAgents();
+  }
+
+
+  getAtomicPropositions(): string[] {
+    return this.bsEnv.value.getExampleDescription().getAtomicPropositions();
   }
 }

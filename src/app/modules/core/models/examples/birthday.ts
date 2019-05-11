@@ -82,6 +82,9 @@ class BirthdayWorld extends WorldValuation {
 
 
 export class Birthday extends ExampleDescription {
+    getAtomicPropositions(): string[] {
+        return this.dates.map(BirthdayWorld.dateToProposition);
+    }
 
     private readonly dates: Date[];
     private readonly date: Date;

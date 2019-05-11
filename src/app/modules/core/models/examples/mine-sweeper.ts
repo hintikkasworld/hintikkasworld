@@ -179,7 +179,7 @@ export class MineSweeper extends ExampleDescription {
     }
 
 
-    getAtoms() {
+    getAtomicPropositions() {
         let A = [];
         for (let y = 1; y <= this.nbrows; y++)
             for (let x = 1; x <= this.nbcols; x++)
@@ -217,7 +217,7 @@ export class MineSweeper extends ExampleDescription {
         rels.set("a", new Obs([]));
 
         let M = SymbolicEpistemicModel.build(this.getWorldClass(), ["a"],
-            this.getAtoms(), rels, new ExactlyFormula(this.nbmines, this.getAtoms()));
+            this.getAtomicPropositions(), rels, new ExactlyFormula(this.nbmines, this.getAtomicPropositions()));
 
         M.setPointedValuation(this.getValuationExample());
         return M;

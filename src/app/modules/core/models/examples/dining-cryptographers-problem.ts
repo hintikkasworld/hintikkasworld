@@ -79,6 +79,10 @@ class DiningCryptographersWorld extends WorldValuation {
 
 
 export class DiningCryptographersProblem extends ExampleDescription {
+    getAtomicPropositions(): string[] {
+        return ["ap", "bp", "cp", "nsap", "pab", "pac", "pbc"];
+    }
+    
     getName() {
         return "Dining cryptographers problem";
     }

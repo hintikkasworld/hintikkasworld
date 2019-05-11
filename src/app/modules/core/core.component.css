@@ -72,3 +72,27 @@ button:focus {
 #internalPerspectiveAgent {
   display: inline-block;
 }
+
+
+.proposition {
+  display: inline;
+  margin:2px;
+  background-color: #EEDDAA;
+}
+
+
+
+#atomicPropositionList {
+  max-width: 500px;
+  border-radius: 20px;
+  border-color: brown;
+  border-width: 3px;
+  border-style: solid;
+  overflow: auto;
+  
+}
+
+
+#error {
+  color: red;
+}

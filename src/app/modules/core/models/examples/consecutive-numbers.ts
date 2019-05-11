@@ -39,6 +39,15 @@ class ConsecutiveNumbersWorld extends WorldValuation {
 
 
 export class ConsecutiveNumbers extends ExampleDescription {
+    getAtomicPropositions(): string[] {
+       let A = [];
+       for (let i = 1; i <= ConsecutiveNumbersWorld.consequenceNumbersImax; i++) {
+           A.push("a" + i);
+           A.push("b" + i);
+       }
+       return A;
+    }
+    
     getName() {
         return "Consecutive Numbers";
     }
