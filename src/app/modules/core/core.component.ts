@@ -12,6 +12,8 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { FormulaFactory, Formula } from './models/formula/formula';
 import { ExplicitEventModel } from './models/eventmodel/explicit-event-model';
+import { SymbolicPublicAnnouncement } from './models/eventmodel/symbolic-public-announcement';
+import { SymbolicEpistemicModel } from './models/epistemicmodel/symbolic-epistemic-model';
 
 
 
@@ -63,10 +65,16 @@ export class CoreComponent implements OnInit {
 
 
   performPublicAnnouncement() {
-    if(!this.modelChecking()) return;
+    if (!this.modelChecking()) return;
+
+
+
     this.bsEnv.value.perform(new EventModelAction({
       name: "public announcement",
-      eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(this.getFormulaGUI())
+      eventModel:
+        this.bsEnv.value.getEpistemicModel() instanceof SymbolicEpistemicModel ?
+          new SymbolicPublicAnnouncement(this.getFormulaGUI())
+          : ExplicitEventModel.getEventModelPublicAnnouncement(this.getFormulaGUI())
     }));
     this.bsEnv.next(this.bsEnv.value);
   }
