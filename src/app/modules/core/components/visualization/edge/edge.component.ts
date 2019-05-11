@@ -14,7 +14,7 @@ export class EdgeComponent implements OnInit {
   environment = environment; //so that the environment (especially the colors of agents) are accessible from the HTML file
 
   /**
-   * returns the path code to be put in the d attribute of <path></path>
+   * returns the path code to be put in the d attribute of the <path></path> that is the line of the edge
    */
   getPathAttributeD() {
     let factorCurve = { "a": 1, "b": 1.8, "c": 2.6 };
@@ -56,9 +56,40 @@ export class EdgeComponent implements OnInit {
   }
 
 
-constructor() { }
+  /**
+   * path for the arrow
+   */
+  getPathArrowAttributeD() {
+    const factorAngle = { "a": 0.45, "b": 0.2, "c": 0.15 };
+    const x1 = this.edge.source.x;
+    const y1 = this.edge.source.y;
+    const x2 = this.edge.target.x;
+    const y2 = this.edge.target.y;
 
-ngOnInit() {
-}
+    const dx = this.edge.target.x - this.edge.source.x,
+      dy = this.edge.target.y - this.edge.source.y;
+      
+
+    if (dx == 0 && dy == 0) {
+      return "";
+    }
+    const arrowLength = 16;
+    const arrowAngle = 0.25;
+    const angle = Math.atan2(y2-y1, x2-x1) + factorAngle[this.edge.agent];
+    const x2a = x2 - arrowLength * Math.cos(angle-arrowAngle);
+    const y2a = y2 - arrowLength * Math.sin(angle-arrowAngle);
+    const x2b = x2 - arrowLength * Math.cos(angle+arrowAngle);
+    const y2b = y2 - arrowLength * Math.sin(angle+arrowAngle);
+    return "M" + x2a + "," + y2a + "L" +
+     x2 + ", " + y2 + "L" + x2b + "," + y2b;
+
+  }
+
+
+
+  constructor() { }
+
+  ngOnInit() {
+  }
 
 }
