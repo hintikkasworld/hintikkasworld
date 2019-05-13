@@ -1,5 +1,4 @@
 import { ClassOfModels } from './../core/models/examples/class-of-models';
-import { CommonknowledgeStrictlyMoreExpressive } from './../core/models/examples/commonknowledge-strictly-more-expressive';
 import { DiningCryptographersProblem } from './../core/models/examples/dining-cryptographers-problem';
 import { Hats } from './../core/models/examples/hats';
 import { NanoHanabi } from './../core/models/examples/nanohanabi';
@@ -19,6 +18,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ExampleService } from 'src/app/services/example.service';
 import { SallyAndAnn } from '../core/models/examples/sally-and-ann';
 import { SymbolicSimpleExample } from '../core/models/examples/symbolic-small-example';
+import { CommonknowledgeStrictlyMoreExpressive } from '../core/models/examples/commonknowledge-strictly-more-expressive';
 
 
 

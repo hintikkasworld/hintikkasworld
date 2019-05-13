@@ -59,7 +59,7 @@ export class CoreComponent implements OnInit {
       $('#modelCheckingButtonImage').attr("src", result ? "assets/img/ok.png" : "assets/img/notok.png");
       return result;
     }
-    catch(error) {
+    catch (error) {
       $("#error").html(error);
     }
   }
@@ -115,5 +115,9 @@ export class CoreComponent implements OnInit {
 
   getAtomicPropositions(): string[] {
     return this.bsEnv.value.getExampleDescription().getAtomicPropositions();
+  }
+
+  showHelp() {
+    window.open("assets/about.html", "_target");
   }
 }
