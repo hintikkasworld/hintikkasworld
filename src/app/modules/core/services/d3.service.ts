@@ -3,7 +3,7 @@ import { Graph } from './models/graph';
 import { Injectable } from '@angular/core';
 import { Edge } from './models/edge';
 import { Node } from './models/node';
-
+import { Observable, of } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -12,9 +12,10 @@ export class D3Service {
 
   constructor() { }
 
-  getGraph(nodes: Node[], edges: Edge[], options: { width, height }) {
-    return new Graph(nodes, edges, options);
-  }
+getGraph(nodes: Node[], edges: Edge[], options: { width, height }): Observable<Graph> {
+  let graph = new Graph(nodes, edges, options);
+  return of(graph);
+}
 
 
   applyDraggableBehaviour(element, node: Node, graph: Graph) {

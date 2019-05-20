@@ -48,7 +48,7 @@ export class GraphComponent implements OnInit {
         for (let idnode2 of M.getSuccessorsID(idnode, agent))
           this.edges.push(new Edge(dictionnaryNode[idnode], dictionnaryNode[idnode2], agent));
 
-    this.graph = this.d3Service.getGraph(this.nodes, this.edges, this.options);
+    this.d3Service.getGraph(this.nodes, this.edges, this.options).subscribe(graph => this.graph = graph);
   }
 
   ngAfterViewInit() {
