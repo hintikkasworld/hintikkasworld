@@ -16,25 +16,25 @@ import { ExplicitEpistemicModel } from '../../../models/epistemicmodel/explicit-
 
 export class GraphComponent implements OnInit {
   @Input() obsEnv: Observable<Environment>;
-  nodes: Node[] = [];
+  nodes: Node[];
   edges: Edge[] = [];
 
   graph: Graph;
 
   private readonly _options: { width, height } = { width: 500, height: 400 };
-  constructor(private d3Service: D3Service) { }
+  constructor(private d3Service: D3Service) {
+  }
 
   ngOnInit() {
     this.obsEnv.subscribe((env) => {
       if (env.getEpistemicModel() instanceof ExplicitEpistemicModel)
         this.update(<ExplicitEpistemicModel>env.getEpistemicModel());
     });
-
   }
 
 
   private update(M: ExplicitEpistemicModel) {
-    let dictionnaryNode = {};
+    let naryNode = {};
 
     this.nodes = [];
     for (let idnode in M.getNodes()) {

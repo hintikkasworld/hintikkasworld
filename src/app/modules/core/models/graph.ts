@@ -1,4 +1,6 @@
 import { Node } from './../services/models/node';
+import { Observable } from 'rxjs';
+
 export class Graph {
 
     protected nodes: { [id: string]: object };
@@ -20,8 +22,15 @@ export class Graph {
      * @returns a dictionnary containing pairs (nodeid, node)  
      */
 
-    getNodes() {
-        return this.nodes;
+    getNodes(): Observable<Node> {
+      return new Observable((observer) => {
+      	const {next, error} = observer;
+	
+	    
+	    
+	    
+	    
+      });
     }
 
     removeNode(id: string): void {
