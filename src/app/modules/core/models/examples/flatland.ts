@@ -240,7 +240,11 @@ export class Flatland extends ExampleDescription {
         super();
         this.ckPositions = ckPositions;
     }
+    getAtomicPropositions() {
+        let A = [];
 
+        return A;
+    }
     getName() {
         if (this.ckPositions)
             return "Flatland with common knowledge of the positions";

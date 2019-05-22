@@ -71,6 +71,18 @@ export class SymbolicSimpleExample extends ExampleDescription {
     private owners = this.agents.concat(["p"]);  /* agents */
     private variables: string[];
 
+    getAtomicPropositions() {
+        let A = [];
+        for (let x = 1; x <= SymbolicSimpleExample.nbCards; x++) {
+            this.agents.forEach( (agent) => {
+                    A.push(SymbolicSimpleExample.getVarName(agent,x)); 
+            })
+        }
+
+
+        return A;
+    }
+
     getName() {
         return "SymbolicSimpleExample";
     }

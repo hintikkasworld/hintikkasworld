@@ -80,7 +80,13 @@ export class NanoHanabi extends ExampleDescription {
     ar;
     bl;
     br;
-
+    getAtomicPropositions() {
+        let A = [];
+        for (let x = 0; x <= 4; x++) {
+            ["ar","al","bl","br","c"].forEach( (prop) => A.push(prop+x.toString()));
+        }
+        return A;
+    }
     getName() { return "Nano Hanabi"; }
 
     getInitialEpistemicModel() {
