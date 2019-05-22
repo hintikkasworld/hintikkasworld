@@ -3,6 +3,7 @@ import { Action } from './models/environment/action';
 import { MuddyChildren } from './models/examples/muddy-children';
 import { environment } from './../../../environments/environment';
 
+import { Location } from '@angular/common';
 import { ExampleService } from './../../services/example.service';
 import { Environment } from './models/environment/environment';
 import { Component, OnInit, Input } from '@angular/core';
@@ -26,12 +27,12 @@ export class CoreComponent implements OnInit {
 
   bsEnv: BehaviorSubject<Environment>;
 
-  constructor(private exampleService: ExampleService) { }
+  constructor(private exampleService: ExampleService, private location: Location) { }
 
   ngOnInit() {
     let exampleDescription = this.exampleService.getExampleDescription();
     let env: Environment;
-    try {
+	  try {
       env = new Environment(exampleDescription);
     }
     catch (error) {
@@ -94,10 +95,13 @@ export class CoreComponent implements OnInit {
 
 
   reset() {
-    this.bsEnv.value.reset()
+    this.bsEnv.value.reset();
     this.bsEnv.next(this.bsEnv.value);
   }
 
+  chooseAnotherExample(): void {
+    this.location.back();	
+  }
   setInternalPerspective(a: string) {
     this.bsEnv.value.agentPerspective = a;
     this.bsEnv.next(this.bsEnv.value);
