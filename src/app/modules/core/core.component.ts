@@ -122,7 +122,13 @@ export class CoreComponent implements OnInit {
   }
 
   getDescription(): string {
-    return this.bsEnv.value.getExampleDescription().getDescription();
+    try {
+      return this.bsEnv.value.getExampleDescription().getDescription();
+    }
+    catch(e) {
+      console.log(e)
+      return ""
+    }
   }
 
   showHelp() {
