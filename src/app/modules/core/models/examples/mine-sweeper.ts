@@ -156,8 +156,16 @@ class MineSweeperWorld extends WorldValuation {
 
 
 export class MineSweeper extends ExampleDescription {
-    getDescription(): string {
-        throw new Error("Method not implemented.");
+    getDescription(): string[] {
+        var A = ["There is a grid with mines in certain cells. Other cells either contain the number of mines adjacent (including diagonals) or are empty."]
+        A.push("")
+        if (this.nbmines < 2) {
+            A.push("The grid is of size "+this.nbrows.toString()+"x"+this.nbcols.toString()+" and there is "+this.nbmines.toString()+" mine.")
+        }
+        else {
+            A.push("The grid is of size "+this.nbrows.toString()+"x"+this.nbcols.toString()+ " and there are "+this.nbmines.toString()+" mines.")
+        }
+        return A
     }
     readonly nbcols: number;
     readonly nbrows: number;

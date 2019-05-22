@@ -104,8 +104,6 @@ button:focus {
 }
 .descriptiontext {
   display: inline;
-  margin:5px;
-  background-color: #EEDDAA;
 }
 #error {
   color: red;

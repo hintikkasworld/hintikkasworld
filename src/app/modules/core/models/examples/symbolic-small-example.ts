@@ -63,8 +63,8 @@ class SimpleExampleWorld extends WorldValuation {
 
 
 export class SymbolicSimpleExample extends ExampleDescription {
-    getDescription(): string {
-        throw new Error("Method not implemented.");
+    getDescription(): string[] {
+        return ["A simple example of a symbolic model."]
     }
 
     static ok: boolean = true;

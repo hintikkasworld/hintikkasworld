@@ -75,8 +75,8 @@ class NanoHanabiWorld extends WorldValuation {
 
 
 export class NanoHanabi extends ExampleDescription {
-    getDescription(): string {
-        throw new Error("Method not implemented.");
+    getDescription(): string[] {
+        return ["Each and has two number between 0 and 4. They only see the numbers of the other agent."]
     }
 
     al;

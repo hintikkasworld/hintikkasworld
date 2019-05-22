@@ -13,7 +13,7 @@ export abstract class ExampleDescription {
     abstract getAtomicPropositions(): string[]
     abstract getName();
     abstract getInitialEpistemicModel(): EpistemicModel;
-    abstract getDescription(): string
+    abstract getDescription(): string[]
     abstract getActions();
 
     getWorldExample(): World {

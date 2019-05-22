@@ -121,13 +121,13 @@ export class CoreComponent implements OnInit {
     return this.bsEnv.value.getExampleDescription().getAtomicPropositions();
   }
 
-  getDescription(): string {
+  getDescription(): string[] {
     try {
       return this.bsEnv.value.getExampleDescription().getDescription();
     }
     catch(e) {
       console.log(e)
-      return ""
+      return []
     }
   }
 

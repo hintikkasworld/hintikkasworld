@@ -6,8 +6,8 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { World } from '../epistemicmodel/world';
 
 export class ClassOfModels  extends ExampleDescription {
-    getDescription(): string {
-        throw new Error("Method not implemented.");
+    getDescription(): string[] {
+        return ["Actions generate Kripke models belonging to the class of their names."]
     }
     getAtomicPropositions(): string[] {
         return ["p"];

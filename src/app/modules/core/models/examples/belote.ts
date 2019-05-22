@@ -85,8 +85,8 @@ export class Belote extends ExampleDescription {
     }
 
 
-    getDescription(): string {
-        return ""
+    getDescription(): string[] {
+        return ["This example is a simplification of the belote game (see https://en.wikipedia.org/wiki/Belote).","", "Each player has 3 cards, whose value is either 1, 7 or K, and whose suit is either spade, diamond, clover, or heart."]
     }
     getInitialEpistemicModel() {
 

@@ -86,8 +86,12 @@ export class Birthday extends ExampleDescription {
         return this.dates.map(BirthdayWorld.dateToProposition);
     }
 
-    getDescription(): string {
-        return ""
+    getDescription(): string[] {
+        return ["Both agents want to know Cheryl's birthday, but have a partial knowledge about the date:",
+        "- They know that the possibilities are May 15, May 16, May 19, June 17, June 18, July 14, July 16, August 14, August 15 or August 17.",
+        "- Agent a knows the month.",
+        "- Agent b knows the day.",
+        "Agent a announces that she does not know the date but she knows that Agent b does not know either. Then Agent b announces that he now knows the date. What is this date?"]
     }
     private readonly dates: Date[];
     private readonly date: Date;

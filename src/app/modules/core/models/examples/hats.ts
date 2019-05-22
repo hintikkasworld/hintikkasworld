@@ -38,8 +38,8 @@ class HatsWorld extends WorldValuation {
 
 
 export class Hats extends ExampleDescription {
-    getDescription(): string {
-        throw new Error("Method not implemented.");
+    getDescription(): string[] {
+        return ["Each agent has a hat, either blue or red. They know that there is at least one blue hat. Agents a and b do not see their own hat and agent c is blind."]
     }
     getAtomicPropositions() {
         return ["aB", "bB", "cB", "aR", "bR", "cR"];

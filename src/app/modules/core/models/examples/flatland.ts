@@ -295,8 +295,13 @@ class FlatlandEpistemicModel implements EpistemicModel {
 
 
 export class Flatland extends ExampleDescription {
-    getDescription(): string {
-        throw new Error("Method not implemented.");
+    getDescription(): string[] {
+        var A = ["Agents are placed in the plane, and see everything in front of them within a cone. They are uncertain about everything they do not see."]
+        if (this.ckPositions) {
+            A.push("")
+            A.push("The positions of the agents are common knowledge.")
+        }
+        return A;
     }
     readonly ckPositions: boolean;
 

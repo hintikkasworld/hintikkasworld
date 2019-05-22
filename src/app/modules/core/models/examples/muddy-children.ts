@@ -41,8 +41,8 @@ class MuddyChildrenWorld extends WorldValuation {
 
 
 export class MuddyChildren extends ExampleDescription {
-    getDescription(): string {
-        return "afopgfaopgfahp"
+    getDescription(): string[] {
+        return ["Children play in the garden and some of them become muddy. Their father comes and say 'At least one of you has mud on her forehead'. He then asks several times 'Does any one of you know whether she has mud on her forehead?'"]
     }
     getAtomicPropositions(): string[] {
         return ["ma", "mb"];

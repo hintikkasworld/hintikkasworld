@@ -80,8 +80,8 @@
         </div>
         Description of the puzzle:
         <div id="description">
-          
-          <div class ="descriptiontext"> {{getDescription()}} </div>
+          <br />
+          <div class ="descriptiontext"  *ngFor="let desc of getDescription()"> {{desc}} <br /> </div>
         </div>
         <div hidden id="divgraphVisualizationActionModel">
           Action:<br />

@@ -39,8 +39,8 @@ class ConsecutiveNumbersWorld extends WorldValuation {
 
 
 export class ConsecutiveNumbers extends ExampleDescription {
-    getDescription(): string {
-        throw new Error("Method not implemented.");
+    getDescription(): string[] {
+        return ["Agents a and b each own a number, say between 1 and 10. They know their number and that the one from the other agent is consecutive, so either -1 or +1. Is it possible for them by just announcing 'I know your number' or 'I do not know your number' to find each other's numbers?"]
     }
     getAtomicPropositions(): string[] {
        let A = [];

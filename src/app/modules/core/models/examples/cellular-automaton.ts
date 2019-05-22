@@ -153,8 +153,8 @@ class CellularAutomatonPostcondition extends Postcondition {
 
 
 export class CellularAutomaton extends ExampleDescription {
-    getDescription(): string {
-        throw new Error("Method not implemented.");
+    getDescription(): string[] {
+       return ["The model is a simulation of rule 110 in cellular automata. Agents' knowledge simulate the current word and the actions simulate the computation steps."]
     }
     getAtomicPropositions(): string[] {
         return ["r", "1", "0"];

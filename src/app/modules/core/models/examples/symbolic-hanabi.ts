@@ -187,8 +187,8 @@ class HanabiState {
  * Caution : This Hanabi doesn't use the position of cards.
  */
 export class SimpleSymbolicHanabi extends ExampleDescription {
-    getDescription(): string {
-        throw new Error("Method not implemented.");
+    getDescription(): string[] {
+        return ["Each agent has some cards between 1 and 5 and either red, yellow, blue, white or green. Each agent can only see the cards of other agents."]
     }
 
     /**
