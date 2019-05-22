@@ -153,6 +153,9 @@ class CellularAutomatonPostcondition extends Postcondition {
 
 
 export class CellularAutomaton extends ExampleDescription {
+    getDescription(): string {
+        throw new Error("Method not implemented.");
+    }
     getAtomicPropositions(): string[] {
         return ["r", "1", "0"];
     }

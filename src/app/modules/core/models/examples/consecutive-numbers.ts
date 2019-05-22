@@ -39,6 +39,9 @@ class ConsecutiveNumbersWorld extends WorldValuation {
 
 
 export class ConsecutiveNumbers extends ExampleDescription {
+    getDescription(): string {
+        throw new Error("Method not implemented.");
+    }
     getAtomicPropositions(): string[] {
        let A = [];
        for (let i = 1; i <= ConsecutiveNumbersWorld.consequenceNumbersImax; i++) {

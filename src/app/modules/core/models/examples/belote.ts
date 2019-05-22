@@ -85,6 +85,9 @@ export class Belote extends ExampleDescription {
     }
 
 
+    getDescription(): string {
+        return ""
+    }
     getInitialEpistemicModel() {
 
         let relations = new Map();

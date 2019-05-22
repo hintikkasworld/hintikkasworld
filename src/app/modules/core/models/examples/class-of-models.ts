@@ -6,6 +6,9 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { World } from '../epistemicmodel/world';
 
 export class ClassOfModels  extends ExampleDescription {
+    getDescription(): string {
+        throw new Error("Method not implemented.");
+    }
     getAtomicPropositions(): string[] {
         return ["p"];
     }

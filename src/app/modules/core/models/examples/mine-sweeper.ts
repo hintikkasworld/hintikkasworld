@@ -156,6 +156,9 @@ class MineSweeperWorld extends WorldValuation {
 
 
 export class MineSweeper extends ExampleDescription {
+    getDescription(): string {
+        throw new Error("Method not implemented.");
+    }
     readonly nbcols: number;
     readonly nbrows: number;
     readonly nbmines: number;

@@ -75,6 +75,9 @@ class NanoHanabiWorld extends WorldValuation {
 
 
 export class NanoHanabi extends ExampleDescription {
+    getDescription(): string {
+        throw new Error("Method not implemented.");
+    }
 
     al;
     ar;

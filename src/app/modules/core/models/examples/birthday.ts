@@ -86,6 +86,9 @@ export class Birthday extends ExampleDescription {
         return this.dates.map(BirthdayWorld.dateToProposition);
     }
 
+    getDescription(): string {
+        return ""
+    }
     private readonly dates: Date[];
     private readonly date: Date;
     private readonly personName: string;

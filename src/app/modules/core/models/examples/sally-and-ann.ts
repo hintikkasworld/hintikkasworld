@@ -117,6 +117,9 @@ class SallyAndAnneWorld extends WorldValuation {
 
 
 export class SallyAndAnn extends ExampleDescription {
+    getDescription(): string {
+        throw new Error("Method not implemented.");
+    }
     getAtomicPropositions(): string[] {
         return ["ahere", "bhere", "marbleb", "bspy", "marbleBasket"]
     }

@@ -295,6 +295,9 @@ class FlatlandEpistemicModel implements EpistemicModel {
 
 
 export class Flatland extends ExampleDescription {
+    getDescription(): string {
+        throw new Error("Method not implemented.");
+    }
     readonly ckPositions: boolean;
 
     constructor(ckPositions: boolean) {

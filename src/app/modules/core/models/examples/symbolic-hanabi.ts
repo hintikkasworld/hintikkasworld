@@ -187,6 +187,9 @@ class HanabiState {
  * Caution : This Hanabi doesn't use the position of cards.
  */
 export class SimpleSymbolicHanabi extends ExampleDescription {
+    getDescription(): string {
+        throw new Error("Method not implemented.");
+    }
 
     /**
      * Number of cards in the game Hanabi

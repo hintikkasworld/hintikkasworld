@@ -121,6 +121,10 @@ export class CoreComponent implements OnInit {
     return this.bsEnv.value.getExampleDescription().getAtomicPropositions();
   }
 
+  getDescription(): string {
+    return this.bsEnv.value.getExampleDescription().getDescription();
+  }
+
   showHelp() {
     window.open("assets/about.html", "_target");
   }

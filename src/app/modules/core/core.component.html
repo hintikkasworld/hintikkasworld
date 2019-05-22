@@ -78,6 +78,11 @@
           Epistemic state:<br />
           <app-graph [obsEnv]='bsEnv.asObservable()'></app-graph>
         </div>
+        Description of the puzzle:
+        <div id="description">
+          
+          <div class ="descriptiontext"> {{getDescription()}} </div>
+        </div>
         <div hidden id="divgraphVisualizationActionModel">
           Action:<br />
           <svg id="graphVisualizationActionModel" class="main" width=1000 height=500>

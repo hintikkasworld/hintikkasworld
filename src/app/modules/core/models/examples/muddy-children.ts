@@ -41,6 +41,9 @@ class MuddyChildrenWorld extends WorldValuation {
 
 
 export class MuddyChildren extends ExampleDescription {
+    getDescription(): string {
+        return "afopgfaopgfahp"
+    }
     getAtomicPropositions(): string[] {
         return ["ma", "mb"];
     }

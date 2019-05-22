@@ -79,6 +79,9 @@ function setExampleSimple() {
 */
 
 export class Simple extends ExampleDescription {
+    getDescription(): string {
+        throw new Error("Method not implemented.");
+    }
     getAtomicPropositions(): string[] {
         return ["p"];
     }

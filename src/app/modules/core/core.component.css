@@ -91,8 +91,22 @@ button:focus {
   overflow: auto;
   
 }
-
-
+#description {
+  max-width: 500px;
+  max-height:200px;
+  height:200px;
+  border-radius: 20px;
+  border-color: brown;
+  border-width: 3px;
+  border-style: solid;
+  overflow: auto;
+  
+}
+.descriptiontext {
+  display: inline;
+  margin:5px;
+  background-color: #EEDDAA;
+}
 #error {
   color: red;
 }

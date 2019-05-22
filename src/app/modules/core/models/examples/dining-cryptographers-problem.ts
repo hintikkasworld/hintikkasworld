@@ -79,6 +79,9 @@ class DiningCryptographersWorld extends WorldValuation {
 
 
 export class DiningCryptographersProblem extends ExampleDescription {
+    getDescription(): string {
+        throw new Error("Method not implemented.");
+    }
     getAtomicPropositions(): string[] {
         return ["ap", "bp", "cp", "nsap", "pab", "pac", "pbc"];
     }

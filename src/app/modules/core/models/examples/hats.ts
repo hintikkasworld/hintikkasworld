@@ -38,6 +38,9 @@ class HatsWorld extends WorldValuation {
 
 
 export class Hats extends ExampleDescription {
+    getDescription(): string {
+        throw new Error("Method not implemented.");
+    }
     getAtomicPropositions() {
         return ["aB", "bB", "cB", "aR", "bR", "cR"];
     }
