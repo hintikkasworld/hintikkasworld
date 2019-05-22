@@ -59,9 +59,3 @@ The class should extend ExampleDescription.
 
 Then in 'MenuComponent', add the example.
 
-
-For launching the current version of Hintikka's World
-=====================================================
-
-ng serve
-http://localhost:4200/
