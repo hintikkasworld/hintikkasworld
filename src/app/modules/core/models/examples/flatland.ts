@@ -1,4 +1,5 @@
 import { SuccessorSet } from './../epistemicmodel/successor-set';
+import * as types from './../formula/formula';
 import { environment } from 'src/environments/environment';
 import { Formula } from './../formula/formula';
 import { EpistemicModel } from './../epistemicmodel/epistemic-model';
@@ -35,7 +36,6 @@ class FlatlandWorld extends World {
             this.agentPos[agent] = { x: this.positions[agent].x, y: this.positions[agent].y, r: 8 };
         }
     }
-
 
     draw(context: CanvasRenderingContext2D) {
         function drawVisionCone(agent: string, pos: Point, angle: number) {
@@ -102,9 +102,20 @@ class FlatlandWorld extends World {
         return scalarProduct >= Math.cos(FlatlandWorld.angleCone);
     }
 
+    /**
+     * 
+     * @param phi 
+     * @returns isSee(a,b) if the proposition is of the form a_sees_b, throws an error otherwise.
+     */
 
     modelCheck(phi: string) {
-        throw new Error("Method not implemented.");
+        var l = phi.split("_");
+        if ((l.length == 3) && (l[1] == "sees") && (l[0] in this.positions) && (l[2] in this.positions)) {
+            return this.isSee(l[0],l[2])
+        }
+        else {
+            throw new Error("Invalid atomic proposition: "+phi)
+        }
     }
 
 
@@ -224,10 +235,60 @@ class FlatlandEpistemicModel implements EpistemicModel {
     getSuccessors(w: FlatlandWorld, a: string): SuccessorSet {
         return new FlatlandSuccessorSet(w, a, this.ckPositions);
     }
-
-    check(formula: Formula) {
-        throw new Error("Method not implemented.");
+    check(formula: types.Formula) {
+        return this.modelCheck(this.getPointedWorld() , formula);
     }
+
+
+    /**
+     * @param w world identifier
+     * @param phi a formula (internal representation of a formula)
+     * @returns true if formula phi is true in w
+     * @example M.modelCheck("w", createFormula("(not p)"))
+     * @example M.modelCheck("w", createFormula("(not (K a p))"))
+     * */
+    modelCheck(w: World, phi: types.Formula): boolean {
+        switch (true) {
+            case (phi instanceof types.TrueFormula): return true;
+            case (phi instanceof types.AtomicFormula): return w.modelCheck((<types.AtomicFormula>phi).getAtomicString());
+            case (phi instanceof types.FalseFormula): return false;
+            case (phi instanceof types.ImplyFormula): return !this.modelCheck(w, (<types.ImplyFormula>phi).formula1) || this.modelCheck(w, (<types.ImplyFormula>phi).formula2);
+            case (phi instanceof types.EquivFormula): return this.modelCheck(w, (<types.EquivFormula>phi).formula1) == this.modelCheck(w, (<types.EquivFormula>phi).formula2);
+            case (phi instanceof types.AndFormula): return (<types.AndFormula>phi).formulas.every((f) => this.modelCheck(w, f));
+            case (phi instanceof types.OrFormula): return (<types.OrFormula>phi).formulas.some((f) => this.modelCheck(w, f));
+            case (phi instanceof types.XorFormula): {
+                let c = 0;
+                for (let f of (<types.XorFormula>phi).formulas) {
+                    if (this.modelCheck(w, f))
+                        c++;
+
+                    if (c > 1)
+                        return false;
+                }
+                return (c == 1);
+            }
+            case (phi instanceof types.NotFormula): return !this.modelCheck(w, (<types.NotFormula>phi).formula);
+            case (phi instanceof types.KFormula): {
+                throw new Error("Knowledge not implemented in Flatland.");
+            }
+            case (phi instanceof types.KposFormula):
+                {
+                    throw new Error("Knowledge not implemented in Flatland.");
+                }
+            case (phi instanceof types.KwFormula): {
+                throw new Error("Knowledge not implemented in Flatland.");
+            }
+            case (phi instanceof types.ExactlyFormula): {
+                let c = 0;
+                for (let s of (<types.ExactlyFormula>phi).variables) {
+                    if (w.modelCheck(s)) {
+                        c += 1
+                    }
+                }
+                return (c == (<types.ExactlyFormula>phi).count)
+            }
+        }
+    }    
 }
 
 
@@ -242,7 +303,11 @@ export class Flatland extends ExampleDescription {
     }
     getAtomicPropositions() {
         let A = [];
-
+        for (let agent in (this.getWorldExample() as FlatlandWorld).positions) {
+            for (let agentb in (this.getWorldExample() as FlatlandWorld).positions) {
+                A.push(agent+"_sees_"+agentb)
+            }
+        }
         return A;
     }
     getName() {
