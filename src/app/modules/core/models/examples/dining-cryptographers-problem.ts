@@ -28,7 +28,7 @@ class DiningCryptographersWorld extends WorldValuation {
 
         context.fillStyle = 'black';
         context.font = "12px Verdana";
-        context.fillText("$", x - 4, y +4);
+        context.fillText("$", x - 4, y + 4);
 
     }
 
@@ -42,7 +42,7 @@ class DiningCryptographersWorld extends WorldValuation {
             for (let b of ["a", "b", "c"])
                 if (a < b) {
                     if (this.modelCheck("flipDone")) {
-                        let bit = this.modelCheck("p" + a + b) ? "1" : "0";
+                        let bit = this.modelCheck(DiningCryptographersProblem.getPropositionSharedBit(a + b)) ? "1" : "0";
                         context.fillText(bit, (this.agentPos[a].x + this.agentPos[b].x) / 2, (this.agentPos[a].y + this.agentPos[b].y) / 2 + 8);
                     }
                     context.beginPath();
@@ -55,17 +55,17 @@ class DiningCryptographersWorld extends WorldValuation {
         this.drawAgents(context);
         context.fillStyle = 'black';
         context.font = "8px Verdana";
-        for (let a of ["a", "b", "c"]) 
-            if (this.modelCheck(a + "p"))
-                this.drawPaid(context, this.agentPos[a].x , this.agentPos[a].y - 18);
+        for (let a of ["a", "b", "c"])
+            if (this.modelCheck(DiningCryptographersProblem.getPropositionPaid(a)))
+                this.drawPaid(context, this.agentPos[a].x, this.agentPos[a].y - 18);
 
-                if (this.modelCheck("nsa" + "p")) {
-                    context.fillText("NSA", 16, 8);
+        if (this.modelCheck(DiningCryptographersProblem.getPropositionPaid("nsa"))) {
+            context.fillText("NSA", 16, 8);
 
-                    this.drawPaid(context, 8 , 8);
-                }
+            this.drawPaid(context, 8, 8);
+        }
         if (this.modelCheck("announcementDone")) {
-            
+
             for (let a of ["a", "b", "c"]) {
                 let bit = this.modelCheck(a + "ann") ? "1" : "0";
                 context.fillText(bit, this.agentPos[a].x - this.agentPos[a].r + 16, this.agentPos[a].y - 16);
@@ -80,12 +80,42 @@ class DiningCryptographersWorld extends WorldValuation {
 
 export class DiningCryptographersProblem extends ExampleDescription {
     getDescription(): string[] {
-        return ["See https://en.wikipedia.org/wiki/Dining_cryptographers_problem"]
+        return ["Three cryptographers gather around a table for dinner. ",
+            "The waiter informs them that the meal has been paid for by someone, who could be one of the cryptographers or the National Security Agency (NSA). The cryptographers respect each other's right to make an anonymous payment, but want to find out whether the NSA paid. So they decide to execute a two-stage protocol.",
+
+            "In the first stage, every two cryptographers establish a shared one - bit secret, say by tossing a coin behind a menu so that only two cryptographers see the outcome in turn for each two cryptographers.",
+
+            "In the second stage, each cryptographer publicly announces a bit, which is:",
+
+            " - if they didn't pay for the meal, the exclusive OR (XOR) of the two shared bits they hold with their two neighbours,",
+            " - if they did pay for the meal, the opposite of that XOR.",
+            "",
+
+            "The three public announcements combined reveal the answer to their question. One simply computes the XOR of the three bits announced.",
+            " - If the result is 0, it implies that none of the cryptographers paid (so the NSA must have paid the bill).",
+            " - Otherwise, one of the cryptographers paid, but their identity remains unknown to the other cryptographers.",
+            "", "See https://en.wikipedia.org/wiki/Dining_cryptographers_problem"]
     }
+
+
+    static getPropositionPaid(agent: string) {
+        return agent + "_paid";
+    }
+
+    static getPropositionSharedBit(agents: string) {
+        return "sharedbit_" + agents;
+    }
+
     getAtomicPropositions(): string[] {
-        return ["ap", "bp", "cp", "nsap", "pab", "pac", "pbc"];
+        return [DiningCryptographersProblem.getPropositionPaid("a"),
+        DiningCryptographersProblem.getPropositionPaid("b"),
+        DiningCryptographersProblem.getPropositionPaid("c"),
+        DiningCryptographersProblem.getPropositionPaid("nsa"),
+        DiningCryptographersProblem.getPropositionSharedBit("ab"),
+        DiningCryptographersProblem.getPropositionSharedBit("ac"),
+        DiningCryptographersProblem.getPropositionSharedBit("bc")];
     }
-    
+
     getName() {
         return "Dining cryptographers problem";
     }
@@ -93,14 +123,13 @@ export class DiningCryptographersProblem extends ExampleDescription {
 
     getInitialEpistemicModel(): import("../epistemicmodel/epistemic-model").EpistemicModel {
         let M = new ExplicitEpistemicModel();
-        M.addWorld("wap", new DiningCryptographersWorld(new Valuation(["ap"])))
-        M.addWorld("wbp", new DiningCryptographersWorld(new Valuation(["bp"])))
-        M.addWorld("wcp", new DiningCryptographersWorld(new Valuation(["cp"])))
-        M.addWorld("wnsap", new DiningCryptographersWorld(new Valuation(["nsap"])))
+        M.addWorld("wap", new DiningCryptographersWorld(new Valuation([DiningCryptographersProblem.getPropositionPaid("a")])))
+        M.addWorld("wbp", new DiningCryptographersWorld(new Valuation([DiningCryptographersProblem.getPropositionPaid("b")])))
+        M.addWorld("wcp", new DiningCryptographersWorld(new Valuation([DiningCryptographersProblem.getPropositionPaid("c")])))
+        M.addWorld("wnsap", new DiningCryptographersWorld(new Valuation([DiningCryptographersProblem.getPropositionPaid("nsa")])))
 
-        M.addEdgeIf("a", (world1, world2) => world1.modelCheck("ap") == world2.modelCheck("ap"));
-        M.addEdgeIf("b", (world1, world2) => world1.modelCheck("bp") == world2.modelCheck("bp"));
-        M.addEdgeIf("c", (world1, world2) => world1.modelCheck("cp") == world2.modelCheck("cp"));
+        for (let agent of ["a", "b", "c"])
+            M.addEdgeIf(agent, (world1, world2) => world1.modelCheck(DiningCryptographersProblem.getPropositionPaid(agent)) == world2.modelCheck(DiningCryptographersProblem.getPropositionPaid(agent)));
 
         if (Math.random() < 0.5)
             M.setPointedWorld('wap');// w = 'wap';
@@ -127,7 +156,7 @@ export class DiningCryptographersProblem extends ExampleDescription {
 
                 function getActionModelFlipBitFor(agents): ExplicitEventModel {
                     let E = new ExplicitEventModel();
-                    let atomicProposition = "p" + agents;
+                    let atomicProposition = DiningCryptographersProblem.getPropositionSharedBit(agents);
                     var assignment1 = {};
                     var assignment2 = {};
 
@@ -192,22 +221,25 @@ export class DiningCryptographersProblem extends ExampleDescription {
                     let assignment = {};
                     let atomicProposition = agent + "ann";
 
-                    let xorExpression;
-                    if (agent == "a")
-                        xorExpression = "(pab xor pac)";
-                    else if (agent == "b")
-                        xorExpression = "(pab xor pbc)";
-                    else if (agent == "c")
-                        xorExpression = "(pac xor pbc)";
-                    else
-                        throw "error in the public announcement";
 
-                    if (M.check(FormulaFactory.createFormula(agent + "p")))
+                    const getPairs = agent => {
+                        if (agent == "a") return ["ab", "ac"]
+                        else if (agent == "b") return ["ab", "bc"]
+                        else if (agent == "c") return ["ac", "bc"];
+                        else
+                            throw "error in the public announcement";
+                    }
+                    const pairs = getPairs(agent);
+
+                    const xorExpression = `(${DiningCryptographersProblem.getPropositionSharedBit(pairs[0])} xor ${DiningCryptographersProblem.getPropositionSharedBit(pairs[1])})`;
+
+
+                    if (M.check(FormulaFactory.createFormula(DiningCryptographersProblem.getPropositionPaid(agent))))
                         assignment[atomicProposition] = M.check(FormulaFactory.createFormula("(not " + xorExpression + ")"));
                     else
                         assignment[atomicProposition] = M.check(FormulaFactory.createFormula(xorExpression));
 
-                    let formula = FormulaFactory.createFormula("(" + agent + "p equiv (" +
+                    let formula = FormulaFactory.createFormula("(" + DiningCryptographersProblem.getPropositionPaid(agent) + " equiv (" +
                         assignment[atomicProposition] + " equiv (not " + xorExpression + ")))");
                     assignment["announcementDone"] = "top";
                     E.addAction("e", formula, new PropositionalAssignmentsPostcondition(assignment));
@@ -231,7 +263,7 @@ export class DiningCryptographersProblem extends ExampleDescription {
     }
 
     getWorldExample(): import("../epistemicmodel/world").World {
-        return new DiningCryptographersWorld(new Valuation(["ap"]));
+        return new DiningCryptographersWorld(new Valuation([DiningCryptographersProblem.getPropositionPaid("a")]));
     }
     onRealWorldClick(env: import("../environment/environment").Environment, point: any): void {
 
