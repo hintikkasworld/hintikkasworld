@@ -15,47 +15,86 @@ import { Valuation } from '../epistemicmodel/valuation';
  * */
 class MuddyChildrenWorld extends WorldValuation {
     static mud = MuddyChildrenWorld.getImage('mud.png');
+    readonly nbChildren;
+    readonly size;
 
-
-
-    constructor(valuation: Valuation) {
+    constructor(valuation: Valuation, nbChildren:number) {
         super(valuation);
-        this.agentPos["a"] = { x: 32, y: 32, r: 32 };
-        this.agentPos["b"] = { x: 64 + 32, y: 32, r: 32 };
-        this.agentPos["c"] = undefined;
+        this.nbChildren = nbChildren;
+        this.size = 64/this.nbChildren;
+        for (let i = 0; i < this.nbChildren; i++) {
+            this.agentPos[String.fromCharCode(97+i)] = { x: this.size*(2*i+1), y: this.size, r: this.size }; 
+        }
+        // The constructor should work for any number of agents, but now is supported only for 4 agents.
+      
     }
 
     draw(context: CanvasRenderingContext2D) {
         this.drawAgents(context);
-
-        if (this.modelCheck("ma")) 
-            context.drawImage(MuddyChildrenWorld.mud, 16, 0, 32, 16);
-        
+        for (let i = 0; i < this.nbChildren; i++) {
+            if (this.modelCheck("m"+String.fromCharCode(97+i))) {
+                context.drawImage(MuddyChildrenWorld.mud, this.agentPos[String.fromCharCode(97+i)].x - (this.size/2), 0, this.size, this.size/2);
+            }
             
-
-        if (this.modelCheck("mb"))
-            context.drawImage(MuddyChildrenWorld.mud, this.agentPos["b"].x - 16, 0, 32, 16);
+        }
     }
 
 }
 
 
 export class MuddyChildren extends ExampleDescription {
+    readonly nbChildren;
+
+    constructor(nbChildren: number) {
+        super();
+        this.nbChildren = nbChildren;
+    }
     getDescription(): string[] {
-        return ["Children play in the garden and some of them become muddy. Their father comes and say 'At least one of you has mud on her forehead'. He then asks several times 'Does any one of you know whether she has mud on her forehead?'"]
+        return [this.nbChildren + " children play in the garden and some of them become muddy. Their father comes and say 'At least one of you has mud on her forehead'. He then asks several times 'Does any one of you know whether she has mud on her forehead?'"]
     }
     getAtomicPropositions(): string[] {
-        return ["ma", "mb"];
+        let A = [];
+        for (let i = 1; i <= this.nbChildren; i++) {
+            A.push("m"+String.fromCharCode(96+i));
+        }
+        return A;
     }
     getName() {return "Muddy Children"};
 
+    generateallstrings(n:number) : string[] {
+        if (n <= 0) {
+            return [];
+        }
+        else if (n == 1) {
+            return ["0","1"]
+        }
+        else {
+            let A = this.generateallstrings(n-1);
+            let B = [];
+            for (let i = 0; i < A.length; i++) {
+                B.push(A[i]+"0");
+                B.push(A[i]+"1");
+            }
+            return B;
+        }
+    }
     getInitialEpistemicModel() {
         let M = new ExplicitEpistemicModel();
 
-        M.addWorld("w", new MuddyChildrenWorld(new Valuation({ "ma": true, "mb": true })));
-        M.addWorld("u", new MuddyChildrenWorld(new Valuation({ "ma": false, "mb": true })));
-        M.addWorld("t", new MuddyChildrenWorld(new Valuation({ "ma": false, "mb": false })));
-        M.addWorld("s", new MuddyChildrenWorld(new Valuation({ "ma": true, "mb": false })));
+        let A = this.generateallstrings(this.nbChildren);
+        console.log(A);
+        for (let i = 0; i < A.length; i++) {
+            let v : Map<string, boolean> = new Map();
+            for (let k = 0; k <= A[i].length; k++) {
+                v.set("m"+String.fromCharCode(97+k), (A[i].charAt(k) == '1'))
+            }
+            M.addWorld("w"+A[i], new MuddyChildrenWorld(Valuation.buildFromMap(v), this.nbChildren));
+        }
+        console.log(M.getNodes);
+       /* M.addWorld("w", new MuddyChildrenWorld(new Valuation({ "ma": true, "mb": true }), this.nbChildren));
+        M.addWorld("u", new MuddyChildrenWorld(new Valuation({ "ma": false, "mb": true }), this.nbChildren));
+        M.addWorld("t", new MuddyChildrenWorld(new Valuation({ "ma": false, "mb": false }), this.nbChildren));
+        M.addWorld("s", new MuddyChildrenWorld(new Valuation({ "ma": true, "mb": false }), this.nbChildren));
 
 
         M.setPointedWorld("w");
@@ -63,8 +102,32 @@ export class MuddyChildren extends ExampleDescription {
         M.addEdgesCluster("a", ["w", "u"]);
         M.addEdgesCluster("a", ["s", "t"]);
         M.addEdgesCluster("b", ["w", "s"]);
-        M.addEdgesCluster("b", ["t", "u"]);
+        M.addEdgesCluster("b", ["t", "u"]); */
 
+        for (let i = 0; i < this.nbChildren; i++) {
+            let Av = this.generateallstrings(i);
+            let Ap = this.generateallstrings(this.nbChildren-(i+1))
+            if (Av.length == 0) {
+                Av.push("")
+            }
+            if (Ap.length == 0) {
+                Ap.push("")
+            }
+            console.log(Av)
+            console.log(Ap)
+            console.log("(-------------------)")
+            for (let iav = 0; iav < Av.length; iav++) {
+                for (let iap = 0; iap < Ap.length; iap++) {
+                    console.log((String.fromCharCode(97+i), ["w"+Av[iav]+"0"+Ap[iap], "w"+Av[iav]+"1"+Ap[iap]]))
+                    M.addEdgesCluster(String.fromCharCode(97+i), ["w"+Av[iav]+"0"+Ap[iap], "w"+Av[iav]+"1"+Ap[iap]])
+                } 
+            }
+        }
+        let winitial = "w"
+        for (let i = 0; i < this.nbChildren; i++) {
+            winitial += "1"
+        }
+        M.setPointedWorld(winitial);
         return M;
     }
 
