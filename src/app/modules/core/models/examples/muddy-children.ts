@@ -6,6 +6,7 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 import { Formula, FormulaFactory } from '../formula/formula';
 import { Valuation } from '../epistemicmodel/valuation';
+import { isoStringToDate } from '@angular/common/src/i18n/format_date';
 
 
 /**
@@ -59,7 +60,7 @@ export class MuddyChildren extends ExampleDescription {
         }
         return A;
     }
-    getName() {return "Muddy Children"};
+    getName() {return (this.nbChildren.toString()) + " Muddy Children"};
 
     generateallstrings(n:number) : string[] {
         if (n <= 0) {
@@ -132,14 +133,24 @@ export class MuddyChildren extends ExampleDescription {
     }
 
     getActions() {
+        let fatherann = "ma"
+        let donotknowann = "(not (K a ma))"
+        for (let i = 1; i < this.nbChildren; i++) {
+            fatherann += " or m" + String.fromCharCode(97+i)
+            donotknowann += " and (not (K "+String.fromCharCode(97+i) + " m"+String.fromCharCode(97+i)+"))"
+        }
+        fatherann = "("+fatherann+")" 
+        donotknowann = "("+donotknowann+")"
+        console.log(fatherann)
+        console.log(donotknowann)
         return [new EventModelAction({name: "Father says at least one child is muddy.", 
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("(ma or mb)"))}),
+                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(fatherann))}),
                 
                 new EventModelAction({name: "Publicly a is muddy!", 
                 eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("ma"))}),
 
                 new EventModelAction({name: "Children say they do not know.", 
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula("((not (K a ma)) and (not (K b mb)))"))})
+                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(donotknowann))})
 
 
                
