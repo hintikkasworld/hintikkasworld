@@ -5,7 +5,7 @@ import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Obs } from '../epistemicmodel/symbolic-relation';
-import { ExactlyFormula, TrueFormula } from '../formula/formula';
+import { ExactlyFormula, TrueFormula, AndFormula, ImplyFormula, AtomicFormula, NotFormula, OrFormula } from '../formula/formula';
 import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
 
 class Cell {
@@ -73,7 +73,7 @@ class BattleShipWorld extends WorldValuation {
     readonly nbrows: number;
     readonly agents: string[];
     readonly ships: number[];
-    static readonly xt = 38;
+    static readonly xt = 16;
     static readonly yt = 0;
     readonly cellSize: number;
     static imgFull = BattleShipWorld.getImage("bomb.png");
@@ -87,7 +87,8 @@ class BattleShipWorld extends WorldValuation {
         this.ships = ships;
         this.clicked = clicked;
         this.cellSize = Math.min(16, Math.min((64 - BattleShipWorld.yt) / (nbrows+1), (128 - BattleShipWorld.xt) / (3+2*nbcols)));
-        this.agentPos["a"] = { x: 16, y: 32, r: 16 };
+        this.agentPos["a"] = { x:10, y: 32, r: 10 };
+        this.agentPos["b"] = {x: 128-10, y: 32, r:10};
     }
 
     isClicked(row, col) {
@@ -135,10 +136,9 @@ class BattleShipWorld extends WorldValuation {
 
         // We place the boats of the left grid.
 
-        context.strokeStyle = "blue";
+        context.strokeStyle = "b";
         context.fillStyle = "gray";   
         for (let agent = 0; agent <= this.agents.length-1;agent++) {
-            console.log(this.agents[agent])
             for (let col = 1; col <= this.nbcols; col++) {
                 for (let row = 1; row <= this.nbrows; row++) {
                     for (let size = 0; size <= this.ships.length-1;size++) {
@@ -223,51 +223,70 @@ export class BattleShip extends ExampleDescription {
     readonly nbcols: number;
     readonly nbrows: number;
     readonly ships: number[];
-    readonly agents = ["red","blue"];
+    readonly agents = ["a","b"];
     clicked;
     readonly atmset: string[];
+    
+    readonly shipsduplfree:number[]
+    atmsetShips = new Map();
     constructor(nbrows: number, nbcols: number, ships: number[]) {
         super();
         this.nbcols = nbcols;
         this.nbrows = nbrows;
         this.ships = ships;
         this.atmset = this.generateAtomicPropositions();
+        this.shipsduplfree = [];
+        for (let i = 0; i <= this.ships.length-1; i++) {
+            if (!(this.shipsduplfree.includes(this.ships[i]))) {
+                this.shipsduplfree.push(this.ships[i]);
+            }
+        }
     }
 
     getAtomicPropositions():string[] {
         return this.atmset;
     }
     generateAtomicPropositions(): string[] {
-        var A = [];
-        for (let x = 1; x <= this.nbcols; x++) {
+        let A = [];
+        //this.atmsetShips = new Map();
+       /* for (let x = 1; x <= this.nbcols; x++) {
              for (let y = 1; y <= this.nbrows; y++) {
                 for (var agent = 0; agent < this.agents.length; agent++) {
                     A.push(getAtomIsTheCellOccupied(this.agents[agent],x,y));
                  }
              }
-        }
+        }*/
 
-        var S = [];
-        for (var size = 0; size < this.ships.length; size++) {
-            if (!(this.ships[size] in S)) {
-                S.push(this.ships[size])
-                for (let x = 1; x <= this.nbcols+1-size; x++) {
-                    for (let y = 1; y <= this.nbrows; y++) {
-                        for (var agent = 0; agent < this.agents.length; agent++) {
-                            A.push(getAtomBeginningShip(this.agents[agent],"hor",this.ships[size],x,y));
-                        }
+       
+        for (let agent = 0; agent < this.agents.length; agent++) {
+            let S = [];
+            let m = new Map();
+            for (let size = 0; size < this.ships.length; size++) {
+                if (!(S.includes(this.ships[size]))) {
+                    S.push(this.ships[size])
+                        let ll = [];
+                        for (let x = 1; x <= this.nbcols+1-this.ships[size]; x++) {
+                            for (let y = 1; y <= this.nbrows; y++) {
+                                    A.push(getAtomBeginningShip(this.agents[agent],"hor",x,y,this.ships[size]));
+                                    ll.push(getAtomBeginningShip(this.agents[agent],"hor",x,y,this.ships[size]))
+                                }
+                            }
+                        
+                    
+                for (let x = 1; x <= this.nbcols; x++) {
+                    for (let y = 1; y <= this.nbrows+1-this.ships[size]; y++) {
+                        
+                            A.push(getAtomBeginningShip(this.agents[agent],"ver",x,y,this.ships[size]));
+                            ll.push(getAtomBeginningShip(this.agents[agent],"ver",x,y,this.ships[size]));
                     }
-               }   
-               for (let x = 1; x <= this.nbcols; x++) {
-                for (let y = 1; y <= this.nbrows+1-size; y++) {
-                    for (var agent = 0; agent < this.agents.length; agent++) {
-                        A.push(getAtomBeginningShip(this.agents[agent],"ver",this.ships[size],x,y));
-                    }
+
+            }       
+            m.set(this.ships[size],  ll);
                 }
-           }                 
-            }
 
-        }
+            } 
+        this.atmsetShips.set(this.agents[agent],m)
+    }
         return A;
     }    
     getName() {
@@ -277,13 +296,44 @@ export class BattleShip extends ExampleDescription {
         this.clicked = {};
         let rels = new Map();
         rels.set("a", new Obs([]));
+        rels.set("b", new Obs([]));
+        let l = [];
+  
+        for (let i = 0; i < this.shipsduplfree.length; i++) {
+            for (let agent = 0; agent <= this.agents.length-1; agent++) {
+                  l.push(new ExactlyFormula(1, this.atmsetShips.get(this.agents[agent]).get(this.shipsduplfree[i])))         
+                for (let col = 1; col <= this.nbcols; col++) {
+                    for (let row = 1; row <= this.nbrows; row++) {
+                       l.push(new OrFormula([new NotFormula(new AtomicFormula(getAtomBeginningShip(this.agents[agent],"hor",col,row,this.shipsduplfree[i]))),
+                            new NotFormula(new AtomicFormula(getAtomBeginningShip(this.agents[agent],"ver",col,row,this.shipsduplfree[i])))]))
+                        let l2 = [];
+                        for (let i2 = 0; i2 <= this.shipsduplfree.length-1; i2++) {
+                                if (i2 != i) {
+                                    for (let col2 = Math.min(1,col-this.shipsduplfree[i]+1); col2 <= col; col++) {
+                                        l2.push(new NotFormula( new AtomicFormula(getAtomBeginningShip(this.agents[agent],"hor",col2,row,this.shipsduplfree[i]))))
+                                    }
+                                    for (let row2 = Math.min(1,row-this.shipsduplfree[i]+1); row2 <= row; row++) {
+                                        l2.push(new NotFormula( new AtomicFormula(getAtomBeginningShip(this.agents[agent],"ver",col,row2,this.shipsduplfree[i]))))
+                                    }
+                                }
+                        }
+                       /* l.push(new ImplyFormula(new OrFormula([new AtomicFormula(getAtomBeginningShip(this.agents[agent],"hor",col,row,this.shipsduplfree[i])),new AtomicFormula(getAtomBeginningShip(this.agents[agent],"ver",col,row,this.shipsduplfree[i]))])
+                            ,new AndFormula(l2))) */
+                    }
+                }
+            }
+        }
+
 
       //  let M = SymbolicEpistemicModel.build(this.getWorldClass(), ["a"], this.getAtomicPropositions(), rels, new ExactlyFormula(this.ships.reduce((a,b) => a + b, 0), this.getAtomicPropositions()));
         // 
-        let M = SymbolicEpistemicModel.build(this.getWorldClass(), ["a"], this.getAtomicPropositions(), rels, new TrueFormula());
+        console.log(l)
+        console.log(this.getAtomicPropositions())
+        let M = SymbolicEpistemicModel.build(this.getWorldClass(), ["a","b"], this.getAtomicPropositions(), rels, new AndFormula(l));
         M.setPointedValuation(this.getValuationExample());
         return M;
     }
+
     getValuationExample(): Valuation {
         let V = []
         for (let agent = 0; agent <= this.agents.length-1;agent++) {
@@ -330,7 +380,6 @@ export class BattleShip extends ExampleDescription {
             } 
         }
 
-        console.log(V);
         return new Valuation(V);
     }
     getWorldClass(): import("../epistemicmodel/world-valuation-type").WorldValuationType {
