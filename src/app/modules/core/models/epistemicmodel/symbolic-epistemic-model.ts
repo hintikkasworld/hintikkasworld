@@ -13,6 +13,8 @@ import { BddService, BDDNode } from '../../../../services/bdd.service';
 import { WorldValuationType } from './world-valuation-type';
 
 
+
+
 /**
  * it implements an epistemic model described symbolically by means of BDDs
  */
@@ -78,48 +80,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return str.includes(SymbolicEpistemicModel.getPrimedString());
     }
 
-    /**
-     * @param worldClass the type of worlds that the symbolic epistemic models returns (e.g. BeloteWorld)
-     * @param agents list of agents as string
-     * @param atoms list of propositional atoms describing the example
-     * @param relations Map of agent: accessibility relations
-     * @param rules specific rules of the game as Formula
-     */
-    static build(worldClass: WorldValuationType, agents: string[], atoms: string[], relations: Map<string, SymbolicRelation>, rules: Formula) {
-
-        let propositionalAtoms = [];
-        let propositionalPrimes = []
-
-        let to_prime = new Map();
-        let not_to_prime = new Map();
-        atoms.forEach((value) => {
-            let prime = SymbolicEpistemicModel.getPrimedVarName(value);
-            propositionalAtoms.push(value);
-            propositionalPrimes.push(prime);
-            to_prime[value] = prime;
-            not_to_prime[prime] = to_prime;
-        });
-
-        let rulesPrime = rules.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
-        let rulesAndRulesPrime = new AndFormula([rulesPrime, rules]);
-
-        let bddRulesAndRulesPrime = BDD.buildFromFormula(rulesAndRulesPrime);
-        console.log("INITIAL RULES", rulesAndRulesPrime, "=>", bddRulesAndRulesPrime);
-
-        let relationsRestrictedToInitialFormula = new Map<string, BDDNode>();
-        relations.forEach((value: SymbolicRelation, key: string) => {
-            console.log("Starting the computation of the BDD of the symbolic Relation for " + key + "...");
-            let bddRelation = value.toBDD();
-            console.log("Computation of the BDD of the symbolic Relation for " + key + " finished!");
-            relationsRestrictedToInitialFormula.set(key, BDD.bddService.applyAnd([BDD.bddService.createCopy(bddRulesAndRulesPrime), bddRelation]));
-            console.log("Computation of the BDD ofthe mix with the rules BDD for the symbolic Relation for " + key + " finished!");
-        });
-    //    console.log("Symbolic Relations", relations, "=>", relationsRestrictedToInitialFormula);
-        console.log("Symbolic relations processed!")
-        return new SymbolicEpistemicModel(relationsRestrictedToInitialFormula, worldClass, agents, propositionalAtoms, propositionalPrimes, bddRulesAndRulesPrime);
-
-    }
-
     constructor(relations: Map<string, BDDNode>, worldClass: WorldValuationType, agents: string[],
         propositionalAtoms: string[], propositionalsPrimes: string[], formulaSetWorlds: BDDNode) {
 
@@ -141,22 +101,15 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     /**
-    @param a valuation
-    Makes that valuation to be the pointed one
-    **/
-    setPointedValuation(valuation: Valuation) { this.pointedValuation = valuation; console.log("SET VALUATION", valuation); }
-
-    setAgentSymbolicRelation(agent: string, bddPointer: BDDNode): void {
-        this.symbolicRelations.set(agent, bddPointer);
-    }
-    
-    
-    /**
     @returns the pointed world
     **/
     getPointedWorld() { return this.getWorld(this.pointedValuation); }
 
-    
+    /**
+    @param a valuation
+    Makes that valuation to be the pointed one
+    **/
+    setPointedValuation(valuation: Valuation) { this.pointedValuation = valuation; console.log("SET VALUATION", valuation); }
 
     getSuccessors(w: World, a: string): SymbolicSuccessorSet {
 
@@ -197,6 +150,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     getAgentSymbolicRelation(agent: string): BDDNode {
         return this.symbolicRelations.get(agent);
+    }
+
+    setAgentSymbolicRelation(agent: string, bddPointer: BDDNode): void {
+        this.symbolicRelations.set(agent, bddPointer);
     }
 
     getInitialFormula(): BDDNode {
