@@ -13,8 +13,6 @@ import { BddService, BDDNode } from '../../../../services/bdd.service';
 import { WorldValuationType } from './world-valuation-type';
 
 
-
-
 /**
  * it implements an epistemic model described symbolically by means of BDDs
  */
@@ -143,15 +141,22 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     /**
-    @returns the pointed world
-    **/
-    getPointedWorld() { return this.getWorld(this.pointedValuation); }
-
-    /**
     @param a valuation
     Makes that valuation to be the pointed one
     **/
     setPointedValuation(valuation: Valuation) { this.pointedValuation = valuation; console.log("SET VALUATION", valuation); }
+
+    setAgentSymbolicRelation(agent: string, bddPointer: BDDNode): void {
+        this.symbolicRelations.set(agent, bddPointer);
+    }
+    
+    
+    /**
+    @returns the pointed world
+    **/
+    getPointedWorld() { return this.getWorld(this.pointedValuation); }
+
+    
 
     getSuccessors(w: World, a: string): SymbolicSuccessorSet {
 
@@ -192,10 +197,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     getAgentSymbolicRelation(agent: string): BDDNode {
         return this.symbolicRelations.get(agent);
-    }
-
-    setAgentSymbolicRelation(agent: string, bddPointer: BDDNode): void {
-        this.symbolicRelations.set(agent, bddPointer);
     }
 
     getInitialFormula(): BDDNode {
