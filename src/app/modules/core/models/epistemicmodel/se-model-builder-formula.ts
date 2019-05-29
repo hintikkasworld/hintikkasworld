@@ -4,9 +4,14 @@ import { WorldValuationType } from './world-valuation-type';
 import { AndFormula, Formula } from '../formula/formula';
 import { BDD } from '../formula/bdd';
 import { SymbolicRelation } from './symbolic-relation';
-import { Observable, of } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
 
 export class SEModelBuilderFormula {
+
+    private static atoms: string[];
+    private static primes: string[];
+    private static bddRulesAndRulesPrime: BDDNode;
+    private static relationsRestrictedToInitialFormula: Map<string, BDDNode>;
 
      /**
      * @param worldClass the type of worlds that the symbolic epistemic models returns (e.g. BeloteWorld)
@@ -16,11 +21,10 @@ export class SEModelBuilderFormula {
      * @param rules specific rules of the game as Formula
      */
     static build(worldClass: WorldValuationType, agents: string[], atoms: string[], relations: Map<string, SymbolicRelation>, rules: Formula): Observable<SymbolicEpistemicModel> {
-        let propositionalAtoms = this.initializePropositionalAtoms(atoms);
-        let propositionalPrimes = this.initializePropositionalPrimes(atoms);
-        let     
-        this.setFormulaSetWorlds(rules).subscribe((bddRulesAndRulesPrime) => this.setRelations(relations, bddRulesAndRulesPrime));
-        return of(new SymbolicEpistemicModel(relationsRestrictedToInitialFormula, worldClass, agents, propositionalAtoms, propositionalPrimes, bddRulesAndRulesPrime));
+        this.initializeAtomsPrimes(atoms);
+        this.setFormulaSetWorlds(rules).subscribe((bddRulesAndRulesPrime) => this.bddRulesAndRulesPrime = bddRulesAndRulesPrime);
+        this.setRelations(relations, this.bddRulesAndRulesPrime).subscribe((relationsRestrictedToInitialFormula) => this.relationsRestrictedToInitialFormula = relationsRestrictedToInitialFormula);
+        return of(new SymbolicEpistemicModel(this.relationsRestrictedToInitialFormula, worldClass, agents, this.atoms, this.primes, this.bddRulesAndRulesPrime));
     }
 
     // all of these functions below are stupid functions to 
@@ -28,30 +32,29 @@ export class SEModelBuilderFormula {
     // The method setFormulaSetWorlds has to be an asynchronous function
     // so that setRelations could be used first
 
-    private static initializePropositionalAtoms(atoms: string[]) {
-        let propositionalAtoms = [];
-        atoms.forEach((value) => {
-            propositionalAtoms.push(value);
-        });
-        return propositionalAtoms;
-    }
 
-    private static initializePropositionalPrimes(atoms: string[]) {
-        let propositionalPrimes = [];
+    private static initializeAtomsPrimes(atoms: string[]) {
+        this.atoms = [];
+        this.primes = [];
+        let to_prime = new Map();
+        let not_to_prime = new Map();
         atoms.forEach((value) => {
             let prime = SymbolicEpistemicModel.getPrimedVarName(value);
-            propositionalPrimes.push(prime);
+            this.atoms.push(value);
+            this.primes.push(prime);
+            to_prime[value] = prime;
+            not_to_prime[prime] = to_prime;
         });
-        return propositionalPrimes;
+
     }
 
-    private static setFormulaSetWorlds(rules) {
+    private static setFormulaSetWorlds(rules: Formula) {
         let rulesPrime = rules.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
         let rulesAndRulesPrime = new AndFormula([rulesPrime, rules]);
         return of(BDD.buildFromFormula(rulesAndRulesPrime));
     }
 
-    private static setRelations(relations, bddRulesAndRulesPrime): Map<string, BDDNode>{
+    private static setRelations(relations: Map<string, SymbolicRelation>, bddRulesAndRulesPrime: BDDNode): Observable<Map<string, BDDNode>> {
         let relationsRestrictedToInitialFormula = new Map<string, BDDNode>();
         relations.forEach((value: SymbolicRelation, key: string) => {
             console.log("Starting the computation of the BDD of the symbolic Relation for " + key + "...");
@@ -62,7 +65,7 @@ export class SEModelBuilderFormula {
         });
         // console.log("Symbolic Relations", relations, "=>", relationsRestrictedToInitialFormula);
         console.log("Symbolic relations processed!");
-        return relationsRestrictedToInitialFormula;
+        return of<Map<string, BDDNode>>(relationsRestrictedToInitialFormula);
     }
 
 
