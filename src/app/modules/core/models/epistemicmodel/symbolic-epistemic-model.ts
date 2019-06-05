@@ -87,7 +87,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * @param relations Map of agent: accessibility relations
      * @param rules specific rules of the game as Formula
      */
-    static build(worldClass: WorldValuationType, agents: string[], atoms: string[], relations: Map<string, SymbolicRelation>, rules: Formula) {
+    static build(worldClass: WorldValuationType, agents: string[], atoms: string[], relations: Map<string, SymbolicRelation>, rules: Formula, pointedValuation: Valuation) {
 
         let propositionalAtoms = [];
         let propositionalPrimes = []
@@ -118,22 +118,24 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         });
     //    console.log("Symbolic Relations", relations, "=>", relationsRestrictedToInitialFormula);
         console.log("Symbolic relations processed!")
-        return new SymbolicEpistemicModel(relationsRestrictedToInitialFormula, worldClass, agents, propositionalAtoms, propositionalPrimes, bddRulesAndRulesPrime);
+        return new SymbolicEpistemicModel(relationsRestrictedToInitialFormula, worldClass, agents, propositionalAtoms, propositionalPrimes, bddRulesAndRulesPrime, pointedValuation);
 
     }
 
+   
+
     constructor(relations: Map<string, BDDNode>, worldClass: WorldValuationType, agents: string[],
-        propositionalAtoms: string[], propositionalsPrimes: string[], formulaSetWorlds: BDDNode) {
+        propositionalAtoms: string[], propositionalsPrimes: string[], formulaSetWorlds: BDDNode, pointedValuation: Valuation) {
 
         // console.log("Agents of SymbolicEpistemicModel", agents);
 
         this.agents = agents;
-        this.pointedValuation = null;
         this.worldClass = worldClass;
         this.propositionalAtoms = propositionalAtoms;
         this.propositionalPrimes = propositionalsPrimes;
         this.formulaSetWorlds = formulaSetWorlds;
         this.symbolicRelations = relations;
+        this.pointedValuation = pointedValuation;
 
         /**François commented this:
         this.symbolicRelations = new Map<string, BDDNode>();
@@ -146,12 +148,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     @returns the pointed world
     **/
     getPointedWorld() { return this.getWorld(this.pointedValuation); }
-
-    /**
-    @param a valuation
-    Makes that valuation to be the pointed one
-    **/
-    setPointedValuation(valuation: Valuation) { this.pointedValuation = valuation; console.log("SET VALUATION", valuation); }
 
     getSuccessors(w: World, a: string): SymbolicSuccessorSet {
 
@@ -376,8 +372,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             relations.set(key, BDD.bddService.createCopy(value));
         });
         let formula = BDD.bddService.createCopy(this.formulaSetWorlds);
-        let clone = new SymbolicEpistemicModel(relations, this.worldClass, this.agents, this.propositionalAtoms, this.propositionalPrimes, formula)
-        clone.setPointedValuation(this.pointedValuation);
+        let clone = new SymbolicEpistemicModel(relations,
+             this.worldClass, this.agents, this.propositionalAtoms, 
+             this.propositionalPrimes, formula, this.pointedValuation);
         return clone;
     }
 

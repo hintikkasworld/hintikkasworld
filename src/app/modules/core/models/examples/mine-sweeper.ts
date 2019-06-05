@@ -228,9 +228,8 @@ export class MineSweeper extends ExampleDescription {
         rels.set("a", new Obs([]));
 
         let M = SymbolicEpistemicModel.build(this.getWorldClass(), ["a"],
-            this.getAtomicPropositions(), rels, new ExactlyFormula(this.nbmines, this.getAtomicPropositions()));
+            this.getAtomicPropositions(), rels, new ExactlyFormula(this.nbmines, this.getAtomicPropositions()), this.getValuationExample());
 
-        M.setPointedValuation(this.getValuationExample());
         return M;
     }
 

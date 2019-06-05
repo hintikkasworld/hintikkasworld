@@ -180,8 +180,8 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
         // console.log("LISTES", listTransfert, SymbolicEventModel.getMapPostedToNotPosted(listTransfert))
         res = BDD.bddService.applyRenaming(res, SymbolicEventModel.getMapPostedToNotPosted(listTransfert));  // Renaming + var into normal variables
         DEBUGLOG("renamed new world", res)
-        let newSEM = new SymbolicEpistemicModel(agentMap, M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula())
-        newSEM.setPointedValuation(BDD.bddService.toValuation(res));
+        let newSEM = new SymbolicEpistemicModel(agentMap, M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula(), BDD.bddService.toValuation(res));
+
 
         /* DEBUG LOOP */
         {

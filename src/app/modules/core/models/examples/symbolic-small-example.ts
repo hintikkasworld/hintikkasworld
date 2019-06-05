@@ -165,7 +165,7 @@ export class SymbolicSimpleExample extends ExampleDescription {
 
         console.log("Rules", rules);
 
-        let M = SymbolicEpistemicModel.build(SimpleExampleWorld, this.agents, variables, relationsSymboliques, rules);
+        
 
         console.log("Fin SEM");
 
@@ -193,7 +193,7 @@ export class SymbolicSimpleExample extends ExampleDescription {
 
         console.log("Valuation", propositions, );
 
-        M.setPointedValuation(new Valuation(propositions));
+        let M = SymbolicEpistemicModel.build(SimpleExampleWorld, this.agents, variables, relationsSymboliques, rules, new Valuation(propositions));
 
         return M;
         /**

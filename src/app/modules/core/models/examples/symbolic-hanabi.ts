@@ -348,8 +348,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         console.log("Valuation", new Valuation(propositions));
 
 
-        let M = SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, this.variables, symbolicRelations, rules);
-        M.setPointedValuation(new Valuation(propositions));
+        let M = SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, this.variables, symbolicRelations, rules, new Valuation(propositions));
 
         console.log("Fin SEM");
 
