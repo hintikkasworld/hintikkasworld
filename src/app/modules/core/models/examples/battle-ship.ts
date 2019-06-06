@@ -301,84 +301,135 @@ export class BattleShip extends ExampleDescription {
     getInitialEpistemicModel(): import("../epistemicmodel/epistemic-model").EpistemicModel {
         this.clicked = {};
         let rels = new Map();
-        rels.set("a", new Obs([]));
-        rels.set("b", new Obs([]));
-        let l = [];
 
+        let l = [];
+        let reltab = new Array();
+        for (let agent = 0; agent <= this.agents.length - 1; agent++) {
+            reltab.push(new Array())
+        }
+        console.log(reltab)
         for (let i = 0; i < this.shipsduplfree.length; i++) {
             for (let agent = 0; agent <= this.agents.length - 1; agent++) {
-                l.push(new ExactlyFormula(1, this.atmsetShips.get(this.agents[agent]).get(this.shipsduplfree[i])))
-                for (let col = 1; col <= this.nbcols; col++) {
+                let c = 0
+                for (let j = 0; j < this.ships.length; j++) {
+                    if (this.ships[j] == this.shipsduplfree[i]) {
+                        c+= 1
+                    }
+                }
+               l.push(new ExactlyFormula(c, this.atmsetShips.get(this.agents[agent]).get(this.shipsduplfree[i])))
+               for (let k = 0; k <  this.atmsetShips.get(this.agents[agent]).get(this.shipsduplfree[i]).length; k++) {
+                   reltab[agent].push( this.atmsetShips.get(this.agents[agent]).get(this.shipsduplfree[i])[k])
+                   console.log(reltab)
+                }
+               for (let col = 1; col <= this.nbcols; col++) {
                     for (let row = 1; row <= this.nbrows; row++) {
-                        l.push(new OrFormula([new NotFormula(new AtomicFormula(getAtomBeginningShip(this.agents[agent], "hor", col, row, this.shipsduplfree[i]))),
-                        new NotFormula(new AtomicFormula(getAtomBeginningShip(this.agents[agent], "ver", col, row, this.shipsduplfree[i])))]))
-                        let l2 = [];
+                        let ll = []
+                        if (col <= this.nbcols + 1 - this.shipsduplfree[i]) {
+                            ll.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(this.agents[agent], "hor", col, row, this.shipsduplfree[i]))));
+                        }
+                        if (row <= this.nbrows + 1 - this.shipsduplfree[i]) {
+                            ll.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(this.agents[agent], "ver", col, row, this.shipsduplfree[i]))));
+                        }
+                        
+                        if (ll.length == 2) {
+                            console.log(ll);
+                        //   l.push(new OrFormula(ll))
+                            
+                        }
+                         let l2 = [];
                         for (let i2 = 0; i2 <= this.shipsduplfree.length - 1; i2++) {
                             if (i2 != i) {
-                                for (let col2 = Math.min(1, col - this.shipsduplfree[i] + 1); col2 <= col; col++) {
-                                    l2.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(this.agents[agent], "hor", col2, row, this.shipsduplfree[i]))))
+                                for (let col2 = col - this.shipsduplfree[i] + 1; col2 <= col; col++) {
+                                    if (col2 >= 1) {
+                                        l2.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(this.agents[agent], "hor", col2, row, this.shipsduplfree[i]))))
+                                    }
                                 }
-                                for (let row2 = Math.min(1, row - this.shipsduplfree[i] + 1); row2 <= row; row++) {
-                                    l2.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(this.agents[agent], "ver", col, row2, this.shipsduplfree[i]))))
+
+                                for (let row2 = row - this.shipsduplfree[i] + 1; row2 <= row; row++) {
+                                    if (row2 >= 1) {
+                                        l2.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(this.agents[agent], "ver", col, row2, this.shipsduplfree[i]))))
+                                    }
                                 }
+
                             }
                         }
-                        /* l.push(new ImplyFormula(new OrFormula([new AtomicFormula(getAtomBeginningShip(this.agents[agent],"hor",col,row,this.shipsduplfree[i])),new AtomicFormula(getAtomBeginningShip(this.agents[agent],"ver",col,row,this.shipsduplfree[i]))])
-                             ,new AndFormula(l2))) */
+                      //  l.push(new ImplyFormula(new OrFormula([new AtomicFormula(getAtomBeginningShip(this.agents[agent],"hor",col,row,this.shipsduplfree[i])),new AtomicFormula(getAtomBeginningShip(this.agents[agent],"ver",col,row,this.shipsduplfree[i]))])
+                            // ,new AndFormula(l2))) 
                     }
                 }
             }
         }
-
+        /* rels.set("a", new Obs(reltab[0]));
+        rels.set("b", new Obs(reltab[1])); */ 
+       rels.set("a", new Obs([]) );
+        rels.set("b", new Obs([])); 
 
         //  let M = SymbolicEpistemicModel.build(this.getWorldClass(), ["a"], this.getAtomicPropositions(), rels, new ExactlyFormula(this.ships.reduce((a,b) => a + b, 0), this.getAtomicPropositions()));
         // 
         console.log(l)
         console.log(this.getAtomicPropositions())
-        let M = SymbolicEpistemicModel.build(this.getWorldClass(), ["a", "b"], this.getAtomicPropositions(), rels, new AndFormula(l));
+        let M = SymbolicEpistemicModel.build(this.getWorldClass(), this.agents, this.getAtomicPropositions(), rels, new AndFormula(l));
         M.setPointedValuation(this.getValuationExample());
         return M;
     }
 
     getValuationExample(): Valuation {
         let V = []
+        let filled = []
+        for (let agent = 0; agent < this.agents.length; agent++) {
+            let filled2 = []
+            filled2.push(new Array())
+            for (let row = 1; row <= this.nbrows; row++) {
+                let tab = new Array()
+                tab.push(false)
+                for (let col = 1; col <= this.nbcols; col++) {
+                    tab.push(false)
+                }
+                filled2.push(tab)
+            }
+            filled.push(filled2)
+        }
+
         for (let agent = 0; agent <= this.agents.length - 1; agent++) {
             for (let i = 0; i <= this.ships.length - 1; i++) {
                 while (true) {
-                    if (getRandomNumber(0, 1) == 0) {
+                    console.log(filled)
+                    if ((getRandomNumber(0, 1) == 0) && (this.ships[i] <= this.nbrows)) {
                         const dir = "ver"
                         const col = getRandomNumber(1, this.nbcols);
                         const row = getRandomNumber(1, this.nbrows + 1 - this.ships[i]);
                         var b = true;
                         for (let x = row; x <= row + this.ships[i] - 1; x++) {
-                            if (V.includes(getAtomIsTheCellOccupied(this.agents[agent], col, x))) {
+                            if (filled[agent][x][col]) {
                                 b = false
                             }
                         }
                         if (b) {
                             for (let x = row; x <= row + this.ships[i] - 1; x++) {
-                                V.push(getAtomIsTheCellOccupied(this.agents[agent], col, x));
+                                filled[agent][x][col] = true
                             }
                             V.push(getAtomBeginningShip(this.agents[agent], dir, col, row, this.ships[i]))
                             break;
                         }
                     }
                     else {
-                        const dir = "hor"
-                        const col = getRandomNumber(1, this.nbcols + 1 - this.ships[i]);
-                        const row = getRandomNumber(1, this.nbrows);
-                        var b = true;
-                        for (let y = col; y <= col + this.ships[i] - 1; y++) {
-                            if (V.includes(getAtomIsTheCellOccupied(this.agents[agent], y, row))) {
-                                b = false
-                            }
-                        }
-                        if (b) {
+                        if (this.ships[i] <= this.nbcols) {
+                            const dir = "hor"
+                            const col = getRandomNumber(1, this.nbcols + 1 - this.ships[i]);
+                            const row = getRandomNumber(1, this.nbrows);
+                            var b = true;
                             for (let y = col; y <= col + this.ships[i] - 1; y++) {
-                                V.push(getAtomIsTheCellOccupied(this.agents[agent], y, row));
+                                if (filled[agent][row][y]) {
+                                    b = false
+                                }
                             }
-                            V.push(getAtomBeginningShip(this.agents[agent], dir, col, row, this.ships[i]))
-                            break;
+                            if (b) {
+                                for (let y = col; y <= col + this.ships[i] - 1; y++) {
+                                    filled[agent][row][y] = true
+                                }
+                                V.push(getAtomBeginningShip(this.agents[agent], dir, col, row, this.ships[i]))
+                                break;
+                            }
                         }
                     }
 
