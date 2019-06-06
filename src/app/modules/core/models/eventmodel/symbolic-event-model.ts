@@ -6,7 +6,10 @@ import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-mod
 import { BDD } from '../formula/bdd';
 import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { BddService, BDDNode } from '../../../../services/bdd.service';
-
+import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
+import { Formula } from '../formula/formula';
+import { SymbolicRelation } from '../epistemicmodel/symbolic-relation';
+import { Valuation } from '../epistemicmodel/valuation';
 
 type EventId = string;
 type AgentId = string;
@@ -109,6 +112,28 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
      * @param M1 SymbolicEpistemicModel
      */
     apply(M: SymbolicEpistemicModel): SymbolicEpistemicModel{
+
+        let example = this;
+
+        class SEModelDescriptorFormulaEvent implements SEModelDescriptor {
+            getAtomicPropositions(): string[] {
+                throw new Error("Method not implemented.");
+            }            
+            getAgents(): string[] {
+                throw new Error("Method not implemented.");
+            }
+            getSetWorldsFormulaDescription(): Formula {
+                throw new Error("Method not implemented.");
+            }
+            getRelationDescription(agent: string): SymbolicRelation {
+                throw new Error("Method not implemented.");
+            }
+            getPointedValuation(): Valuation {
+                throw new Error("Method not implemented.");
+            }
+
+            
+        }
         //const DEBUGLOG = (msg, n) => {};
         const DEBUGLOG = (msg, n) => console.log(msg, BDD.bddService.nodeToString(n), BDD.bddService.countSolutions(n) + " solutions", BDD.bddService.pickSolutions(n));
         
@@ -180,7 +205,8 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
         // console.log("LISTES", listTransfert, SymbolicEventModel.getMapPostedToNotPosted(listTransfert))
         res = BDD.bddService.applyRenaming(res, SymbolicEventModel.getMapPostedToNotPosted(listTransfert));  // Renaming + var into normal variables
         DEBUGLOG("renamed new world", res)
-        let newSEM = new SymbolicEpistemicModel(agentMap, M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula(), BDD.bddService.toValuation(res));
+        //let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula(), BDD.bddService.toValuation(res));
+        let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), new SEModelDescriptorFormulaEvent());
 
 
         /* DEBUG LOOP */

@@ -7,8 +7,9 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { Environment } from '../environment/environment';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
-import { Obs } from '../epistemicmodel/symbolic-relation';
+import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
+import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 
 class Cell {
     row: number;
@@ -156,6 +157,12 @@ class MineSweeperWorld extends WorldValuation {
 
 
 export class MineSweeper extends ExampleDescription {
+
+
+
+
+
+
     getDescription(): string[] {
         var A = ["There is a grid with mines in certain cells. Other cells either contain the number of mines adjacent (including diagonals) or are empty."]
         A.push("")
@@ -223,14 +230,31 @@ export class MineSweeper extends ExampleDescription {
      * where agent 2 only knows there are exactly two bombs.
      */
     getInitialEpistemicModel(): SymbolicEpistemicModel {
+
+        let example = this;
+
+        class SEModelDescriptorFormulaMineSweeper implements SEModelDescriptor {
+            getAtomicPropositions() {
+                return example.getAtomicPropositions();
+            }           
+            
+            getAgents() {
+                return ["a"];
+            }
+        
+            getPointedValuation() {
+                return example.getValuationExample();
+            }
+            getSetWorldsFormulaDescription(): Formula {
+                return new ExactlyFormula(example.nbmines, this.getAtomicPropositions());
+            }
+
+            getRelationDescription(agent: string): SymbolicRelation {
+               return new Obs([]);
+            }
+        }
         this.clicked = {};
-        let rels = new Map();
-        rels.set("a", new Obs([]));
-
-        let M = SymbolicEpistemicModel.build(this.getWorldClass(), ["a"],
-            this.getAtomicPropositions(), rels, new ExactlyFormula(this.nbmines, this.getAtomicPropositions()), this.getValuationExample());
-
-        return M;
+        return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorFormulaMineSweeper());
     }
 
     /* @returns the Kripke model where the agent looses*/

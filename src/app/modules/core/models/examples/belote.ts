@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
+import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 /**
  * @param truePropositions an array of true propositions
  * @returns a possible combination of cards
@@ -89,11 +90,27 @@ export class Belote extends ExampleDescription {
         return ["This example is a simplification of the belote game (see https://en.wikipedia.org/wiki/Belote).","", "Each player has 3 cards, whose value is either 1, 7 or K, and whose suit is either spade, diamond, clover, or heart."]
     }
     getInitialEpistemicModel() {
+        let example = this;
 
+        class SEModelDescriptorFormulaBelote implements SEModelDescriptor {
+            getAtomicPropositions(): string[] {
+                return example.getAtomicPropositions();
+            }            
+            getAgents(): string[] {
+                return ["a", "b", "c", "d"];
+            }
+            getSetWorldsFormulaDescription(): Formula {
+                return Belote.getInitialSetWorldsFormula();
+            }
+            getRelationDescription(agent: string): SymbolicRelation {
+                return Belote.getInitialRelations().get(agent);
+            }
+            getPointedValuation(): Valuation {
+                return Belote.getRandomInitialValuation();
+            }
+        }
         let relations = new Map();
-
-        let M = SymbolicEpistemicModel.build(BeloteWorld, ["a", "b", "c", "d"],
-            this.getAtomicPropositions(), Belote.getInitialRelations(), Belote.getInitialSetWorldsFormula(), Belote.getRandomInitialValuation());
+        let M = new SymbolicEpistemicModel(BeloteWorld, new SEModelDescriptorFormulaBelote());
 
         return M;
     }

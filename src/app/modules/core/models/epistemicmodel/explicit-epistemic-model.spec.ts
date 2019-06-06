@@ -5,7 +5,7 @@ describe('ExplicitEpistemicModel', () => {
   it('should create an instance', () => {
     expect(new ExplicitEpistemicModel()).toBeTruthy();
   });
-  let mc = new MuddyChildren()
+  let mc = new MuddyChildren(2)
   let m = mc.getInitialEpistemicModel();
 
   it('The formula top is true on the model', () => {
