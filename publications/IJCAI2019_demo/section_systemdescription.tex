@@ -3,7 +3,7 @@ Whereas the first version was written in JavaScript, in order to ease the develo
 
 \subsection{Binary decision diagrams}
 
-As shown by \citet{DBLP:conf/atal/CharrierS17}, the symbolic model checking of DEL is PSPACE-complete, thus is critical. We manipulate sets of worlds as well as relations by means of Binary Decision Diagrams. To this aim, we wrote a JavaScript wrapper of the C library CUDD (Colorado University Decision Diagram Package)~\cite{DBLP:journals/sttt/Somenzi01}: we wrote a thin wrapper in C, which we compiled into Web Assembly using Emscripten, in order to be usable from our JavaScript module.
+As shown by \citet{DBLP:conf/atal/CharrierS17}, the symbolic model checking of DEL is PSPACE-complete, thus is critical. We manipulate sets of worlds as well as relations by means of Binary Decision Diagrams. To this aim, we wrote a JavaScript wrapper of the C library CUDD (Colorado University Decision Diagram Package)~\cite{DBLP:journals/sttt/Somenzi01}: we wrote a thin wrapper in C, then compiled into Web Assembly using Emscripten, in order to be usable from our JavaScript module.
 
 In order to show possible worlds for a given agent $a$ in some world $w$, we first construct the BDD of $\succinctrelation a(descr(w), \vec x')$ where $descr(w)$ are the Boolean values of $\vec x$ corresponding to world $w$. We then count the number of possible valuations $\vec x'$ that make $\succinctrelation a(descr(w), \vec x')$ true (BDDs are an efficient representation for counting valuations satisfying a Boolean formula). If the number of such valuations is small, we show all possible worlds, otherwise we randomly generate valuations for $\vec x'$ that makes $\succinctrelation a(descr(w), \vec x')$ true (we randomly select a branch that leads to the ``true'' leaf in the BDD of $\succinctrelation a(descr(w), \vec x')$).
 
@@ -14,7 +14,7 @@ Figure \ref{figure:architecture} shows the new architecture of \emph{Hintikka's 
 
 \subsection{Adding new examples}
 
-Providing new examples is easy with our system. Explicit epistemic models are simply directly described (sets of nodes and of edges). Symbolic epistemic models are described by a Boolean formula $\succinctsetworlds$, or Boolean formulas for $\succinctrelation{a}$. The system provides a way to easily describe how worlds are displayed in the comic strips.
+Providing new examples is easy. Explicit epistemic models are directly described (sets of nodes and of edges). Symbolic epistemic models are described by a Boolean formula $\succinctsetworlds$, and Boolean formulas for $\succinctrelation{a}$. The system provides a way to easily describe how worlds are displayed in the comic strips.
 
 \begin{figure}
 	\begin{center}
