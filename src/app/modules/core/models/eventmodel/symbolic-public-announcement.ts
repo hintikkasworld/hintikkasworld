@@ -17,18 +17,27 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
 
     apply(M: SymbolicEpistemicModel): SymbolicEpistemicModel {
         const BS = BDD.bddService;
-        const possibleWorlds = M.queryWorldsSatisfying(this.precondition);
-        const possibleWorldsPrime = BS.applyRenaming(BS.createCopy(possibleWorlds), SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
-        const clique = BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
-        const newSEM = M.clone();
-        const observers = this.observers !== undefined ? this.observers : M.getAgents();
-        for (const agent of observers) {
-            const currentRel = M.getAgentSymbolicRelation(agent);
-            const newRel = BS.applyAnd([BS.createCopy(currentRel), BS.createCopy(clique)]);
-            newSEM.setAgentSymbolicRelation(agent, newRel);
+
+        const descr = M.getInternalDescription();
+
+        const newDescr = {
+            getAgents: () => descr.getAgents(),
+            getAtomicPropositions: () => descr.getAtomicPropositions(),
+            getSetWorldsBDDDescription: () => M.queryWorldsSatisfying(this.precondition),
+            getRelationBDD: (agent: string) => {
+                const possibleWorlds = M.queryWorldsSatisfying(this.precondition);
+                const possibleWorldsPrime = BS.applyRenaming(BS.createCopy(possibleWorlds), SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
+                const clique = BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
+
+                if(this.observers == undefined || this.observers.includes(agent))
+                    return BS.applyAnd([BS.createCopy(descr.getRelationBDD(agent)), BS.createCopy(clique)]);
+                else
+                    return descr.getRelationBDD(agent);
+            },
+            getPointedValuation: () => descr.getPointedValuation()
         }
-        BS.destroy(clique);
-        return newSEM;
+
+        return new SymbolicEpistemicModel(M.getWorldClass(), newDescr);
     }
 
     isApplicableIn(M: SymbolicEpistemicModel): boolean {

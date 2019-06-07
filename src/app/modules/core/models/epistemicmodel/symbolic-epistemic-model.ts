@@ -11,6 +11,8 @@ import { BDD } from '../formula/bdd';
 import * as types from './../formula/formula';
 import { BddService, BDDNode } from '../../../../services/bdd.service';
 import { WorldValuationType } from './world-valuation-type';
+import { SEModelDescriptor } from './descriptor/se-model-descriptor';
+import { SEModelInternalDescriptor } from './descriptor/se-model-internal-descriptor';
 
 
 
@@ -19,12 +21,28 @@ import { WorldValuationType } from './world-valuation-type';
  * it implements an epistemic model described symbolically by means of BDDs
  */
 export class SymbolicEpistemicModel implements EpistemicModel {
+    static getRulesAndRulesPrime(formulaSetWorlds: any): BDDNode {
+        let formulaSetWorldsPrime = formulaSetWorlds.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
+        let formulaSetWorldsAndFormulaSetWorldsPrime = new AndFormula([formulaSetWorldsPrime, formulaSetWorlds]);
+
+        return BDD.buildFromFormula(formulaSetWorldsAndFormulaSetWorldsPrime);
+    }
+
+
+    static getPrimedAtomicPropositions(propositionalAtoms: string[]): string[] {
+        let propositionalPrimes = [];
+        propositionalAtoms.forEach((value) => {
+            let prime = SymbolicEpistemicModel.getPrimedVarName(value);
+            propositionalPrimes.push(prime);
+        });
+        return propositionalPrimes;
+    }
 
     protected pointedValuation: Valuation; //the valuation that corresponds to the pointed world
     protected readonly propositionalAtoms: string[];
-    protected readonly propositionalPrimes: string[];
+    protected propositionalPrimes: string[];
 
-    protected readonly formulaSetWorlds: BDDNode;
+    protected bddSetWorlds: BDDNode;
     protected readonly agents: string[];
 
     protected readonly worldClass: WorldValuationType;
@@ -34,7 +52,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      */
     protected symbolicRelations: Map<string, BDDNode>;
 
-    
+
     /**
      * stores the worlds (that are of type WorldValuation) that the user already asked for.
      * keys are strings (from a valuation, you call valuation.toString() to get the key... hhmm.. still a bit weird
@@ -55,7 +73,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return this.worlds[key];
     }
 
-    
+
 
     getAgents(): string[] { return this.agents; }
 
@@ -81,67 +99,60 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     /**
-     * @param worldClass the type of worlds that the symbolic epistemic models returns (e.g. BeloteWorld)
-     * @param agents list of agents as string
-     * @param atoms list of propositional atoms describing the example
-     * @param relations Map of agent: accessibility relations
-     * @param rules specific rules of the game as Formula
+     * There are two way to create a symbolic epistemic model.
+     * In both way, we need to create descriptor class implementing
+     * either SEModelDescriptor or SEModelInternalDescriptor.
+     * SEModelDescriptor provides methods to build a symbolic epistemic
+     * model from crash. SEModelInternalDescriptor in the other hand
+     * consists of accessors to get information directly from the memory.
+     * SEModelDescriptor are used mainly to initialize initial model for 
+     * symbolic examples. SEModelInternalDescriptor is used in the 
+     * clone a model.
+     * For more example, please check symbolic models like belote or minesweeper
+     * @param worldClass  
+     * @param descr a descriptor to initialize every 
      */
-    static build(worldClass: WorldValuationType, agents: string[], atoms: string[], relations: Map<string, SymbolicRelation>, rules: Formula, pointedValuation: Valuation) {
-
-        let propositionalAtoms = [];
-        let propositionalPrimes = []
-
-        let to_prime = new Map();
-        let not_to_prime = new Map();
-        atoms.forEach((value) => {
-            let prime = SymbolicEpistemicModel.getPrimedVarName(value);
-            propositionalAtoms.push(value);
-            propositionalPrimes.push(prime);
-            to_prime[value] = prime;
-            not_to_prime[prime] = to_prime;
-        });
-
-        let rulesPrime = rules.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
-        let rulesAndRulesPrime = new AndFormula([rulesPrime, rules]);
-
-        let bddRulesAndRulesPrime = BDD.buildFromFormula(rulesAndRulesPrime);
-        console.log("INITIAL RULES", rulesAndRulesPrime, "=>", bddRulesAndRulesPrime);
-
-        let relationsRestrictedToInitialFormula = new Map<string, BDDNode>();
-        relations.forEach((value: SymbolicRelation, key: string) => {
-            console.log("Starting the computation of the BDD of the symbolic Relation for " + key + "...");
-            let bddRelation = value.toBDD();
-            console.log("Computation of the BDD of the symbolic Relation for " + key + " finished!");
-            relationsRestrictedToInitialFormula.set(key, BDD.bddService.applyAnd([BDD.bddService.createCopy(bddRulesAndRulesPrime), bddRelation]));
-            console.log("Computation of the BDD ofthe mix with the rules BDD for the symbolic Relation for " + key + " finished!");
-        });
-    //    console.log("Symbolic Relations", relations, "=>", relationsRestrictedToInitialFormula);
-        console.log("Symbolic relations processed!")
-        return new SymbolicEpistemicModel(relationsRestrictedToInitialFormula, worldClass, agents, propositionalAtoms, propositionalPrimes, bddRulesAndRulesPrime, pointedValuation);
+    constructor(worldClass: WorldValuationType, descr: SEModelDescriptor | SEModelInternalDescriptor) {
+        this.worldClass = worldClass;
+        this.pointedValuation = descr.getPointedValuation();
+        this.agents = descr.getAgents();
+        this.propositionalAtoms = descr.getAtomicPropositions();
+        this.symbolicRelations = new Map();
+        this.loadDescriptor(descr);
 
     }
 
-   
 
-    constructor(relations: Map<string, BDDNode>, worldClass: WorldValuationType, agents: string[],
-        propositionalAtoms: string[], propositionalsPrimes: string[], formulaSetWorlds: BDDNode, pointedValuation: Valuation) {
 
+
+    /**
+     * Asynchronous function to load descriptor. This is a 
+     * slowest part of the program.
+     * @param descr 
+     */
+    private async loadDescriptor(descr: SEModelDescriptor | SEModelInternalDescriptor) {
+        this.propositionalPrimes = SymbolicEpistemicModel.getPrimedAtomicPropositions(this.propositionalAtoms);
         // console.log("Agents of SymbolicEpistemicModel", agents);
+        if ((<any>descr).getSetWorldsFormulaDescription != undefined) { //we intend  "instanceof SEModelDescriptor"
+            let descriptor = <SEModelDescriptor>descr;
 
-        this.agents = agents;
-        this.worldClass = worldClass;
-        this.propositionalAtoms = propositionalAtoms;
-        this.propositionalPrimes = propositionalsPrimes;
-        this.formulaSetWorlds = formulaSetWorlds;
-        this.symbolicRelations = relations;
-        this.pointedValuation = pointedValuation;
+            //from now on, it should done asynchronously
+            this.bddSetWorlds = SymbolicEpistemicModel.getRulesAndRulesPrime(descriptor.getSetWorldsFormulaDescription());
 
-        /**François commented this:
-        this.symbolicRelations = new Map<string, BDDNode>();
-        relations.forEach((value: BDDNode, key: string) => {
-            this.symbolicRelations.set(key, value);
-        });*/
+
+            for (let agent of this.agents) {
+                let bddRelation = descriptor.getRelationDescription(agent).toBDD();
+                this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
+            }
+        }
+        else { //we intend  "instanceof SEModelInternalDescriptor"
+            let descriptor = <SEModelInternalDescriptor>descr;
+            this.bddSetWorlds = descriptor.getSetWorldsBDDDescription();
+            for (let agent of this.agents) {
+                let bddRelation = descriptor.getRelationBDD(agent);
+                this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
+            }
+        }
     }
 
     /**
@@ -157,7 +168,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         //console.log("Props", props);
         let wBDD = BDD.bddService.createCube(props);
 
-    //    console.log("after cube")
+        //    console.log("after cube")
         //console.log("cube", BDD.bddService.pickAllSolutions(bdd));
         //console.log("graphe", BDD.bddService.pickAllSolutions(this.getAgentGraphe(a)));
 
@@ -165,7 +176,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             BDD.bddService.createCopy(this.getAgentSymbolicRelation(a)),
             wBDD]);
 
-      //  console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))
+        //  console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))
         //console.log("AND", BDD.bddService.pickAllSolutions(bdd_and));
 
         let bddSetSuccessorsWithPrime = BDD.bddService.applyExistentialForget(
@@ -181,9 +192,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
         //console.log("Calcul bdd sucessors", BDD.bddService.pickAllSolutions(bddSetSuccessors));
 
-        
+
         //console.log("Solutions", sols);
-        return new SymbolicSuccessorSet(this, bddSetSuccessors, this.propositionalAtoms); 
+        return new SymbolicSuccessorSet(this, bddSetSuccessors, this.propositionalAtoms);
     };
 
     getAgentSymbolicRelation(agent: string): BDDNode {
@@ -195,7 +206,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     getInitialFormula(): BDDNode {
-        return this.formulaSetWorlds
+        return this.bddSetWorlds
     }
 
     static getMapNotPrimeToPrime(atoms: string[]): Map<string, string> {
@@ -321,7 +332,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             );
             return this._query(all_worlds, new types.OrFormula([Knp, Kp]));
         }
-        if (phi instanceof types.ExactlyFormula){
+        if (phi instanceof types.ExactlyFormula) {
             //return BDD.bddService.applyAnd([BDD.buildFromFormula(phi), BDD.bddService.createCopy(all_worlds)])
             return this._query(all_worlds, <types.ExactlyFormula>phi.convertToNormalFormula());
 
@@ -365,30 +376,29 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return map;
     }
 
-    clone(): SymbolicEpistemicModel{
 
-        let relations = new Map();
-        this.symbolicRelations.forEach((value: BDDNode, key: string) => {
-            relations.set(key, BDD.bddService.createCopy(value));
-        });
-        let formula = BDD.bddService.createCopy(this.formulaSetWorlds);
-        let clone = new SymbolicEpistemicModel(relations,
-             this.worldClass, this.agents, this.propositionalAtoms, 
-             this.propositionalPrimes, formula, this.pointedValuation);
-        return clone;
+
+    getInternalDescription(): SEModelInternalDescriptor {
+        return {
+            getAgents: () => this.agents,
+            getAtomicPropositions: () => this.propositionalAtoms,
+            getSetWorldsBDDDescription: () => this.bddSetWorlds,
+            getRelationBDD: (agent: string) => this.symbolicRelations.get(agent),
+            getPointedValuation: () => this.pointedValuation
+        }
     }
 
     /**
      * @returns an explicit epistemic model that is equivalent to the symbolic one.
      * remark: should be called only if you know that the number of worlds in the symbolic model is small
      */
-    toExplicit() : ExplicitEpistemicModel {
+    toExplicit(): ExplicitEpistemicModel {
         let M = new ExplicitEpistemicModel();
-        BDD.bddService.pickAllSolutions(this.formulaSetWorlds, this.propositionalAtoms);
+        BDD.bddService.pickAllSolutions(this.bddSetWorlds, this.propositionalAtoms);
         return M;
-        }
+    }
 
-            
-            
+
+
 }
 

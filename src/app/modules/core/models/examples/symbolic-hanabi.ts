@@ -19,6 +19,7 @@ import { BDD } from './../formula/bdd';
 import { BDDNode, BddService } from './../../../../services/bdd.service';
 import { MyTestForBDD } from "./test_bdd";
 import { CachedSource } from 'webpack-sources';
+import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 
 
 
@@ -260,102 +261,125 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
     getInitialEpistemicModel() {
 
-        /* DIRTY TESTS HERE.... */
-        //      MyTestForBDD.run();
+        let example = this;
 
+        /**
+         * Another good example of creating symbolic epistemic model.
+         * 
+         */
+        class SEModelDescriptorHanabi implements SEModelDescriptor {
+            getAtomicPropositions(): string[] {
+                return example.getAtomicPropositions();
+            }
 
-        /* Creation of all variables getVarName */
+            getAgents(): string[] {
+                return ["a", "b", "c", "d"];
+            }
+
+            getSetWorldsFormulaDescription(): Formula {
+
+                /** exactly one owner for each card*/
+                let liste_rules = [];
+                for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
+                    let cards = []
+                    example.owners.forEach((agent) => {
+                        cards.push(SimpleSymbolicHanabi.getVarName(agent, c));
+                    });
+                    liste_rules.push(new ExactlyFormula(1, cards));
+                }
+                return new AndFormula(liste_rules);
+            }
+            
+            getRelationDescription(agent: string): SymbolicRelation {
+                let symbolicRelations: Map<string, SymbolicRelation> = new Map();
+                example.agents.forEach((agent) => {
+                let seenFormulas: (Formula | string)[] = [];
+                /* Reciprocity of cards : agent does'nt see all variables of himself and draw */
+                example.owners.filter(o => (o != agent && o != "p")).forEach((owner) => {
+                    for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
+                        seenFormulas.push(SimpleSymbolicHanabi.getVarName(owner, c));
+                    };
+                });
+
+                /* Enumeration of agent's card : : agent see the number of his cards : 0 <-> 0p and 1 <-> 1p and ... */
+                let his_cards = [];
+                for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
+                    his_cards.push(SimpleSymbolicHanabi.getVarName(agent, c));
+                }
+                for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
+                    for (var i = 0; i < example.nbCardsInHand_Begin + 1; i++) {
+                        //      console.log(i, his_cards)
+                        seenFormulas.push(new ExactlyFormula(i, his_cards));
+                    };
+                };
+                //   console.log("ListeRel", liste_rel);
+                symbolicRelations.set(agent, new Obs(seenFormulas));
+
+                });
+                return symbolicRelations.get(agent);
+            }
+            getPointedValuation(): Valuation {
+                let propositions: { [id: string]: boolean } = {};
+                // distribution of cards between agents
+                let cards: number[] = []
+                for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++)
+                    cards.push(c)
         
+                function shuffleArray(array) {
+                    for (let i = array.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [array[i], array[j]] = [array[j], array[i]];
+                    }
+                }
+        
+                if (example.random_distribution)
+                    shuffleArray(cards)
+        
+                for (let i = 0; i < cards.length; i++) {
+                    let c = cards[i]
+                    if (i < example.nbCardsInHand_Begin * example.agents.length) {
+                        let agent = example.agents[i % example.agents.length];
+                        propositions[SimpleSymbolicHanabi.getVarName(agent, c)] = true;
+                    } else {
+                        // in the draw
+                        propositions[SimpleSymbolicHanabi.getVarName("p", c)] = true;
+                    }
+                }
+        
+                // others proposition as false
+                example.variables.forEach((variable) => {
+                    if (!(variable in propositions)) {
+                        propositions[variable] = false;
+                    }
+                });
+                return new Valuation(propositions);
+            }
+
+
+
+
+        }
+
         this.variables = this.getAtomicPropositions();
 
         console.log("Variables", this.variables);
 
         /* Create Obs <<SymbolicRelation>> which represent relations of each agent like var_a_c <-> var_a_c_p */
-        let symbolicRelations: Map<string, SymbolicRelation> = new Map();
-        this.agents.forEach((agent) => {
-            let seenFormulas: (Formula | string)[] = [];
-            /* Reciprocity of cards : agent does'nt see all variables of himself and draw */
-            this.owners.filter(o => (o != agent && o != "p")).forEach((owner) => {
-                for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                    seenFormulas.push(SimpleSymbolicHanabi.getVarName(owner, c));
-                };
-            });
-
-            /* Enumeration of agent's card : : agent see the number of his cards : 0 <-> 0p and 1 <-> 1p and ... */
-            let his_cards = [];
-            for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                his_cards.push(SimpleSymbolicHanabi.getVarName(agent, c));
-            }
-            for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                for (var i = 0; i < this.nbCardsInHand_Begin + 1; i++) {
-                    //      console.log(i, his_cards)
-                    seenFormulas.push(new ExactlyFormula(i, his_cards));
-                };
-            };
-            //   console.log("ListeRel", liste_rel);
-            symbolicRelations.set(agent, new Obs(seenFormulas));
-
-        });
+        
 
         // console.log("RelationsSymboliques", relationsSymboliques);
 
-        /* Unicity of cards : a card is here only once : a:1 but no b:1 ... */
-        let liste_rules = [];
-        for (var c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-            let cards = []
-            this.owners.forEach((agent) => {
-                cards.push(SimpleSymbolicHanabi.getVarName(agent, c));
-            });
-            liste_rules.push(new ExactlyFormula(1, cards));
-        }
-        let rules = new AndFormula(liste_rules);
 
-        // BEGIN WORLD
+       
 
-        let propositions: { [id: string]: boolean } = {};
-        // distribution of cards between agents
-        let cards: number[] = []
-        for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++)
-            cards.push(c)
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        if (this.random_distribution)
-            shuffleArray(cards)
-
-        for (let i = 0; i < cards.length; i++) {
-            let c = cards[i]
-            if (i < this.nbCardsInHand_Begin * this.agents.length) {
-                let agent = this.agents[i % this.agents.length];
-                propositions[SimpleSymbolicHanabi.getVarName(agent, c)] = true;
-            } else {
-                // in the draw
-                propositions[SimpleSymbolicHanabi.getVarName("p", c)] = true;
-            }
-        }
-
-        // others proposition as false
-        this.variables.forEach((variable) => {
-            if (!(variable in propositions)) {
-                propositions[variable] = false;
-            }
-        });
-        console.log("Valuation", new Valuation(propositions));
-
-
-        let M = SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, this.variables, symbolicRelations, rules, new Valuation(propositions));
+        //SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, this.variables, symbolicRelations, rules, new Valuation(propositions));
+        let M = new SymbolicEpistemicModel(SimpleHanabiWorld, new SEModelDescriptorHanabi());
 
         console.log("Fin SEM");
 
         function test(M: SymbolicEpistemicModel) {
             console.log("TEST");
 
-            console.log("InitialWorld", new Valuation(propositions));
 
             console.log("Graphe a", M.getAgentSymbolicRelation("a"));
 
