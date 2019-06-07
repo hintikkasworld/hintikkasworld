@@ -233,6 +233,11 @@ export class MineSweeper extends ExampleDescription {
 
         let example = this;
 
+        /**
+         * Good example of creating symbolic epistemic model in which
+         * SEModelDescriptorFormulaMineSweeper implements SEModelDescriptor
+         * to create a symbolic epistemic model from crash.
+         */
         class SEModelDescriptorFormulaMineSweeper implements SEModelDescriptor {
             getAtomicPropositions() {
                 return example.getAtomicPropositions();

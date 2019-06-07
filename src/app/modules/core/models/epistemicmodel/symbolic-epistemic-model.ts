@@ -40,9 +40,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     protected pointedValuation: Valuation; //the valuation that corresponds to the pointed world
     protected readonly propositionalAtoms: string[];
-    protected readonly propositionalPrimes: string[];
+    protected propositionalPrimes: string[];
 
-    protected readonly bddSetWorlds: BDDNode;
+    protected bddSetWorlds: BDDNode;
     protected readonly agents: string[];
 
     protected readonly worldClass: WorldValuationType;
@@ -98,15 +98,40 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return str.includes(SymbolicEpistemicModel.getPrimedString());
     }
 
-
+    /**
+     * There are two way to create a symbolic epistemic model.
+     * In both way, we need to create descriptor class implementing
+     * either SEModelDescriptor or SEModelInternalDescriptor.
+     * SEModelDescriptor provides methods to build a symbolic epistemic
+     * model from crash. SEModelInternalDescriptor in the other hand
+     * consists of accessors to get information directly from the memory.
+     * SEModelDescriptor are used mainly to initialize initial model for 
+     * symbolic examples. SEModelInternalDescriptor is used in the 
+     * clone a model.
+     * For more example, please check symbolic models like belote or minesweeper
+     * @param worldClass  
+     * @param descr a descriptor to initialize every 
+     */
     constructor(worldClass: WorldValuationType, descr: SEModelDescriptor | SEModelInternalDescriptor) {
         this.worldClass = worldClass;
         this.pointedValuation = descr.getPointedValuation();
         this.agents = descr.getAgents();
         this.propositionalAtoms = descr.getAtomicPropositions();
-        this.propositionalPrimes = SymbolicEpistemicModel.getPrimedAtomicPropositions(this.propositionalAtoms);
         this.symbolicRelations = new Map();
-        
+        this.loadDescriptor(descr);
+
+    }
+
+
+
+
+    /**
+     * Asynchronous function to load descriptor. This is a 
+     * slowest part of the program.
+     * @param descr 
+     */
+    private async loadDescriptor(descr: SEModelDescriptor | SEModelInternalDescriptor) {
+        this.propositionalPrimes = SymbolicEpistemicModel.getPrimedAtomicPropositions(this.propositionalAtoms);
         // console.log("Agents of SymbolicEpistemicModel", agents);
         if ((<any>descr).getSetWorldsFormulaDescription != undefined) { //we intend  "instanceof SEModelDescriptor"
             let descriptor = <SEModelDescriptor>descr;
@@ -114,7 +139,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             //from now on, it should done asynchronously
             this.bddSetWorlds = SymbolicEpistemicModel.getRulesAndRulesPrime(descriptor.getSetWorldsFormulaDescription());
 
-            
+
             for (let agent of this.agents) {
                 let bddRelation = descriptor.getRelationDescription(agent).toBDD();
                 this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
@@ -128,10 +153,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                 this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
             }
         }
-
-
-
-
     }
 
     /**

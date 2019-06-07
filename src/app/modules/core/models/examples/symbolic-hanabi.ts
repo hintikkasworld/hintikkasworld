@@ -263,6 +263,10 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         let example = this;
 
+        /**
+         * Another good example of creating symbolic epistemic model.
+         * 
+         */
         class SEModelDescriptorHanabi implements SEModelDescriptor {
             getAtomicPropositions(): string[] {
                 return example.getAtomicPropositions();
