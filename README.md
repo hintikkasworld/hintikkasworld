@@ -7,6 +7,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 
 Before install Angular:
+- `sudo dnf install npm`;
 - `sudo npm update -g`;
 - `npm install -g @angular/cli`.
 
@@ -24,6 +25,13 @@ Module not found: Error: Can't resolve 'path' in '/home/fschwarz/HW/hintikkaswor
 please run:
 - npm install path
 - add "browser": {"fs": false, "crypto": false} to the file package.json.
+
+
+
+
+
+In order to install Visual Studio Code:
+
 
 ## Development server
 
