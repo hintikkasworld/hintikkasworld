@@ -40,7 +40,7 @@ export class CoreComponent implements OnInit {
       console.error(err.name, err.message);
       console.error(err.stack);
       console.log("Error: so we load MuddyChildren!");
-      exampleDescription = new MuddyChildren();
+      exampleDescription = new MuddyChildren(2);
       env = new Environment(exampleDescription);
     }
     this.bsEnv = new BehaviorSubject(env);

@@ -15,6 +15,7 @@ import { BddService } from './../../../../../app/services/bdd.service';
 import { BDD } from './../formula/bdd';
 import { MyTestForBDD } from "./test_bdd";
 import { SymbolicEventModel } from '../eventmodel/symbolic-event-model';
+import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 
 /**
  * @param valuation a valuation
@@ -101,7 +102,27 @@ export class SymbolicSimpleExample extends ExampleDescription {
 
 
     getInitialEpistemicModel() {
+        return undefined;
+        let example = this;
+        class SEModelDescriptorFormulaSmallExample implements SEModelDescriptor {
+            getAtomicPropositions(): string[] {
+                throw new Error("Method not implemented.");
+            }            
+            getAgents(): string[] {
+                return example.agents;
+            }
+            getSetWorldsFormulaDescription(): Formula {
+                throw new Error("Method not implemented.");
+            }
+            getRelationDescription(agent: string): SymbolicRelation {
+                throw new Error("Method not implemented.");
+            }
+            getPointedValuation(): Valuation {
+                return new Valuation(propositions);
+            }
 
+            
+        }
         /* Francois : DIRTY TESTS HERE.... 
         * MyTestForBDD.run() is launch at the begining of the webapp ??
         */
@@ -165,7 +186,7 @@ export class SymbolicSimpleExample extends ExampleDescription {
 
         console.log("Rules", rules);
 
-        let M = SymbolicEpistemicModel.build(SimpleExampleWorld, this.agents, variables, relationsSymboliques, rules);
+        
 
         console.log("Fin SEM");
 
@@ -192,10 +213,10 @@ export class SymbolicSimpleExample extends ExampleDescription {
         });
 
         console.log("Valuation", propositions, );
+        // variables, relationsSymboliques, rules, 
+       /* let M = SymbolicEpistemicModel.build(SimpleExampleWorld, );
 
-        M.setPointedValuation(new Valuation(propositions));
-
-        return M;
+        return M;*/
         /**
          * Francois : HERE TRY ALL TESTS :
          * getSucessors
@@ -260,7 +281,7 @@ export class SymbolicSimpleExample extends ExampleDescription {
 
         console.log("FIN")*/
 
-        return M;
+
     }
 
 

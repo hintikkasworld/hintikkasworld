@@ -29,7 +29,7 @@ import { BattleShip } from '../core/models/examples/battle-ship';
 })
 export class MenuComponent implements OnInit {
 
-  explicitExamples = [new Simple(), new MuddyChildren(), new SallyAndAnn(), new Hats(), new DiningCryptographersProblem(),
+  explicitExamples = [new Simple(), new MuddyChildren(2), new MuddyChildren(3), new MuddyChildren(4), new SallyAndAnn(), new Hats(), new DiningCryptographersProblem(),
   new ConsecutiveNumbers(), new NanoHanabi(),
   new Cherylsbirthday()];//, new LinesBirthday()];
 
