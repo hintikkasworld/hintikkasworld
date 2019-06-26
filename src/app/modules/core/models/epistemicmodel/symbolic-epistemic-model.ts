@@ -116,7 +116,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         this.worldClass = worldClass;
         this.pointedValuation = descr.getPointedValuation();
         this.agents = descr.getAgents();
-        
+
         this.symbolicRelations = new Map();
         this.loadDescriptor(descr);
         console.log("end of the construction")
@@ -134,12 +134,19 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     private async loadDescriptor(descr: SEModelDescriptor | SEModelInternalDescriptor) {
         function wait() {
             return new Promise(resolve => {
-              setTimeout(() => {
-                resolve('resolved');
-              }, 2);
+                setTimeout(() => {
+                    resolve('resolved');
+                }, 200000);
             });
-          }
+        }
 
+        function syncWait() {
+            let A = [1, 2, 3];
+            for (let i = 0; i < 1000000000; i++)
+                A.sort();
+        }
+
+        syncWait();
         console.log("   loadDescriptor: begin")
         await wait();
         this.propositionalAtoms = descr.getAtomicPropositions();
