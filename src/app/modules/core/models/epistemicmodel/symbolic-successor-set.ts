@@ -1,10 +1,10 @@
 import { BDD } from './../formula/bdd';
-import { BDDNode } from './../../../../services/bdd.service';
 import { SuccessorSet } from './successor-set';
 import { World } from './world';
 import { WorldValuationType } from './world-valuation-type';
 import { Valuation } from './valuation';
 import { SymbolicEpistemicModel } from './symbolic-epistemic-model';
+import { BDDNode } from './bddnode';
 
 export class SymbolicSuccessorSet implements SuccessorSet {
 
