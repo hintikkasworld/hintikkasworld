@@ -36,7 +36,7 @@ export class MenuComponent implements OnInit {
   symbolicExamples = [new SymbolicSimpleExample(), new MineSweeper(2, 2, 1),  new MineSweeper(5, 6, 15), new MineSweeper(8, 8, 10), new MineSweeper(8, 10, 3), 
     new MineSweeper(10, 10, 6),
     new MineSweeper(16,16, 40), 
-    new MineSweeper(12, 15, 20), new Belote(), new BattleShip(1,6,[1,2]), new SimpleSymbolicHanabi(),  new Flatland(false), new Flatland(true)];
+    new MineSweeper(12, 15, 20), new Belote(), new BattleShip(4,4,[2,2,1]), new SimpleSymbolicHanabi(),  new Flatland(false), new Flatland(true)];
 
   technicalExamples = [new ClassOfModels(), new CommonknowledgeStrictlyMoreExpressive(), new CellularAutomaton()];
   
