@@ -1,8 +1,9 @@
 import { EventModel } from './event-model';
-import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
-import { Formula } from '../formula/formula';
+import { Formula } from './../epistemicmodel/formula';   
 import { BDD } from '../formula/bdd';
+
+
 
 export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicModel> {
 

@@ -3,13 +3,13 @@ import { SymbolicEvent } from "./symbolic-event";
 import { EpistemicModel } from "../epistemicmodel/epistemic-model";
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
-import { BDD } from '../formula/bdd';
+import { BDD} from '../formula/bdd';
 import { WorldValuation } from '../epistemicmodel/world-valuation';
-import { BddService, BDDNode } from '../../../../services/bdd.service';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
-import { Formula } from '../formula/formula';
+import { Formula } from './../epistemicmodel/formula';
 import { SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { Valuation } from '../epistemicmodel/valuation';
+import { BDDNode } from 'src/app/services/bdd.service';
 
 type EventId = string;
 type AgentId = string;

@@ -16,7 +16,6 @@ import { SEModelInternalDescriptor } from './descriptor/se-model-internal-descri
 
 
 
-
 /**
  * it implements an epistemic model described symbolically by means of BDDs
  */

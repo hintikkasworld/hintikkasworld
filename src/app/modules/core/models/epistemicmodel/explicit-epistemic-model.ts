@@ -2,10 +2,8 @@ import { ExplicitSuccessorSet } from './explicit-successor-set';
 import * as types from './../formula/formula';
 import { Graph } from './../graph';
 import { EpistemicModel } from './epistemic-model';
-import { WorldValuation } from './world-valuation';
 import { environment } from 'src/environments/environment';
 import { World } from './world';
-import { getNodeInjectable } from '@angular/core/src/render3/di';
 import { SuccessorSet } from './successor-set';
 
 export class ExplicitEpistemicModel extends Graph implements EpistemicModel {

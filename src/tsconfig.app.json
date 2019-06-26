@@ -1,11 +1,14 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": "./buildcache/front-end",
     "outDir": "../out-tsc/app",
     "types": []
   },
   "exclude": [
     "test.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*.worker.ts"
   ]
 }
