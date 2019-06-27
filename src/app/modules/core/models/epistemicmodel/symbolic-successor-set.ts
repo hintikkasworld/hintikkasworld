@@ -1,10 +1,18 @@
+<<<<<<< HEAD
 import { BDD} from '../formula/bdd';    
+=======
+import { BDD } from './../formula/bdd';
+>>>>>>> d3a25c608aa23d57a4e0da62a52ae7aa70377d48
 import { SuccessorSet } from './successor-set';
 import { World } from './world';
 import { Valuation } from './valuation';
 import { SymbolicEpistemicModel } from './symbolic-epistemic-model';
+<<<<<<< HEAD
 import { BDDNode } from '../../../core/models/epistemicmodel/bddnode';
 
+=======
+import { BDDNode } from './bddnode';
+>>>>>>> d3a25c608aa23d57a4e0da62a52ae7aa70377d48
 
 export class SymbolicSuccessorSet implements SuccessorSet {
 
