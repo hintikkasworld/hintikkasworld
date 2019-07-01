@@ -6,7 +6,6 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 import { Formula, FormulaFactory } from '../formula/formula';
 import { Valuation } from '../epistemicmodel/valuation';
-import { isoStringToDate } from '@angular/common/src/i18n/format_date';
 
 
 /**

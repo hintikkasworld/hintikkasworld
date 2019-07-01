@@ -10,7 +10,7 @@ import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 export class ExampleComponent implements OnInit {
 
   @Input() exampleDescription: ExampleDescription;
-  @ViewChild('canvas') canvas:ElementRef;
+  @ViewChild('canvas', {read: ElementRef, static: true}) canvas:ElementRef;
 
   constructor() { 
   }
