@@ -1,7 +1,8 @@
 import { Valuation } from './../epistemicmodel/valuation';
-import { BDDNode, BddService } from './../../../../services/bdd.service';
+import { BddService } from './../../../../services/bdd.service';
 import { Formula } from './formula';
 import * as types from './../formula/formula';
+import { BDDNode } from './../epistemicmodel/bddnode'
 
 export class BDD {
 
