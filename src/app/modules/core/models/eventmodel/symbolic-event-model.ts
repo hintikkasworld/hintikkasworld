@@ -10,6 +10,7 @@ import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descrip
 import { Formula } from '../formula/formula';
 import { SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { Valuation } from '../epistemicmodel/valuation';
+import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
 
 type EventId = string;
 type AgentId = string;
@@ -206,7 +207,7 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
         res = BDD.bddService.applyRenaming(res, SymbolicEventModel.getMapPostedToNotPosted(listTransfert));  // Renaming + var into normal variables
         DEBUGLOG("renamed new world", res)
         //let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula(), BDD.bddService.toValuation(res));
-        let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), new SEModelDescriptorFormulaEvent());
+        let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), new SEModelDescriptorFormulaEvent(), new BDDServiceWorkerService());
 
 
         /* DEBUG LOOP */

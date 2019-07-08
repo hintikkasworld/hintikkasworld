@@ -7,6 +7,7 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
+import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
 /**
  * @param truePropositions an array of true propositions
  * @returns a possible combination of cards
@@ -110,7 +111,7 @@ export class Belote extends ExampleDescription {
             }
         }
         let relations = new Map();
-        let M = new SymbolicEpistemicModel(BeloteWorld, new SEModelDescriptorFormulaBelote());
+        let M = new SymbolicEpistemicModel(BeloteWorld, new SEModelDescriptorFormulaBelote(), new BDDServiceWorkerService());
 
         return M;
     }

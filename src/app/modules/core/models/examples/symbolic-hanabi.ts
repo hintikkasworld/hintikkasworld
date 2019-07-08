@@ -20,6 +20,7 @@ import { BDDNode, BddService } from './../../../../services/bdd.service';
 import { MyTestForBDD } from "./test_bdd";
 import { CachedSource } from 'webpack-sources';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
+import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
 
 
 
@@ -373,7 +374,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
        
 
         //SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, this.variables, symbolicRelations, rules, new Valuation(propositions));
-        let M = new SymbolicEpistemicModel(SimpleHanabiWorld, new SEModelDescriptorHanabi());
+        let M = new SymbolicEpistemicModel(SimpleHanabiWorld, new SEModelDescriptorHanabi(), new BDDServiceWorkerService());
 
         console.log("Fin SEM");
 

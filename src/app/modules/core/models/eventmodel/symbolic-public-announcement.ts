@@ -3,6 +3,7 @@ import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Formula } from './../epistemicmodel/formula';
 import { BDD } from '../formula/bdd';
+import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
 
 export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicModel> {
 
@@ -37,7 +38,7 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
             getPointedValuation: () => descr.getPointedValuation()
         }
 
-        return new SymbolicEpistemicModel(M.getWorldClass(), newDescr);
+        return new SymbolicEpistemicModel(M.getWorldClass(), newDescr, new BDDServiceWorkerService());
     }
 
     isApplicableIn(M: SymbolicEpistemicModel): boolean {

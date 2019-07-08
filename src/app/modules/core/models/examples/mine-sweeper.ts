@@ -10,6 +10,7 @@ import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-mod
 import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
+import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
 
 class Cell {
     row: number;
@@ -259,7 +260,7 @@ export class MineSweeper extends ExampleDescription {
             }
         }
         this.clicked = {};
-        return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorFormulaMineSweeper());
+        return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorFormulaMineSweeper(), new BDDServiceWorkerService());
     }
 
     /* @returns the Kripke model where the agent looses*/
