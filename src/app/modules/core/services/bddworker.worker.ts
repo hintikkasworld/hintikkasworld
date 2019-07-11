@@ -1,7 +1,9 @@
+
 import { Formula } from './../models/epistemicmodel/formula';
 import { BddService } from './../../../services/bdd.service';
 import * as types from  './../models/formula/formula';
 import { BDDNode } from './../../core/models/epistemicmodel/bddnode'
+
 /// <reference lib="webworker" />
 
 let bddService = new BddService( () => {});
