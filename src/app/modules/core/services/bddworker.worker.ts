@@ -1,7 +1,8 @@
 import { BDDNode } from './../models/eventmodel/explicit-to-symbolic';
-import { Formula } from './../models/epistemicmodel/formula';
+import { Formula } from './../models/formula/formula';
 import { BddService } from './../../../services/bdd.service';
 import * as types from  './../models/formula/formula';
+
 /// <reference lib="webworker" />
 
 let bddService = new BddService( () => {});

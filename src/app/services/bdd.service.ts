@@ -1,7 +1,4 @@
-import { Injectable } from "@angular/core";
-import { Observable, BehaviorSubject } from "rxjs";
-import { filter, map } from "rxjs/operators";
-import { isPlatformWorkerUi } from '@angular/common';
+import {  BehaviorSubject } from "rxjs";
 import { Valuation } from '../modules/core/models/epistemicmodel/valuation';
 
 import * as Module from "./../../../cuddjs/release/cuddjs.js";
@@ -14,9 +11,6 @@ type BDDAtom = number;
 type pointer = number;
 
 
-@Injectable({
-  providedIn: 'root'
-})
 
 export class BddService {
 
