@@ -1,4 +1,6 @@
-import {  BehaviorSubject } from "rxjs";
+
+//import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 import { Valuation } from '../modules/core/models/epistemicmodel/valuation';
 
 import * as Module from "./../../../cuddjs/release/cuddjs.js";
@@ -11,6 +13,9 @@ type BDDAtom = number;
 type pointer = number;
 
 
+/*@Injectable({
+  providedIn: 'root'
+})*/
 
 export class BddService {
 
@@ -26,7 +31,8 @@ export class BddService {
 
   constructor(f: () => void) {
     this.instantiateWasm("wasm/cuddjs.wasm2", f).catch(e => {
-      alert("Problem initializing WASM module, maybe the browser does not have enough memory?");
+      //alert("Problem initializing WASM module, maybe the browser does not have enough memory?");
+      console.log("problem instantiate wasm")
       throw e;
     });
   }
@@ -67,10 +73,9 @@ export class BddService {
 
       }
     };
-
+    
     // instantiate the module
     this.bddModule = Module(moduleArgs);
-
   }
 
   private mallocPointerArray(array: number[]): pointer {

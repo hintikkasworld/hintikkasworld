@@ -1,11 +1,6 @@
-import { BDDNode } from './../modules/core/models/eventmodel/explicit-to-symbolic';
-import { BDD } from './../modules/core/models/formula/bdd';
+import { BDDNode } from './../modules/core/models/epistemicmodel/bddnode'
 import { Formula } from './../modules/core/models/formula/formula';
-import { Injectable } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
 export class BDDServiceWorkerService {
   i = 0;
   promises = [];
@@ -43,15 +38,15 @@ export class BDDServiceWorkerService {
 
   }
 
-  public formulaToBDD(formula: Formula): Promise<BDDNode> {
-    return new Promise(function(resolve, reject) {
+  public formulaToBDD(formulaString: string): Promise<BDDNode> {
+    return new Promise((resolve, reject) => {
 
       var id = this.i++;
       this.promises[id] = {resolve: resolve, reject: reject};
 
       //we send formula to the worker
       //id = id of the task
-      this.worker.postMessage({id: id, formula: formula});
+      this.worker.postMessage({id: id, formula: formulaString});
     });
   }
 }
