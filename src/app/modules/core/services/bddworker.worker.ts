@@ -90,8 +90,11 @@ function createExactlyBDD(n: number, vars: string[]): BDDNode {
 addEventListener('message', ({ data }) => {
 
   console.log("formula received : " + data.formula);  
-  const response = `worker response to ${data}`;
-        getBDDNode(types.FormulaFactory.createFormula(data.formula));
+  const response = {
+      id: data.id,
+      result: getBDDNode(types.FormulaFactory.createFormula(data.formula))
+  }
+        
 
   postMessage(response);
 });

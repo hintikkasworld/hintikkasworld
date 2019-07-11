@@ -374,7 +374,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
        
 
         //SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, this.variables, symbolicRelations, rules, new Valuation(propositions));
-        let M = new SymbolicEpistemicModel(SimpleHanabiWorld, new SEModelDescriptorHanabi(), new BDDServiceWorkerService());
+        let M = new SymbolicEpistemicModel(SimpleHanabiWorld, new SEModelDescriptorHanabi());
 
         console.log("Fin SEM");
 

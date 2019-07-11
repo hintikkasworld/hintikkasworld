@@ -111,7 +111,7 @@ export class Belote extends ExampleDescription {
             }
         }
         let relations = new Map();
-        let M = new SymbolicEpistemicModel(BeloteWorld, new SEModelDescriptorFormulaBelote(), new BDDServiceWorkerService());
+        let M = new SymbolicEpistemicModel(BeloteWorld, new SEModelDescriptorFormulaBelote());
 
         return M;
     }

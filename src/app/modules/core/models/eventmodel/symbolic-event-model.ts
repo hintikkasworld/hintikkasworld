@@ -207,7 +207,7 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
         res = BDD.bddService.applyRenaming(res, SymbolicEventModel.getMapPostedToNotPosted(listTransfert));  // Renaming + var into normal variables
         DEBUGLOG("renamed new world", res)
         //let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula(), BDD.bddService.toValuation(res));
-        let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), new SEModelDescriptorFormulaEvent(), new BDDServiceWorkerService());
+        let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), new SEModelDescriptorFormulaEvent());
 
 
         /* DEBUG LOOP */

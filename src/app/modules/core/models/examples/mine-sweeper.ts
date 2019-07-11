@@ -260,7 +260,7 @@ export class MineSweeper extends ExampleDescription {
             }
         }
         this.clicked = {};
-        return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorFormulaMineSweeper(), new BDDServiceWorkerService());
+        return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorFormulaMineSweeper());
     }
 
     /* @returns the Kripke model where the agent looses*/

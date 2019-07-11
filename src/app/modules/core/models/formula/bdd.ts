@@ -7,7 +7,7 @@ import { BDDNode } from './../epistemicmodel/bddnode'
 export class BDD {
 
     bddNode: BDDNode;
-    static bddService: BddService = new BddService(() => {});
+    static bddService: BddService = undefined;//new BddService(() => {});
 
     constructor(b:BDDNode) {
         // BDD.bddService.save(b); 
@@ -94,26 +94,5 @@ export class BDD {
 
     }
 
-    static and(lb:BDD[]):BDD {
-        return new BDD(BDD.bddService.applyAnd(lb.map(b => (b.thisbddNode))))
-    }
-    static or(lb:BDD[]):BDD {
-        return new BDD(BDD.bddService.applyOr(lb.map(b => (b.thisbddNode))))
-    }
-    static not(b:BDD):BDD {
-        return new BDD(BDD.bddService.applyNot(b.thisbddNode))
-    }
-    static imply(b1:BDD,b2:BDD):BDD {
-        return new BDD(BDD.bddService.applyImplies(b1.thisbddNode,b2.thisbddNode))
-    }
-    static equiv(b1:BDD,b2:BDD):BDD {
-        return new BDD(BDD.bddService.applyEquiv(b1.thisbddNode,b2.thisbddNode))
-    }
-    static universalforget(b:BDD,vars:string[]) {
-        return new BDD(BDD.bddService.applyUniversalForget(b.thisbddNode,vars))
-    }
-    static existentialforget(b:BDD,vars:string[]) {
-        return new BDD(BDD.bddService.applyExistentialForget(b.thisbddNode,vars))
-    }
 
 }

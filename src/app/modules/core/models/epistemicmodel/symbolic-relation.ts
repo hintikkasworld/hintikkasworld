@@ -5,7 +5,7 @@ import { BDD } from '../formula/bdd';
 
 export interface SymbolicRelation {
     toFormula(): Formula;
-    toBDD(): BDDNode;
+    toBDD(): Promise<BDDNode>;
 }
 
 /**
@@ -44,13 +44,13 @@ export class Obs implements SymbolicRelation {
     /**
      * Return the BDD of the SymbolicRelation, build thanks to the toFormula()
      */
-    toBDD() : BDDNode {
+    async toBDD() : Promise<BDDNode> {
         let formula = this.toFormula();
      //   console.log(formula.prettyPrint());
        // console.log(formula);
         let res = null;
         try {
-            res = BDD.buildFromFormula(formula);
+            res = SymbolicEpistemicModel.bddServiceWorkerService.formulaToBDD(formula);
         } catch (error) {
             console.log(BDD.bddService.stackTrace());
             console.log("Erreur dans la contruction de la formule !")
