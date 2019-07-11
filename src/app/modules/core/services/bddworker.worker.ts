@@ -1,7 +1,7 @@
-import { BDDNode } from './../models/eventmodel/explicit-to-symbolic';
 import { Formula } from './../models/epistemicmodel/formula';
 import { BddService } from './../../../services/bdd.service';
 import * as types from  './../models/formula/formula';
+import { BDDNode } from './../../core/models/epistemicmodel/bddnode'
 /// <reference lib="webworker" />
 
 let bddService = new BddService( () => {});
@@ -14,17 +14,17 @@ function getBDDNode(phi: Formula): BDDNode {
       case (phi instanceof types.AtomicFormula): 
           return bddService.createLiteral((<types.AtomicFormula>phi).getAtomicString());
       case (phi instanceof types.ImplyFormula):
-          return bddService.applyImplies(this.getBDDNode((<types.ImplyFormula>phi).formula1), this.getBDDNode((<types.ImplyFormula>phi).formula2));
+          return bddService.applyImplies(getBDDNode((<types.ImplyFormula>phi).formula1), getBDDNode((<types.ImplyFormula>phi).formula2));
       case (phi instanceof types.EquivFormula):
-          return bddService.applyEquiv(this.getBDDNode((<types.EquivFormula>phi).formula1), this.getBDDNode((<types.EquivFormula>phi).formula2));
+          return bddService.applyEquiv(getBDDNode((<types.EquivFormula>phi).formula1), getBDDNode((<types.EquivFormula>phi).formula2));
       case (phi instanceof types.AndFormula):
-          return bddService.applyAnd((<types.AndFormula>phi).formulas.map((f) => this.getBDDNode(f)));
+          return bddService.applyAnd((<types.AndFormula>phi).formulas.map((f) => getBDDNode(f)));
       case (phi instanceof types.OrFormula):
-          return bddService.applyOr((<types.OrFormula>phi).formulas.map((f) => this.getBDDNode(f)));
+          return bddService.applyOr((<types.OrFormula>phi).formulas.map((f) => getBDDNode(f)));
       case (phi instanceof types.XorFormula): {
           throw new Error("to be implemented");
       }
-      case (phi instanceof types.NotFormula): return bddService.applyNot(this.getBDDNode((<types.NotFormula>phi).formula));
+      case (phi instanceof types.NotFormula): return bddService.applyNot(getBDDNode((<types.NotFormula>phi).formula));
       case (phi instanceof types.KFormula): {
           throw new Error("formula should be propositional");
       }
@@ -85,12 +85,11 @@ function createExactlyBDD(n: number, vars: string[]): BDDNode {
 
 
 
-
-
-
 addEventListener('message', ({ data }) => {
-  const response = //`worker response to ${data}`;
-        getBDDNode(data.formula);
+
+  console.log("formula received : " + data.formula);  
+  const response = `worker response to ${data}`;
+        getBDDNode(types.FormulaFactory.createFormula(data.formula));
 
   postMessage(response);
 });

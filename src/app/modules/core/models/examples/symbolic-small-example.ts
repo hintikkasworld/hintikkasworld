@@ -10,8 +10,6 @@ import { ExplicitToSymbolic } from '../eventmodel/explicit-to-symbolic';
 import { EventModelAction } from './../environment/event-model-action';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
 import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositional-assignments-postcondition';
-
-import { BddService } from './../../../../../app/services/bdd.service';
 import { BDD } from './../formula/bdd';
 import { MyTestForBDD } from "./test_bdd";
 import { SymbolicEventModel } from '../eventmodel/symbolic-event-model';

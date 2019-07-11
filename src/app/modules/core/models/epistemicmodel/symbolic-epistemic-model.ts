@@ -1,4 +1,3 @@
-import { BDDServiceWorkerService } from './../../../../services/bddservice-worker.service';
 import { ExplicitEpistemicModel } from './explicit-epistemic-model';
 import { SymbolicSuccessorSet } from './symbolic-successor-set';
 import { EpistemicModel } from './epistemic-model';
@@ -14,6 +13,7 @@ import { BddService, BDDNode } from '../../../../services/bdd.service';
 import { WorldValuationType } from './world-valuation-type';
 import { SEModelDescriptor } from './descriptor/se-model-descriptor';
 import { SEModelInternalDescriptor } from './descriptor/se-model-internal-descriptor';
+import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
 
 
 
@@ -22,6 +22,32 @@ import { SEModelInternalDescriptor } from './descriptor/se-model-internal-descri
  * it implements an epistemic model described symbolically by means of BDDs
  */
 export class SymbolicEpistemicModel implements EpistemicModel {
+
+ /**
+     * There are two way to create a symbolic epistemic model.
+     * In both way, we need to create descriptor class implementing
+     * either SEModelDescriptor or SEModelInternalDescriptor.
+     * SEModelDescriptor provides methods to build a symbolic epistemic
+     * model from crash. SEModelInternalDescriptor in the other hand
+     * consists of accessors to get information directly from the memory.
+     * SEModelDescriptor are used mainly to initialize initial model for 
+     * symbolic examples. SEModelInternalDescriptor is used in the 
+     * clone a model.
+     * For more example, please check symbolic models like belote or minesweeper
+     * @param worldClass  
+     * @param descr a descriptor to initialize every 
+     */
+    constructor(worldClass: WorldValuationType, descr: SEModelDescriptor | SEModelInternalDescriptor, private bddServiceWorkerService: BDDServiceWorkerService) {
+        this.worldClass = worldClass;
+        this.pointedValuation = descr.getPointedValuation();
+        this.agents = descr.getAgents();
+
+        this.symbolicRelations = new Map();
+        this.loadDescriptor(descr);
+        console.log("end of the construction")
+
+    }
+
 
     static getPrimedAtomicPropositions(propositionalAtoms: string[]): string[] {
         let propositionalPrimes = [];
@@ -92,36 +118,12 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return str.includes(SymbolicEpistemicModel.getPrimedString());
     }
 
-    /**
-     * There are two way to create a symbolic epistemic model.
-     * In both way, we need to create descriptor class implementing
-     * either SEModelDescriptor or SEModelInternalDescriptor.
-     * SEModelDescriptor provides methods to build a symbolic epistemic
-     * model from crash. SEModelInternalDescriptor in the other hand
-     * consists of accessors to get information directly from the memory.
-     * SEModelDescriptor are used mainly to initialize initial model for 
-     * symbolic examples. SEModelInternalDescriptor is used in the 
-     * clone a model.
-     * For more example, please check symbolic models like belote or minesweeper
-     * @param worldClass  
-     * @param descr a descriptor to initialize every 
-     */
-    constructor(worldClass: WorldValuationType, descr: SEModelDescriptor | SEModelInternalDescriptor, private bddServiceWorkerService: BDDServiceWorkerService) {
-        this.worldClass = worldClass;
-        this.pointedValuation = descr.getPointedValuation();
-        this.agents = descr.getAgents();
-
-        this.symbolicRelations = new Map();
-        this.loadDescriptor(descr);
-        console.log("end of the construction")
-
-    }
+   
 
     async getRulesAndRulesPrime(formulaSetWorlds: any): Promise<BDDNode> {
-        let formulaSetWorldsPrime = formulaSetWorlds.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
-        let formulaSetWorldsAndFormulaSetWorldsPrime = new AndFormula([formulaSetWorldsPrime, formulaSetWorlds]);
-
-        return await this.bddServiceWorkerService.formulaToBDD(formulaSetWorldsAndFormulaSetWorldsPrime);
+      let formulaSetWorldsPrime = formulaSetWorlds.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
+      let formulaSetWorldsAndFormulaSetWorldsPrime = new AndFormula([formulaSetWorldsPrime, formulaSetWorlds]);
+      return await this.bddServiceWorkerService.formulaToBDD(formulaSetWorldsAndFormulaSetWorldsPrime.prettyPrint());
     }
 
 
@@ -140,6 +142,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             let descriptor = <SEModelDescriptor>descr;
             //from now on, it should done asynchronously
             this.getRulesAndRulesPrime(descriptor.getSetWorldsFormulaDescription()).then((result) => { this.bddSetWorlds = result});
+            return;
             for (let agent of this.agents) {
                 let bddRelation = descriptor.getRelationDescription(agent).toBDD();
                 this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));

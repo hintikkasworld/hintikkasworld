@@ -7,8 +7,8 @@ import { BDD } from '../formula/bdd';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Postcondition } from './postcondition';
 import { TrivialPostcondition } from './trivial-postcondition';
+import { BDDNode } from 'src/app/services/bdd.service';
 
-export type BDDNode = number;
 
 /**
  * Allows to transform an ExplicitEventModel into a SymbolicEventModel, using the translate() method.

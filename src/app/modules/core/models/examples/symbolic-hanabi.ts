@@ -16,7 +16,7 @@ import { SymbolicPublicAnnouncement } from '../eventmodel/symbolic-public-announ
 import { SymbolicEvent } from '../eventmodel/symbolic-event';
 import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositional-assignments-postcondition';
 import { BDD } from './../formula/bdd';
-import { BDDNode, BddService } from './../../../../services/bdd.service';
+import { BDDNode } from './../../../../services/bdd.service';
 import { MyTestForBDD } from "./test_bdd";
 import { CachedSource } from 'webpack-sources';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
