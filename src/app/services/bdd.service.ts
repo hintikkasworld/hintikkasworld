@@ -1,4 +1,5 @@
-
+import { Formula } from './../modules/core/models/formula/formula';
+import * as types from  './../modules/core/models/formula/formula';
 //import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { Valuation } from '../modules/core/models/epistemicmodel/valuation';
@@ -521,6 +522,84 @@ export class BddService {
   }
 
 
+  formulaStringToBDD(formulaString: string) : BDDNode {
+    return this.getBDDNode(types.FormulaFactory.createFormula(formulaString));
+  }
+
+  getBDDNode(phi: Formula): BDDNode {
+    switch (true) {
+        case (phi instanceof types.TrueFormula): return this.createTrue();
+        case (phi instanceof types.FalseFormula): return this.createFalse();
+        case (phi instanceof types.AtomicFormula): 
+            return this.createLiteral((<types.AtomicFormula>phi).getAtomicString());
+        case (phi instanceof types.ImplyFormula):
+            return this.applyImplies(this.getBDDNode((<types.ImplyFormula>phi).formula1), this.getBDDNode((<types.ImplyFormula>phi).formula2));
+        case (phi instanceof types.EquivFormula):
+            return this.applyEquiv(this.getBDDNode((<types.EquivFormula>phi).formula1), this.getBDDNode((<types.EquivFormula>phi).formula2));
+        case (phi instanceof types.AndFormula):
+            return this.applyAnd((<types.AndFormula>phi).formulas.map((f) => this.getBDDNode(f)));
+        case (phi instanceof types.OrFormula):
+            return this.applyOr((<types.OrFormula>phi).formulas.map((f) => this.getBDDNode(f)));
+        case (phi instanceof types.XorFormula): {
+            throw new Error("to be implemented");
+        }
+        case (phi instanceof types.NotFormula): return this.applyNot(this.getBDDNode((<types.NotFormula>phi).formula));
+        case (phi instanceof types.KFormula): {
+            throw new Error("formula should be propositional");
+        }
+        case (phi instanceof types.KposFormula):
+            throw new Error("formula should be propositional");
+        case (phi instanceof types.KwFormula): {
+            throw new Error("formula should be propositional");
+        }
+        case (phi instanceof types.ExactlyFormula): {
+            return this.createExactlyBDD((<types.ExactlyFormula>phi).count, (<types.ExactlyFormula>phi).variables);
+        }
+    }
+    throw Error("type of phi not found");
+  }
+  
+  
+  
+  
+  createExactlyBDD(n: number, vars: string[]): BDDNode {
+  
+    const cache: Map<string, BDDNode> = new Map();
+  
+    const getNamongK = (n: number, k:number) => {
+  
+        const key =  n + "," + k;
+  
+        if(cache.has(key)) return cache.get(key);
+        if(n==0){
+            const assignment = new Map();
+            for(let v of vars.slice(0, k)){
+                assignment.set(v, false);
+            }
+            cache.set(key, this.createCube(assignment));
+            return cache.get(key);
+        }
+        if(k == 0) return this.createFalse();
+  
+        let x = this.createLiteral(vars[k-1]);
+        let bdd_1 = this.createCopy(getNamongK(n-1, k-1));
+        let bdd_2 = this.createCopy(getNamongK(n, k-1));
+        let res = this.applyIte(x, bdd_1, bdd_2);
+        cache.set(key, res);
+        return res;
+  
+    }
+  
+    let res = this.createCopy(getNamongK(n, vars.length));
+    
+    cache.forEach((value, key) => {
+        this.destroy(value);
+    });
+  
+    return res;
+  
+  }
+  
 
 }
 

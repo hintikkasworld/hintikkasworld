@@ -39,7 +39,27 @@ export class BDDServiceWorkerService {
 
   }
 
-  public formulaToBDD(formula: Formula): Promise<BDDNode> {
+  public static formulaToBDD(formula: Formula): Promise<BDDNode> {
+    return BDDServiceWorkerService.call("formulaToBDD", [formula.prettyPrint()]);
+  }
+
+  public static applyAnd(args: BDDNode[]) : Promise<BDDNode> {
+    return BDDServiceWorkerService.call("applyAnd", args);
+  }
+
+  
+  public static createCopy(bdd: BDDNode) : Promise<BDDNode> {
+    return BDDServiceWorkerService.call("createCopy", [bdd]);
+  }
+
+
+  /**
+   * 
+   * @param functionName 
+   * @param args 
+   * @description call the method functionName of BDDService on the webworker side with the arguments args
+   */
+  public static call(functionName: String, args: any[]): Promise<BDDNode> {
     return new Promise((resolve, reject) => {
 
       let id = BDDServiceWorkerService.i++;
@@ -47,7 +67,7 @@ export class BDDServiceWorkerService {
 
       //we send formula to the worker
       //id = id of the task
-      BDDServiceWorkerService.worker.postMessage({id: id, formula: formula.prettyPrint()});
+      BDDServiceWorkerService.worker.postMessage({id: id, functionName: functionName, args: args});
     });
   }
 }

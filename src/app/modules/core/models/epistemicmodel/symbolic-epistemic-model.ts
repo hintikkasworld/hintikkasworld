@@ -7,7 +7,6 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { World } from './world';
 import { SymbolicRelation, Obs } from './symbolic-relation';
 import { Formula, AndFormula, ExactlyFormula, NotFormula, EquivFormula, AtomicFormula, FormulaFactory, TrueFormula, KposFormula } from '../formula/formula';
-import { BDD } from '../formula/bdd';
 import * as types from './../formula/formula';
 import { BddService, BDDNode } from '../../../../services/bdd.service';
 import { WorldValuationType } from './world-valuation-type';
@@ -23,8 +22,7 @@ import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.serv
  */
 export class SymbolicEpistemicModel implements EpistemicModel {
 
-    //to be moved somewhere else
-    public static bddServiceWorkerService: BDDServiceWorkerService = new BDDServiceWorkerService();
+
  /**
      * There are two way to create a symbolic epistemic model.
      * In both way, we need to create descriptor class implementing
@@ -125,7 +123,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     async getRulesAndRulesPrime(formulaSetWorlds: any): Promise<BDDNode> {
       let formulaSetWorldsPrime = formulaSetWorlds.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
       let formulaSetWorldsAndFormulaSetWorldsPrime = new AndFormula([formulaSetWorldsPrime, formulaSetWorlds]);
-      return await SymbolicEpistemicModel.bddServiceWorkerService.formulaToBDD(formulaSetWorldsAndFormulaSetWorldsPrime);
+      return await BDDServiceWorkerService.formulaToBDD(formulaSetWorldsAndFormulaSetWorldsPrime);
     }
 
 
@@ -144,10 +142,11 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             let descriptor = <SEModelDescriptor>descr;
             //from now on, it should done asynchronously
             this.bddSetWorlds = await this.getRulesAndRulesPrime(descriptor.getSetWorldsFormulaDescription());
-            return;
             for (let agent of this.agents) {
                 let bddRelation : BDDNode = await descriptor.getRelationDescription(agent).toBDD();
-                this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
+                //this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
+                this.symbolicRelations.set(agent, await BDDServiceWorkerService.applyAnd(
+                    [await BDDServiceWorkerService.createCopy(this.bddSetWorlds), bddRelation]));
             }
         }
         else { //we intend  "instanceof SEModelInternalDescriptor"
@@ -155,7 +154,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             this.bddSetWorlds = descriptor.getSetWorldsBDDDescription();
             for (let agent of this.agents) {
                 let bddRelation = descriptor.getRelationBDD(agent);
-                this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
+                this.symbolicRelations.set(agent, await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(this.bddSetWorlds), bddRelation]));
 
             }
         }
