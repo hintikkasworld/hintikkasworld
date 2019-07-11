@@ -11,10 +11,10 @@ export class Valuation {
     else
       this.propositions = truePropositions;
   }
-  
+
   static buildFromMap(A: Map<string, boolean>): Valuation {
-      const trueProp = Array.from(A.keys()).filter(p => A.get(p));
-      return new Valuation(trueProp);
+    const trueProp = Array.from(A.keys()).filter(p => A.get(p));
+    return new Valuation(trueProp);
   }
 
   isPropositionTrue(p: string) { return (this.propositions[p] == true); }
@@ -41,5 +41,22 @@ export class Valuation {
         truePropositions.push(proposition);
     truePropositions.sort();
     return truePropositions.join();
+  }
+
+
+  getTruePropositions(): string[] {
+    let A = [];
+    for (var proposition in this.propositions)
+      if (this.propositions[proposition])
+        A.push(proposition);
+    return A;
+  }
+
+  getFalsePropositions(): string[] {
+    let A = [];
+    for (var proposition in this.propositions)
+      if (!this.propositions[proposition])
+        A.push(proposition);
+    return A;
   }
 }

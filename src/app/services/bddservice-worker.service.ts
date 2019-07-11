@@ -53,6 +53,20 @@ export class BDDServiceWorkerService {
   }
 
 
+  public static createCube(trueProps: string[], falseProps: string[]) : Promise<BDDNode> {
+    return BDDServiceWorkerService.call("createCube", [trueProps, falseProps]);
+  }
+
+
+  public static applyExistentialForget(b: BDDNode, atoms: string[]) : Promise<BDDNode> {
+    return BDDServiceWorkerService.call("applyExistentialForget", [b, atoms]);
+  }
+
+
+  public static applyRenaming(b: BDDNode, renaming: Map<string, string>) {
+    return BDDServiceWorkerService.call("applyRenaming", [b, renaming]);
+  }
+
   /**
    * 
    * @param functionName 

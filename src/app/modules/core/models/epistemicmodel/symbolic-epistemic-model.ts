@@ -49,6 +49,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
 
+
+
+
     static getPrimedAtomicPropositions(propositionalAtoms: string[]): string[] {
         let propositionalPrimes = [];
         propositionalAtoms.forEach((value) => {
@@ -167,40 +170,8 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     getPointedWorld() { return this.getWorld(this.pointedValuation); }
 
     getSuccessors(w: World, a: string): SymbolicSuccessorSet {
-
-        // console.log("getSucessors", a, this.getAgentSymbolicRelation(a))
-
-        let props: Map<string, boolean> = SymbolicEpistemicModel.valuationToMap((<WorldValuation>w).valuation);
-        //console.log("Props", props);
-        let wBDD = BDD.bddService.createCube(props);
-
-        //    console.log("after cube")
-        //console.log("cube", BDD.bddService.pickAllSolutions(bdd));
-        //console.log("graphe", BDD.bddService.pickAllSolutions(this.getAgentGraphe(a)));
-
-        let bddRelationOnW = BDD.bddService.applyAnd([
-            BDD.bddService.createCopy(this.getAgentSymbolicRelation(a)),
-            wBDD]);
-
-        //  console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))
-        //console.log("AND", BDD.bddService.pickAllSolutions(bdd_and));
-
-        let bddSetSuccessorsWithPrime = BDD.bddService.applyExistentialForget(
-            bddRelationOnW,
-            this.propositionalAtoms);
-
-        //console.log("after forget", BDD.bddService.pickAllSolutions(bddSetSuccessorsWithPrime))
-        //console.log("forget", this.propositionalAtoms, BDD.bddService.pickAllSolutions(forget));
-
-        let bddSetSuccessors = BDD.bddService.applyRenaming(
-            bddSetSuccessorsWithPrime,
-            SymbolicEpistemicModel.getMapPrimeToNotPrime(this.propositionalAtoms));
-
-        //console.log("Calcul bdd sucessors", BDD.bddService.pickAllSolutions(bddSetSuccessors));
-
-
         //console.log("Solutions", sols);
-        return new SymbolicSuccessorSet(this, bddSetSuccessors, this.propositionalAtoms);
+        return new SymbolicSuccessorSet(this, w, a);
     };
 
     getAgentSymbolicRelation(agent: string): BDDNode {
