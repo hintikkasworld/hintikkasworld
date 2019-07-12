@@ -88,6 +88,10 @@ export class BDDServiceWorkerService {
     return BDDServiceWorkerService.call("applyOr", model);
   }
 
+  public static applyNot(formula: number) {
+    return BDDServiceWorkerService.call("applyNot", [formula])
+  }
+
   public static createFalse() {
     let voidArgs: any[] = [1,2];
     return BDDServiceWorkerService.call("createFalse", voidArgs);
