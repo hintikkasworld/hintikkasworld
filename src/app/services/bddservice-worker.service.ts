@@ -1,5 +1,6 @@
 import { BDDNode } from './../modules/core/models/epistemicmodel/bddnode'
 import { Formula } from './../modules/core/models/formula/formula';
+import { Valuation } from '../modules/core/models/epistemicmodel/valuation';
 
 export class BDDServiceWorkerService {
   static i = 0;
@@ -39,26 +40,26 @@ export class BDDServiceWorkerService {
 
   }
 
-  public static formulaToBDD(formula: Formula): Promise<BDDNode> {
+  public static formulaToBDD(formula: Formula) {
     return BDDServiceWorkerService.call("formulaToBDD", [formula.prettyPrint()]);
   }
 
-  public static applyAnd(args: BDDNode[]) : Promise<BDDNode> {
+  public static applyAnd(args: BDDNode[]) {
     return BDDServiceWorkerService.call("applyAnd", args);
   }
 
   
-  public static createCopy(bdd: BDDNode) : Promise<BDDNode> {
+  public static createCopy(bdd: BDDNode) {
     return BDDServiceWorkerService.call("createCopy", [bdd]);
   }
 
 
-  public static createCube(trueProps: string[], falseProps: string[]) : Promise<BDDNode> {
+  public static createCube(trueProps: string[], falseProps: string[]){
     return BDDServiceWorkerService.call("createCube", [trueProps, falseProps]);
   }
 
 
-  public static applyExistentialForget(b: BDDNode, atoms: string[]) : Promise<BDDNode> {
+  public static applyExistentialForget(b: BDDNode, atoms: string[]) {
     return BDDServiceWorkerService.call("applyExistentialForget", [b, atoms]);
   }
 
@@ -67,13 +68,42 @@ export class BDDServiceWorkerService {
     return BDDServiceWorkerService.call("applyRenaming", [b, renaming]);
   }
 
+  public static pickAllSolutions(b: BDDNode, atoms: string[]) {
+    return BDDServiceWorkerService.call("pickAllSolutions", [b, atoms]);
+  }
+  
+  public static pickRandomSolution(b: BDDNode, atoms: string[]) {
+    return BDDServiceWorkerService.call("pickRandomSolution", [b, atoms]);
+  }
+
+  public static applyConditioning(b: BDDNode, valuationToMap: Map<string, boolean>) {
+    return BDDServiceWorkerService.call("applyConditioning", [b, valuationToMap]);
+  }
+
+  public static isConsistent(b: BDDNode) {
+    return BDDServiceWorkerService.call("isConsistent", [b]);
+  }
+
+  public static applyOr(model: any[]) {
+    return BDDServiceWorkerService.call("applyOr", model);
+  }
+
+  public static createFalse() {
+    let voidArgs: any[] = [1,2];
+    return BDDServiceWorkerService.call("createFalse", voidArgs);
+  }
+
+  public static createLiteral(a: string) {
+    return BDDServiceWorkerService.call("createLiteral", [a]);
+  }
+
   /**
    * 
    * @param functionName 
    * @param args 
    * @description call the method functionName of BDDService on the webworker side with the arguments args
    */
-  public static call(functionName: String, args: any[]): Promise<BDDNode> {
+  public static call(functionName: String, args: any[]): Promise<any>{
     return new Promise((resolve, reject) => {
 
       let id = BDDServiceWorkerService.i++;

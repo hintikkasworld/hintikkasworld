@@ -104,12 +104,12 @@ export class SymbolicSuccessorSet implements SuccessorSet {
                 return [];
             else {
                 this.finished = true;
-                return arrayValToArrayWorlds(BDDServiceWorkerService.pickAllSolutions(this.bdd, this.atoms));
+                return arrayValToArrayWorlds(await BDDServiceWorkerService.pickAllSolutions(this.bdd, this.atoms));
             }
         else {
             const sols = [];
             for (let i = 0; i < 5; i++) {
-                const val: Valuation = BDDServiceWorkerService.pickRandomSolution(this.bdd, this.atoms);
+                const val: Valuation = await BDDServiceWorkerService.pickRandomSolution(this.bdd, this.atoms);
                 if (!this.isAlreadyBeenOutput(val)) {
                     sols.push(val);
                     this.declareAlreadyOutput(val);
@@ -120,7 +120,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
     }
 
     async getRandomSuccessor(): Promise<World> {
-        let val: Valuation = BDDServiceWorkerService.pickRandomSolution(this.bdd, this.atoms);
+        let val: Valuation = await BDDServiceWorkerService.pickRandomSolution(this.bdd, this.atoms);
         return this.M.getWorld(val);
     }
 

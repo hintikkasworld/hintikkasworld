@@ -216,20 +216,20 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * @param formula a modal formula
      * @returns true if the formula is true in the real world (the pointed one)
      */
-    check(formula: Formula): boolean {
+    async check(formula: Formula): Promise<boolean> {
         let bddFormulaSemantics = this.queryWorldsSatisfying(formula);
         // console.log("check middle", BDD.bddService.pickAllSolutions(pointeur), SymbolicEpistemicModel.valuationToMap(this.pointed));
-        let res = BDD.bddService.applyConditioning(bddFormulaSemantics, SymbolicEpistemicModel.valuationToMap(this.pointedValuation));
+        let res = await BDDServiceWorkerService.applyConditioning(bddFormulaSemantics, SymbolicEpistemicModel.valuationToMap(this.pointedValuation));
         //console.log("check end",  BDD.bddService.pickAllSolutions(res))
-        return BDD.bddService.isConsistent(res)
+        return BDDServiceWorkerService.isConsistent(<BDDNode>res)
     }
 
-    queryWorldsSatisfying(phi: Formula): BDDNode {
+    async queryWorldsSatisfying(phi: Formula): Promise<BDDNode> {
 
-        let allWorlds = BDD.bddService.createFalse();
-        this.symbolicRelations.forEach((value: BDDNode, key: string) => {
-            let f2 = BDD.bddService.applyExistentialForget(BDD.bddService.createCopy(value), this.propositionalPrimes);
-            allWorlds = BDD.bddService.applyOr([allWorlds, f2]);
+        let allWorlds = await BDDServiceWorkerService.createFalse();
+        this.symbolicRelations.forEach(async (value: BDDNode, key: string) => {
+            let f2 = BDDServiceWorkerService.applyExistentialForget(await BDDServiceWorkerService.createCopy(value), this.propositionalPrimes);
+            allWorlds = BDDServiceWorkerService.applyOr([allWorlds, f2]);
         });
 
         // console.log("f of _query_worlds", BDD.bddService.pickAllSolutions(all_worlds))
@@ -240,21 +240,21 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return res;
     }
 
-    private _query(all_worlds: BDDNode, phi: Formula): BDDNode {
+    private async _query(all_worlds: BDDNode, phi: Formula): Promise<BDDNode> {
         // console.log("Query", bdd, phi)
 
-        if (phi instanceof types.TrueFormula) { return BDD.bddService.createCopy(all_worlds); }
-        if (phi instanceof types.FalseFormula) { return BDD.bddService.createFalse(); }
+        if (phi instanceof types.TrueFormula) { return await BDDServiceWorkerService.createCopy(all_worlds); }
+        if (phi instanceof types.FalseFormula) { return BDDServiceWorkerService.createFalse(); }
         if (phi instanceof types.AtomicFormula) {
             // console.log("Atom ", (<types.AtomicFormula>phi).getAtomicString())
-            return BDD.bddService.applyAnd([
-                BDD.bddService.createLiteral((<types.AtomicFormula>phi).getAtomicString()),
-                BDD.bddService.createCopy(all_worlds)
+            return BDDServiceWorkerService.applyAnd([
+                await BDDServiceWorkerService.createLiteral((<types.AtomicFormula>phi).getAtomicString()),
+                BDDServiceWorkerService.createCopy(all_worlds)
             ]
             );
         }
         if (phi instanceof types.AndFormula) {
-            return BDD.bddService.applyAnd(
+            return BDDServiceWorkerService.applyAnd(
                 ((<types.AndFormula>phi).formulas).map(
                     (f) => this._query(all_worlds, f)
                 )
