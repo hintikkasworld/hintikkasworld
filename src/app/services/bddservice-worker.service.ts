@@ -1,5 +1,5 @@
 import { BDDNode } from './../modules/core/models/epistemicmodel/bddnode'
-import { Formula } from './../modules/core/models/formula/formula';
+import { Formula, TrueFormula } from './../modules/core/models/formula/formula';
 import { Valuation } from '../modules/core/models/epistemicmodel/valuation';
 
 export class BDDServiceWorkerService {
@@ -41,7 +41,7 @@ export class BDDServiceWorkerService {
   }
 
   public static formulaToBDD(formula: Formula) {
-    return BDDServiceWorkerService.call("formulaToBDD", [formula.prettyPrint()]);
+    return BDDServiceWorkerService.call("formulaStringToBDD", [formula.prettyPrint()]);
   }
 
   public static applyAnd(args: BDDNode[]) {
@@ -49,6 +49,10 @@ export class BDDServiceWorkerService {
   }
 
   
+  public static createTrue() {
+    return this.formulaToBDD(new TrueFormula());
+  }
+
   public static createCopy(bdd: BDDNode) {
     return BDDServiceWorkerService.call("createCopy", [bdd]);
   }
@@ -72,6 +76,10 @@ export class BDDServiceWorkerService {
     return BDDServiceWorkerService.call("pickAllSolutions", [b, atoms]);
   }
   
+  public static countSolutions(b: BDDNode, atoms: string[]) {
+    return BDDServiceWorkerService.call("countSolutions", [b, atoms]);
+  }
+
   public static pickRandomSolution(b: BDDNode, atoms: string[]) {
     return BDDServiceWorkerService.call("pickRandomSolution", [b, atoms]);
   }
@@ -84,8 +92,12 @@ export class BDDServiceWorkerService {
     return BDDServiceWorkerService.call("isConsistent", [b]);
   }
 
-  public static applyOr(model: any[]) {
-    return BDDServiceWorkerService.call("applyOr", model);
+  public static applyOr(bdds: any[]) {
+    return BDDServiceWorkerService.call("applyOr", [bdds]);
+  }
+
+  public static applyEquiv(b1, b2: BDDNode) {
+    return BDDServiceWorkerService.call("applyEquiv", [b1, b2]);
   }
 
   public static applyNot(formula: number) {

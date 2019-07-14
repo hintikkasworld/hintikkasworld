@@ -148,7 +148,7 @@ export class DiningCryptographersProblem extends ExampleDescription {
             }
 
 
-            isApplicableIn(M: EpistemicModel): boolean {
+            async isApplicableIn(M: EpistemicModel): Promise<boolean> {
                 return M.check(FormulaFactory.createFormula("(not flipDone)"));
             }
             perform(M: ExplicitEpistemicModel): ExplicitEpistemicModel {

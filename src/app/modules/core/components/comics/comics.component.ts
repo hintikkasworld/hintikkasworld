@@ -318,8 +318,10 @@ export class ComicsComponent implements OnInit {
     levelDiv.attr('id', "level" + level);
     levelDiv.addClass("bulle");
 
-    if (successorSet.getNumber() > 10)
-      levelDiv.append(`<div class="count">${successorSet.getNumber()} possible worlds</div>`);
+    successorSet.getNumber().then((number) => {
+      if (number > 10)
+        levelDiv.append(`<div class="count">${number} possible worlds</div>`);
+    });
 
     let levelDivContent = $("<div>");
     levelDivContent.attr('id', "level-content" + level);
@@ -342,10 +344,15 @@ export class ComicsComponent implements OnInit {
     this.canvasFromWorld[level] = new Map();
     levelContainer.empty();
 
-    if (successorSet.getNumber() == 0)
-      $('#level' + level).addClass("error");
-    else
-      $('#level' + level).removeClass("error");
+    successorSet.getNumber().then(
+      (number) => {
+        if (number == 0)
+          $('#level' + level).addClass("error");
+        else
+          $('#level' + level).removeClass("error");
+
+      }
+    )
 
     let comics = this;
     function callForNewSuccessors() {

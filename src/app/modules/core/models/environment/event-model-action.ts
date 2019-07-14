@@ -16,7 +16,7 @@ export class EventModelAction implements Action {
 
     }
     
-    isApplicableIn(M: EpistemicModel): boolean {
+    async isApplicableIn(M: EpistemicModel): Promise<boolean> {
         return this._E.isApplicableIn(M);
     }
     getName() {

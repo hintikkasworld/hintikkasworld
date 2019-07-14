@@ -8,16 +8,13 @@ import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Formula, ExactlyFormula, AndFormula, AtomicFormula, NotFormula, KFormula, OrFormula, EquivFormula } from '../formula/formula';
-import { ExplicitToSymbolic } from '../eventmodel/explicit-to-symbolic';
 import { EventModelAction } from './../environment/event-model-action';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
 import { SymbolicEventModel } from '../eventmodel/symbolic-event-model';
 import { SymbolicPublicAnnouncement } from '../eventmodel/symbolic-public-announcement'
 import { SymbolicEvent } from '../eventmodel/symbolic-event';
 import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositional-assignments-postcondition';
-import { BDD } from './../formula/bdd';
 import { BDDNode } from './../../../../services/bdd.service';
-import { MyTestForBDD } from "./test_bdd";
 import { CachedSource } from 'webpack-sources';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
@@ -378,7 +375,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         console.log("Fin SEM");
 
-        function test(M: SymbolicEpistemicModel) {
+     /*   function test(M: SymbolicEpistemicModel) {
             console.log("TEST");
 
 
@@ -403,7 +400,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 2))]));
             console.log(form5.prettyPrint(), M.check(form5));
 
-        }
+        }*/
 
 
         //test(M);
@@ -412,7 +409,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     }
 
 
-    getEventModelPlay(agent: string, card: number, destination: string): SymbolicEventModel {
+    async getEventModelPlay(agent: string, card: number, destination: string): Promise<SymbolicEventModel> {
         /**
     * Get Formula var_pos1_value && !var_pos2_value && !+_var_pos1_value && +_var_pos2_value
     * This formula swap two variables between worlds and posted world.
@@ -434,7 +431,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
           * @param pos2 second possessor
           * @param value value of card
           */
-        let symbolic_transfert_card = (pos1: string, pos2: string, value: number): BDDNode => {
+        let symbolic_transfert_card = async (pos1: string, pos2: string, value: number): Promise<BDDNode> => {
             // var_pos1_value && not var_post2_value
             let var1 = SimpleSymbolicHanabi.getVarName(pos1, value)
             let var2 = SimpleSymbolicHanabi.getVarName(pos2, value)
@@ -444,14 +441,14 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 new AtomicFormula(SymbolicEventModel.getPostedVarName(var2)),
                 new NotFormula(new AtomicFormula(SymbolicEventModel.getPostedVarName(var1)))
             ])
-            const postBdd = BDD.buildFromFormula(new AndFormula([pre, post]));
+            const postBdd = await BDDServiceWorkerService.formulaToBDD(new AndFormula([pre, post]));
             //console.log("postBdd = ", BDD.bddService.pickAllSolutions(postBdd));
 
             const list_var: string[] = this.variables.filter(
                 vari => (vari != var1 && vari != var2)
             )
             let frame = SymbolicEventModel.frame(list_var, false);
-            let res = BDD.bddService.applyAnd([postBdd, frame])
+            let res = await BDDServiceWorkerService.applyAnd([postBdd, frame])
             //console.log("symbolic transfert", new AndFormula([pre, post]).prettyPrint(), BDD.bddService.pickSolutions(res, 20))
             return res;
         }
@@ -467,7 +464,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         let events_bdd: Map<string, BDDNode> = new Map<string, BDDNode>();
 
         const pre = precondition_symbolic_transfert(agent, destination, card)
-        const bdd_transfert = symbolic_transfert_card(agent, destination, card)
+        const bdd_transfert = await symbolic_transfert_card(agent, destination, card)
         const name = getName(agent, card);
 
         events.set(name, new SymbolicEvent(pre, bdd_transfert));
@@ -475,8 +472,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         let transfert = SymbolicEpistemicModel.getMapNotPrimeToPrime(this.variables.concat(this.variables.map(v => SymbolicEventModel.getPostedVarName(v))));
 
-        const eventPrime = BDD.bddService.applyRenaming(BDD.bddService.createCopy(events_bdd.get(name)), transfert);
-        const arc = BDD.bddService.applyAnd([BDD.bddService.createCopy(events_bdd.get(name)), eventPrime])
+        const eventPrime = BDDServiceWorkerService.applyRenaming(await BDDServiceWorkerService.createCopy(events_bdd.get(name)), transfert);
+        const arc = await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(events_bdd.get(name)), eventPrime])
 
         for (let agent of this.agents)
             agentRelations.set(agent, arc);
@@ -575,7 +572,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
 
         /* Value announce */
-        for (let agent of this.agents) {
+        /*for (let agent of this.agents) {
             for (var value = 1; value < 6; value++) {
                 for (var nb = 1; nb < 2; nb++) {
                     listActions.push(new EventModelAction({
@@ -587,9 +584,9 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 }
             }
         }
-
+*/
         /* Color annouce */
-        for (let agent of this.agents) {
+    /*    for (let agent of this.agents) {
             for (var color = 0; color < this.nb_colors; color++) {
                 let color_string = SimpleSymbolicHanabi.colors[color]
                 for (var nb = 1; nb < 6; nb++) {
@@ -599,7 +596,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                     }));
                 }
             }
-        }
+        }*/
         console.log(listActions);
         this.actions = listActions;
         return listActions;
@@ -607,7 +604,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     }
 
 
-
+/**
     onRealWorldClick(env: Environment, point: { x: number; y: number; }) {
         let w = <SimpleHanabiWorld>env.getEpistemicModel().getPointedWorld();
         let card = w.getCardUnderCursor(point);
@@ -628,5 +625,5 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 name: "Agent " + card.agent + " discards " + card.nb + ".",
                 eventModel: this.getEventModelPlay(card.agent, card.nb, "e")
             }));
-    }
+    } */
 }

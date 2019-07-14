@@ -14,7 +14,7 @@ export class ActionSetEpistemicModel implements Action {
         return this.name;
     }
 
-    isApplicableIn(M: EpistemicModel): boolean {
+    async isApplicableIn(M: EpistemicModel): Promise<boolean> {
         return true;
     }
     perform(M: EpistemicModel): EpistemicModel {

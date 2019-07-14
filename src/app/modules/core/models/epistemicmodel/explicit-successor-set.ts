@@ -9,7 +9,7 @@ export class ExplicitSuccessorSet implements SuccessorSet {
         this.successors = successors;
     }
 
-    getNumber(): number {
+    async getNumber(): Promise<number> {
         return this.successors.length;
     }
        

@@ -2,7 +2,6 @@ import { EventModel } from './event-model';
 import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Formula } from './../epistemicmodel/formula';
-import { BDD } from '../formula/bdd';
 import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
 
 export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicModel> {
@@ -17,23 +16,24 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
     }
 
     apply(M: SymbolicEpistemicModel): SymbolicEpistemicModel {
-        const BS = BDD.bddService;
+        const BS = BDDServiceWorkerService;
 
         const descr = M.getInternalDescription();
 
         const newDescr = {
             getAgents: () => descr.getAgents(),
             getAtomicPropositions: () => descr.getAtomicPropositions(),
-            getSetWorldsBDDDescription: () => M.queryWorldsSatisfying(this.precondition),
+            getSetWorldsBDDDescription: () => 0,// TODO M.queryWorldsSatisfying(this.precondition),
             getRelationBDD: (agent: string) => {
-                const possibleWorlds = M.queryWorldsSatisfying(this.precondition);
-                const possibleWorldsPrime = BS.applyRenaming(BS.createCopy(possibleWorlds), SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
-                const clique = BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
-
-                if(this.observers == undefined || this.observers.includes(agent))
-                    return BS.applyAnd([BS.createCopy(descr.getRelationBDD(agent)), BS.createCopy(clique)]);
-                else
-                    return descr.getRelationBDD(agent);
+                /*  const possibleWorlds = M.queryWorldsSatisfying(this.precondition);
+                  const possibleWorldsPrime = BS.applyRenaming(BS.createCopy(possibleWorlds), SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
+                  const clique = BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
+  
+                  if(this.observers == undefined || this.observers.includes(agent))
+                      return BS.applyAnd([BS.createCopy(descr.getRelationBDD(agent)), BS.createCopy(clique)]);
+                  else
+                      return descr.getRelationBDD(agent);*/
+                return undefined;
             },
             getPointedValuation: () => descr.getPointedValuation()
         }
@@ -41,7 +41,7 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
         return new SymbolicEpistemicModel(M.getWorldClass(), newDescr);
     }
 
-    isApplicableIn(M: SymbolicEpistemicModel): boolean {
+    async isApplicableIn(M: SymbolicEpistemicModel): Promise<boolean> {
         return M.check(this.precondition);
     }
 

@@ -88,9 +88,10 @@ export class SymbolicSuccessorSet implements SuccessorSet {
     /**
      * @returns the number of successors
      */
-    getNumber(): number {
-       /* if (this.number == undefined) this.number = BDD.bddService.countSolutions(this.bdd, this.atoms); //memoization
-        return this.number;*/
+    async getNumber(): Promise<number> {
+        if (this.number == undefined)
+            this.number = await BDDServiceWorkerService.countSolutions(this.bdd, this.atoms); //memoization
+        return this.number;
         return 0;
     }
 
@@ -99,7 +100,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
             return A.map((val: Valuation) => this.M.getWorld(val));
         }
 
-        if (this.getNumber() < 10)
+        if (await this.getNumber() < 10)
             if (this.finished)
                 return [];
             else {
