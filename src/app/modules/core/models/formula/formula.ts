@@ -46,6 +46,9 @@ export class OrFormula implements Formula {
         return new OrFormula(this._formulas.map(formula => formula.renameAtoms(f)));
     }
     prettyPrint(): string {
+        if(this._formulas.length == 0)
+            return "false";
+
         var s: string = "("+this._formulas[0].prettyPrint();
         for (var i = 1; i < this._formulas.length; i += 1) {
             s += " or "+this._formulas[i].prettyPrint();
@@ -67,6 +70,9 @@ export class AndFormula implements Formula {
         return new AndFormula(this._formulas.map(formula => formula.renameAtoms(f)));
     }
     prettyPrint(): string {
+        if(this._formulas.length == 0)
+            return "true";
+
         var s: string = "("+this._formulas[0].prettyPrint();
         for (var i = 1; i < this._formulas.length; i += 1) {
             s += " and "+this._formulas[i].prettyPrint();

@@ -1,20 +1,23 @@
 import { BDDNode } from './../modules/core/models/epistemicmodel/bddnode'
 import { Formula, TrueFormula } from './../modules/core/models/formula/formula';
-import { Valuation } from '../modules/core/models/epistemicmodel/valuation';
+
+
 
 export class BDDServiceWorkerService {
   static i = 0;
   static promises = [];
 
-  private static worker = new Worker('../modules/core/services/bddworker.worker.ts', { type: 'module' });;
+  private static worker = BDDServiceWorkerService.createWorker();
 
-  constructor() {
+  static createWorker()  {
+    let worker = new Worker('../modules/core/services/bddworker.worker.ts', { type: 'module' });
     console.log("creating BDDServiceWorkerService");
     console.log("Worker created");
     /** function called when the worker has computed the result of sth */
-    BDDServiceWorkerService.worker.onmessage = (msg) => {
+    worker.onmessage = (msg) => {
       const {id, err, result} = msg.data
-    
+      console.log("data received from the worker: ");
+      console.log(msg.data);
       if (result) {
         console.log("the worker answered : " + result);
         const resolve = BDDServiceWorkerService.promises[id].resolve
@@ -37,6 +40,8 @@ export class BDDServiceWorkerService {
       delete BDDServiceWorkerService.promises[id].resolve
       delete BDDServiceWorkerService.promises[id].reject
     }
+
+    return worker;
 
   }
 
@@ -77,6 +82,7 @@ export class BDDServiceWorkerService {
   }
   
   public static countSolutions(b: BDDNode, atoms: string[]) {
+    console.log(atoms)
     return BDDServiceWorkerService.call("countSolutions", [b, atoms]);
   }
 

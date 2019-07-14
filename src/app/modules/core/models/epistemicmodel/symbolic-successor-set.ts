@@ -9,7 +9,7 @@ import { WorldValuation } from './world-valuation';
 
 export class SymbolicSuccessorSet implements SuccessorSet {
 
-    private bdd: BDDNode;
+    private bddPromise: Promise<BDDNode>;
     private atoms: string[];
     private readonly M: SymbolicEpistemicModel;
     private number: number = undefined; // number of successors (memoization)
@@ -46,17 +46,19 @@ export class SymbolicSuccessorSet implements SuccessorSet {
 
     constructor(M: SymbolicEpistemicModel, w: World, a: string) {
         this.M = M;
-        this.load(w, a);
+        this.atoms = this.M.getPropositionalAtoms();
+        this.bddPromise = this.load(w, a);
     }
 
 
 
-    async load(w: World, a: string) {
+    async load(w: World, a: string) : Promise<BDDNode> {
         // console.log("getSucessors", a, this.getAgentSymbolicRelation(a))
-
+        console.log("begin BDD successor computation...")
 
         let wBDD = await BDDServiceWorkerService.createCube((<WorldValuation>w).valuation.getTruePropositions(), (<WorldValuation>w).valuation.getFalsePropositions());
 
+        console.log("cube done");
         //    console.log("after cube")
         //console.log("cube", BDD.bddService.pickAllSolutions(bdd));
         //console.log("graphe", BDD.bddService.pickAllSolutions(this.getAgentGraphe(a)));
@@ -64,7 +66,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
         let bddRelationOnW = await BDDServiceWorkerService.applyAnd([
             await BDDServiceWorkerService.createCopy(this.M.getAgentSymbolicRelation(a)),
             wBDD]);
-
+            console.log("AND done");
         //  console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))
         //console.log("AND", BDD.bddService.pickAllSolutions(bdd_and));
 
@@ -79,9 +81,9 @@ export class SymbolicSuccessorSet implements SuccessorSet {
             bddSetSuccessorsWithPrime,
             SymbolicEpistemicModel.getMapPrimeToNotPrime(this.M.getPropositionalAtoms()));
 
-
-        this.bdd = await bddSetSuccessors;
-        this.atoms = this.M.getPropositionalAtoms();
+            console.log("BDD successor computed!");
+        return bddSetSuccessors;
+        
         //console.log("Calcul bdd sucessors", BDD.bddService.pickAllSolutions(bddSetSuccessors));
 
     }
@@ -89,8 +91,9 @@ export class SymbolicSuccessorSet implements SuccessorSet {
      * @returns the number of successors
      */
     async getNumber(): Promise<number> {
+        console.log("le BDD est : " + await this.bddPromise);
         if (this.number == undefined)
-            this.number = await BDDServiceWorkerService.countSolutions(this.bdd, this.atoms); //memoization
+            this.number = await BDDServiceWorkerService.countSolutions(await this.bddPromise, this.atoms); //memoization
         return this.number;
         return 0;
     }
@@ -105,12 +108,12 @@ export class SymbolicSuccessorSet implements SuccessorSet {
                 return [];
             else {
                 this.finished = true;
-                return arrayValToArrayWorlds(await BDDServiceWorkerService.pickAllSolutions(this.bdd, this.atoms));
+                return arrayValToArrayWorlds(await BDDServiceWorkerService.pickAllSolutions(await this.bddPromise, this.atoms));
             }
         else {
             const sols = [];
             for (let i = 0; i < 5; i++) {
-                const val: Valuation = await BDDServiceWorkerService.pickRandomSolution(this.bdd, this.atoms);
+                const val: Valuation = await BDDServiceWorkerService.pickRandomSolution(await this.bddPromise, this.atoms);
                 if (!this.isAlreadyBeenOutput(val)) {
                     sols.push(val);
                     this.declareAlreadyOutput(val);
@@ -121,7 +124,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
     }
 
     async getRandomSuccessor(): Promise<World> {
-        let val: Valuation = await BDDServiceWorkerService.pickRandomSolution(this.bdd, this.atoms);
+        let val: Valuation = await BDDServiceWorkerService.pickRandomSolution(await this.bddPromise, this.atoms);
         return this.M.getWorld(val);
     }
 

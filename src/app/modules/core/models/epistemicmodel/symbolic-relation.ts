@@ -55,7 +55,7 @@ export class Obs implements SymbolicRelation {
         } catch (error) {
         //    console.log(BDD.bddService.stackTrace());
             console.log("Erreur dans la contruction de la formule !")
-            console.log("Trace : ", error.stack);
+            console.log("Trace : ", error);
             throw error;
         }
         return res;

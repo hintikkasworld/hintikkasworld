@@ -29,6 +29,6 @@ addEventListener('message', ({ data }) => {
       result: executeFunctionByName(data.functionName, data.args)
   }
         
-
+  console.log("data sent back by the worker: " + response);
   postMessage(response);
 });
