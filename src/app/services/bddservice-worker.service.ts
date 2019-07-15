@@ -42,7 +42,6 @@ export class BDDServiceWorkerService {
     }
 
     return worker;
-
   }
 
   public static formulaToBDD(formula: Formula): Promise<BDDNode> {
@@ -55,7 +54,7 @@ export class BDDServiceWorkerService {
 
 
   public static createTrue(): Promise<BDDNode> {
-    return this.formulaToBDD(new TrueFormula());
+    return BDDServiceWorkerService.formulaToBDD(new TrueFormula());
   }
 
   public static createCopy(bdd: BDDNode): Promise<BDDNode> {

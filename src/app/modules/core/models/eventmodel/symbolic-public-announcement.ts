@@ -23,7 +23,7 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
         const newDescr = {
             getAgents: () => descr.getAgents(),
             getAtomicPropositions: () => descr.getAtomicPropositions(),
-            getSetWorldsBDDDescription: () => M.queryWorldsSatisfying(this.precondition),
+            getSetWorldsBDDDescription: async () : Promise<BDDNode> => await M.queryWorldsSatisfying(this.precondition),
             getRelationBDD: async (agent: string) : Promise<BDDNode> =>  {
                   const possibleWorlds = await M.queryWorldsSatisfying(this.precondition);
                   const possibleWorldsPrime = await BS.applyRenaming(await BS.createCopy(possibleWorlds), SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
@@ -41,7 +41,7 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
     }
 
     async isApplicableIn(M: SymbolicEpistemicModel): Promise<boolean> {
-        return M.check(this.precondition);
+        return await M.check(this.precondition);
     }
 
     private precondition: Formula;

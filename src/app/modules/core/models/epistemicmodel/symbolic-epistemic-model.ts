@@ -135,6 +135,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * @param descr 
      */
     private async loadDescriptor(descr: SEModelDescriptor | SEModelInternalDescriptor) {
+        console.log("begin loadDescriptor...");
         this.propositionalAtoms = descr.getAtomicPropositions();
         this.propositionalPrimes = SymbolicEpistemicModel.getPrimedAtomicPropositions(this.propositionalAtoms);
         // console.log("Agents of SymbolicEpistemicModel", agents);
@@ -152,8 +153,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         else { //we intend  "instanceof SEModelInternalDescriptor"
             let descriptor = <SEModelInternalDescriptor>descr;
             this.bddSetWorlds = await descriptor.getSetWorldsBDDDescription();
+            console.log("bdd worlds is: " + this.bddSetWorlds);
             for (let agent of this.agents) {
                 let bddRelation: BDDNode = await descriptor.getRelationBDD(agent);
+                console.log("bdd relation for agent " + agent + " is: " + bddRelation);
                 this.symbolicRelations.set(agent,
                     await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(this.bddSetWorlds),
                         bddRelation]));
@@ -253,13 +256,17 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             );
         }
         if (phi instanceof types.AndFormula) {
-            let arrayNumber: number[];
-            ((<types.AndFormula>phi).formulas).map(async (f) => arrayNumber.push(await this._query(all_worlds, f)));
+            let arrayNumber: number[] = [];
+            for(let f of (<types.AndFormula>phi).formulas) {
+                arrayNumber.push(await this._query(all_worlds, f) );
+            }
             return await BDDServiceWorkerService.applyAnd( arrayNumber );
         }
         if (phi instanceof types.OrFormula) {
-            let arrayNumber: number[];
-            ((<types.OrFormula>phi).formulas).map(async (f) => arrayNumber.push(await this._query(all_worlds, f)));
+            let arrayNumber: number[] = [];
+            for(let f of (<types.OrFormula>phi).formulas) {
+                arrayNumber.push(await this._query(all_worlds, f) );
+            }
 
             return await BDDServiceWorkerService.applyOr(arrayNumber);
         }
