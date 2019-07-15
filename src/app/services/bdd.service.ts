@@ -214,15 +214,15 @@ export class BddService {
     return res;
   }
 
-  /*
-    applyConditioning(b: BDDNode, assignment: Map<string, boolean>): BDDNode {
+  
+  applyConditioning(b: BDDNode, assignment: Map<string, boolean>): BDDNode {
       const cube = this.createCube(assignment);
       // console.log("Will apply conditioning on " + this.nodeToString(b) + " with assignment " + assignment + "(cube = " + this.nodeToString(cube) + ")");
       let res = this.bddModule._apply_conditioning(b, cube);
       // console.log(res);
       // console.log("end applyConditioning", this.nodeToString(res));
       return res;
-    }*/
+    }
 
   applyRenaming(b: BDDNode, renaming: Map<string, string>) {
     const oldvars: string[] = [];
@@ -477,14 +477,12 @@ export class BddService {
    * @param assignment an assignment (a Map) from propositions (names) to Boolean (their truth values)
    * @returns the BDD that corresponds to the conjunction of litterals that describes the assignment.
    */
-  createCube(trueProps: string[], falseProps: string[]): BDDNode {
+  createCube(assignment: Map<String, boolean>): BDDNode {
     const literals = []
-    for (const atom of trueProps) {
+
+    for (const atom of assignment.keys()) {
       let lit = this.createLiteral(atom);
-      literals.push(lit);
-    }
-    for (const atom of falseProps) {
-      let lit = this.createLiteral(atom);
+      if(assignment.get(atom))
       lit = this.applyNot(lit);
       literals.push(lit);
     }

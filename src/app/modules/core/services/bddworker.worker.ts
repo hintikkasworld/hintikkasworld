@@ -1,7 +1,5 @@
 
-import { Formula } from './../models/epistemicmodel/formula';
 import { BddService } from './../../../services/bdd.service';
-import { BDDNode } from './../../core/models/epistemicmodel/bddnode'
 
 /// <reference lib="webworker" />
 
@@ -11,10 +9,15 @@ import { BDDNode } from './../../core/models/epistemicmodel/bddnode'
 let bddService = new BddService( () => {});
 
 
-
+/**
+ * 
+ * @param functionName 
+ * @param args 
+ * @returns the result of the application of the method of name functionName of bddService with the arguments args
+ */
 function executeFunctionByName(functionName, args) {
     if(bddService[functionName] == undefined)
-      throw functionName + " is not a member of bddService";
+      throw functionName + " is not a method of bddService";
 
     //console.log("we apply " + functionName + " on [" + args + "]");
     let result = bddService[functionName].apply(bddService, args);
