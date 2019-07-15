@@ -16,8 +16,10 @@ function executeFunctionByName(functionName, args) {
     if(bddService[functionName] == undefined)
       throw functionName + " is not a member of bddService";
 
-    console.log("we apply " + functionName + " on " + args);
-    return bddService[functionName].apply(bddService, args);
+    console.log("we apply " + functionName + " on [" + args + "]");
+    let result = bddService[functionName].apply(bddService, args);
+    console.log("the result is: " + result);
+    return result;
 }
 
 

@@ -49,12 +49,16 @@ export class BDDServiceWorkerService {
   }
 
   public static applyAnd(args: BDDNode[]): Promise<BDDNode> {
-    return BDDServiceWorkerService.call("applyAnd", args);
+    return BDDServiceWorkerService.call("applyAnd", [args]);
   }
 
 
   public static createTrue(): Promise<BDDNode> {
     return BDDServiceWorkerService.formulaToBDD(new TrueFormula());
+  }
+
+  public static createFalse(): Promise<BDDNode> {
+    return BDDServiceWorkerService.call("createFalse", []);
   }
 
   public static createCopy(bdd: BDDNode): Promise<BDDNode> {
@@ -109,10 +113,7 @@ export class BDDServiceWorkerService {
     return BDDServiceWorkerService.call("applyNot", [formula])
   }
 
-  public static createFalse(): Promise<BDDNode> {
-    let voidArgs: any[] = [1, 2];
-    return BDDServiceWorkerService.call("createFalse", voidArgs);
-  }
+
 
   public static createLiteral(a: string): Promise<BDDNode> {
     return BDDServiceWorkerService.call("createLiteral", [a]);

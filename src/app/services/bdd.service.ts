@@ -158,6 +158,7 @@ export class BddService {
   }
 
   applyAnd(b: BDDNode[]): BDDNode {
+    console.log("applyAnd on an input with " + b + "");
     // console.log("Will apply and to this array of BDDs:", b.map(b => this.nodeToString(b)));
     let result = this.createTrue();
     for (let i = 0; i < b.length; i++) {
