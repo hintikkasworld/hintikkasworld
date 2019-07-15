@@ -1,5 +1,5 @@
+import { BDDNode } from 'src/app/services/bdd.service';
 import { EventModel } from './event-model';
-import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Formula } from './../epistemicmodel/formula';
 import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
@@ -24,7 +24,7 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
             getAgents: () => descr.getAgents(),
             getAtomicPropositions: () => descr.getAtomicPropositions(),
             getSetWorldsBDDDescription: () => M.queryWorldsSatisfying(this.precondition),
-            getRelationBDD: async (agent: string) =>  {
+            getRelationBDD: async (agent: string) : Promise<BDDNode> =>  {
                   const possibleWorlds = await M.queryWorldsSatisfying(this.precondition);
                   const possibleWorldsPrime = await BS.applyRenaming(await BS.createCopy(possibleWorlds), SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
                   const clique = await BS.applyAnd([possibleWorlds, possibleWorldsPrime]);

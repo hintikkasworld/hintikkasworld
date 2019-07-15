@@ -20,20 +20,20 @@ import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.serv
 export class SymbolicEpistemicModel implements EpistemicModel {
 
 
- /**
-     * There are two way to create a symbolic epistemic model.
-     * In both way, we need to create descriptor class implementing
-     * either SEModelDescriptor or SEModelInternalDescriptor.
-     * SEModelDescriptor provides methods to build a symbolic epistemic
-     * model from crash. SEModelInternalDescriptor in the other hand
-     * consists of accessors to get information directly from the memory.
-     * SEModelDescriptor are used mainly to initialize initial model for 
-     * symbolic examples. SEModelInternalDescriptor is used in the 
-     * clone a model.
-     * For more example, please check symbolic models like belote or minesweeper
-     * @param worldClass  
-     * @param descr a descriptor to initialize every 
-     */
+    /**
+        * There are two way to create a symbolic epistemic model.
+        * In both way, we need to create descriptor class implementing
+        * either SEModelDescriptor or SEModelInternalDescriptor.
+        * SEModelDescriptor provides methods to build a symbolic epistemic
+        * model from crash. SEModelInternalDescriptor in the other hand
+        * consists of accessors to get information directly from the memory.
+        * SEModelDescriptor are used mainly to initialize initial model for 
+        * symbolic examples. SEModelInternalDescriptor is used in the 
+        * clone a model.
+        * For more example, please check symbolic models like belote or minesweeper
+        * @param worldClass  
+        * @param descr a descriptor to initialize every 
+        */
     constructor(worldClass: WorldValuationType, descr: SEModelDescriptor | SEModelInternalDescriptor) {
         this.worldClass = worldClass;
         this.pointedValuation = descr.getPointedValuation();
@@ -118,12 +118,12 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return str.includes(SymbolicEpistemicModel.getPrimedString());
     }
 
-   
+
 
     async getRulesAndRulesPrime(formulaSetWorlds: any): Promise<BDDNode> {
-      let formulaSetWorldsPrime = formulaSetWorlds.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
-      let formulaSetWorldsAndFormulaSetWorldsPrime = new AndFormula([formulaSetWorldsPrime, formulaSetWorlds]);
-      return await BDDServiceWorkerService.formulaToBDD(formulaSetWorldsAndFormulaSetWorldsPrime);
+        let formulaSetWorldsPrime = formulaSetWorlds.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
+        let formulaSetWorldsAndFormulaSetWorldsPrime = new AndFormula([formulaSetWorldsPrime, formulaSetWorlds]);
+        return await BDDServiceWorkerService.formulaToBDD(formulaSetWorldsAndFormulaSetWorldsPrime);
     }
 
 
@@ -143,7 +143,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             //from now on, it should done asynchronously
             this.bddSetWorlds = await this.getRulesAndRulesPrime(descriptor.getSetWorldsFormulaDescription());
             for (let agent of this.agents) {
-                let bddRelation : BDDNode = await descriptor.getRelationDescription(agent).toBDD();
+                let bddRelation: BDDNode = await descriptor.getRelationDescription(agent).toBDD();
                 //this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
                 this.symbolicRelations.set(agent, await BDDServiceWorkerService.applyAnd(
                     [await BDDServiceWorkerService.createCopy(this.bddSetWorlds), bddRelation]));
@@ -153,8 +153,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             let descriptor = <SEModelInternalDescriptor>descr;
             this.bddSetWorlds = await descriptor.getSetWorldsBDDDescription();
             for (let agent of this.agents) {
-                let bddRelation : BDDNode = await descriptor.getRelationBDD(agent);
-                this.symbolicRelations.set(agent, await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(this.bddSetWorlds), bddRelation]));
+                let bddRelation: BDDNode = await descriptor.getRelationBDD(agent);
+                this.symbolicRelations.set(agent,
+                    await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(this.bddSetWorlds),
+                        bddRelation]));
 
             }
         }
@@ -223,15 +225,15 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     async queryWorldsSatisfying(phi: Formula): Promise<BDDNode> {
 
-        let allWorlds : BDDNode = await BDDServiceWorkerService.createFalse();
+        let allWorlds: BDDNode = await BDDServiceWorkerService.createFalse();
         this.symbolicRelations.forEach(async (value: BDDNode, key: string) => {
-            let f2 : BDDNode = await BDDServiceWorkerService.applyExistentialForget(await BDDServiceWorkerService.createCopy(value), this.propositionalPrimes);
+            let f2: BDDNode = await BDDServiceWorkerService.applyExistentialForget(await BDDServiceWorkerService.createCopy(value), this.propositionalPrimes);
             allWorlds = await BDDServiceWorkerService.applyOr([allWorlds, f2]);
         });
 
         // console.log("f of _query_worlds", BDD.bddService.pickAllSolutions(all_worlds))
 
-        let res : BDDNode = await this._query(allWorlds, phi);
+        let res: BDDNode = await this._query(allWorlds, phi);
 
         // console.log("end _query_worlds", res);
         return res;
@@ -253,16 +255,13 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         if (phi instanceof types.AndFormula) {
             let arrayNumber: number[];
             ((<types.AndFormula>phi).formulas).map(async (f) => arrayNumber.push(await this._query(all_worlds, f)));
-            return await BDDServiceWorkerService.applyAnd(
-                arrayNumber
-            );
+            return await BDDServiceWorkerService.applyAnd( arrayNumber );
         }
         if (phi instanceof types.OrFormula) {
-            return BDDServiceWorkerService.applyOr(
-                ((<types.OrFormula>phi).formulas).map(
-                    (f) => this._query(all_worlds, f)
-                )
-            );
+            let arrayNumber: number[];
+            ((<types.OrFormula>phi).formulas).map(async (f) => arrayNumber.push(await this._query(all_worlds, f)));
+
+            return await BDDServiceWorkerService.applyOr(arrayNumber);
         }
         if (phi instanceof types.NotFormula) {
             //console.log("Not", (<types.NotFormula>phi).formula);

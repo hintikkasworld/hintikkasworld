@@ -447,7 +447,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             const list_var: string[] = this.variables.filter(
                 vari => (vari != var1 && vari != var2)
             )
-            let frame = SymbolicEventModel.frame(list_var, false);
+            let frame = await SymbolicEventModel.frame(list_var, false);
             let res = await BDDServiceWorkerService.applyAnd([postBdd, frame])
             //console.log("symbolic transfert", new AndFormula([pre, post]).prettyPrint(), BDD.bddService.pickSolutions(res, 20))
             return res;
