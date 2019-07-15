@@ -30,9 +30,9 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
                   const clique = await BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
   
                   if(this.observers == undefined || this.observers.includes(agent))
-                      return BS.applyAnd([BS.createCopy(await descr.getRelationBDD(agent)), await BS.createCopy(clique)]);
+                      return await BS.applyAnd([await BS.createCopy(await descr.getRelationBDD(agent)), await BS.createCopy(clique)]);
                   else
-                      return descr.getRelationBDD(agent);
+                      return await descr.getRelationBDD(agent);
             },
             getPointedValuation: () => descr.getPointedValuation()
         }

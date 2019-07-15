@@ -472,7 +472,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         let transfert = SymbolicEpistemicModel.getMapNotPrimeToPrime(this.variables.concat(this.variables.map(v => SymbolicEventModel.getPostedVarName(v))));
 
-        const eventPrime = BDDServiceWorkerService.applyRenaming(await BDDServiceWorkerService.createCopy(events_bdd.get(name)), transfert);
+        const eventPrime = await BDDServiceWorkerService.applyRenaming(await BDDServiceWorkerService.createCopy(events_bdd.get(name)), transfert);
         const arc = await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(events_bdd.get(name)), eventPrime])
 
         for (let agent of this.agents)

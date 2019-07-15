@@ -266,8 +266,8 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         }
         if (phi instanceof types.NotFormula) {
             //console.log("Not", (<types.NotFormula>phi).formula);
-            let res = BDDServiceWorkerService.applyNot(await this._query(all_worlds, (<types.NotFormula>phi).formula));
-            let res2 = BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(all_worlds), res]);
+            let res = await BDDServiceWorkerService.applyNot(await this._query(all_worlds, (<types.NotFormula>phi).formula));
+            let res2 = await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(all_worlds), res]);
             return res2;
         }
         if (phi instanceof types.KFormula) {
@@ -282,15 +282,15 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         }
         if (phi instanceof types.KposFormula) {
             //console.log("Kpos")
-            let mp = BDDServiceWorkerService.applyRenaming(
+            let mp = await BDDServiceWorkerService.applyRenaming(
                 await this._query(all_worlds, (<types.KposFormula>phi).formula),
                 SymbolicEpistemicModel.getMapPrimeToNotPrime(this.propositionalAtoms)
             );
             // console.log("mp", BDD.bddService.pickAllSolutions(mp));
-            let bdd_a = this.getAgentSymbolicRelation((<types.KposFormula>phi).agent);
+            let bdd_a = await this.getAgentSymbolicRelation((<types.KposFormula>phi).agent);
             let bdd_and = await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(bdd_a), mp]);
             // console.log("bdd_and", BDD.bddService.pickAllSolutions(bdd_and).map(v => v.toAssignment(this.propositionalAtoms.concat(this.propositionalPrimes))), this.propositionalPrimes);
-            let res = BDDServiceWorkerService.applyExistentialForget(bdd_and, this.propositionalPrimes);
+            let res = await BDDServiceWorkerService.applyExistentialForget(bdd_and, this.propositionalPrimes);
             // console.log("res Kpos", BDD.bddService.pickAllSolutions(res).map(v => v.toAssignment(this.propositionalAtoms)));
             return res
         }
