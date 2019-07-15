@@ -151,9 +151,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         }
         else { //we intend  "instanceof SEModelInternalDescriptor"
             let descriptor = <SEModelInternalDescriptor>descr;
-            this.bddSetWorlds = descriptor.getSetWorldsBDDDescription();
+            this.bddSetWorlds = await descriptor.getSetWorldsBDDDescription();
             for (let agent of this.agents) {
-                let bddRelation = descriptor.getRelationBDD(agent);
+                let bddRelation : BDDNode = await descriptor.getRelationBDD(agent);
                 this.symbolicRelations.set(agent, await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(this.bddSetWorlds), bddRelation]));
 
             }
@@ -241,19 +241,19 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         // console.log("Query", bdd, phi)
 
         if (phi instanceof types.TrueFormula) { return await BDDServiceWorkerService.createCopy(all_worlds); }
-        if (phi instanceof types.FalseFormula) { return BDDServiceWorkerService.createFalse(); }
+        if (phi instanceof types.FalseFormula) { return await BDDServiceWorkerService.createFalse(); }
         if (phi instanceof types.AtomicFormula) {
             // console.log("Atom ", (<types.AtomicFormula>phi).getAtomicString())
-            return BDDServiceWorkerService.applyAnd([
+            return await BDDServiceWorkerService.applyAnd([
                 await BDDServiceWorkerService.createLiteral((<types.AtomicFormula>phi).getAtomicString()),
-                BDDServiceWorkerService.createCopy(all_worlds)
+                await BDDServiceWorkerService.createCopy(all_worlds)
             ]
             );
         }
         if (phi instanceof types.AndFormula) {
             let arrayNumber: number[];
             ((<types.AndFormula>phi).formulas).map(async (f) => arrayNumber.push(await this._query(all_worlds, f)));
-            return BDDServiceWorkerService.applyAnd(
+            return await BDDServiceWorkerService.applyAnd(
                 arrayNumber
             );
         }
@@ -304,11 +304,11 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                 (<types.KwFormula>phi).agent,
                 new types.NotFormula((<types.KwFormula>phi).formula)
             );
-            return this._query(all_worlds, new types.OrFormula([Knp, Kp]));
+            return await this._query(all_worlds, new types.OrFormula([Knp, Kp]));
         }
         if (phi instanceof types.ExactlyFormula) {
             //return BDD.bddService.applyAnd([BDD.buildFromFormula(phi), BDD.bddService.createCopy(all_worlds)])
-            return this._query(all_worlds, <types.ExactlyFormula>phi.convertToNormalFormula());
+            return await this._query(all_worlds, <types.ExactlyFormula>phi.convertToNormalFormula());
 
         }
 
@@ -356,8 +356,8 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return {
             getAgents: () => this.agents,
             getAtomicPropositions: () => this.propositionalAtoms,
-            getSetWorldsBDDDescription: () => this.bddSetWorlds,
-            getRelationBDD: (agent: string) => this.symbolicRelations.get(agent),
+            getSetWorldsBDDDescription: async () => this.bddSetWorlds,
+            getRelationBDD: async (agent: string) => this.symbolicRelations.get(agent),
             getPointedValuation: () => this.pointedValuation
         }
     }

@@ -13,7 +13,7 @@ import { Valuation } from '../valuation';
 export interface SEModelInternalDescriptor {
     getAtomicPropositions(): string[];
     getAgents(): string[];
-    getSetWorldsBDDDescription(): BDDNode;
-    getRelationBDD(agent: string): BDDNode;
+    getSetWorldsBDDDescription(): Promise<BDDNode>;
+    getRelationBDD(agent: string): Promise<BDDNode>;
     getPointedValuation(): Valuation;
 }

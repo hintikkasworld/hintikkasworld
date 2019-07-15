@@ -17,7 +17,7 @@ export class BDDServiceWorkerService {
     worker.onmessage = (msg) => {
       const {id, err, result} = msg.data
       console.log("data received from the worker: ");
-      console.log(msg.data);
+      console.log(msg.data.result.toString());
       if (result) {
         console.log("the worker answered : " + result);
         const resolve = BDDServiceWorkerService.promises[id].resolve
@@ -49,16 +49,16 @@ export class BDDServiceWorkerService {
     return BDDServiceWorkerService.call("formulaStringToBDD", [formula.prettyPrint()]);
   }
 
-  public static applyAnd(args: BDDNode[]) {
+  public static applyAnd(args: BDDNode[]) : Promise<BDDNode>{
     return BDDServiceWorkerService.call("applyAnd", args);
   }
 
   
-  public static createTrue() {
+  public static createTrue() : Promise<BDDNode>{
     return this.formulaToBDD(new TrueFormula());
   }
 
-  public static createCopy(bdd: BDDNode) {
+  public static createCopy(bdd: BDDNode) : Promise<BDDNode>{
     return BDDServiceWorkerService.call("createCopy", [bdd]);
   }
 
@@ -106,16 +106,16 @@ export class BDDServiceWorkerService {
     return BDDServiceWorkerService.call("applyEquiv", [b1, b2]);
   }
 
-  public static applyNot(formula: number) {
+  public static applyNot(formula: number) : Promise<BDDNode> {
     return BDDServiceWorkerService.call("applyNot", [formula])
   }
 
-  public static createFalse() {
+  public static createFalse() : Promise<BDDNode> {
     let voidArgs: any[] = [1,2];
     return BDDServiceWorkerService.call("createFalse", voidArgs);
   }
 
-  public static createLiteral(a: string) {
+  public static createLiteral(a: string) : Promise<BDDNode> {
     return BDDServiceWorkerService.call("createLiteral", [a]);
   }
 

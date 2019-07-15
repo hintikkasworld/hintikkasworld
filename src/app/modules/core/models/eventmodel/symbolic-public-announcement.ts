@@ -23,17 +23,16 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
         const newDescr = {
             getAgents: () => descr.getAgents(),
             getAtomicPropositions: () => descr.getAtomicPropositions(),
-            getSetWorldsBDDDescription: () => 0,// TODO M.queryWorldsSatisfying(this.precondition),
-            getRelationBDD: (agent: string) => {
-                /*  const possibleWorlds = M.queryWorldsSatisfying(this.precondition);
-                  const possibleWorldsPrime = BS.applyRenaming(BS.createCopy(possibleWorlds), SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
-                  const clique = BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
+            getSetWorldsBDDDescription: () => M.queryWorldsSatisfying(this.precondition),
+            getRelationBDD: async (agent: string) =>  {
+                  const possibleWorlds = await M.queryWorldsSatisfying(this.precondition);
+                  const possibleWorldsPrime = await BS.applyRenaming(await BS.createCopy(possibleWorlds), SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
+                  const clique = await BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
   
                   if(this.observers == undefined || this.observers.includes(agent))
-                      return BS.applyAnd([BS.createCopy(descr.getRelationBDD(agent)), BS.createCopy(clique)]);
+                      return BS.applyAnd([BS.createCopy(await descr.getRelationBDD(agent)), await BS.createCopy(clique)]);
                   else
-                      return descr.getRelationBDD(agent);*/
-                return undefined;
+                      return descr.getRelationBDD(agent);
             },
             getPointedValuation: () => descr.getPointedValuation()
         }

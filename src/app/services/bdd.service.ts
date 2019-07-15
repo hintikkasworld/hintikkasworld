@@ -1,5 +1,5 @@
 import { Formula } from './../modules/core/models/formula/formula';
-import * as types from  './../modules/core/models/formula/formula';
+import * as types from './../modules/core/models/formula/formula';
 //import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { Valuation } from '../modules/core/models/epistemicmodel/valuation';
@@ -74,7 +74,7 @@ export class BddService {
 
       }
     };
-    
+
     // instantiate the module
     this.bddModule = Module(moduleArgs);
   }
@@ -214,15 +214,15 @@ export class BddService {
     return res;
   }
 
-/*
-  applyConditioning(b: BDDNode, assignment: Map<string, boolean>): BDDNode {
-    const cube = this.createCube(assignment);
-    // console.log("Will apply conditioning on " + this.nodeToString(b) + " with assignment " + assignment + "(cube = " + this.nodeToString(cube) + ")");
-    let res = this.bddModule._apply_conditioning(b, cube);
-    // console.log(res);
-    // console.log("end applyConditioning", this.nodeToString(res));
-    return res;
-  }*/
+  /*
+    applyConditioning(b: BDDNode, assignment: Map<string, boolean>): BDDNode {
+      const cube = this.createCube(assignment);
+      // console.log("Will apply conditioning on " + this.nodeToString(b) + " with assignment " + assignment + "(cube = " + this.nodeToString(cube) + ")");
+      let res = this.bddModule._apply_conditioning(b, cube);
+      // console.log(res);
+      // console.log("end applyConditioning", this.nodeToString(res));
+      return res;
+    }*/
 
   applyRenaming(b: BDDNode, renaming: Map<string, string>) {
     const oldvars: string[] = [];
@@ -265,7 +265,7 @@ export class BddService {
     }
   }
   private getRatioYes(n: BDDNode): number {
-    if ( ! this.isInternalNode(n)) throw new Error("No ratio of yes for constant node");
+    if (!this.isInternalNode(n)) throw new Error("No ratio of yes for constant node");
     if (this.randomSolutionRatioCache.has(n)) return this.randomSolutionRatioCache.get(n);
     const supportTot = this.support(n);
     const nbYes = this.countSolutions(this.getThenOf(n), supportTot);
@@ -281,7 +281,7 @@ export class BddService {
    * @param atoms, supposed to be a superset of the support of bddNode
    * @returns a random valuation that satisfies bddNode
    */
-  pickRandomSolution(bddNode: BDDNode, atoms: string[] = []): Valuation {
+  pickRandomSolution(bddNode: BDDNode, atoms: string[] = []) {
     this.initRatioCache(bddNode);
     //const DEBUGLOG = (msg, n?) => console.log(msg, n ? this.nodeToString(n) : null);
     /**
@@ -315,14 +315,18 @@ export class BddService {
     /*add randomly variables that are in atoms but not in the support of bddNode (their values is not relevant)
     */
     const addRandomlyVariablesInAtomsNotInSupport = (A: Map<string, boolean>) => {
-        atoms.filter(a => !A.has(a)).forEach((atom: string) => {
-            A.set(atom, !!(Math.random() < 0.5));
-        });
+      atoms.filter(a => !A.has(a)).forEach((atom: string) => {
+        A.set(atom, !!(Math.random() < 0.5));
+      });
     }
 
     const A = pickRandomSolutionMap(bddNode);
     addRandomlyVariablesInAtomsNotInSupport(A);
-    return Valuation.buildFromMap(A);
+
+    let propositions = {};
+    A.forEach((value, key) => { propositions[key] = value; });
+    console.log(propositions)
+    return propositions;
   }
 
   // THIS USES CUDD, but the results do not seem uniform??
@@ -498,7 +502,7 @@ export class BddService {
       sol = this.cubeToAssignment(no); // it cannot be FALSE
       sol.set(x, false);
     } else {
-      if ( ! this.isFalse(no)) throw new Error("Too many solutions: this is not a cube");
+      if (!this.isFalse(no)) throw new Error("Too many solutions: this is not a cube");
       sol = this.cubeToAssignment(yes); // it cannot be FALSE
       sol.set(x, true);
     }
@@ -527,84 +531,85 @@ export class BddService {
   }
 
 
-  formulaStringToBDD(formulaString: string) : BDDNode {
+  formulaStringToBDD(formulaString: string): BDDNode {
     return this.getBDDNode(types.FormulaFactory.createFormula(formulaString));
   }
 
   getBDDNode(phi: Formula): BDDNode {
     switch (true) {
-        case (phi instanceof types.TrueFormula): return this.createTrue();
-        case (phi instanceof types.FalseFormula): return this.createFalse();
-        case (phi instanceof types.AtomicFormula): 
-            return this.createLiteral((<types.AtomicFormula>phi).getAtomicString());
-        case (phi instanceof types.ImplyFormula):
-            return this.applyImplies(this.getBDDNode((<types.ImplyFormula>phi).formula1), this.getBDDNode((<types.ImplyFormula>phi).formula2));
-        case (phi instanceof types.EquivFormula):
-            return this.applyEquiv(this.getBDDNode((<types.EquivFormula>phi).formula1), this.getBDDNode((<types.EquivFormula>phi).formula2));
-        case (phi instanceof types.AndFormula):
-            return this.applyAnd((<types.AndFormula>phi).formulas.map((f) => this.getBDDNode(f)));
-        case (phi instanceof types.OrFormula):
-            return this.applyOr((<types.OrFormula>phi).formulas.map((f) => this.getBDDNode(f)));
-        case (phi instanceof types.XorFormula): {
-            throw new Error("to be implemented");
-        }
-        case (phi instanceof types.NotFormula): return this.applyNot(this.getBDDNode((<types.NotFormula>phi).formula));
-        case (phi instanceof types.KFormula): {
-            throw new Error("formula should be propositional");
-        }
-        case (phi instanceof types.KposFormula):
-            throw new Error("formula should be propositional");
-        case (phi instanceof types.KwFormula): {
-            throw new Error("formula should be propositional");
-        }
-        case (phi instanceof types.ExactlyFormula): {
-            return this.createExactlyBDD((<types.ExactlyFormula>phi).count, (<types.ExactlyFormula>phi).variables);
-        }
+      case (phi instanceof types.TrueFormula): return this.createTrue();
+      case (phi instanceof types.FalseFormula): return this.createFalse();
+      case (phi instanceof types.AtomicFormula):
+        return this.createLiteral((<types.AtomicFormula>phi).getAtomicString());
+      case (phi instanceof types.ImplyFormula):
+        return this.applyImplies(this.getBDDNode((<types.ImplyFormula>phi).formula1), this.getBDDNode((<types.ImplyFormula>phi).formula2));
+      case (phi instanceof types.EquivFormula):
+        return this.applyEquiv(this.getBDDNode((<types.EquivFormula>phi).formula1), this.getBDDNode((<types.EquivFormula>phi).formula2));
+      case (phi instanceof types.AndFormula):
+        return this.applyAnd((<types.AndFormula>phi).formulas.map((f) => this.getBDDNode(f)));
+      case (phi instanceof types.OrFormula):
+        return this.applyOr((<types.OrFormula>phi).formulas.map((f) => this.getBDDNode(f)));
+      case (phi instanceof types.XorFormula): {
+        throw new Error("to be implemented");
+      }
+      case (phi instanceof types.NotFormula): return this.applyNot(this.getBDDNode((<types.NotFormula>phi).formula));
+      case (phi instanceof types.KFormula): {
+        throw new Error("formula should be propositional");
+      }
+      case (phi instanceof types.KposFormula):
+        throw new Error("formula should be propositional");
+      case (phi instanceof types.KwFormula): {
+        throw new Error("formula should be propositional");
+      }
+      case (phi instanceof types.ExactlyFormula): {
+        return this.createExactlyBDD((<types.ExactlyFormula>phi).count, (<types.ExactlyFormula>phi).variables);
+      }
     }
     throw Error("type of phi not found");
   }
-  
-  
-  
-  
-  createExactlyBDD(n: number, vars: string[]): BDDNode {
-  
+
+
+
+
+  createExactlyBDD(n: BDDNode, vars: string[]): BDDNode {
+
     const cache: Map<string, BDDNode> = new Map();
-  
-    const getNamongK = (n: number, k:number) => {
-  
-        const key =  n + "," + k;
-  
-        if(cache.has(key)) return cache.get(key);
-        if(n==0){
-            const falseProp = [];
-            for(let v of vars.slice(0, k)){
-              falseProp.push(v);
-            }
-            cache.set(key, this.createCube([], falseProp));
-            return cache.get(key);
+
+    const getNamongK = (n: number, k: number) => {
+
+      const key = n + "," + k;
+
+      if (cache.has(key)) return cache.get(key);
+      if (n == 0) {
+        const falseProp = [];
+        for (let v of vars.slice(0, k)) {
+          falseProp.push(v);
         }
-        if(k == 0) return this.createFalse();
-  
-        let x = this.createLiteral(vars[k-1]);
-        let bdd_1 = this.createCopy(getNamongK(n-1, k-1));
-        let bdd_2 = this.createCopy(getNamongK(n, k-1));
-        let res = this.applyIte(x, bdd_1, bdd_2);
-        cache.set(key, res);
-        return res;
-  
+        cache.set(key, this.createCube([], falseProp));
+        return cache.get(key);
+      }
+
+      if (k == 0) return this.createFalse();
+
+      let x = this.createLiteral(vars[k - 1]);
+      let bdd_1 = this.createCopy(getNamongK(n - 1, k - 1));
+      let bdd_2 = this.createCopy(getNamongK(n, k - 1));
+      let res = this.applyIte(x, bdd_1, bdd_2);
+      cache.set(key, res);
+      return res;
+
     }
-  
+
     let res = this.createCopy(getNamongK(n, vars.length));
-    
+
     cache.forEach((value, key) => {
-        this.destroy(value);
+      this.destroy(value);
     });
-  
+
     return res;
-  
+
   }
-  
+
 
 }
 
