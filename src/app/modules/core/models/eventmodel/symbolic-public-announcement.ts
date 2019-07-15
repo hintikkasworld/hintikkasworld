@@ -16,10 +16,11 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
     }
 
     apply(M: SymbolicEpistemicModel): SymbolicEpistemicModel {
+        console.log("SymbolicPublicAnnouncement.apply");
         const BS = BDDServiceWorkerService;
 
         const descr = M.getInternalDescription();
-
+        
         const newDescr = {
             getAgents: () => descr.getAgents(),
             getAtomicPropositions: () => descr.getAtomicPropositions(),
@@ -36,7 +37,7 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
             },
             getPointedValuation: () => descr.getPointedValuation()
         }
-
+        
         return new SymbolicEpistemicModel(M.getWorldClass(), newDescr);
     }
 

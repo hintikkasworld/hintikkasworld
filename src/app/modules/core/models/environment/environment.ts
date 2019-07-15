@@ -35,6 +35,8 @@ export class Environment {
     }
 
     getExecutableActions(): Action[] {
+        //TO BE ASYNCHORNOUS
+        return [];
         if (this.executableActions == undefined) {
             // console.log("memoized executable actions : ", this.executableActions);
             // this.executableActions = []; //set to be true in case sbody else would like to compute it

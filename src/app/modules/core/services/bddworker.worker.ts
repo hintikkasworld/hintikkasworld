@@ -16,21 +16,21 @@ function executeFunctionByName(functionName, args) {
     if(bddService[functionName] == undefined)
       throw functionName + " is not a member of bddService";
 
-    console.log("we apply " + functionName + " on [" + args + "]");
+    //console.log("we apply " + functionName + " on [" + args + "]");
     let result = bddService[functionName].apply(bddService, args);
-    console.log("the result is: " + result);
+  //  console.log("the result is: " + result);
     return result;
 }
 
 
 
 addEventListener('message', ({ data }) => {
-  console.log("data received by the worker: " + data);  
+//  console.log("data received by the worker: " + data);  
   const response = {
       id: data.id,
       result: executeFunctionByName(data.functionName, data.args)
   }
         
-  console.log("data sent back by the worker: " + response);
+ // console.log("data sent back by the worker: " + response);
   postMessage(response);
 });

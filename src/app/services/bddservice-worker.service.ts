@@ -16,10 +16,10 @@ export class BDDServiceWorkerService {
     /** function called when the worker has computed the result of sth */
     worker.onmessage = (msg) => {
       const { id, err, result } = msg.data
-      console.log("data received from the worker: ");
-      console.log(msg.data.result.toString());
+    //  console.log("data received from the worker: ");
+    //  console.log(msg.data.result.toString());
       if (result) {
-        console.log("the worker answered : " + result);
+      //  console.log("the worker answered : " + result);
         const resolve = BDDServiceWorkerService.promises[id].resolve
         if (resolve) {
           resolve(result)

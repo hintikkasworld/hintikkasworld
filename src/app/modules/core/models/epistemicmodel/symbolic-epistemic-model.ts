@@ -35,6 +35,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         * @param descr a descriptor to initialize every 
         */
     constructor(worldClass: WorldValuationType, descr: SEModelDescriptor | SEModelInternalDescriptor) {
+        console.log("SymbolicEpistemicModel.constructor");
         this.worldClass = worldClass;
         this.pointedValuation = descr.getPointedValuation();
         this.agents = descr.getAgents();
