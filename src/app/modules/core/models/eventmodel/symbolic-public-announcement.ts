@@ -25,20 +25,23 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
         const newDescr = {
             getAgents: () => descr.getAgents(),
             getAtomicPropositions: () => descr.getAtomicPropositions(),
-            getSetWorldsBDDDescription: async () : Promise<BDDNode> => await bddWorldsPromise,
-            getRelationBDD: async (agent: string) : Promise<BDDNode> =>  {
-                  const possibleWorlds = await bddWorldsPromise;
-                  const possibleWorldsPrime = await BS.applyRenaming(await BS.createCopy(possibleWorlds), SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
-                  const clique = await BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
-  
-                  if(this.observers == undefined || this.observers.includes(agent))
-                      return await BS.applyAnd([await BS.createCopy(await descr.getRelationBDD(agent)), await BS.createCopy(clique)]);
-                  else
-                      return await descr.getRelationBDD(agent);
+            getSetWorldsBDDDescription: async (): Promise<BDDNode> => await bddWorldsPromise,
+
+            getRelationBDD: async (agent: string): Promise<BDDNode> => {
+                const possibleWorlds = await bddWorldsPromise;
+                const possibleWorldsPrime = await BS.applyRenaming(await BS.createCopy(possibleWorlds),
+                    SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
+                const clique = await BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
+
+                if (this.observers == undefined || this.observers.includes(agent))
+                    return await BS.applyAnd([await BS.createCopy(await descr.getRelationBDD(agent)), await BS.createCopy(clique)]);
+                else
+                    return await descr.getRelationBDD(agent);
             },
+
             getPointedValuation: () => descr.getPointedValuation()
         }
-        
+
         return new SymbolicEpistemicModel(M.getWorldClass(), newDescr);
     }
 

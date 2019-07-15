@@ -95,7 +95,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
 
-
     getAgents(): string[] { return this.agents; }
 
     /**
