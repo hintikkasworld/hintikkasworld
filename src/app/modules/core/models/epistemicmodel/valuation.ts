@@ -19,6 +19,7 @@ export class Valuation {
 
   isPropositionTrue(p: string) { return (this.propositions[p] == true); }
 
+  /* the use of Maps is overkilling. Please use getPropositionMap */
   toAssignment(props: string[]): Map<string, boolean> {
     /* check support */
     for (const p of Object.keys(this.propositions)) {
@@ -43,7 +44,7 @@ export class Valuation {
     return truePropositions.join();
   }
 
-
+/* 
   getTruePropositions(): string[] {
     let A = [];
     for (var proposition in this.propositions)
@@ -58,5 +59,9 @@ export class Valuation {
       if (!this.propositions[proposition])
         A.push(proposition);
     return A;
+  }*/
+
+  getPropositionMap() : {[p:string]:boolean} {
+    return this.propositions;
   }
 }

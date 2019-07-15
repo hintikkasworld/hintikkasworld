@@ -52,11 +52,11 @@ export class SymbolicSuccessorSet implements SuccessorSet {
 
 
 
-    async load(w: World, a: string) : Promise<BDDNode> {
+    async load(w: World, a: string): Promise<BDDNode> {
         // console.log("getSucessors", a, this.getAgentSymbolicRelation(a))
         console.log("begin BDD successor computation...")
 
-        let wBDD = await BDDServiceWorkerService.createCube((<WorldValuation>w).valuation.getTruePropositions(), (<WorldValuation>w).valuation.getFalsePropositions());
+        let wBDD = await BDDServiceWorkerService.createCube((<WorldValuation>w).valuation.getPropositionMap());
 
         console.log("cube done");
         //    console.log("after cube")
@@ -66,7 +66,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
         let bddRelationOnW = await BDDServiceWorkerService.applyAnd([
             await BDDServiceWorkerService.createCopy(this.M.getAgentSymbolicRelation(a)),
             wBDD]);
-            console.log("AND done");
+        console.log("AND done");
         //  console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))
         //console.log("AND", BDD.bddService.pickAllSolutions(bdd_and));
 
@@ -81,9 +81,9 @@ export class SymbolicSuccessorSet implements SuccessorSet {
             bddSetSuccessorsWithPrime,
             SymbolicEpistemicModel.getMapPrimeToNotPrime(this.M.getPropositionalAtoms()));
 
-            console.log("BDD successor computed!");
+        console.log("BDD successor computed!");
         return bddSetSuccessors;
-        
+
         //console.log("Calcul bdd sucessors", BDD.bddService.pickAllSolutions(bddSetSuccessors));
 
     }

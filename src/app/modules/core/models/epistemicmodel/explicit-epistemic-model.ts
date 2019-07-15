@@ -8,8 +8,8 @@ import { World } from './world';
 import { SuccessorSet } from './successor-set';
 
 export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
-    check(formula: types.Formula) {
-        return this.modelCheck(this.getPointedWorldID(), formula);
+    async check(formula: types.Formula) {
+        return await this.modelCheck(this.getPointedWorldID(), formula);
     }
 
     nodeToID: Map<World, string> = new Map();

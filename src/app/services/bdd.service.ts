@@ -214,15 +214,15 @@ export class BddService {
     return res;
   }
 
-  
-  applyConditioning(b: BDDNode, assignment: Map<string, boolean>): BDDNode {
-      const cube = this.createCube(assignment);
-      // console.log("Will apply conditioning on " + this.nodeToString(b) + " with assignment " + assignment + "(cube = " + this.nodeToString(cube) + ")");
-      let res = this.bddModule._apply_conditioning(b, cube);
-      // console.log(res);
-      // console.log("end applyConditioning", this.nodeToString(res));
-      return res;
-    }
+
+  applyConditioning(b: BDDNode, assignment: { [p: string]: boolean }): BDDNode {
+    const cube = this.createCube(assignment);
+    // console.log("Will apply conditioning on " + this.nodeToString(b) + " with assignment " + assignment + "(cube = " + this.nodeToString(cube) + ")");
+    let res = this.bddModule._apply_conditioning(b, cube);
+    // console.log(res);
+    // console.log("end applyConditioning", this.nodeToString(res));
+    return res;
+  }
 
   applyRenaming(b: BDDNode, renaming: Map<string, string>) {
     const oldvars: string[] = [];
@@ -477,13 +477,13 @@ export class BddService {
    * @param assignment an assignment (a Map) from propositions (names) to Boolean (their truth values)
    * @returns the BDD that corresponds to the conjunction of litterals that describes the assignment.
    */
-  createCube(assignment: Map<String, boolean>): BDDNode {
+  createCube(assignment: { [p: string]: boolean }): BDDNode {
     const literals = []
 
-    for (const atom of assignment.keys()) {
+    for (const atom in assignment) {
       let lit = this.createLiteral(atom);
-      if(assignment.get(atom))
-      lit = this.applyNot(lit);
+      if (assignment[atom] != true)
+        lit = this.applyNot(lit);
       literals.push(lit);
     }
     return this.applyAnd(literals);
@@ -579,11 +579,11 @@ export class BddService {
 
       if (cache.has(key)) return cache.get(key);
       if (n == 0) {
-        const falseProp = [];
+        const valuation = {};
         for (let v of vars.slice(0, k)) {
-          falseProp.push(v);
+          valuation[v] = false;
         }
-        cache.set(key, this.createCube([], falseProp));
+        cache.set(key, this.createCube(valuation));
         return cache.get(key);
       }
 

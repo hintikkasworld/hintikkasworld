@@ -18,23 +18,23 @@ export class BDDServiceWorkerService {
       const { id, err, result } = msg.data
     //  console.log("data received from the worker: ");
     //  console.log(msg.data.result.toString());
-      if (result) {
+    //  if (result) {
       //  console.log("the worker answered : " + result);
         const resolve = BDDServiceWorkerService.promises[id].resolve
         if (resolve) {
           resolve(result)
         }
-      } else {
+    /*  } else {
         // error condition
         const reject = BDDServiceWorkerService.promises[id].reject
         if (reject) {
           if (err) {
             reject(err)
           } else {
-            reject('Got nothing')
+            reject('Got nothing from the worker')
           }
         }
-      }
+      }*/
 
       // purge used callbacks
       delete BDDServiceWorkerService.promises[id].resolve
@@ -54,7 +54,7 @@ export class BDDServiceWorkerService {
 
 
   public static createTrue(): Promise<BDDNode> {
-    return BDDServiceWorkerService.formulaToBDD(new TrueFormula());
+    return BDDServiceWorkerService.call("createTrue", []);
   }
 
   public static createFalse(): Promise<BDDNode> {
@@ -66,8 +66,8 @@ export class BDDServiceWorkerService {
   }
 
 
-  public static createCube(trueProps: string[], falseProps: string[]) {
-    return BDDServiceWorkerService.call("createCube", [trueProps, falseProps]);
+  public static createCube(valuation: {[p: string]: boolean}) {
+    return BDDServiceWorkerService.call("createCube", [valuation]);
   }
 
 
@@ -93,8 +93,8 @@ export class BDDServiceWorkerService {
     return BDDServiceWorkerService.call("pickRandomSolution", [b, atoms]);
   }
 
-  public static applyConditioning(b: BDDNode, valuationToMap: Map<string, boolean>) {
-    return BDDServiceWorkerService.call("applyConditioning", [b, valuationToMap]);
+  public static applyConditioning(b: BDDNode, assignment: { [p: string]: boolean }) {
+    return BDDServiceWorkerService.call("applyConditioning", [b, assignment]);
   }
 
   public static isConsistent(b: BDDNode): Promise<boolean> {

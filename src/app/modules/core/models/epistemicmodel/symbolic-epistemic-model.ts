@@ -221,31 +221,28 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      */
     async check(formula: Formula): Promise<boolean> {
         let bddFormulaSemantics = await this.queryWorldsSatisfying(formula);
-        // console.log("check middle", BDD.bddService.pickAllSolutions(pointeur), SymbolicEpistemicModel.valuationToMap(this.pointed));
-        let res = await BDDServiceWorkerService.applyConditioning(bddFormulaSemantics, SymbolicEpistemicModel.valuationToMap(this.pointedValuation));
-        //console.log("check end",  BDD.bddService.pickAllSolutions(res))
-        return BDDServiceWorkerService.isConsistent(<BDDNode>res)
+        let res = await BDDServiceWorkerService.applyConditioning(bddFormulaSemantics,
+            this.pointedValuation.getPropositionMap());
+        return await BDDServiceWorkerService.isConsistent(<BDDNode> res);
     }
 
     async queryWorldsSatisfying(phi: Formula): Promise<BDDNode> {
 
-        let allWorlds: BDDNode = await BDDServiceWorkerService.createFalse();
+      /*  let allWorlds: BDDNode = await BDDServiceWorkerService.createFalse();
         this.symbolicRelations.forEach(async (value: BDDNode, key: string) => {
             let f2: BDDNode = await BDDServiceWorkerService.applyExistentialForget(await BDDServiceWorkerService.createCopy(value), this.propositionalPrimes);
             allWorlds = await BDDServiceWorkerService.applyOr([allWorlds, f2]);
-        });
+        });*/
+        let allWorlds = this.bddSetWorlds;
 
-        // console.log("f of _query_worlds", BDD.bddService.pickAllSolutions(all_worlds))
-
-        let res: BDDNode = await this._query(allWorlds, phi);
-
-        // console.log("end _query_worlds", res);
-        return res;
+        return await this._query(allWorlds, phi);;
     }
 
+    /*
+    
+    */
     private async _query(all_worlds: BDDNode, phi: Formula): Promise<BDDNode> {
         // console.log("Query", bdd, phi)
-
         if (phi instanceof types.TrueFormula) { return await BDDServiceWorkerService.createCopy(all_worlds); }
         if (phi instanceof types.FalseFormula) { return await BDDServiceWorkerService.createFalse(); }
         if (phi instanceof types.AtomicFormula) {
@@ -258,15 +255,15 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         }
         if (phi instanceof types.AndFormula) {
             let arrayNumber: number[] = [];
-            for(let f of (<types.AndFormula>phi).formulas) {
-                arrayNumber.push(await this._query(all_worlds, f) );
+            for (let f of (<types.AndFormula>phi).formulas) {
+                arrayNumber.push(await this._query(all_worlds, f));
             }
-            return await BDDServiceWorkerService.applyAnd( arrayNumber );
+            return await BDDServiceWorkerService.applyAnd(arrayNumber);
         }
         if (phi instanceof types.OrFormula) {
             let arrayNumber: number[] = [];
-            for(let f of (<types.OrFormula>phi).formulas) {
-                arrayNumber.push(await this._query(all_worlds, f) );
+            for (let f of (<types.OrFormula>phi).formulas) {
+                arrayNumber.push(await this._query(all_worlds, f));
             }
 
             return await BDDServiceWorkerService.applyOr(arrayNumber);
@@ -342,19 +339,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         }
         // console.log("VALUATION TO FORMULA", valuation, literals)
         return new AndFormula(literals);
-    }
-
-    /**
-     * 
-     * @param valuation 
-     * @returns a Map that associates a Boolean to each proposition (the Boolean is the truth value of that proposition)
-     */
-    static valuationToMap(valuation: Valuation): Map<string, boolean> {
-        let map = new Map<string, boolean>();
-        for (var element in valuation.propositions)
-            map.set(element, valuation.propositions[element]);
-
-        return map;
     }
 
 

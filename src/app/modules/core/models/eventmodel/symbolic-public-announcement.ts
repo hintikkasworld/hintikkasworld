@@ -20,13 +20,14 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
         const BS = BDDServiceWorkerService;
 
         const descr = M.getInternalDescription();
-        
+        const bddWorldsPromise = M.queryWorldsSatisfying(this.precondition);
+
         const newDescr = {
             getAgents: () => descr.getAgents(),
             getAtomicPropositions: () => descr.getAtomicPropositions(),
-            getSetWorldsBDDDescription: async () : Promise<BDDNode> => await M.queryWorldsSatisfying(this.precondition),
+            getSetWorldsBDDDescription: async () : Promise<BDDNode> => await bddWorldsPromise,
             getRelationBDD: async (agent: string) : Promise<BDDNode> =>  {
-                  const possibleWorlds = await M.queryWorldsSatisfying(this.precondition);
+                  const possibleWorlds = await bddWorldsPromise;
                   const possibleWorldsPrime = await BS.applyRenaming(await BS.createCopy(possibleWorlds), SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
                   const clique = await BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
   
