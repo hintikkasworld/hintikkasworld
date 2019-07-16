@@ -46,10 +46,7 @@ export class BDDServiceWorkerService {
   }
 
   public static formulaToBDD(formula: Formula): Promise<BDDNode> {
-    console.log("formulaToBDD begin... the formula is:");
-    let formulaString = formula.prettyPrint();
-    console.log(formulaString);
-    return BDDServiceWorkerService.call("formulaStringToBDD", [formulaString]);
+    return BDDServiceWorkerService.call("formulaToBDD", [formula]);
   }
 
   public static applyAnd(args: BDDNode[]): Promise<BDDNode> {

@@ -2,11 +2,13 @@
 import { Scheme } from './scheme';
 
 export interface Formula {
+    readonly type: string;
     prettyPrint(): string;
     renameAtoms(f: (s:string) => string):Formula;
 }
-
+ 
 export class TrueFormula implements Formula {
+    readonly type = "true";
     renameAtoms(f: (s: string) => string): Formula {
         return this;
     }
@@ -16,6 +18,7 @@ export class TrueFormula implements Formula {
 
 }
 export class FalseFormula implements Formula {
+    readonly type = "false";
     renameAtoms(f: (s: string) => string): Formula {
         return this;
     }
@@ -25,6 +28,7 @@ export class FalseFormula implements Formula {
 
 }
 export class AtomicFormula implements Formula {
+    readonly type = "atomic";
     renameAtoms(f: (s: string) => string): Formula {
         return new AtomicFormula(f(this._atomicstring));
     }
@@ -42,6 +46,7 @@ export class AtomicFormula implements Formula {
 }
 
 export class OrFormula implements Formula {
+    readonly type = "or";
     renameAtoms(f: (s: string) => string): Formula {
         return new OrFormula(this._formulas.map(formula => formula.renameAtoms(f)));
     }
@@ -66,6 +71,7 @@ export class OrFormula implements Formula {
 }
 
 export class AndFormula implements Formula {
+    readonly type = "and";
     renameAtoms(f: (s: string) => string): Formula {
         return new AndFormula(this._formulas.map(formula => formula.renameAtoms(f)));
     }
@@ -90,6 +96,7 @@ export class AndFormula implements Formula {
 }
 
 abstract class ModalOperatorFormula implements Formula {
+    readonly type;
     abstract clone(): ModalOperatorFormula;
     abstract opString(): string;
     renameAtoms(f: (s: string) => string): Formula {
@@ -115,6 +122,7 @@ abstract class ModalOperatorFormula implements Formula {
 }
 
 export class KFormula extends ModalOperatorFormula {
+    readonly type = "K";
     clone(): ModalOperatorFormula {
         return new KFormula(this.agent, this.formula);
     }
@@ -125,6 +133,7 @@ export class KFormula extends ModalOperatorFormula {
 }
 
 export class KposFormula extends ModalOperatorFormula {
+    readonly type = "Kpos";
     clone(): ModalOperatorFormula {
         return new KposFormula(this.agent, this.formula);
     }
@@ -135,6 +144,7 @@ export class KposFormula extends ModalOperatorFormula {
 }
 
 export class KwFormula extends ModalOperatorFormula {
+    readonly type = "Kw";
     clone(): ModalOperatorFormula {
         return new KwFormula(this.agent, this.formula);
     }
@@ -146,6 +156,7 @@ export class KwFormula extends ModalOperatorFormula {
 
 
 export class NotFormula implements Formula {
+    readonly type = "not";
     renameAtoms(f: (s: string) => string): Formula {
         return new NotFormula(this._formula.renameAtoms(f));
     }
@@ -163,6 +174,7 @@ export class NotFormula implements Formula {
 
 
 export class XorFormula implements Formula {
+    readonly type = "xor";
     renameAtoms(f: (s: string) => string): Formula {
         return new XorFormula(this._formulas.map(formula => formula.renameAtoms(f)));
     }
@@ -185,6 +197,7 @@ export class XorFormula implements Formula {
 
 
 export class ImplyFormula implements Formula {
+    readonly type = "imply";
     renameAtoms(f: (s: string) => string): Formula {
         return new ImplyFormula(this._formula1.renameAtoms(f),this._formula2.renameAtoms(f));
     }
@@ -207,6 +220,7 @@ export class ImplyFormula implements Formula {
 
 
 export class EquivFormula implements Formula {
+    readonly type = "equiv";
     renameAtoms(f: (s: string) => string): Formula {
         return new EquivFormula(this._formula1.renameAtoms(f),this._formula2.renameAtoms(f));
     }
@@ -228,6 +242,7 @@ export class EquivFormula implements Formula {
 }
 
 export class ExactlyFormula implements Formula {
+    readonly type = "exactly";
     renameAtoms(f: (s: string) => string): Formula {
         return new ExactlyFormula(this._count, this._variables.map(f));
     }

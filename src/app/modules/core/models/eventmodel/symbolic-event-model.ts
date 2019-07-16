@@ -245,7 +245,7 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
     }
     
     async isApplicableIn(M: SymbolicEpistemicModel): Promise<boolean> {
-      return M.check(this.getPointedAction().pre);
+      return await M.check(this.getPointedAction().pre);
     }
 
     /**

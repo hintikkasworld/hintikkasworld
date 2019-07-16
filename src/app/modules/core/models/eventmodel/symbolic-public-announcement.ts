@@ -1,7 +1,7 @@
+import { Formula } from './../epistemicmodel/formula';
 import { BDDNode } from 'src/app/services/bdd.service';
 import { EventModel } from './event-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
-import { Formula } from './../epistemicmodel/formula';
 import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
 
 export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicModel> {
