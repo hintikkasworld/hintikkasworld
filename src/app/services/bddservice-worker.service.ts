@@ -80,12 +80,11 @@ export class BDDServiceWorkerService {
     return BDDServiceWorkerService.call("applyRenaming", [b, renaming]);
   }
 
-  public static pickAllSolutions(b: BDDNode, atoms: string[]) {
+  public static pickAllSolutions(b: BDDNode, atoms: string[]) : Promise<string[][]> {
     return BDDServiceWorkerService.call("pickAllSolutions", [b, atoms]);
   }
 
   public static countSolutions(b: BDDNode, atoms: string[]): Promise<number> {
-    console.log(atoms)
     return BDDServiceWorkerService.call("countSolutions", [b, atoms]);
   }
 

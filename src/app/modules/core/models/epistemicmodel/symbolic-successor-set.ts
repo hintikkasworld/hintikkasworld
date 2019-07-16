@@ -77,7 +77,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
         //console.log("after forget", BDD.bddService.pickAllSolutions(bddSetSuccessorsWithPrime))
         //console.log("forget", this.propositionalAtoms, BDD.bddService.pickAllSolutions(forget));
 
-        let bddSetSuccessors = BDDServiceWorkerService.applyRenaming(
+        let bddSetSuccessors = await BDDServiceWorkerService.applyRenaming(
             bddSetSuccessorsWithPrime,
             SymbolicEpistemicModel.getMapPrimeToNotPrime(this.M.getPropositionalAtoms()));
 
@@ -99,18 +99,27 @@ export class SymbolicSuccessorSet implements SuccessorSet {
     }
 
     async getSomeSuccessors(): Promise<World[]> {
+        console.log("load getSomeSuccessors");
         const arrayValToArrayWorlds = (A: Valuation[]): World[] => {
             return A.map((val: Valuation) => this.M.getWorld(val));
         }
 
-        if (await this.getNumber() < 10)
-            if (this.finished)
+        if (await this.getNumber() < 10) {
+            console.log("...less than 10 succs");
+            if (this.finished) {
+                console.log("set of successors finished!")
                 return [];
+            }
             else {
                 this.finished = true;
-                return arrayValToArrayWorlds(await BDDServiceWorkerService.pickAllSolutions(await this.bddPromise, this.atoms));
+                console.log("set of successors: we compute the " + (await this.getNumber()) + " successors!");
+                let A = await BDDServiceWorkerService.pickAllSolutions(await this.bddPromise, this.atoms);
+                let V = A.map((props) => new Valuation(props));
+                return arrayValToArrayWorlds(V);
             }
+        }
         else {
+            console.log("...more than 10 succs");
             const sols = [];
             for (let i = 0; i < 5; i++) {
                 const val: Valuation = new Valuation(await BDDServiceWorkerService.pickRandomSolution(await this.bddPromise, this.atoms));
@@ -119,6 +128,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
                     this.declareAlreadyOutput(val);
                 }
             }
+            console.log("getSomeSuccessors outputs " + sols.length + " solutions.");
             return arrayValToArrayWorlds(sols);
         }
     }

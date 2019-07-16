@@ -28,14 +28,14 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
             getSetWorldsBDDDescription: async (): Promise<BDDNode> => await bddWorldsPromise,
 
             getRelationBDD: async (agent: string): Promise<BDDNode> => {
-                const possibleWorlds = await bddWorldsPromise;
+               /* const possibleWorlds = await bddWorldsPromise;
                 const possibleWorldsPrime = await BS.applyRenaming(await BS.createCopy(possibleWorlds),
                     SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
                 const clique = await BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
 
                 if (this.observers == undefined || this.observers.includes(agent))
                     return await BS.applyAnd([await BS.createCopy(await descr.getRelationBDD(agent)), await BS.createCopy(clique)]);
-                else
+                else*/
                     return await descr.getRelationBDD(agent);
             },
 

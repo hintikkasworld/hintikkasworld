@@ -427,13 +427,13 @@ export class BddService {
   /**
    * CAUTION: use it only on small BDDs. Most used for debug.
    */
-  pickAllSolutions(bddNode: BDDNode, atoms?: string[]): Valuation[] {
+  pickAllSolutions(bddNode: BDDNode, atoms?: string[]): string[][] {
     return this.pickSolutions(bddNode, Infinity, atoms);
   }
   /**
    * NB: this is not efficient at all
    */
-  pickSolutions(bddNode: BDDNode, max: number = 10, atoms?: string[]): Valuation[] {
+  pickSolutions(bddNode: BDDNode, max: number = 10, atoms?: string[]): string[][] {
     if (atoms === undefined) atoms = this.support(bddNode);
     const combineSols = (x: string, t: BDDNode, e: BDDNode, max: number, atoms: string[]) => {
       const sols = getSetOfTrueAtomsOf(e, max, atoms).slice();
@@ -458,7 +458,7 @@ export class BddService {
       if (atoms.length !== nextatoms.length + 1) throw new Error("Atom " + x + " not in provided support");
       return combineSols(x, this.getThenOf(n), this.getElseOf(n), max, nextatoms);
     };
-    return getSetOfTrueAtomsOf(bddNode, max, atoms).map(trueAtoms => new Valuation(trueAtoms));
+    return getSetOfTrueAtomsOf(bddNode, max, atoms);//.map(trueAtoms => new Valuation(trueAtoms));
   }
 
 
@@ -507,6 +507,7 @@ export class BddService {
     return sol;
   }
 
+  /*
   toValuation(bddNode: BDDNode, atoms?: string[]): Valuation {
     // TODO use cubeToAssignment ?…
     const sols = this.pickSolutions(bddNode, 2, atoms);
@@ -514,7 +515,7 @@ export class BddService {
     if (sols.length === 1) return sols[0];
     if (sols.length === 2) throw new Error("Too many solutions: this is not a valuation");
     throw new Error("Too many solutions: this is a bug in pickSolutions()!");
-  }
+  }*/
 
   destroy(bddNode: BDDNode): void {
     this.bddModule._destroy(bddNode);
