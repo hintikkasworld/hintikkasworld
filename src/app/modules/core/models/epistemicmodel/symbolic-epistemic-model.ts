@@ -120,7 +120,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
 
 
-    async getRulesAndRulesPrime(formulaSetWorlds: any): Promise<BDDNode> {
+    async getRulesAndRulesPrime(formulaSetWorlds: Formula): Promise<BDDNode> {
         let formulaSetWorldsPrime = formulaSetWorlds.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
         let formulaSetWorldsAndFormulaSetWorldsPrime = new AndFormula([formulaSetWorldsPrime, formulaSetWorlds]);
         return await BDDServiceWorkerService.formulaToBDD(formulaSetWorldsAndFormulaSetWorldsPrime);
@@ -137,7 +137,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     private async loadDescriptor(descr: SEModelDescriptor | SEModelInternalDescriptor) {
         console.log("begin loadDescriptor...");
         this.propositionalAtoms = descr.getAtomicPropositions();
+        console.log( "   propositionalAtoms set!");
         this.propositionalPrimes = SymbolicEpistemicModel.getPrimedAtomicPropositions(this.propositionalAtoms);
+        console.log( "   propositionalPrimes set!");
         // console.log("Agents of SymbolicEpistemicModel", agents);
         if ((<any>descr).getSetWorldsFormulaDescription != undefined) { //we intend  "instanceof SEModelDescriptor"
             let descriptor = <SEModelDescriptor>descr;
