@@ -157,9 +157,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             for (let agent of this.agents) {
                 let bddRelation: BDDNode = await descriptor.getRelationBDD(agent);
                 console.log("bdd relation for agent " + agent + " is: " + bddRelation);
-                this.symbolicRelations.set(agent,
-                    await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(this.bddSetWorlds),
-                        bddRelation]));
+                this.symbolicRelations.set(agent, bddRelation);
+                /* await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(this.bddSetWorlds),
+                     bddRelation]));*/
 
             }
         }
@@ -222,17 +222,17 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         let bddFormulaSemantics = await this.queryWorldsSatisfying(formula);
         let res = await BDDServiceWorkerService.applyConditioning(bddFormulaSemantics,
             this.pointedValuation.getPropositionMap());
-        return await BDDServiceWorkerService.isConsistent(<BDDNode> res);
+        return await BDDServiceWorkerService.isConsistent(<BDDNode>res);
     }
 
     async queryWorldsSatisfying(phi: Formula): Promise<BDDNode> {
 
-        let allWorlds: BDDNode = await BDDServiceWorkerService.createFalse();
-        this.symbolicRelations.forEach(async (value: BDDNode, key: string) => {
-            let f2: BDDNode = await BDDServiceWorkerService.applyExistentialForget(await BDDServiceWorkerService.createCopy(value), this.propositionalPrimes);
-            allWorlds = await BDDServiceWorkerService.applyOr([allWorlds, f2]);
-        });
-
+        /*  let allWorlds: BDDNode = await BDDServiceWorkerService.createFalse();
+          this.symbolicRelations.forEach(async (value: BDDNode, key: string) => {
+              let f2: BDDNode = await BDDServiceWorkerService.applyExistentialForget(await BDDServiceWorkerService.createCopy(value), this.propositionalPrimes);
+              allWorlds = await BDDServiceWorkerService.applyOr([allWorlds, f2]);
+          });*/
+        let allWorlds = this.bddSetWorlds;
         return await this._query(allWorlds, phi);;
     }
 

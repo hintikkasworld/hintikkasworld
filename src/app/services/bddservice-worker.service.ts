@@ -4,6 +4,7 @@ import { Formula, TrueFormula } from './../modules/core/models/formula/formula';
 
 
 export class BDDServiceWorkerService {
+    
   static i = 0;
   static promises = [];
 
@@ -112,7 +113,9 @@ export class BDDServiceWorkerService {
     return BDDServiceWorkerService.call("applyNot", [formula])
   }
 
-
+  static async debugInfo(str: string, b: number) {
+    console.log("InfoBDD for " + str + ": ADDR=" + b + "     isSat=" + await BDDServiceWorkerService.isConsistent(b));
+}
 
   public static createLiteral(a: string): Promise<BDDNode> {
     return BDDServiceWorkerService.call("createLiteral", [a]);

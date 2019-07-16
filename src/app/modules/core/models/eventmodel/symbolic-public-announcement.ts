@@ -20,23 +20,32 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
         const BS = BDDServiceWorkerService;
 
         const descr = M.getInternalDescription();
-        const bddWorldsPromise = M.queryWorldsSatisfying(this.precondition);
+      //  const bddWorldsPromise = M.queryWorldsSatisfying(this.precondition);
 
         const newDescr = {
             getAgents: () => descr.getAgents(),
             getAtomicPropositions: () => descr.getAtomicPropositions(),
-            getSetWorldsBDDDescription: async (): Promise<BDDNode> => await bddWorldsPromise,
+            getSetWorldsBDDDescription: async (): Promise<BDDNode> => await M.queryWorldsSatisfying(this.precondition),
 
             getRelationBDD: async (agent: string): Promise<BDDNode> => {
-               /* const possibleWorlds = await bddWorldsPromise;
+                const previousRelation = await BS.createTrue();//descr.getRelationBDD(agent);
+
+                await BS.debugInfo("previousRelation", previousRelation);
+
+                const possibleWorlds = await M.queryWorldsSatisfying(this.precondition);
+
+                await BS.debugInfo("possibleWorlds", possibleWorlds);
                 const possibleWorldsPrime = await BS.applyRenaming(await BS.createCopy(possibleWorlds),
                     SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
-                const clique = await BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
 
+                await BS.debugInfo("possibleWorldsPrime", possibleWorldsPrime);
+                const clique = await BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
+                await BS.debugInfo("clique", clique);
                 if (this.observers == undefined || this.observers.includes(agent))
-                    return await BS.applyAnd([await BS.createCopy(await descr.getRelationBDD(agent)), await BS.createCopy(clique)]);
-                else*/
+                    return await BS.applyAnd([await BS.createCopy(previousRelation), await BS.createCopy(clique)]);
+                else
                     return await descr.getRelationBDD(agent);
+                return await BS.createTrue();
             },
 
             getPointedValuation: () => descr.getPointedValuation()
