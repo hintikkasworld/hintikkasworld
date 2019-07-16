@@ -13,13 +13,16 @@ import { WorldValuationType } from './world-valuation-type';
 import { SEModelDescriptor } from './descriptor/se-model-descriptor';
 import { SEModelInternalDescriptor } from './descriptor/se-model-internal-descriptor';
 import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
+import { Observable } from 'rxjs/internal/Observable';
+import { of } from 'rxjs';
+
 
 /**
  * it implements an epistemic model described symbolically by means of BDDs
  */
 export class SymbolicEpistemicModel implements EpistemicModel {
 
-
+    private doneLoaddescriptor: boolean = false;
     /**
         * There are two way to create a symbolic epistemic model.
         * In both way, we need to create descriptor class implementing
@@ -39,7 +42,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         this.worldClass = worldClass;
         this.pointedValuation = descr.getPointedValuation();
         this.agents = descr.getAgents();
-
+        
         this.symbolicRelations = new Map();
         this.loadDescriptor(descr);
         console.log("end of the construction")
@@ -163,7 +166,11 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
             }
         }
-        console.log("   loadDescriptor: end")
+        this.doneLoaddescriptor = true;
+    }
+
+    getDoneDescriptorBoolean(): boolean {
+        return this.doneLoaddescriptor;
     }
 
     /**

@@ -29,7 +29,6 @@
           <label id="'labelinternalPerspectiveAgent' + agent" [for]="'internalPerspectiveAgent' + agent" [title]="'Internal perspective of agent ' + agent">
             <img width=32px [src]="'assets/img/agent' + agent + '.png'" />
           </label>
-
         </div>
 
         <div class="vr"></div>
@@ -61,8 +60,6 @@
         <app-action-list [obsEnv]='bsEnv.asObservable()' (toPerform)='perform($event)'></app-action-list>
 
       </td>
-
-
 
       <td id="hintikkasWorldScene" valign="top">
         <app-comics [obsEnv]='bsEnv.asObservable()'></app-comics>
@@ -97,5 +94,6 @@
 
     </tr>
   </table>
+  <div id="doneDescriptor">Agents are not ready to be clicked</div>
   <div id="test" style="float: left;"></div>
 </div>

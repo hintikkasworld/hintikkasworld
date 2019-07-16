@@ -15,6 +15,7 @@ import { FormulaFactory, Formula } from './models/formula/formula';
 import { ExplicitEventModel } from './models/eventmodel/explicit-event-model';
 import { SymbolicPublicAnnouncement } from './models/eventmodel/symbolic-public-announcement';
 import { SymbolicEpistemicModel } from './models/epistemicmodel/symbolic-epistemic-model';
+import { DoneDescriptorService } from './services/doneDescriptor.service';
 
 
 
@@ -27,7 +28,7 @@ export class CoreComponent implements OnInit {
 
   bsEnv: BehaviorSubject<Environment>;
 
-  constructor(private exampleService: ExampleService, private location: Location) { }
+  constructor(private exampleService: ExampleService, private location: Location, private doneDescriptorService: DoneDescriptorService) { }
 
   ngOnInit() {
     let exampleDescription = this.exampleService.getExampleDescription();
@@ -46,6 +47,14 @@ export class CoreComponent implements OnInit {
     this.bsEnv = new BehaviorSubject(env);
 
     this.bsEnv.subscribe(env => this.initModelChecking());
+    let sem = this.bsEnv.value.getEpistemicModel(); 
+    if (sem instanceof SymbolicEpistemicModel) {
+      this.doneDescriptorService.getDoneDescriptorBoolean(sem).subscribe((doneDescriptor) => {if (doneDescriptor) {
+        $('#doneDescriptor').hide();
+        console.log(doneDescriptor);
+      }});
+    }
+    
   }
 
 
