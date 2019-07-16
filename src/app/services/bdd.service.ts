@@ -536,7 +536,7 @@ export class BddService {
       case (phi.type == "true"): return this.createTrue();
       case (phi.type == "false"): return this.createFalse();
       case (phi.type == "atomic"):
-        return this.createLiteral((<types.AtomicFormula>phi).getAtomicString());
+        return this.createLiteral((<any>phi)._atomicstring);
       case (phi.type == "imply"):
         return this.applyImplies(this.formulaToBDDRec((<any>phi)._formula1), this.formulaToBDDRec((<any>phi)._formula2));
       case (phi.type == "equiv"):
