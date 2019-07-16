@@ -4,6 +4,7 @@ import { Formula, TrueFormula } from './../modules/core/models/formula/formula';
 
 
 export class BDDServiceWorkerService {
+    
   static i = 0;
   static promises = [];
 
@@ -45,7 +46,10 @@ export class BDDServiceWorkerService {
   }
 
   public static formulaToBDD(formula: Formula): Promise<BDDNode> {
-    return BDDServiceWorkerService.call("formulaStringToBDD", [formula.prettyPrint()]);
+    console.log("formulaToBDD begin... the formula is:");
+    let formulaString = formula.prettyPrint();
+    console.log(formulaString);
+    return BDDServiceWorkerService.call("formulaStringToBDD", [formulaString]);
   }
 
   public static applyAnd(args: BDDNode[]): Promise<BDDNode> {
@@ -108,11 +112,13 @@ export class BDDServiceWorkerService {
     return BDDServiceWorkerService.call("applyEquiv", [b1, b2]);
   }
 
-  public static applyNot(formula: number): Promise<BDDNode> {
-    return BDDServiceWorkerService.call("applyNot", [formula])
+  public static applyNot(b: number): Promise<BDDNode> {
+    return BDDServiceWorkerService.call("applyNot", [b])
   }
 
-
+  static async debugInfo(str: string, b: number) {
+    console.log("InfoBDD for " + str + ": ADDR=" + b + "     isSat=" + await BDDServiceWorkerService.isConsistent(b));
+}
 
   public static createLiteral(a: string): Promise<BDDNode> {
     return BDDServiceWorkerService.call("createLiteral", [a]);

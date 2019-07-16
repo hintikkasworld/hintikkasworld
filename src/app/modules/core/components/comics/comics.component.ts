@@ -319,8 +319,8 @@ export class ComicsComponent implements OnInit {
     levelDiv.addClass("bulle");
 
     successorSet.getNumber().then((number) => {
-      if (number > 10)
-        levelDiv.append(`<div class="count">${number} possible worlds</div>`);
+     // if (number > 10)
+        levelDiv.prepend(`<div class="count">${number} possible worlds</div>`);
     });
 
     let levelDivContent = $("<div>");

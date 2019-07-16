@@ -123,7 +123,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
 
 
-    async getRulesAndRulesPrime(formulaSetWorlds: any): Promise<BDDNode> {
+    async getRulesAndRulesPrime(formulaSetWorlds: Formula): Promise<BDDNode> {
         let formulaSetWorldsPrime = formulaSetWorlds.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
         let formulaSetWorldsAndFormulaSetWorldsPrime = new AndFormula([formulaSetWorldsPrime, formulaSetWorlds]);
         return await BDDServiceWorkerService.formulaToBDD(formulaSetWorldsAndFormulaSetWorldsPrime);
@@ -140,7 +140,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     private async loadDescriptor(descr: SEModelDescriptor | SEModelInternalDescriptor) {
         console.log("begin loadDescriptor...");
         this.propositionalAtoms = descr.getAtomicPropositions();
+        console.log( "   propositionalAtoms set!");
         this.propositionalPrimes = SymbolicEpistemicModel.getPrimedAtomicPropositions(this.propositionalAtoms);
+        console.log( "   propositionalPrimes set!");
         // console.log("Agents of SymbolicEpistemicModel", agents);
         if ((<any>descr).getSetWorldsFormulaDescription != undefined) { //we intend  "instanceof SEModelDescriptor"
             let descriptor = <SEModelDescriptor>descr;
@@ -160,9 +162,9 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             for (let agent of this.agents) {
                 let bddRelation: BDDNode = await descriptor.getRelationBDD(agent);
                 console.log("bdd relation for agent " + agent + " is: " + bddRelation);
-                this.symbolicRelations.set(agent,
-                    await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(this.bddSetWorlds),
-                        bddRelation]));
+                this.symbolicRelations.set(agent, bddRelation);
+                /* await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(this.bddSetWorlds),
+                     bddRelation]));*/
 
             }
         }
@@ -229,17 +231,17 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         let bddFormulaSemantics = await this.queryWorldsSatisfying(formula);
         let res = await BDDServiceWorkerService.applyConditioning(bddFormulaSemantics,
             this.pointedValuation.getPropositionMap());
-        return await BDDServiceWorkerService.isConsistent(<BDDNode> res);
+        return await BDDServiceWorkerService.isConsistent(<BDDNode>res);
     }
 
     async queryWorldsSatisfying(phi: Formula): Promise<BDDNode> {
 
-        let allWorlds: BDDNode = await BDDServiceWorkerService.createFalse();
-        this.symbolicRelations.forEach(async (value: BDDNode, key: string) => {
-            let f2: BDDNode = await BDDServiceWorkerService.applyExistentialForget(await BDDServiceWorkerService.createCopy(value), this.propositionalPrimes);
-            allWorlds = await BDDServiceWorkerService.applyOr([allWorlds, f2]);
-        });
-
+        /*  let allWorlds: BDDNode = await BDDServiceWorkerService.createFalse();
+          this.symbolicRelations.forEach(async (value: BDDNode, key: string) => {
+              let f2: BDDNode = await BDDServiceWorkerService.applyExistentialForget(await BDDServiceWorkerService.createCopy(value), this.propositionalPrimes);
+              allWorlds = await BDDServiceWorkerService.applyOr([allWorlds, f2]);
+          });*/
+        let allWorlds = this.bddSetWorlds;
         return await this._query(allWorlds, phi);;
     }
 
