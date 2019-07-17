@@ -43,6 +43,8 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         this.agents = descr.getAgents();
         
         this.symbolicRelations = new Map();
+        // loadDescriptor will call the worker to pass down the heavy part of constructing
+        // a binary decision diagram
         this.loadDescriptor(descr);
         console.log("end of the construction")
 
