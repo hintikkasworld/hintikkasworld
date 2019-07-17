@@ -50,7 +50,8 @@ export class CoreComponent implements OnInit {
     let sem = this.bsEnv.value.getEpistemicModel(); 
     if (sem instanceof SymbolicEpistemicModel) {
       this.doneDescriptorService.getDoneDescriptorBoolean(sem).subscribe((doneDescriptor) => {if (doneDescriptor) {
-        $('#doneDescriptor').hide();
+        document.getElementById('doneDescriptor').style.visibility = 'hidden';
+        //$('#doneDescriptor').hide();
         console.log(doneDescriptor);
       }});
     }

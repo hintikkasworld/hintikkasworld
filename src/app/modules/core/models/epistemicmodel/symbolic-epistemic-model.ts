@@ -22,7 +22,6 @@ import { of } from 'rxjs';
  */
 export class SymbolicEpistemicModel implements EpistemicModel {
 
-    private doneLoaddescriptor: boolean = false;
     /**
         * There are two way to create a symbolic epistemic model.
         * In both way, we need to create descriptor class implementing
@@ -168,11 +167,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
             }
         }
-        this.doneLoaddescriptor = true;
     }
 
     getDoneDescriptorBoolean(): boolean {
-        return this.doneLoaddescriptor;
+        return true;
     }
 
     /**
