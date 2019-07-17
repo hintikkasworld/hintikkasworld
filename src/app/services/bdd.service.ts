@@ -530,28 +530,25 @@ export class BddService {
   }
 
 
-  formulaStringToBDD(formulaString: string): BDDNode {
-    return this.getBDDNode(types.FormulaFactory.createFormula(formulaString));
-  }
 
-  getBDDNode(phi: Formula): BDDNode {
+  formulaToBDDRec(phi: Formula): BDDNode {
     switch (true) {
-      case (phi instanceof types.TrueFormula): return this.createTrue();
-      case (phi instanceof types.FalseFormula): return this.createFalse();
-      case (phi instanceof types.AtomicFormula):
-        return this.createLiteral((<types.AtomicFormula>phi).getAtomicString());
-      case (phi instanceof types.ImplyFormula):
-        return this.applyImplies(this.getBDDNode((<types.ImplyFormula>phi).formula1), this.getBDDNode((<types.ImplyFormula>phi).formula2));
-      case (phi instanceof types.EquivFormula):
-        return this.applyEquiv(this.getBDDNode((<types.EquivFormula>phi).formula1), this.getBDDNode((<types.EquivFormula>phi).formula2));
-      case (phi instanceof types.AndFormula):
-        return this.applyAnd((<types.AndFormula>phi).formulas.map((f) => this.getBDDNode(f)));
-      case (phi instanceof types.OrFormula):
-        return this.applyOr((<types.OrFormula>phi).formulas.map((f) => this.getBDDNode(f)));
-      case (phi instanceof types.XorFormula): {
+      case (phi.type == "true"): return this.createTrue();
+      case (phi.type == "false"): return this.createFalse();
+      case (phi.type == "atomic"):
+        return this.createLiteral((<any>phi)._atomicstring);
+      case (phi.type == "imply"):
+        return this.applyImplies(this.formulaToBDDRec((<any>phi)._formula1), this.formulaToBDDRec((<any>phi)._formula2));
+      case (phi.type == "equiv"):
+        return this.applyEquiv(this.formulaToBDDRec((<any>phi)._formula1), this.formulaToBDDRec((<any>phi)._formula2));
+      case (phi.type == "and"):
+        return this.applyAnd((<any>phi)._formulas.map((f) => this.formulaToBDDRec(f)));
+      case (phi.type == "or"):
+        return this.applyOr((<any>phi)._formulas.map((f) => this.formulaToBDDRec(f)));
+      case (phi.type == "xor"): {
         throw new Error("to be implemented");
       }
-      case (phi instanceof types.NotFormula): return this.applyNot(this.getBDDNode((<types.NotFormula>phi).formula));
+      case (phi.type == "not"): return this.applyNot(this.formulaToBDDRec((<any>phi)._formula));
       case (phi instanceof types.KFormula): {
         throw new Error("formula should be propositional");
       }
@@ -560,14 +557,17 @@ export class BddService {
       case (phi instanceof types.KwFormula): {
         throw new Error("formula should be propositional");
       }
-      case (phi instanceof types.ExactlyFormula): {
-        return this.createExactlyBDD((<types.ExactlyFormula>phi).count, (<types.ExactlyFormula>phi).variables);
+      case (phi.type == "exactly"): {
+        return this.createExactlyBDD((<any>phi)._count, (<any>phi)._variables);
       }
     }
     throw Error("type of phi not found");
   }
 
-
+  formulaToBDD(phi: Formula): BDDNode {
+    return this.formulaToBDDRec(phi);
+    
+  }
 
 
   createExactlyBDD(n: BDDNode, vars: string[]): BDDNode {
