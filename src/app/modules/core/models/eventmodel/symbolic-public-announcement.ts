@@ -2,7 +2,7 @@ import { BDDNode } from 'src/app/services/bdd.service';
 import { EventModel } from './event-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Formula } from './../epistemicmodel/formula';
-import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
+import { BDDWorkerService } from 'src/app/services/bddworker.service';
 
 export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicModel> {
 
@@ -17,7 +17,7 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
 
     apply(M: SymbolicEpistemicModel): SymbolicEpistemicModel {
         console.log("SymbolicPublicAnnouncement.apply");
-        const BS = BDDServiceWorkerService;
+        const BS = BDDWorkerService;
 
         const descr = M.getInternalDescription();
         const bddWorldsPromise = M.queryWorldsSatisfying(this.precondition);

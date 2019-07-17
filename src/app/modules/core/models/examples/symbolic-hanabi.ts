@@ -17,7 +17,7 @@ import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositi
 import { BDDNode } from './../../../../services/bdd.service';
 import { CachedSource } from 'webpack-sources';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
-import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
+import { BDDWorkerService } from 'src/app/services/bddworker.service';
 
 
 
@@ -441,14 +441,14 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                 new AtomicFormula(SymbolicEventModel.getPostedVarName(var2)),
                 new NotFormula(new AtomicFormula(SymbolicEventModel.getPostedVarName(var1)))
             ])
-            const postBdd = await BDDServiceWorkerService.formulaToBDD(new AndFormula([pre, post]));
+            const postBdd = await BDDWorkerService.formulaToBDD(new AndFormula([pre, post]));
             //console.log("postBdd = ", BDD.bddService.pickAllSolutions(postBdd));
 
             const list_var: string[] = this.variables.filter(
                 vari => (vari != var1 && vari != var2)
             )
             let frame = await SymbolicEventModel.frame(list_var, false);
-            let res = await BDDServiceWorkerService.applyAnd([postBdd, frame])
+            let res = await BDDWorkerService.applyAnd([postBdd, frame])
             //console.log("symbolic transfert", new AndFormula([pre, post]).prettyPrint(), BDD.bddService.pickSolutions(res, 20))
             return res;
         }
@@ -472,8 +472,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         let transfert = SymbolicEpistemicModel.getMapNotPrimeToPrime(this.variables.concat(this.variables.map(v => SymbolicEventModel.getPostedVarName(v))));
 
-        const eventPrime = await BDDServiceWorkerService.applyRenaming(await BDDServiceWorkerService.createCopy(events_bdd.get(name)), transfert);
-        const arc = await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(events_bdd.get(name)), eventPrime])
+        const eventPrime = await BDDWorkerService.applyRenaming(await BDDWorkerService.createCopy(events_bdd.get(name)), transfert);
+        const arc = await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(events_bdd.get(name)), eventPrime])
 
         for (let agent of this.agents)
             agentRelations.set(agent, arc);

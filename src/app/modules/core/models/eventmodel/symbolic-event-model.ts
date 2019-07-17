@@ -9,7 +9,7 @@ import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descrip
 import { Formula } from '../formula/formula';
 import { SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { Valuation } from '../epistemicmodel/valuation';
-import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
+import { BDDWorkerService } from 'src/app/services/bddworker.service';
 
 type EventId = string;
 type AgentId = string;
@@ -145,7 +145,7 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
 
         // for(let agent of this.agents){
 
-        //     const agentEventRelation = BDDServiceWorkerService.createCopy(this.getPlayerRelation(agent));
+        //     const agentEventRelation = BDDWorkerService.createCopy(this.getPlayerRelation(agent));
 
         //     console.log("applying to agent " + agent);
 
@@ -283,7 +283,7 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
     static async frame(vars: string[], prime: boolean): Promise<BDDNode> {
         //console.log("call frame", vars, prime)
 
-        let pointeur = await BDDServiceWorkerService.createTrue();
+        let pointeur = await BDDWorkerService.createTrue();
         for (let vari of vars) {
             let var1 = vari;
             if (SymbolicEventModel.isPosted(vari)) { var1.replace("/" + SymbolicEventModel.getPostedString() + "/g", ''); }
@@ -295,11 +295,11 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
                 var2 = SymbolicEpistemicModel.getPrimedVarName(var2);
             }
 
-            let equiv : BDDNode = await BDDServiceWorkerService.applyEquiv(
-                await BDDServiceWorkerService.createLiteral(var1),
-                await BDDServiceWorkerService.createLiteral(var2));
+            let equiv : BDDNode = await BDDWorkerService.applyEquiv(
+                await BDDWorkerService.createLiteral(var1),
+                await BDDWorkerService.createLiteral(var2));
 
-            pointeur = await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(pointeur), await BDDServiceWorkerService.createCopy(equiv)]);
+            pointeur = await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(pointeur), await BDDWorkerService.createCopy(equiv)]);
         }
         // console.log("end frame", vars, prime, BDD.bddService.pickSolutions(pointeur, 10));
         return pointeur;

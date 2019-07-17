@@ -12,7 +12,7 @@ import { BddService, BDDNode } from '../../../../services/bdd.service';
 import { WorldValuationType } from './world-valuation-type';
 import { SEModelDescriptor } from './descriptor/se-model-descriptor';
 import { SEModelInternalDescriptor } from './descriptor/se-model-internal-descriptor';
-import { BDDServiceWorkerService } from 'src/app/services/bddservice-worker.service';
+import { BDDWorkerService } from 'src/app/services/bddworker.service';
 import { Observable } from 'rxjs/internal/Observable';
 import { of } from 'rxjs';
 
@@ -125,7 +125,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     async getRulesAndRulesPrime(formulaSetWorlds: Formula): Promise<BDDNode> {
         let formulaSetWorldsPrime = formulaSetWorlds.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
         let formulaSetWorldsAndFormulaSetWorldsPrime = new AndFormula([formulaSetWorldsPrime, formulaSetWorlds]);
-        return await BDDServiceWorkerService.formulaToBDD(formulaSetWorldsAndFormulaSetWorldsPrime);
+        return await BDDWorkerService.formulaToBDD(formulaSetWorldsAndFormulaSetWorldsPrime);
     }
 
 
@@ -150,8 +150,8 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             for (let agent of this.agents) {
                 let bddRelation: BDDNode = await descriptor.getRelationDescription(agent).toBDD();
                 //this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
-                this.symbolicRelations.set(agent, await BDDServiceWorkerService.applyAnd(
-                    [await BDDServiceWorkerService.createCopy(this.bddSetWorlds), bddRelation]));
+                this.symbolicRelations.set(agent, await BDDWorkerService.applyAnd(
+                    [await BDDWorkerService.createCopy(this.bddSetWorlds), bddRelation]));
             }
         }
         else { //we intend  "instanceof SEModelInternalDescriptor"
@@ -162,7 +162,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                 let bddRelation: BDDNode = await descriptor.getRelationBDD(agent);
                 console.log("bdd relation for agent " + agent + " is: " + bddRelation);
                 this.symbolicRelations.set(agent, bddRelation);
-                /* await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(this.bddSetWorlds),
+                /* await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(this.bddSetWorlds),
                      bddRelation]));*/
 
             }
@@ -227,17 +227,17 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      */
     async check(formula: Formula): Promise<boolean> {
         let bddFormulaSemantics = await this.queryWorldsSatisfying(formula);
-        let res = await BDDServiceWorkerService.applyConditioning(bddFormulaSemantics,
+        let res = await BDDWorkerService.applyConditioning(bddFormulaSemantics,
             this.pointedValuation.getPropositionMap());
-        return await BDDServiceWorkerService.isConsistent(<BDDNode>res);
+        return await BDDWorkerService.isConsistent(<BDDNode>res);
     }
 
     async queryWorldsSatisfying(phi: Formula): Promise<BDDNode> {
 
-        /*  let allWorlds: BDDNode = await BDDServiceWorkerService.createFalse();
+        /*  let allWorlds: BDDNode = await BDDWorkerService.createFalse();
           this.symbolicRelations.forEach(async (value: BDDNode, key: string) => {
-              let f2: BDDNode = await BDDServiceWorkerService.applyExistentialForget(await BDDServiceWorkerService.createCopy(value), this.propositionalPrimes);
-              allWorlds = await BDDServiceWorkerService.applyOr([allWorlds, f2]);
+              let f2: BDDNode = await BDDWorkerService.applyExistentialForget(await BDDWorkerService.createCopy(value), this.propositionalPrimes);
+              allWorlds = await BDDWorkerService.applyOr([allWorlds, f2]);
           });*/
         let allWorlds = this.bddSetWorlds;
         return await this._query(allWorlds, phi);;
@@ -248,13 +248,13 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     */
     private async _query(all_worlds: BDDNode, phi: Formula): Promise<BDDNode> {
         // console.log("Query", bdd, phi)
-        if (phi instanceof types.TrueFormula) { return await BDDServiceWorkerService.createCopy(all_worlds); }
-        if (phi instanceof types.FalseFormula) { return await BDDServiceWorkerService.createFalse(); }
+        if (phi instanceof types.TrueFormula) { return await BDDWorkerService.createCopy(all_worlds); }
+        if (phi instanceof types.FalseFormula) { return await BDDWorkerService.createFalse(); }
         if (phi instanceof types.AtomicFormula) {
             // console.log("Atom ", (<types.AtomicFormula>phi).getAtomicString())
-            return await BDDServiceWorkerService.applyAnd([
-                await BDDServiceWorkerService.createLiteral((<types.AtomicFormula>phi).getAtomicString()),
-                await BDDServiceWorkerService.createCopy(all_worlds)
+            return await BDDWorkerService.applyAnd([
+                await BDDWorkerService.createLiteral((<types.AtomicFormula>phi).getAtomicString()),
+                await BDDWorkerService.createCopy(all_worlds)
             ]
             );
         }
@@ -263,7 +263,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             for (let f of (<types.AndFormula>phi).formulas) {
                 arrayNumber.push(await this._query(all_worlds, f));
             }
-            return await BDDServiceWorkerService.applyAnd(arrayNumber);
+            return await BDDWorkerService.applyAnd(arrayNumber);
         }
         if (phi instanceof types.OrFormula) {
             let arrayNumber: number[] = [];
@@ -271,12 +271,12 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                 arrayNumber.push(await this._query(all_worlds, f));
             }
 
-            return await BDDServiceWorkerService.applyOr(arrayNumber);
+            return await BDDWorkerService.applyOr(arrayNumber);
         }
         if (phi instanceof types.NotFormula) {
             //console.log("Not", (<types.NotFormula>phi).formula);
-            let res = await BDDServiceWorkerService.applyNot(await this._query(all_worlds, (<types.NotFormula>phi).formula));
-            let res2 = await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(all_worlds), res]);
+            let res = await BDDWorkerService.applyNot(await this._query(all_worlds, (<types.NotFormula>phi).formula));
+            let res2 = await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(all_worlds), res]);
             return res2;
         }
         if (phi instanceof types.KFormula) {
@@ -291,15 +291,15 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         }
         if (phi instanceof types.KposFormula) {
             //console.log("Kpos")
-            let mp = await BDDServiceWorkerService.applyRenaming(
+            let mp = await BDDWorkerService.applyRenaming(
                 await this._query(all_worlds, (<types.KposFormula>phi).formula),
                 SymbolicEpistemicModel.getMapPrimeToNotPrime(this.propositionalAtoms)
             );
             // console.log("mp", BDD.bddService.pickAllSolutions(mp));
             let bdd_a = await this.getAgentSymbolicRelation((<types.KposFormula>phi).agent);
-            let bdd_and = await BDDServiceWorkerService.applyAnd([await BDDServiceWorkerService.createCopy(bdd_a), mp]);
+            let bdd_and = await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(bdd_a), mp]);
             // console.log("bdd_and", BDD.bddService.pickAllSolutions(bdd_and).map(v => v.toAssignment(this.propositionalAtoms.concat(this.propositionalPrimes))), this.propositionalPrimes);
-            let res = await BDDServiceWorkerService.applyExistentialForget(bdd_and, this.propositionalPrimes);
+            let res = await BDDWorkerService.applyExistentialForget(bdd_and, this.propositionalPrimes);
             // console.log("res Kpos", BDD.bddService.pickAllSolutions(res).map(v => v.toAssignment(this.propositionalAtoms)));
             return res
         }
@@ -364,7 +364,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      */
     toExplicit(): ExplicitEpistemicModel {
         let M = new ExplicitEpistemicModel();
-        BDDServiceWorkerService.pickAllSolutions(this.bddSetWorlds, this.propositionalAtoms);
+        BDDWorkerService.pickAllSolutions(this.bddSetWorlds, this.propositionalAtoms);
         return M;
     }
 

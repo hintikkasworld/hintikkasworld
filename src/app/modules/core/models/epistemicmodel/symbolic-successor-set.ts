@@ -1,4 +1,4 @@
-import { BDDServiceWorkerService } from './../../../../services/bddservice-worker.service';
+import { BDDWorkerService } from '../../../../services/bddworker.service';
 import { SuccessorSet } from './successor-set';
 import { World } from './world';
 import { WorldValuationType } from './world-valuation-type';
@@ -56,23 +56,23 @@ export class SymbolicSuccessorSet implements SuccessorSet {
         // console.log("getSucessors", a, this.getAgentSymbolicRelation(a))
         console.log("begin BDD successor computation...")
 
-        let bddValuation = await BDDServiceWorkerService.createCube((<WorldValuation>w).valuation.getPropositionMap());
-        console.log("bddValuation has " + await BDDServiceWorkerService.countSolutions(bddValuation, this.M.getPropositionalAtoms()) + ".");
+        let bddValuation = await BDDWorkerService.createCube((<WorldValuation>w).valuation.getPropositionMap());
+        console.log("bddValuation has " + await BDDWorkerService.countSolutions(bddValuation, this.M.getPropositionalAtoms()) + ".");
 
        
 
-        let bddRelationOnW = await BDDServiceWorkerService.applyAnd([
-            await BDDServiceWorkerService.createCopy(this.M.getAgentSymbolicRelation(a)),
+        let bddRelationOnW = await BDDWorkerService.applyAnd([
+            await BDDWorkerService.createCopy(this.M.getAgentSymbolicRelation(a)),
             bddValuation]);
 
 
         //  console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))
         //console.log("AND", BDD.bddService.pickAllSolutions(bdd_and));
 
-        let bddSetSuccessorsWithPrime = await BDDServiceWorkerService.applyExistentialForget(
+        let bddSetSuccessorsWithPrime = await BDDWorkerService.applyExistentialForget(
             bddRelationOnW,
             this.M.getPropositionalAtoms());
-        console.log("bddSetSuccessorsWithPrime has " + await BDDServiceWorkerService.countSolutions(bddSetSuccessorsWithPrime, 
+        console.log("bddSetSuccessorsWithPrime has " + await BDDWorkerService.countSolutions(bddSetSuccessorsWithPrime, 
                 this.M.getPropositionalPrimes()) + ".");
 
 
@@ -80,10 +80,10 @@ export class SymbolicSuccessorSet implements SuccessorSet {
         //console.log("after forget", BDD.bddService.pickAllSolutions(bddSetSuccessorsWithPrime))
         //console.log("forget", this.propositionalAtoms, BDD.bddService.pickAllSolutions(forget));
 
-        let bddSetSuccessors = await BDDServiceWorkerService.applyRenaming(
+        let bddSetSuccessors = await BDDWorkerService.applyRenaming(
             bddSetSuccessorsWithPrime,
             SymbolicEpistemicModel.getMapPrimeToNotPrime(this.M.getPropositionalAtoms()));
-        console.log("bddSetSuccessors has " + await BDDServiceWorkerService.countSolutions(bddSetSuccessors, 
+        console.log("bddSetSuccessors has " + await BDDWorkerService.countSolutions(bddSetSuccessors, 
                 this.M.getPropositionalAtoms()) + ".");
 
         console.log("BDD successor computed!");
@@ -98,7 +98,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
     async getNumber(): Promise<number> {
         console.log("le BDD est : " + await this.bddPromise);
         if (this.number == undefined)
-            this.number = await BDDServiceWorkerService.countSolutions(await this.bddPromise, this.atoms); //memoization
+            this.number = await BDDWorkerService.countSolutions(await this.bddPromise, this.atoms); //memoization
         return this.number;
     }
 
@@ -117,7 +117,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
             else {
                 this.finished = true;
                 console.log("set of successors: we compute the " + (await this.getNumber()) + " successors!");
-                let A = await BDDServiceWorkerService.pickAllSolutions(await this.bddPromise, this.atoms);
+                let A = await BDDWorkerService.pickAllSolutions(await this.bddPromise, this.atoms);
                 let V = A.map((props) => new Valuation(props));
                 return arrayValToArrayWorlds(V);
             }
@@ -126,7 +126,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
             console.log("...more than 10 succs");
             const sols = [];
             for (let i = 0; i < 5; i++) {
-                const val: Valuation = new Valuation(await BDDServiceWorkerService.pickRandomSolution(await this.bddPromise, this.atoms));
+                const val: Valuation = new Valuation(await BDDWorkerService.pickRandomSolution(await this.bddPromise, this.atoms));
                 if (!this.isAlreadyBeenOutput(val)) {
                     sols.push(val);
                     this.declareAlreadyOutput(val);
@@ -138,7 +138,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
     }
 
     async getRandomSuccessor(): Promise<World> {
-        let val: Valuation = new Valuation(await BDDServiceWorkerService.pickRandomSolution(await this.bddPromise, this.atoms));
+        let val: Valuation = new Valuation(await BDDWorkerService.pickRandomSolution(await this.bddPromise, this.atoms));
         return this.M.getWorld(val);
     }
 
