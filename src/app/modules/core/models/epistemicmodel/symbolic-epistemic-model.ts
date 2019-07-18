@@ -148,18 +148,27 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         console.log( "   propositionalPrimes set!");
         // console.log("Agents of SymbolicEpistemicModel", agents);
         if ((<any>descr).getSetWorldsFormulaDescription != undefined) { //we intend  "instanceof SEModelDescriptor"
-            let descriptor = <SEModelDescriptor>descr;
-            //from now on, it should done asynchronously
-            this.bddSetWorlds = await this.getRulesAndRulesPrime(descriptor.getSetWorldsFormulaDescription());
-            for (let agent of this.agents) {
-                let bddRelation: BDDNode = await descriptor.getRelationDescription(agent).toBDD();
-                //this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
-                this.symbolicRelations.set(agent, await BDDWorkerService.applyAnd(
-                    [await BDDWorkerService.createCopy(this.bddSetWorlds), bddRelation]));
-            }
+            this.loadModelDescriptor(<SEModelDescriptor>descr);
         }
         else { //we intend  "instanceof SEModelInternalDescriptor"
-            let descriptor = <SEModelInternalDescriptor>descr;
+            this.loadModelInternalDescriptor(<SEModelInternalDescriptor>descr);
+        }
+    }
+
+    private async loadModelDescriptor(descr: SEModelDescriptor) {
+        let descriptor = <SEModelDescriptor>descr;
+        //from now on, it should done asynchronously
+        this.bddSetWorlds = await this.getRulesAndRulesPrime(descriptor.getSetWorldsFormulaDescription());
+        for (let agent of this.agents) {
+            let bddRelation: BDDNode = await descriptor.getRelationDescription(agent).toBDD();
+            //this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
+            this.symbolicRelations.set(agent, await BDDWorkerService.applyAnd(
+                [await BDDWorkerService.createCopy(this.bddSetWorlds), bddRelation]));
+        }
+    }
+
+    private async loadModelInternalDescriptor(descr: SEModelInternalDescriptor) {
+        let descriptor = <SEModelInternalDescriptor>descr;
             this.bddSetWorlds = await descriptor.getSetWorldsBDDDescription();
             console.log("bdd worlds is: " + this.bddSetWorlds);
             for (let agent of this.agents) {
@@ -170,10 +179,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                      bddRelation]));*/
 
             }
-        }
-        this.doneDescriptor = true;
     }
-
     /**
     @returns the pointed world
     **/
