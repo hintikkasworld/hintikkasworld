@@ -21,6 +21,7 @@ import { of } from 'rxjs';
  * it implements an epistemic model described symbolically by means of BDDs
  */
 export class SymbolicEpistemicModel implements EpistemicModel {
+    cbDoneDescriptor: any;
 
     /**
         * There are two way to create a symbolic epistemic model.
@@ -45,7 +46,8 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         this.symbolicRelations = new Map();
         // loadDescriptor will call the worker to pass down the heavy part of constructing
         // a binary decision diagram
-        this.loadDescriptor(descr);
+        this.loadDescriptor(descr, this.cbDoneDescriptor);
+
         console.log("end of the construction")
 
     }
@@ -76,8 +78,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * Store for each agent the correspondant BDDNode
      */
     protected symbolicRelations: Map<string, BDDNode>;
-
-    doneDescriptor: boolean = false;
 
 
     /**
@@ -140,7 +140,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * slowest part of the program.
      * @param descr 
      */
-    private async loadDescriptor(descr: SEModelDescriptor | SEModelInternalDescriptor) {
+    private async loadDescriptor(descr: SEModelDescriptor | SEModelInternalDescriptor, callback: Function) {
         console.log("begin loadDescriptor...");
         this.propositionalAtoms = descr.getAtomicPropositions();
         console.log( "   propositionalAtoms set!");
@@ -171,9 +171,12 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
             }
         }
-        this.doneDescriptor = true;
+        callback();
     }
 
+    setCallBackForDoneDescriptor(callback) {
+        this.cbDoneDescriptor = callback;
+    }
     /**
     @returns the pointed world
     **/
