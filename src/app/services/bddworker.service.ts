@@ -1,5 +1,5 @@
 import { BDDNode } from '../modules/core/models/epistemicmodel/bddnode'
-import { Formula, TrueFormula } from '../modules/core/models/formula/formula';
+import { Formula, TrueFormula, FormulaFactory } from '../modules/core/models/formula/formula';
 
 
 /**
@@ -63,7 +63,7 @@ export class BDDWorkerService {
     console.log("formulaToBDD begin... the formula is:");
     let formulaString = formula.prettyPrint();
     console.log(formulaString);
-    return BDDWorkerService.call("formulaStringToBDD", [formulaString]);
+    return BDDWorkerService.call("formulaToBDD", [FormulaFactory.createFormula(formulaString)]);
   }
 
   public static applyAnd(args: BDDNode[]): Promise<BDDNode> {

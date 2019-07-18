@@ -77,6 +77,8 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      */
     protected symbolicRelations: Map<string, BDDNode>;
 
+    doneDescriptor: boolean = false;
+
 
     /**
      * stores the worlds (that are of type WorldValuation) that the user already asked for.
@@ -169,10 +171,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
             }
         }
-    }
-
-    getDoneDescriptorBoolean(): boolean {
-        return true;
+        this.doneDescriptor = true;
     }
 
     /**

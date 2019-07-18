@@ -1,6 +1,7 @@
 import { Action } from './action';
 import { ExampleDescription } from './exampledescription';
 import { EpistemicModel } from '../epistemicmodel/epistemic-model';
+import { Observable, of } from 'rxjs';
 
 export class Environment {
     private _epistemicModel: EpistemicModel;
