@@ -153,6 +153,8 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         else { //we intend  "instanceof SEModelInternalDescriptor"
             this.loadModelInternalDescriptor(<SEModelInternalDescriptor>descr);
         }
+        if(this.cbDoneDescriptor != undefined)
+            this.cbDoneDescriptor();
     }
 
     private async loadModelDescriptor(descr: SEModelDescriptor) {
@@ -179,6 +181,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                      bddRelation]));*/
 
             }
+     }
+
+    setCallBackForDoneDescriptor(callback) {
+        this.cbDoneDescriptor = callback;
     }
     /**
     @returns the pointed world
