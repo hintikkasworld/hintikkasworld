@@ -112,7 +112,7 @@ class BattleShipWorld extends WorldValuation {
         return this.hasshipa[row * (this.nbcols + 1) + col];
     }
     hasShipB(row, col) {
-        return this.hasShipB[row * (this.nbcols + 1) + col];
+        return this.hasshipb[row * (this.nbcols + 1) + col];
     }
 
     draw(context: CanvasRenderingContext2D) {
