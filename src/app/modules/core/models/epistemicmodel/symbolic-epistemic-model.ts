@@ -26,7 +26,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     private _isLoaded = false;
-    private cbDoneDescriptor: Function = undefined;
 
     /**
         * There are two way to create a symbolic epistemic model.
@@ -159,11 +158,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
              await this.loadModelInternalDescriptor(<SEModelInternalDescriptor>descr);
         }
 
-        console.log("Callback function : " + this.cbDoneDescriptor)
-
-        if (this.cbDoneDescriptor != undefined)
-            this.cbDoneDescriptor();
-
         this._isLoaded = true;
     }
 
@@ -191,10 +185,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                  bddRelation]));*/
 
         }
-    }
-
-    setCallBackForDoneDescriptor(callback) {
-        this.cbDoneDescriptor = callback;
     }
     /**
     @returns the pointed world

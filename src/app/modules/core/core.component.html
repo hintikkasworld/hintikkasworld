@@ -47,7 +47,10 @@
         <button id="helpButton" (click)="showHelp()" title="Help/About"><img width=24px src="assets/img/help.png"></button>
       </td>
       <td>
-
+          <span id="test" *ngIf="!isEpistemicModelReady()">
+              <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          </span>
+          Agents are not ready
       </td>
 
     </tr>
@@ -63,8 +66,7 @@
 
       <td id="hintikkasWorldScene" valign="top">
         <app-comics [obsEnv]='bsEnv.asObservable()'></app-comics>
-        <div id="test" *ngIf="!isEpistemicModelReady()">not ready yet!</div>
-        <div id="doneDescriptor">Agents are not ready to be clicked</div>
+        
       </td>
       
       <td id="hintikkasWorldKripkeModel" valign="top">
