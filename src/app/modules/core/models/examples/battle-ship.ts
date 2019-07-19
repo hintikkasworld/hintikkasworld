@@ -77,7 +77,8 @@ class BattleShipWorld extends WorldValuation {
     static readonly xt = 16;
     static readonly yt = 0;
     readonly cellSize: number;
-    static imgFull = BattleShipWorld.getImage("bomb.png");
+    static imgShipHorizontal = BattleShipWorld.getImage("ship_horizontal.png");
+    static imgShipVertical = BattleShipWorld.getImage("ship_vertical.png");
     readonly clicked;
 
     constructor(nbrows, nbcols, agents, ships, clicked, valuation: Valuation) {
@@ -100,7 +101,7 @@ class BattleShipWorld extends WorldValuation {
         this.drawAgents(context);
 
         // We draw the backgrounds of the grids.
-        context.fillStyle = "lightgray";
+        context.fillStyle = "#AAAAFF";
 
         context.fillRect(BattleShipWorld.xt, 0, this.nbcols * this.cellSize, this.nbrows * this.cellSize);
         context.fillRect(BattleShipWorld.xt + (this.nbcols + 1) * this.cellSize, 0, this.nbcols * this.cellSize, this.nbrows * this.cellSize);
@@ -162,26 +163,33 @@ class BattleShipWorld extends WorldValuation {
 
     /**
      * Function that draws a boat.
-     * @param context: the canevas to draw into 
+     * @param context: the canvas to draw into 
      * @param col: the column of the start of the boat. 
      * @param row: the row of the start of the boat. 
      * @param size: the size of the boat. 
      * @param coloffset: the offset on the column if we have to draw on the grid on the right player. 
      * @param direction: the direction of the boat (either "hor" for horizontal or "ver" for vertical) 
      */
-    placeBoat(context, col: number, row: number, size: number, coloffset: number, direction: string) {
+    placeBoat(context: CanvasRenderingContext2D, col: number, row: number, size: number, coloffset: number, direction: string) {
+        const x1 = BattleShipWorld.xt + (col - 1 + coloffset) * this.cellSize;
+        const y1 = (row - 1) * this.cellSize;
         if (direction == "hor") {
-            context.fillRect(BattleShipWorld.xt + (col - 1 + coloffset) * this.cellSize, (row - 1) * this.cellSize, size * this.cellSize, this.cellSize);
+            
+
+            context.drawImage(BattleShipWorld.imgShipHorizontal, x1, y1, size * this.cellSize, this.cellSize);
+          /*  context.fillRect(BattleShipWorld.xt + (col - 1 + coloffset) * this.cellSize, (row - 1) * this.cellSize, size * this.cellSize, this.cellSize);
             context.beginPath()
-            context.rect(BattleShipWorld.xt + (col - 1 + coloffset) * this.cellSize, (row - 1) * this.cellSize, size * this.cellSize, this.cellSize)
-            context.stroke();
+            context.rect(BattleShipWorld.xt + (col - 1 + coloffset) * this.cellSize, (row - 1) * this.cellSize, 
+            size * this.cellSize, this.cellSize)
+            context.stroke();*/
         }
         else {
             if (direction == "ver") {
-                context.fillRect(BattleShipWorld.xt + (col - 1 + coloffset) * this.cellSize, (row - 1) * this.cellSize, this.cellSize, size * this.cellSize);
+                context.drawImage(BattleShipWorld.imgShipVertical, x1, y1, this.cellSize, size * this.cellSize);
+              /*  context.fillRect(BattleShipWorld.xt + (col - 1 + coloffset) * this.cellSize, (row - 1) * this.cellSize, this.cellSize, size * this.cellSize);
                 context.beginPath()
                 context.rect(BattleShipWorld.xt + (col - 1 + coloffset) * this.cellSize, (row - 1) * this.cellSize, this.cellSize, size * this.cellSize)
-                context.stroke();
+                context.stroke();*/
             }
         }
 
