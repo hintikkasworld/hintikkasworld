@@ -101,7 +101,7 @@ class BattleShipWorld extends WorldValuation {
         this.drawAgents(context);
 
         // We draw the backgrounds of the grids.
-        context.fillStyle = "#AAAAFF";
+        context.fillStyle = "#DDDDFF";
 
         context.fillRect(BattleShipWorld.xt, 0, this.nbcols * this.cellSize, this.nbrows * this.cellSize);
         context.fillRect(BattleShipWorld.xt + (this.nbcols + 1) * this.cellSize, 0, this.nbcols * this.cellSize, this.nbrows * this.cellSize);
