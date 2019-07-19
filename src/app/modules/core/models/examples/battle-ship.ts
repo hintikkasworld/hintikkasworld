@@ -5,7 +5,7 @@ import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Obs } from '../epistemicmodel/symbolic-relation';
-import { ExactlyFormula, TrueFormula, AndFormula, ImplyFormula, AtomicFormula, NotFormula, OrFormula } from '../formula/formula';
+import { ExactlyFormula, TrueFormula, AndFormula, ImplyFormula, AtomicFormula, NotFormula, OrFormula, Formula } from '../formula/formula';
 import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 import { registerContentQuery } from '@angular/core/src/render3';
@@ -222,14 +222,29 @@ class BattleShipWorld extends WorldValuation {
 
 export class BattleShip extends ExampleDescription {
 
+    // nbcols : number of columns, nbrows : number of lines
     readonly nbcols: number;
     readonly nbrows: number;
+    /* ships is an array containing the size of the ships. For instance [2,2,3] means there are 2 ships of size 2  
+      and 1 of size 3 3 */    
     readonly ships: number[];
+    // Agents names.
     readonly agents = ["a", "b"];
     clicked;
+    // Atomic propositions
+    
     readonly atmset: string[];
 
+    /**
+     * examples of propositions:
+     * a_hor_3_A2: there is a horizontal ship of length 3 starting in A2 in a's grid  (the ship is in A2-A3-A4)
+     * a_ver_3_A2: there is a vertical ship of length 3 starting in A2 in a's grid  (the ship is in A2-B2-C2)
+     * */
+
+    // Array corresponding to ships where duplicates are removed. For instance if ships = [2,2,2,3,3,4] then shipsduplfree = [2,3,4]
     readonly shipsduplfree: number[]
+    
+    
     constructor(nbrows: number, nbcols: number, ships: number[]) {
         super();
         this.nbcols = nbcols;
@@ -246,26 +261,31 @@ export class BattleShip extends ExampleDescription {
                 this.shipsduplfree.push(this.ships[i]);
             }
         }
+
     }
 
     getAtomicPropositions(): string[] {
         return this.atmset;
     }
 
-    /**
-     * examples of propositions:
-     * a_hor_3_A2: there is a horizontal ship of length 3 starting in A2 in a's grid  (the ship is in A2-A3-A4)
-     * a_ver_3_A2: there is a vertical ship of length 3 starting in A2 in a's grid  (the ship is in A2-B2-C2)
+
+     /**
+     * 
+     * @param {string} agent 
+     * @param {number} size
+     * @returns the array of propositions of the form agent_X_size_Y where X is either hor or ver and Y is a cell in the grid.
      */
+
     generateAtomicPropositionsAgentSize(agent:string, size: number): string[] {
         let Res = [];
         let ll = [];
+        // Propositions for horizontal ships
         for (let x = 1; x <= this.nbcols + 1 - size; x++) {
             for (let y = 1; y <= this.nbrows; y++) {
                Res.push(getAtomBeginningShip(agent, "hor", x, y, size));
             }
         }
-
+        // Propositions for vertical ships
         for (let x = 1; x <= this.nbcols; x++) {
             for (let y = 1; y <= this.nbrows + 1 - size; y++) {
                 Res.push(getAtomBeginningShip(agent, "ver", x, y, size));
@@ -273,6 +293,11 @@ export class BattleShip extends ExampleDescription {
         }      
         return Res; 
     }
+     /**
+     * 
+     * @param {string} agent 
+     * @returns the array of propositions of the form agent_X_S_Y where X is either hor or ver, S is a ships size and Y is a cell in the grid.
+     */
 
     generateAtomicPropositionsAgent(agent:string): string[] {
         let S = [];
@@ -290,86 +315,170 @@ export class BattleShip extends ExampleDescription {
     getName() {
         return "BattleShip.";
     }
+     /**
+     * 
+     * @param {string} agent 
+     * @param {number} s
+     * @returns the formula saying how many ships of size @s we should put in agent @agent 's grid.
+     */
+
+    getConstraintNumberShips(agent:string, s: number): ExactlyFormula {
+        let c = 0
+        for (let j = 0; j < this.ships.length; j++) {
+            if (this.ships[j] == s) {
+                c+= 1
+            }
+        }
+        return new ExactlyFormula(c, this.generateAtomicPropositionsAgentSize(agent,s))    
+    }
+     /**
+     * 
+     * @param {string} agent 
+     * @param {number} s
+     * @param {number} col
+     * @param {number} row
+     * @returns the formula saying that at cell (@col,@row) of @agent 's grid, it is not possible to have a ship of size @s starting both horizontally and vertically. Returns TrueFormula if it was not possible by construction to have both (for instance in the bottom left cell).
+     */
+    getConstraintNotBothHorVer(agent:string,s:number,col:number,row:number) : Formula {
+        let ll = []
+        if (col <= this.nbcols + 1 - s) {
+            ll.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(agent, "hor", col, row, s))));
+        }
+        if (row <= this.nbrows + 1 - s) {
+            ll.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(agent, "ver", col, row, s))));
+        }         
+        // Constraint: a ship cannot start both horizontally and vertically.
+        if (ll.length == 2) {
+           return new OrFormula(ll)      
+        }        
+        else {
+            return new TrueFormula
+        }
+    }
+
+
+    getConstraintOtherShipsHor(agent:string, s:number,col:number,row:number) : Formula{ 
+        let l2 = [];
+
+        for (let i2 = 0; i2 <= this.shipsduplfree.length - 1; i2++) {
+            
+            // Offset to say that if the size in the for loop if different, then the ships should also not be in the same cell.
+            var offset = 0;
+            if (this.shipsduplfree[i2] == s) {
+                offset = 1
+            }
+            
+            for (let col2 = col; col2 <= col+s-1; col2++) {                                        
+                if ((col2 >= 1) && (col2 + this.shipsduplfree[i2] -1 <= this.nbcols)){
+                    for (let row2 = row-this.shipsduplfree[i2]+1; row2 <= row-offset; row2++) {
+                        if ((row2 >= 1) && (row2 + this.shipsduplfree[i2] -1 <= this.nbrows)) {
+                            l2.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(agent, "ver", col2, row2, this.shipsduplfree[i2]))))
+                        }
+                        
+                    }
+                }
+            }
+    
+            for (let col2 = col-this.shipsduplfree[i2]+1; col2 <= col-offset; col2++) {
+                if ((col2 >= 1) && (col2 + this.shipsduplfree[i2] -1 <= this.nbcols)) {
+                    l2.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(agent, "hor", col2, row, this.shipsduplfree[i2]))))
+                }
+                
+            }
+        }
+        if (l2.length == 1) {
+            return new ImplyFormula(new AtomicFormula(getAtomBeginningShip(agent,"hor", col, row, s)), l2[0])
+        }
+        else if (l2.length >= 2) {
+            return new ImplyFormula(new AtomicFormula(getAtomBeginningShip(agent,"hor", col, row, s)), new AndFormula(l2))
+        }
+        else {
+            return new TrueFormula
+        }
+    }
+
+    getConstraintOtherShipsVer(agent:string, s:number,col:number,row:number) : Formula{ 
+        let l2 = [];
+
+        for (let i2 = 0; i2 <= this.shipsduplfree.length - 1; i2++) {
+            
+            // Offset to say that if the size in the for loop if different, then the ships should also not be in the same cell.
+            var offset = 0;
+            if (this.shipsduplfree[i2] == s) {
+                offset = 1
+            }
+            
+            for (let row2 = row; row2 <= row+s-1; row2++) {                                        
+                if ((row2 >= 1) && (row2 + this.shipsduplfree[i2] -1 <= this.nbrows)){
+                    for (let col2 = col-this.shipsduplfree[i2]+1; col2 <= col-offset; col2++) { 
+                        if ((col2 >= 1) && (col2 + this.shipsduplfree[i2] -1 <= this.nbcols)){
+                            l2.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(agent, "hor", col2, row2, this.shipsduplfree[i2]))))
+                        }
+                        
+                    }
+                }
+            }
+    
+            for (let row2 = col-this.shipsduplfree[i2]+1; row2 <= row-offset; row2++) {
+                if ((row2 >= 1) && (row2 + this.shipsduplfree[i2] -1 <= this.nbrows)) {
+                    l2.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(agent, "ver", col, row2, this.shipsduplfree[i2]))))
+                }
+                
+            }
+        }
+        if (l2.length == 1) {
+            return new ImplyFormula(new AtomicFormula(getAtomBeginningShip(agent,"ver", col, row, s)), l2[0])
+        }
+        else if (l2.length >= 2) {
+            return new ImplyFormula(new AtomicFormula(getAtomBeginningShip(agent,"ver", col, row, s)), new AndFormula(l2))
+        }
+        else {
+            return new TrueFormula
+        }
+    }    
     getInitialEpistemicModel(): import("../epistemicmodel/epistemic-model").EpistemicModel {
         let example = this;
 
         this.clicked = {};
-        let rels = new Map();
-
-        
-        let reltab = new Array();
-        for (let agent = 0; agent <= this.agents.length - 1; agent++) {
-            reltab.push(new Array())
-        }
-        console.log(reltab)
-
-        /* rels.set("a", new Obs(reltab[0]));
-        rels.set("b", new Obs(reltab[1])); */ 
-       rels.set("a", new Obs([]) );
-        rels.set("b", new Obs([])); 
         class SEModelDescriptorBattleShip implements SEModelDescriptor {
             getAgents(): string[] {
                 return example.agents;
             }
             getSetWorldsFormulaDescription(): import("../formula/formula").Formula {
-                let l = [];
-                for (let i = 0; i < example.shipsduplfree.length; i++) {
+                let l = [];         
+                for (let i = 0; i < example.shipsduplfree.length ; i++) {
+
                     for (let agent = 0; agent <= example.agents.length - 1; agent++) {
-                        let c = 0
-                        for (let j = 0; j < example.ships.length; j++) {
-                            if (example.ships[j] == example.shipsduplfree[i]) {
-                                c+= 1
-                            }
-                        }
-                        console.log(example.agents[agent])
-                        console.log(example.ships[i])
-                        console.log(example.generateAtomicPropositionsAgentSize(example.agents[agent],example.ships[i]))
-                        console.log(new ExactlyFormula(c, example.generateAtomicPropositionsAgentSize(example.agents[agent],example.ships[i])))
-                       l.push(new ExactlyFormula(c, example.generateAtomicPropositionsAgentSize(example.agents[agent],example.ships[i])))
+
+                       l.push(example.getConstraintNumberShips(example.agents[agent],example.shipsduplfree[i]))
 
                        for (let col = 1; col <= example.nbcols; col++) {
                             for (let row = 1; row <= example.nbrows; row++) {
-                                let ll = []
-                                if (col <= example.nbcols + 1 - example.shipsduplfree[i]) {
-                                    ll.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(example.agents[agent], "hor", col, row, example.shipsduplfree[i]))));
-                                }
-                                if (row <= example.nbrows + 1 - example.shipsduplfree[i]) {
-                                    ll.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(example.agents[agent], "ver", col, row, example.shipsduplfree[i]))));
-                                }
                                 
-                                if (ll.length == 2) {
-                                    console.log(ll);
-                                //   l.push(new OrFormula(ll))
-                                    
+                            let f = example.getConstraintNotBothHorVer(example.agents[agent],example.shipsduplfree[i],col,row)
+                            if (f instanceof OrFormula) {
+                                l.push(f)
+                            }        
+                            if (col <= example.nbcols - example.shipsduplfree[i] + 1) {
+                                let f2 = example.getConstraintOtherShipsHor(example.agents[agent],example.shipsduplfree[i],col,row)
+                                if (f2 instanceof ImplyFormula) {
+                                    l.push(f2)
                                 }
-                                 let l2 = [];
-                                for (let i2 = 0; i2 <= example.shipsduplfree.length - 1; i2++) {
-                                    if (i2 != i) {
-                                        for (let col2 = col - example.shipsduplfree[i] + 1; col2 <= col; col++) {
-                                            if (col2 >= 1) {
-                                                l2.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(example.agents[agent], "hor", col2, row, example.shipsduplfree[i]))))
-                                            }
-                                        }
-        
-                                        for (let row2 = row - example.shipsduplfree[i] + 1; row2 <= row; row++) {
-                                            if (row2 >= 1) {
-                                                l2.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(example.agents[agent], "ver", col, row2, example.shipsduplfree[i]))))
-                                            }
-                                        }
-        
-                                    }
+                            }
+                            if (row <= example.nbrows - example.shipsduplfree[i] + 1) {
+                                let f2 = example.getConstraintOtherShipsVer(example.agents[agent],example.shipsduplfree[i],col,row)
+                                if (f2 instanceof ImplyFormula) {
+                                    l.push(f2)
                                 }
-                              //  l.push(new ImplyFormula(new OrFormula([new AtomicFormula(getAtomBeginningShip(example.agents[agent],"hor",col,row,example.shipsduplfree[i])),new AtomicFormula(getAtomBeginningShip(example.agents[agent],"ver",col,row,example.shipsduplfree[i]))])
-                                    // ,new AndFormula(l2))) 
                             }
                         }
                     }
                 }
+            }
                 return new AndFormula(l)
+            
             }
             getRelationDescription(agent: string): import("../epistemicmodel/symbolic-relation").SymbolicRelation {
-                console.log("--------------")
-                console.log(example.generateAtomicPropositionsAgent(agent))
                 return new Obs(example.generateAtomicPropositionsAgent(agent))
             }
             getPointedValuation(): Valuation {
@@ -379,9 +488,6 @@ export class BattleShip extends ExampleDescription {
                 return example.getAtomicPropositions();
         }
     }
-        //  let M = SymbolicEpistemicModel.build(this.getWorldClass(), ["a"], this.getAtomicPropositions(), rels, new ExactlyFormula(this.ships.reduce((a,b) => a + b, 0), this.getAtomicPropositions()));
-        // 
-   //     console.log(this.getAtomicPropositions())
         let M = new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorBattleShip());        
         return M;
     }
@@ -406,7 +512,6 @@ export class BattleShip extends ExampleDescription {
         for (let agent = 0; agent <= this.agents.length - 1; agent++) {
             for (let i = 0; i <= this.ships.length - 1; i++) {
                 while (true) {
-                    console.log(filled)
                     if ((getRandomNumber(0, 1) == 0) && (this.ships[i] <= this.nbrows)) {
                         const dir = "ver"
                         const col = getRandomNumber(1, this.nbcols);
