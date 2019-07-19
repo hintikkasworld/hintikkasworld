@@ -21,7 +21,7 @@ import { of } from 'rxjs';
  * it implements an epistemic model described symbolically by means of BDDs
  */
 export class SymbolicEpistemicModel implements EpistemicModel {
-    getRelationBDD(agent: string) : number {
+    getRelationBDD(agent: string): number {
         return this.symbolicRelations.get(agent);
     }
     isLoaded(): boolean {
@@ -155,10 +155,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         console.log("   propositionalPrimes set!");
         // console.log("Agents of SymbolicEpistemicModel", agents);
         if ((<any>descr).getSetWorldsFormulaDescription != undefined) { //we intend  "instanceof SEModelDescriptor"
-             await this.loadModelDescriptor(<SEModelDescriptor>descr);
+            await this.loadModelDescriptor(<SEModelDescriptor>descr);
         }
         else { //we intend  "instanceof SEModelInternalDescriptor"
-             await this.loadModelInternalDescriptor(<SEModelInternalDescriptor>descr);
+            await this.loadModelInternalDescriptor(<SEModelInternalDescriptor>descr);
         }
 
         this._isLoaded = true;
@@ -210,7 +210,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return this.bddSetWorlds
     }
 
-    static getMapNotPrimeToPrime(atoms: string[]): {[p: string]: string} {
+    static getMapNotPrimeToPrime(atoms: string[]): { [p: string]: string } {
         let map = {};
         atoms.forEach((value) => {
             map[value] = SymbolicEpistemicModel.getPrimedVarName(value);
@@ -218,7 +218,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return map;
     }
 
-    static getMapPrimeToNotPrime(atoms: string[]): {[p: string]: string} {
+    static getMapPrimeToNotPrime(atoms: string[]): { [p: string]: string } {
         let map = {};
         atoms.forEach((value) => {
             map[SymbolicEpistemicModel.getPrimedVarName(value)] = value;
@@ -247,11 +247,11 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return await BDDWorkerService.isConsistent(<BDDNode>res);
     }
 
-    checkBooleanFormula(phi:Formula): boolean {
-        if (phi instanceof types.TrueFormula) { 
+    checkBooleanFormula(phi: Formula): boolean {
+        if (phi instanceof types.TrueFormula) {
             return true
         }
-        if (phi instanceof types.FalseFormula) { 
+        if (phi instanceof types.FalseFormula) {
             return false
         }
         if (phi instanceof types.AtomicFormula) {
@@ -260,7 +260,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         if (phi instanceof types.AndFormula) {
             let b = true
             for (let f of (<types.AndFormula>phi).formulas) {
-                if (! (this.checkBooleanFormula(f))) {
+                if (!(this.checkBooleanFormula(f))) {
                     b = false
                     break
                 }
@@ -278,14 +278,14 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             return b
         }
         if (phi instanceof types.NotFormula) {
-            return !(this.checkBooleanFormula((<types.NotFormula> phi).formula))
+            return !(this.checkBooleanFormula((<types.NotFormula>phi).formula))
         }
-        
-        throw new Error("Not boolean formula phi:" + JSON.stringify(phi));  
-        
-            
+
+        throw new Error("Not boolean formula phi:" + JSON.stringify(phi));
+
+
     }
-    
+
     async queryWorldsSatisfying(phi: Formula): Promise<BDDNode> {
 
         /*  let allWorlds: BDDNode = await BDDWorkerService.createFalse();
@@ -294,7 +294,13 @@ export class SymbolicEpistemicModel implements EpistemicModel {
               allWorlds = await BDDWorkerService.applyOr([allWorlds, f2]);
           });*/
         let allWorlds = this.bddSetWorlds;
-        return await this._query(allWorlds, phi);;
+        return await this._query(allWorlds, phi);
+    }
+
+
+    async queryWorldsSatisfyingBooleanFormula(phi: Formula): Promise<BDDNode> {
+        return await BDDWorkerService.applyAnd([await BDDWorkerService.formulaToBDD(phi),
+        await BDDWorkerService.createCopy(this.bddSetWorlds)]);
     }
 
     /*

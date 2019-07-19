@@ -3,6 +3,10 @@ import { BDDNode } from 'src/app/services/bdd.service';
 import { EventModel } from './event-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
+
+/**
+ * warning !!! Now, it will work better but it assumes that the formula is Boolean!
+ */
 export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicModel> {
 
     /**
@@ -19,7 +23,7 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
         const BS = BDDWorkerService;
 
         const descr = M.getInternalDescription();
-        const bddWorldsPromise = M.queryWorldsSatisfying(this.precondition);
+        const bddWorldsPromise = M.queryWorldsSatisfyingBooleanFormula(this.precondition);
 
         const newDescr = {
             getAgents: () => descr.getAgents(),
