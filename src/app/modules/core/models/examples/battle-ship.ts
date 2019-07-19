@@ -427,7 +427,7 @@ export class BattleShip extends ExampleDescription {
                 }
             }
     
-            for (let row2 = col-this.shipsduplfree[i2]+1; row2 <= row-offset; row2++) {
+            for (let row2 = row-this.shipsduplfree[i2]+1; row2 <= row-offset; row2++) {
                 if ((row2 >= 1) && (row2 + this.shipsduplfree[i2] -1 <= this.nbrows)) {
                     l2.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(agent, "ver", col, row2, this.shipsduplfree[i2]))))
                 }
