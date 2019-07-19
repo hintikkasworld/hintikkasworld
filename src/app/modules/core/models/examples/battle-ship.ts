@@ -375,8 +375,9 @@ export class BattleShip extends ExampleDescription {
                 offset = 1
             }
             
-            for (let col2 = col; col2 <= col+s-1; col2++) {                                        
-                if ((col2 >= 1) && (col2 + this.shipsduplfree[i2] -1 <= this.nbcols)){
+            for (let col2 = col; col2 <= col+s-1; col2++) {
+
+                if (col2 >= 1){        
                     for (let row2 = row-this.shipsduplfree[i2]+1; row2 <= row-offset; row2++) {
                         if ((row2 >= 1) && (row2 + this.shipsduplfree[i2] -1 <= this.nbrows)) {
                             l2.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(agent, "ver", col2, row2, this.shipsduplfree[i2]))))
@@ -416,7 +417,7 @@ export class BattleShip extends ExampleDescription {
             }
             
             for (let row2 = row; row2 <= row+s-1; row2++) {                                        
-                if ((row2 >= 1) && (row2 + this.shipsduplfree[i2] -1 <= this.nbrows)){
+                if (row2 >= 1){
                     for (let col2 = col-this.shipsduplfree[i2]+1; col2 <= col-offset; col2++) { 
                         if ((col2 >= 1) && (col2 + this.shipsduplfree[i2] -1 <= this.nbcols)){
                             l2.push(new NotFormula(new AtomicFormula(getAtomBeginningShip(agent, "hor", col2, row2, this.shipsduplfree[i2]))))
