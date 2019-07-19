@@ -8,7 +8,6 @@ import { Obs } from '../epistemicmodel/symbolic-relation';
 import { ExactlyFormula, TrueFormula, AndFormula, ImplyFormula, AtomicFormula, NotFormula, OrFormula, Formula } from '../formula/formula';
 import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
-import { registerContentQuery } from '@angular/core/src/render3';
 
 class Cell {
     row: number;
