@@ -57,6 +57,11 @@ export class CoreComponent implements OnInit {
   }
 
 
+  isEpistemicModelReady() : boolean {
+    return this.bsEnv.value.getEpistemicModel().isLoaded();
+  }
+
+
   getFormulaGUI(): Formula {
     return FormulaFactory.createFormula(<string>$("#formula").val());
   }

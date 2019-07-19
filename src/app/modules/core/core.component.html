@@ -63,6 +63,7 @@
 
       <td id="hintikkasWorldScene" valign="top">
         <app-comics [obsEnv]='bsEnv.asObservable()'></app-comics>
+        <div id="test" *ngIf="!isEpistemicModelReady()">not ready yet!</div>
         <div id="doneDescriptor">Agents are not ready to be clicked</div>
       </td>
       

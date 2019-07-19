@@ -220,6 +220,9 @@ class FlatlandSuccessorSet implements SuccessorSet {
 }
 
 class FlatlandEpistemicModel implements EpistemicModel {
+    isLoaded(): boolean {
+        return true;
+    }
     static pointedWorld = new FlatlandWorld(
         { a: { x: 10, y: 30 }, b: { x: 50, y: 30 }, c: { x: 70, y: 50 } },
         { a: 0, b: Math.PI / 4, c: Math.PI / 2 });

@@ -21,6 +21,11 @@ import { of } from 'rxjs';
  * it implements an epistemic model described symbolically by means of BDDs
  */
 export class SymbolicEpistemicModel implements EpistemicModel {
+    isLoaded(): boolean {
+        return this._isLoaded;
+    }
+
+    private _isLoaded = false;
     private cbDoneDescriptor: Function = undefined;
 
     /**
@@ -42,7 +47,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         this.worldClass = worldClass;
         this.pointedValuation = descr.getPointedValuation();
         this.agents = descr.getAgents();
-        
+
         this.symbolicRelations = new Map();
         // loadDescriptor will call the worker to pass down the heavy part of constructing
         // a binary decision diagram
@@ -143,18 +148,23 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     private async loadDescriptor(descr: SEModelDescriptor | SEModelInternalDescriptor) {
         console.log("begin loadDescriptor...");
         this.propositionalAtoms = descr.getAtomicPropositions();
-        console.log( "   propositionalAtoms set!");
+        console.log("   propositionalAtoms set!");
         this.propositionalPrimes = SymbolicEpistemicModel.getPrimedAtomicPropositions(this.propositionalAtoms);
-        console.log( "   propositionalPrimes set!");
+        console.log("   propositionalPrimes set!");
         // console.log("Agents of SymbolicEpistemicModel", agents);
         if ((<any>descr).getSetWorldsFormulaDescription != undefined) { //we intend  "instanceof SEModelDescriptor"
-            this.loadModelDescriptor(<SEModelDescriptor>descr);
+             await this.loadModelDescriptor(<SEModelDescriptor>descr);
         }
         else { //we intend  "instanceof SEModelInternalDescriptor"
-            this.loadModelInternalDescriptor(<SEModelInternalDescriptor>descr);
+             await this.loadModelInternalDescriptor(<SEModelInternalDescriptor>descr);
         }
-        if(this.cbDoneDescriptor != undefined)
+
+        console.log("Callback function : " + this.cbDoneDescriptor)
+
+        if (this.cbDoneDescriptor != undefined)
             this.cbDoneDescriptor();
+
+        this._isLoaded = true;
     }
 
     private async loadModelDescriptor(descr: SEModelDescriptor) {
@@ -171,17 +181,17 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     private async loadModelInternalDescriptor(descr: SEModelInternalDescriptor) {
         let descriptor = <SEModelInternalDescriptor>descr;
-            this.bddSetWorlds = await descriptor.getSetWorldsBDDDescription();
-            console.log("bdd worlds is: " + this.bddSetWorlds);
-            for (let agent of this.agents) {
-                let bddRelation: BDDNode = await descriptor.getRelationBDD(agent);
-                console.log("bdd relation for agent " + agent + " is: " + bddRelation);
-                this.symbolicRelations.set(agent, bddRelation);
-                /* await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(this.bddSetWorlds),
-                     bddRelation]));*/
+        this.bddSetWorlds = await descriptor.getSetWorldsBDDDescription();
+        console.log("bdd worlds is: " + this.bddSetWorlds);
+        for (let agent of this.agents) {
+            let bddRelation: BDDNode = await descriptor.getRelationBDD(agent);
+            console.log("bdd relation for agent " + agent + " is: " + bddRelation);
+            this.symbolicRelations.set(agent, bddRelation);
+            /* await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(this.bddSetWorlds),
+                 bddRelation]));*/
 
-            }
-     }
+        }
+    }
 
     setCallBackForDoneDescriptor(callback) {
         this.cbDoneDescriptor = callback;
