@@ -207,18 +207,18 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return this.bddSetWorlds
     }
 
-    static getMapNotPrimeToPrime(atoms: string[]): Map<string, string> {
-        let map = new Map<string, string>();
+    static getMapNotPrimeToPrime(atoms: string[]): {[p: string]: string} {
+        let map = {};
         atoms.forEach((value) => {
-            map.set(value, SymbolicEpistemicModel.getPrimedVarName(value));
+            map[value] = SymbolicEpistemicModel.getPrimedVarName(value);
         });
         return map;
     }
 
-    static getMapPrimeToNotPrime(atoms: string[]): Map<string, string> {
-        let map = new Map<string, string>();
+    static getMapPrimeToNotPrime(atoms: string[]): {[p: string]: string} {
+        let map = {};
         atoms.forEach((value) => {
-            map.set(SymbolicEpistemicModel.getPrimedVarName(value), value);
+            map[SymbolicEpistemicModel.getPrimedVarName(value)] = value;
         });
         return map;
     }

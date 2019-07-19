@@ -63,6 +63,7 @@ export class BDDWorkerService {
     /*console.log("formulaToBDD begin... the formula is:");
     let formulaString = formula.prettyPrint();
     console.log(formulaString);*/
+    console.log("on the client side, we ask for the computation at ", new Date());
     return BDDWorkerService.call("formulaToBDD", [formula]);
   }
 
@@ -94,7 +95,7 @@ export class BDDWorkerService {
   }
 
 
-  public static applyRenaming(b: BDDNode, renaming: Map<string, string>): Promise<BDDNode> {
+  public static applyRenaming(b: BDDNode, renaming: {[p: string]: string}): Promise<BDDNode> {
     return BDDWorkerService.call("applyRenaming", [b, renaming]);
   }
 

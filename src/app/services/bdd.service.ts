@@ -224,12 +224,12 @@ export class BddService {
     return res;
   }
 
-  applyRenaming(b: BDDNode, renaming: Map<string, string>) {
+  applyRenaming(b: BDDNode, renaming: {[p:string]: string}) {
     const oldvars: string[] = [];
     const newvars: string[] = [];
-    for (const [o, n] of Array.from(renaming.entries())) {
+    for (const o in renaming) {
       oldvars.push(o);
-      newvars.push(n);
+      newvars.push(renaming[o]);
     }
 
     const oldvarsPtr = this.mallocAtomArray(oldvars);
@@ -565,6 +565,7 @@ export class BddService {
   }
 
   formulaToBDD(phi: Formula): BDDNode {
+    console.log("computation on the webworker side begins at ", new Date());
     return this.formulaToBDDRec(phi);
     
   }
