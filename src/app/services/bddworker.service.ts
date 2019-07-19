@@ -60,10 +60,10 @@ export class BDDWorkerService {
    * BDDWorkerService to pass a formula to the worker.
    */
   public static formulaToBDD(formula: Formula): Promise<BDDNode> {
-    console.log("formulaToBDD begin... the formula is:");
+    /*console.log("formulaToBDD begin... the formula is:");
     let formulaString = formula.prettyPrint();
-    console.log(formulaString);
-    return BDDWorkerService.call("formulaToBDD", [FormulaFactory.createFormula(formulaString)]);
+    console.log(formulaString);*/
+    return BDDWorkerService.call("formulaToBDD", [formula]);
   }
 
   public static applyAnd(args: BDDNode[]): Promise<BDDNode> {
@@ -131,7 +131,7 @@ export class BDDWorkerService {
   }
 
   static async debugInfo(str: string, b: number) {
-    console.log("InfoBDD for " + str + ": ADDR=" + b + "     isSat=" + await BDDWorkerService.isConsistent(b));
+    //console.log("InfoBDD for " + str + ": ADDR=" + b + "     isSat=" + await BDDWorkerService.isConsistent(b));
 }
 
   public static createLiteral(a: string): Promise<BDDNode> {
