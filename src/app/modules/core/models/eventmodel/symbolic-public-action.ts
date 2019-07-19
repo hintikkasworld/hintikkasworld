@@ -22,7 +22,7 @@ export class SymbolicPublicAction implements EventModel<SymbolicEpistemicModel> 
     }
     
     async isApplicableIn(M: SymbolicEpistemicModel): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        return await M.check(this.precondition);
     }
   
 }

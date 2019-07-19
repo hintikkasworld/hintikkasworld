@@ -564,6 +564,14 @@ export class BattleShip extends ExampleDescription {
 
         return new Valuation(V);
     }
+
+
+
+    getWorldExample() : BattleShipWorld {
+        return new BattleShipWorld(this.nbrows, this.nbcols, this.ships, this.agents, false, this.getValuationExample());
+    }
+
+
     getWorldClass(): import("../epistemicmodel/world-valuation-type").WorldValuationType {
         return <WorldValuationType><unknown>curryClass(BattleShipWorld, this.nbrows, this.nbcols, this.agents, this.ships, this.clicked);
     }
