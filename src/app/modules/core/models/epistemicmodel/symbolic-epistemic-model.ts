@@ -287,14 +287,18 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     async queryWorldsSatisfying(phi: Formula): Promise<BDDNode> {
-
+        if(phi.isBoolean())
+            return await this.queryWorldsSatisfyingBooleanFormula(phi);
+        else {
+            let allWorlds = this.bddSetWorlds;
+            return await this._query(allWorlds, phi);
+        }
         /*  let allWorlds: BDDNode = await BDDWorkerService.createFalse();
           this.symbolicRelations.forEach(async (value: BDDNode, key: string) => {
               let f2: BDDNode = await BDDWorkerService.applyExistentialForget(await BDDWorkerService.createCopy(value), this.propositionalPrimes);
               allWorlds = await BDDWorkerService.applyOr([allWorlds, f2]);
           });*/
-        let allWorlds = this.bddSetWorlds;
-        return await this._query(allWorlds, phi);
+        
     }
 
 
