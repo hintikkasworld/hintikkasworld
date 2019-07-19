@@ -41,7 +41,7 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
                 await BS.debugInfo("clique", clique);
                 
                 if (this.observers == undefined || this.observers.includes(agent))
-                    return await BS.applyAnd([await BS.createCopy(previousRelation), await BS.createCopy(clique)]);
+                    return await BS.applyAnd([previousRelation, clique]);
                 else
                     return await descr.getRelationBDD(agent);
             },

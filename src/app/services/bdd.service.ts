@@ -160,9 +160,9 @@ export class BddService {
   applyAnd(b: BDDNode[]): BDDNode {
     // console.log("Will apply and to this array of BDDs:", b.map(b => this.nodeToString(b)));
     let result = this.createTrue();
-    for (let i = 0; i < b.length; i++) {
+    for (let bdd of b) {
       // console.log(`Will conjoin ${this.nodeToString(result)} with ${this.nodeToString(b[i])}`);
-      result = this.bddModule._apply_and(result, b[i]);
+      result = this.bddModule._apply_and(result, bdd);
       // console.log("applied ", i+1, " ANDs out of ", b.length);
     }
     return result;
