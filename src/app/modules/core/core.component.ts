@@ -47,8 +47,12 @@ export class CoreComponent implements OnInit {
     this.bsEnv = new BehaviorSubject(env);
 
     this.bsEnv.subscribe(env => this.initModelChecking());
-  
-    
+
+  }
+
+
+  isEpistemicModelReady() : boolean {
+    return this.bsEnv.value.getEpistemicModel().isLoaded();
   }
 
 

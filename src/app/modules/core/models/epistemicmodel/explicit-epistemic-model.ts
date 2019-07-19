@@ -8,6 +8,11 @@ import { World } from './world';
 import { SuccessorSet } from './successor-set';
 
 export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
+    isLoaded(): boolean {
+        return true;
+    }
+
+
     async check(formula: types.Formula) {
         return await this.modelCheck(this.getPointedWorldID(), formula);
     }

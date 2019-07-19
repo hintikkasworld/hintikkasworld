@@ -7,6 +7,7 @@ import { World } from './world';
  * a symbolic representation, or... something else.
  */
 export interface EpistemicModel {
+    isLoaded(): boolean;
     /**
      * @returns the pointed world (the current world)
      */
