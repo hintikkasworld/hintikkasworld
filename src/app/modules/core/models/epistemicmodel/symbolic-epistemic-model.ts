@@ -176,7 +176,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     private async loadModelInternalDescriptor(descr: SEModelInternalDescriptor) {
         let descriptor = <SEModelInternalDescriptor>descr;
         this.bddSetWorlds = await descriptor.getSetWorldsBDDDescription();
-        console.log("bdd worlds is: " + this.bddSetWorlds);
         for (let agent of this.agents) {
             let bddRelation: BDDNode = await descriptor.getRelationBDD(agent);
             console.log("bdd relation for agent " + agent + " is: " + bddRelation);

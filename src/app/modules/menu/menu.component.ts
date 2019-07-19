@@ -37,8 +37,9 @@ export class MenuComponent implements OnInit {
     new MineSweeper(16,16, 40), 
     new MineSweeper(12, 15, 20), new Belote(), 
     new BattleShip(3,3,[2,3]),
-    new BattleShip(4,4,[2,3]),
-    new BattleShip(5,5,[2,3]),
+    new BattleShip(4,4,[3,3]),
+    new BattleShip(5,5,[3,3]),
+    new BattleShip(8,8,[3,3]),
      new SimpleSymbolicHanabi(),  new Flatland(false), new Flatland(true)];
 
   technicalExamples = [new ClassOfModels(), new CommonknowledgeStrictlyMoreExpressive(), new CellularAutomaton()];
