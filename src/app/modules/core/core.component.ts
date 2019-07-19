@@ -47,12 +47,6 @@ export class CoreComponent implements OnInit {
     this.bsEnv = new BehaviorSubject(env);
 
     this.bsEnv.subscribe(env => this.initModelChecking());
-    let sem = this.bsEnv.value.getEpistemicModel();
-    if (sem instanceof SymbolicEpistemicModel) {
-      sem.setCallBackForDoneDescriptor(function () {
-        $('#doneDescriptor').hide();
-      });
-    }
   }
 
 
