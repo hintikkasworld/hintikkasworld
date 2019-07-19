@@ -1,6 +1,6 @@
 import { EventModelAction } from './../environment/event-model-action';
 import { SymbolicPublicAnnouncement } from './../eventmodel/symbolic-public-announcement';
-import { ExactlyFormula, TrueFormula, AndFormula, AtomicFormula, NotFormula, Formula } from './../formula/formula';
+import { ExactlyFormula, AndFormula, AtomicFormula, NotFormula, Formula } from './../formula/formula';
 import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
@@ -10,7 +10,6 @@ import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-mod
 import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
-import { BDDWorkerService } from 'src/app/services/bddworker.service';
 
 class Cell {
     row: number;
