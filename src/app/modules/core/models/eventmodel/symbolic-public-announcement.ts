@@ -27,11 +27,11 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
             getSetWorldsBDDDescription: async (): Promise<BDDNode> => await bddWorldsPromise,
 
             getRelationBDD: async (agent: string): Promise<BDDNode> => {
-                const previousRelation = await descr.getRelationBDD(agent);
+                const previousRelation = M.getRelationBDD(agent);
 
                 if (this.observers == undefined || this.observers.includes(agent)) {
 
-                    await BS.debugInfo("previousRelation", previousRelation);
+                   // await BS.debugInfo("previousRelation", previousRelation);
 
                     const possibleWorlds = await bddWorldsPromise;
                     await BS.debugInfo("possibleWorlds", possibleWorlds);

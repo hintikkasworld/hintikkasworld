@@ -21,6 +21,9 @@ import { of } from 'rxjs';
  * it implements an epistemic model described symbolically by means of BDDs
  */
 export class SymbolicEpistemicModel implements EpistemicModel {
+    getRelationBDD(agent: string) : number {
+        return this.symbolicRelations.get(agent);
+    }
     isLoaded(): boolean {
         return this._isLoaded;
     }
