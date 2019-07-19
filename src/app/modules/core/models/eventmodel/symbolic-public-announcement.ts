@@ -28,20 +28,21 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
 
             getRelationBDD: async (agent: string): Promise<BDDNode> => {
                 const previousRelation = await descr.getRelationBDD(agent);
-                await BS.debugInfo("previousRelation", previousRelation);
 
-                const possibleWorlds = await bddWorldsPromise;
-                await BS.debugInfo("possibleWorlds", possibleWorlds);
+                if (this.observers == undefined || this.observers.includes(agent)) {
 
-                const possibleWorldsPrime = await BS.applyRenaming(await BS.createCopy(possibleWorlds),
-                    SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
-                await BS.debugInfo("possibleWorldsPrime", possibleWorldsPrime);
+                    await BS.debugInfo("previousRelation", previousRelation);
 
-                const clique = await BS.applyAnd([await BS.createCopy(possibleWorlds), possibleWorldsPrime]);
-                await BS.debugInfo("clique", clique);
-                
-                if (this.observers == undefined || this.observers.includes(agent))
-                    return await BS.applyAnd([previousRelation, clique]);
+                    const possibleWorlds = await bddWorldsPromise;
+                    await BS.debugInfo("possibleWorlds", possibleWorlds);
+
+                    const possibleWorldsPrime = await BS.applyRenaming(await BS.createCopy(possibleWorlds),
+                        SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
+                    await BS.debugInfo("possibleWorldsPrime", possibleWorldsPrime)
+                    /*  const clique = await BS.applyAnd([await BS.createCopy(possibleWorlds), possibleWorldsPrime]);
+                      await BS.debugInfo("clique", clique);*/
+                    return await BS.applyAnd([previousRelation, await BS.createCopy(possibleWorlds), possibleWorldsPrime])
+                }
                 else
                     return await descr.getRelationBDD(agent);
             },
