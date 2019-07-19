@@ -57,13 +57,22 @@ export class MuddyChildren extends ExampleDescription {
 
     getAtomicPropositions(): string[] {
         let A = [];
-        for (let i = 1; i <= this.nbChildren; i++) {
-            A.push("m" + String.fromCharCode(96 + i));
+        for (let i = 0; i <= this.nbChildren-1; i++) {
+            A.push("m" + MuddyChildren.getAgentName(i));
         }
         return A;
     }
-    
+
     getName() { return (this.nbChildren.toString()) + " Muddy Children" };
+
+    /**
+     * 
+     * @param i 
+     * @returns the agent's name of number i (agent's name of number 0 is a, of number 1 is b etc.)
+     */
+    static getAgentName(i: number) {
+        return String.fromCharCode(97 + i);
+    }
 
     generateAllBinaryStrings(n: number): string[] {
         if (n <= 0) {
@@ -91,7 +100,7 @@ export class MuddyChildren extends ExampleDescription {
         for (let i = 0; i < A.length; i++) {
             let v: Map<string, boolean> = new Map();
             for (let k = 0; k <= A[i].length; k++) {
-                v.set("m" + String.fromCharCode(97 + k), (A[i].charAt(k) == '1'))
+                v.set("m" + MuddyChildren.getAgentName(k), (A[i].charAt(k) == '1'))
             }
             M.addWorld("w" + A[i], new MuddyChildrenWorld(Valuation.buildFromMap(v), this.nbChildren));
         }
@@ -109,7 +118,7 @@ export class MuddyChildren extends ExampleDescription {
            
             for (let iav = 0; iav < Av.length; iav++) {
                 for (let iap = 0; iap < Ap.length; iap++) {
-                    M.addEdgesCluster(String.fromCharCode(97 + i), ["w" + Av[iav] + "0" + Ap[iap], "w" + Av[iav] + "1" + Ap[iap]])
+                    M.addEdgesCluster(MuddyChildren.getAgentName(i), ["w" + Av[iav] + "0" + Ap[iap], "w" + Av[iav] + "1" + Ap[iap]])
                 }
             }
         }
@@ -125,8 +134,8 @@ export class MuddyChildren extends ExampleDescription {
         let fatherann = "ma"
         let donotknowann = "(not (K a ma))"
         for (let i = 1; i < this.nbChildren; i++) {
-            fatherann += " or m" + String.fromCharCode(97 + i)
-            donotknowann += " and (not (K " + String.fromCharCode(97 + i) + " m" + String.fromCharCode(97 + i) + "))"
+            fatherann += " or m" + MuddyChildren.getAgentName(i)
+            donotknowann += " and (not (K " + MuddyChildren.getAgentName(i) + " m" + MuddyChildren.getAgentName(i) + "))"
         }
         fatherann = "(" + fatherann + ")"
         donotknowann = "(" + donotknowann + ")"
