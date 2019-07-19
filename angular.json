@@ -17,7 +17,7 @@
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
-            "tsConfig": "src/tsconfig.app.json",
+            "tsConfig":"src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
               "src/assets"
@@ -26,7 +26,8 @@
               "src/styles.css"
             ],
             "scripts": ["node_modules/jquery/dist/jquery.min.js"],
-            "es5BrowserSupport": true
+            "es5BrowserSupport": true,
+            "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {
             "production": {
@@ -94,7 +95,8 @@
           "options": {
             "tsConfig": [
               "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
+              "src/tsconfig.spec.json",
+              "tsconfig.worker.json"
             ],
             "exclude": [
               "**/node_modules/**"

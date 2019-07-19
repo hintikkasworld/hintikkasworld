@@ -7,6 +7,7 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
+import { BDDWorkerService } from 'src/app/services/bddworker.service';
 /**
  * @param truePropositions an array of true propositions
  * @returns a possible combination of cards

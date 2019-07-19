@@ -7,26 +7,51 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { World } from './world';
 import { SymbolicRelation, Obs } from './symbolic-relation';
 import { Formula, AndFormula, ExactlyFormula, NotFormula, EquivFormula, AtomicFormula, FormulaFactory, TrueFormula, KposFormula } from '../formula/formula';
-import { BDD } from '../formula/bdd';
 import * as types from './../formula/formula';
 import { BddService, BDDNode } from '../../../../services/bdd.service';
 import { WorldValuationType } from './world-valuation-type';
 import { SEModelDescriptor } from './descriptor/se-model-descriptor';
 import { SEModelInternalDescriptor } from './descriptor/se-model-internal-descriptor';
-
-
+import { BDDWorkerService } from 'src/app/services/bddworker.service';
+import { Observable } from 'rxjs/internal/Observable';
+import { of } from 'rxjs';
 
 
 /**
  * it implements an epistemic model described symbolically by means of BDDs
  */
 export class SymbolicEpistemicModel implements EpistemicModel {
-    static getRulesAndRulesPrime(formulaSetWorlds: any): BDDNode {
-        let formulaSetWorldsPrime = formulaSetWorlds.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
-        let formulaSetWorldsAndFormulaSetWorldsPrime = new AndFormula([formulaSetWorldsPrime, formulaSetWorlds]);
 
-        return BDD.buildFromFormula(formulaSetWorldsAndFormulaSetWorldsPrime);
+    /**
+        * There are two way to create a symbolic epistemic model.
+        * In both way, we need to create descriptor class implementing
+        * either SEModelDescriptor or SEModelInternalDescriptor.
+        * SEModelDescriptor provides methods to build a symbolic epistemic
+        * model from crash. SEModelInternalDescriptor in the other hand
+        * consists of accessors to get information directly from the memory.
+        * SEModelDescriptor are used mainly to initialize initial model for 
+        * symbolic examples. SEModelInternalDescriptor is used in the 
+        * clone a model.
+        * For more example, please check symbolic models like belote or minesweeper
+        * @param worldClass  
+        * @param descr a descriptor to initialize every 
+        */
+    constructor(worldClass: WorldValuationType, descr: SEModelDescriptor | SEModelInternalDescriptor) {
+        console.log("SymbolicEpistemicModel.constructor");
+        this.worldClass = worldClass;
+        this.pointedValuation = descr.getPointedValuation();
+        this.agents = descr.getAgents();
+        
+        this.symbolicRelations = new Map();
+        // loadDescriptor will call the worker to pass down the heavy part of constructing
+        // a binary decision diagram
+        this.loadDescriptor(descr);
+        console.log("end of the construction")
+
     }
+
+
+
 
 
     static getPrimedAtomicPropositions(propositionalAtoms: string[]): string[] {
@@ -39,7 +64,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     protected pointedValuation: Valuation; //the valuation that corresponds to the pointed world
-    protected readonly propositionalAtoms: string[];
+    protected propositionalAtoms: string[];
     protected propositionalPrimes: string[];
 
     protected bddSetWorlds: BDDNode;
@@ -74,7 +99,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
 
-
     getAgents(): string[] { return this.agents; }
 
     /**
@@ -98,28 +122,12 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return str.includes(SymbolicEpistemicModel.getPrimedString());
     }
 
-    /**
-     * There are two way to create a symbolic epistemic model.
-     * In both way, we need to create descriptor class implementing
-     * either SEModelDescriptor or SEModelInternalDescriptor.
-     * SEModelDescriptor provides methods to build a symbolic epistemic
-     * model from crash. SEModelInternalDescriptor in the other hand
-     * consists of accessors to get information directly from the memory.
-     * SEModelDescriptor are used mainly to initialize initial model for 
-     * symbolic examples. SEModelInternalDescriptor is used in the 
-     * clone a model.
-     * For more example, please check symbolic models like belote or minesweeper
-     * @param worldClass  
-     * @param descr a descriptor to initialize every 
-     */
-    constructor(worldClass: WorldValuationType, descr: SEModelDescriptor | SEModelInternalDescriptor) {
-        this.worldClass = worldClass;
-        this.pointedValuation = descr.getPointedValuation();
-        this.agents = descr.getAgents();
-        this.propositionalAtoms = descr.getAtomicPropositions();
-        this.symbolicRelations = new Map();
-        this.loadDescriptor(descr);
 
+
+    async getRulesAndRulesPrime(formulaSetWorlds: Formula): Promise<BDDNode> {
+        let formulaSetWorldsPrime = formulaSetWorlds.renameAtoms((name) => { return SymbolicEpistemicModel.getPrimedVarName(name); });
+        let formulaSetWorldsAndFormulaSetWorldsPrime = new AndFormula([formulaSetWorldsPrime, formulaSetWorlds]);
+        return await BDDWorkerService.formulaToBDD(formulaSetWorldsAndFormulaSetWorldsPrime);
     }
 
 
@@ -131,70 +139,53 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * @param descr 
      */
     private async loadDescriptor(descr: SEModelDescriptor | SEModelInternalDescriptor) {
+        console.log("begin loadDescriptor...");
+        this.propositionalAtoms = descr.getAtomicPropositions();
+        console.log( "   propositionalAtoms set!");
         this.propositionalPrimes = SymbolicEpistemicModel.getPrimedAtomicPropositions(this.propositionalAtoms);
+        console.log( "   propositionalPrimes set!");
         // console.log("Agents of SymbolicEpistemicModel", agents);
         if ((<any>descr).getSetWorldsFormulaDescription != undefined) { //we intend  "instanceof SEModelDescriptor"
-            let descriptor = <SEModelDescriptor>descr;
-
-            //from now on, it should done asynchronously
-            this.bddSetWorlds = SymbolicEpistemicModel.getRulesAndRulesPrime(descriptor.getSetWorldsFormulaDescription());
-
-
-            for (let agent of this.agents) {
-                let bddRelation = descriptor.getRelationDescription(agent).toBDD();
-                this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
-            }
+            this.loadModelDescriptor(<SEModelDescriptor>descr);
         }
         else { //we intend  "instanceof SEModelInternalDescriptor"
-            let descriptor = <SEModelInternalDescriptor>descr;
-            this.bddSetWorlds = descriptor.getSetWorldsBDDDescription();
-            for (let agent of this.agents) {
-                let bddRelation = descriptor.getRelationBDD(agent);
-                this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
-            }
+            this.loadModelInternalDescriptor(<SEModelInternalDescriptor>descr);
         }
     }
 
+    private async loadModelDescriptor(descr: SEModelDescriptor) {
+        let descriptor = <SEModelDescriptor>descr;
+        //from now on, it should done asynchronously
+        this.bddSetWorlds = await this.getRulesAndRulesPrime(descriptor.getSetWorldsFormulaDescription());
+        for (let agent of this.agents) {
+            let bddRelation: BDDNode = await descriptor.getRelationDescription(agent).toBDD();
+            //this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
+            this.symbolicRelations.set(agent, await BDDWorkerService.applyAnd(
+                [await BDDWorkerService.createCopy(this.bddSetWorlds), bddRelation]));
+        }
+    }
+
+    private async loadModelInternalDescriptor(descr: SEModelInternalDescriptor) {
+        let descriptor = <SEModelInternalDescriptor>descr;
+            this.bddSetWorlds = await descriptor.getSetWorldsBDDDescription();
+            console.log("bdd worlds is: " + this.bddSetWorlds);
+            for (let agent of this.agents) {
+                let bddRelation: BDDNode = await descriptor.getRelationBDD(agent);
+                console.log("bdd relation for agent " + agent + " is: " + bddRelation);
+                this.symbolicRelations.set(agent, bddRelation);
+                /* await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(this.bddSetWorlds),
+                     bddRelation]));*/
+
+            }
+    }
     /**
     @returns the pointed world
     **/
     getPointedWorld() { return this.getWorld(this.pointedValuation); }
 
     getSuccessors(w: World, a: string): SymbolicSuccessorSet {
-
-        // console.log("getSucessors", a, this.getAgentSymbolicRelation(a))
-
-        let props: Map<string, boolean> = SymbolicEpistemicModel.valuationToMap((<WorldValuation>w).valuation);
-        //console.log("Props", props);
-        let wBDD = BDD.bddService.createCube(props);
-
-        //    console.log("after cube")
-        //console.log("cube", BDD.bddService.pickAllSolutions(bdd));
-        //console.log("graphe", BDD.bddService.pickAllSolutions(this.getAgentGraphe(a)));
-
-        let bddRelationOnW = BDD.bddService.applyAnd([
-            BDD.bddService.createCopy(this.getAgentSymbolicRelation(a)),
-            wBDD]);
-
-        //  console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))
-        //console.log("AND", BDD.bddService.pickAllSolutions(bdd_and));
-
-        let bddSetSuccessorsWithPrime = BDD.bddService.applyExistentialForget(
-            bddRelationOnW,
-            this.propositionalAtoms);
-
-        //console.log("after forget", BDD.bddService.pickAllSolutions(bddSetSuccessorsWithPrime))
-        //console.log("forget", this.propositionalAtoms, BDD.bddService.pickAllSolutions(forget));
-
-        let bddSetSuccessors = BDD.bddService.applyRenaming(
-            bddSetSuccessorsWithPrime,
-            SymbolicEpistemicModel.getMapPrimeToNotPrime(this.propositionalAtoms));
-
-        //console.log("Calcul bdd sucessors", BDD.bddService.pickAllSolutions(bddSetSuccessors));
-
-
         //console.log("Solutions", sols);
-        return new SymbolicSuccessorSet(this, bddSetSuccessors, this.propositionalAtoms);
+        return new SymbolicSuccessorSet(this, w, a);
     };
 
     getAgentSymbolicRelation(agent: string): BDDNode {
@@ -239,61 +230,58 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * @param formula a modal formula
      * @returns true if the formula is true in the real world (the pointed one)
      */
-    check(formula: Formula): boolean {
-        let bddFormulaSemantics = this.queryWorldsSatisfying(formula);
-        // console.log("check middle", BDD.bddService.pickAllSolutions(pointeur), SymbolicEpistemicModel.valuationToMap(this.pointed));
-        let res = BDD.bddService.applyConditioning(bddFormulaSemantics, SymbolicEpistemicModel.valuationToMap(this.pointedValuation));
-        //console.log("check end",  BDD.bddService.pickAllSolutions(res))
-        return BDD.bddService.isConsistent(res)
+    async check(formula: Formula): Promise<boolean> {
+        let bddFormulaSemantics = await this.queryWorldsSatisfying(formula);
+        let res = await BDDWorkerService.applyConditioning(bddFormulaSemantics,
+            this.pointedValuation.getPropositionMap());
+        return await BDDWorkerService.isConsistent(<BDDNode>res);
     }
 
-    queryWorldsSatisfying(phi: Formula): BDDNode {
+    async queryWorldsSatisfying(phi: Formula): Promise<BDDNode> {
 
-        let allWorlds = BDD.bddService.createFalse();
-        this.symbolicRelations.forEach((value: BDDNode, key: string) => {
-            let f2 = BDD.bddService.applyExistentialForget(BDD.bddService.createCopy(value), this.propositionalPrimes);
-            allWorlds = BDD.bddService.applyOr([allWorlds, f2]);
-        });
-
-        // console.log("f of _query_worlds", BDD.bddService.pickAllSolutions(all_worlds))
-
-        let res = this._query(allWorlds, phi);
-
-        // console.log("end _query_worlds", res);
-        return res;
+        /*  let allWorlds: BDDNode = await BDDWorkerService.createFalse();
+          this.symbolicRelations.forEach(async (value: BDDNode, key: string) => {
+              let f2: BDDNode = await BDDWorkerService.applyExistentialForget(await BDDWorkerService.createCopy(value), this.propositionalPrimes);
+              allWorlds = await BDDWorkerService.applyOr([allWorlds, f2]);
+          });*/
+        let allWorlds = this.bddSetWorlds;
+        return await this._query(allWorlds, phi);;
     }
 
-    private _query(all_worlds: BDDNode, phi: Formula): BDDNode {
+    /*
+    
+    */
+    private async _query(all_worlds: BDDNode, phi: Formula): Promise<BDDNode> {
         // console.log("Query", bdd, phi)
-
-        if (phi instanceof types.TrueFormula) { return BDD.bddService.createCopy(all_worlds); }
-        if (phi instanceof types.FalseFormula) { return BDD.bddService.createFalse(); }
+        if (phi instanceof types.TrueFormula) { return await BDDWorkerService.createCopy(all_worlds); }
+        if (phi instanceof types.FalseFormula) { return await BDDWorkerService.createFalse(); }
         if (phi instanceof types.AtomicFormula) {
             // console.log("Atom ", (<types.AtomicFormula>phi).getAtomicString())
-            return BDD.bddService.applyAnd([
-                BDD.bddService.createLiteral((<types.AtomicFormula>phi).getAtomicString()),
-                BDD.bddService.createCopy(all_worlds)
+            return await BDDWorkerService.applyAnd([
+                await BDDWorkerService.createLiteral((<types.AtomicFormula>phi).getAtomicString()),
+                await BDDWorkerService.createCopy(all_worlds)
             ]
             );
         }
         if (phi instanceof types.AndFormula) {
-            return BDD.bddService.applyAnd(
-                ((<types.AndFormula>phi).formulas).map(
-                    (f) => this._query(all_worlds, f)
-                )
-            );
+            let arrayNumber: number[] = [];
+            for (let f of (<types.AndFormula>phi).formulas) {
+                arrayNumber.push(await this._query(all_worlds, f));
+            }
+            return await BDDWorkerService.applyAnd(arrayNumber);
         }
         if (phi instanceof types.OrFormula) {
-            return BDD.bddService.applyOr(
-                ((<types.OrFormula>phi).formulas).map(
-                    (f) => this._query(all_worlds, f)
-                )
-            );
+            let arrayNumber: number[] = [];
+            for (let f of (<types.OrFormula>phi).formulas) {
+                arrayNumber.push(await this._query(all_worlds, f));
+            }
+
+            return await BDDWorkerService.applyOr(arrayNumber);
         }
         if (phi instanceof types.NotFormula) {
             //console.log("Not", (<types.NotFormula>phi).formula);
-            let res = BDD.bddService.applyNot(this._query(all_worlds, (<types.NotFormula>phi).formula));
-            let res2 = BDD.bddService.applyAnd([BDD.bddService.createCopy(all_worlds), res]);
+            let res = await BDDWorkerService.applyNot(await this._query(all_worlds, (<types.NotFormula>phi).formula));
+            let res2 = await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(all_worlds), res]);
             return res2;
         }
         if (phi instanceof types.KFormula) {
@@ -308,15 +296,15 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         }
         if (phi instanceof types.KposFormula) {
             //console.log("Kpos")
-            let mp = BDD.bddService.applyRenaming(
-                this._query(all_worlds, (<types.KposFormula>phi).formula),
+            let mp = await BDDWorkerService.applyRenaming(
+                await this._query(all_worlds, (<types.KposFormula>phi).formula),
                 SymbolicEpistemicModel.getMapPrimeToNotPrime(this.propositionalAtoms)
             );
             // console.log("mp", BDD.bddService.pickAllSolutions(mp));
-            let bdd_a = this.getAgentSymbolicRelation((<types.KposFormula>phi).agent);
-            let bdd_and = BDD.bddService.applyAnd([BDD.bddService.createCopy(bdd_a), mp]);
+            let bdd_a = await this.getAgentSymbolicRelation((<types.KposFormula>phi).agent);
+            let bdd_and = await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(bdd_a), mp]);
             // console.log("bdd_and", BDD.bddService.pickAllSolutions(bdd_and).map(v => v.toAssignment(this.propositionalAtoms.concat(this.propositionalPrimes))), this.propositionalPrimes);
-            let res = BDD.bddService.applyExistentialForget(bdd_and, this.propositionalPrimes);
+            let res = await BDDWorkerService.applyExistentialForget(bdd_and, this.propositionalPrimes);
             // console.log("res Kpos", BDD.bddService.pickAllSolutions(res).map(v => v.toAssignment(this.propositionalAtoms)));
             return res
         }
@@ -330,11 +318,11 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                 (<types.KwFormula>phi).agent,
                 new types.NotFormula((<types.KwFormula>phi).formula)
             );
-            return this._query(all_worlds, new types.OrFormula([Knp, Kp]));
+            return await this._query(all_worlds, new types.OrFormula([Knp, Kp]));
         }
         if (phi instanceof types.ExactlyFormula) {
             //return BDD.bddService.applyAnd([BDD.buildFromFormula(phi), BDD.bddService.createCopy(all_worlds)])
-            return this._query(all_worlds, <types.ExactlyFormula>phi.convertToNormalFormula());
+            return await this._query(all_worlds, <types.ExactlyFormula>phi.convertToNormalFormula());
 
         }
 
@@ -363,27 +351,14 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return new AndFormula(literals);
     }
 
-    /**
-     * 
-     * @param valuation 
-     * @returns a Map that associates a Boolean to each proposition (the Boolean is the truth value of that proposition)
-     */
-    static valuationToMap(valuation: Valuation): Map<string, boolean> {
-        let map = new Map<string, boolean>();
-        for (var element in valuation.propositions)
-            map.set(element, valuation.propositions[element]);
-
-        return map;
-    }
-
 
 
     getInternalDescription(): SEModelInternalDescriptor {
         return {
             getAgents: () => this.agents,
             getAtomicPropositions: () => this.propositionalAtoms,
-            getSetWorldsBDDDescription: () => this.bddSetWorlds,
-            getRelationBDD: (agent: string) => this.symbolicRelations.get(agent),
+            getSetWorldsBDDDescription: async () => this.bddSetWorlds,
+            getRelationBDD: async (agent: string) => this.symbolicRelations.get(agent),
             getPointedValuation: () => this.pointedValuation
         }
     }
@@ -394,7 +369,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      */
     toExplicit(): ExplicitEpistemicModel {
         let M = new ExplicitEpistemicModel();
-        BDD.bddService.pickAllSolutions(this.bddSetWorlds, this.propositionalAtoms);
+        BDDWorkerService.pickAllSolutions(this.bddSetWorlds, this.propositionalAtoms);
         return M;
     }
 

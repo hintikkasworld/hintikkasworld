@@ -33,6 +33,6 @@ export interface EpistemicModel {
      * @param formula 
      * @returns true if the formula is true in the pointed world
      */
-    check(formula: Formula);
+    check(formula: Formula): Promise<boolean>;
 
 }

@@ -29,7 +29,6 @@
           <label id="'labelinternalPerspectiveAgent' + agent" [for]="'internalPerspectiveAgent' + agent" [title]="'Internal perspective of agent ' + agent">
             <img width=32px [src]="'assets/img/agent' + agent + '.png'" />
           </label>
-
         </div>
 
         <div class="vr"></div>
@@ -62,12 +61,11 @@
 
       </td>
 
-
-
       <td id="hintikkasWorldScene" valign="top">
         <app-comics [obsEnv]='bsEnv.asObservable()'></app-comics>
+        <div id="doneDescriptor">Agents are not ready to be clicked</div>
       </td>
-
+      
       <td id="hintikkasWorldKripkeModel" valign="top">
           Atomic propositions:
         <div id="atomicPropositionList">
@@ -97,5 +95,7 @@
 
     </tr>
   </table>
+  
   <div id="test" style="float: left;"></div>
 </div>
+

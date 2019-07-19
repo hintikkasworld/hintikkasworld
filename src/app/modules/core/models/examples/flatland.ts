@@ -139,7 +139,7 @@ class FlatlandSuccessorSet implements SuccessorSet {
         this.ckPositions = ckPositions;
     }
 
-    getNumber(): number {
+    async getNumber(): Promise<number> {
         if (this.isSingleSuccessor())
             return 1;
         else
@@ -235,7 +235,7 @@ class FlatlandEpistemicModel implements EpistemicModel {
     getSuccessors(w: FlatlandWorld, a: string): SuccessorSet {
         return new FlatlandSuccessorSet(w, a, this.ckPositions);
     }
-    check(formula: types.Formula) {
+    async check(formula: types.Formula) : Promise<boolean> {
         return this.modelCheck(this.getPointedWorld() , formula);
     }
 

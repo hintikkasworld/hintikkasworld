@@ -3,13 +3,13 @@ import { SymbolicEvent } from "./symbolic-event";
 import { EpistemicModel } from "../epistemicmodel/epistemic-model";
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
-import { BDD } from '../formula/bdd';
 import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { BddService, BDDNode } from '../../../../services/bdd.service';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 import { Formula } from '../formula/formula';
 import { SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { Valuation } from '../epistemicmodel/valuation';
+import { BDDWorkerService } from 'src/app/services/bddworker.service';
 
 type EventId = string;
 type AgentId = string;
@@ -113,119 +113,120 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
      */
     apply(M: SymbolicEpistemicModel): SymbolicEpistemicModel{
 
-        let example = this;
+            //TO BE REWRITTEN
+        // let example = this;
 
-        class SEModelDescriptorFormulaEvent implements SEModelDescriptor {
-            getAtomicPropositions(): string[] {
-                throw new Error("Method not implemented.");
-            }            
-            getAgents(): string[] {
-                throw new Error("Method not implemented.");
-            }
-            getSetWorldsFormulaDescription(): Formula {
-                throw new Error("Method not implemented.");
-            }
-            getRelationDescription(agent: string): SymbolicRelation {
-                throw new Error("Method not implemented.");
-            }
-            getPointedValuation(): Valuation {
-                throw new Error("Method not implemented.");
-            }
+        // class SEModelDescriptorFormulaEvent implements SEModelDescriptor {
+        //     getAtomicPropositions(): string[] {
+        //         throw new Error("Method not implemented.");
+        //     }            
+        //     getAgents(): string[] {
+        //         throw new Error("Method not implemented.");
+        //     }
+        //     getSetWorldsFormulaDescription(): Formula {
+        //         throw new Error("Method not implemented.");
+        //     }
+        //     getRelationDescription(agent: string): SymbolicRelation {
+        //         throw new Error("Method not implemented.");
+        //     }
+        //     getPointedValuation(): Valuation {
+        //         throw new Error("Method not implemented.");
+        //     }
 
             
-        }
-        //const DEBUGLOG = (msg, n) => {};
-        const DEBUGLOG = (msg, n) => console.log(msg, BDD.bddService.nodeToString(n), BDD.bddService.countSolutions(n) + " solutions", BDD.bddService.pickSolutions(n));
+        // }
+        // const DEBUGLOG = (msg, n) => {};
+        // //const DEBUGLOG = (msg, n) => console.log(msg, BDD.bddService.nodeToString(n), BDD.bddService.countSolutions(n) + " solutions", BDD.bddService.pickSolutions(n));
         
-        let agentMap = new Map<AgentId, BDDNode>();
+        // let agentMap = new Map<AgentId, BDDNode>();
 
-        console.log("APPLY", this.pointed, M.getPointedWorld().valuation, Object.keys(this.getUniqueEvent))
-        DEBUGLOG("this.pointed", this.getUniqueEvent(this.pointed).post);
+        // console.log("APPLY", this.pointed, M.getPointedWorld().valuation, Object.keys(this.getUniqueEvent))
+        // DEBUGLOG("this.pointed", this.getUniqueEvent(this.pointed).post);
 
-        for(let agent of this.agents){
+        // for(let agent of this.agents){
 
-            const agentEventRelation = BDD.bddService.createCopy(this.getPlayerRelation(agent));
+        //     const agentEventRelation = BDDWorkerService.createCopy(this.getPlayerRelation(agent));
 
-            console.log("applying to agent " + agent);
+        //     console.log("applying to agent " + agent);
 
-            /* Get the minus variables of the support */
-            const var_minus: string[] = [];
-            for(const vari of BDD.bddService.support(agentEventRelation))
-                var_minus.push(SymbolicEventModel.removePost(vari));
+        //     /* Get the minus variables of the support */
+        //     const var_minus: string[] = [];
+        //     for(const vari of BDD.bddService.support(agentEventRelation))
+        //         var_minus.push(SymbolicEventModel.removePost(vari));
             
-            /* Get the posted variables */
-            const var_plus: string[] = [];
-            for(const vari of var_minus)
-                var_plus.push(SymbolicEventModel.getPostedVarName(vari));
+        //     /* Get the posted variables */
+        //     const var_plus: string[] = [];
+        //     for(const vari of var_minus)
+        //         var_plus.push(SymbolicEventModel.getPostedVarName(vari));
             
-            /* transition var_plus to var_minus */
-            // [var <= +_var, var_p <= +_var_p]
-            let transfert = new Map<string, string>();
-            for (var i=0; i < var_plus.length; i++)
-                transfert.set(var_plus[i], var_minus[i]);
+        //     /* transition var_plus to var_minus */
+        //     // [var <= +_var, var_p <= +_var_p]
+        //     let transfert = new Map<string, string>();
+        //     for (var i=0; i < var_plus.length; i++)
+        //         transfert.set(var_plus[i], var_minus[i]);
             
             
-            DEBUGLOG("bdd relation for current agent", agentEventRelation);
+        //     DEBUGLOG("bdd relation for current agent", agentEventRelation);
             
-            console.log("support", BDD.bddService.support(agentEventRelation));
-            console.log("var_minus", var_minus)
-            console.log("var_plus", var_plus)
-            console.log("transfert", transfert)
+        //     console.log("support", BDD.bddService.support(agentEventRelation));
+        //     console.log("var_minus", var_minus)
+        //     console.log("var_plus", var_plus)
+        //     console.log("transfert", transfert)
 
-            // Forget(bdd_event AND bdd_agent, var U var_p)[var <= +_var, var_p <= +_var_p]
-            // Renaming(forget(And(event, bdd_agent), var_minus), transfert)
+        //     // Forget(bdd_event AND bdd_agent, var U var_p)[var <= +_var, var_p <= +_var_p]
+        //     // Renaming(forget(And(event, bdd_agent), var_minus), transfert)
 
-            const agentMRelation: BDDNode = BDD.bddService.createCopy(M.getAgentSymbolicRelation(agent));
-            const keptCompatibleArcs = BDD.bddService.applyAnd([agentMRelation, agentEventRelation]);
-            DEBUGLOG("kept arrows that are compatible", keptCompatibleArcs)
-            const appliedPost = BDD.bddService.applyExistentialForget(keptCompatibleArcs, var_minus);
-            DEBUGLOG("forgot 'before' vars, i.e., performed postcondition", appliedPost);
-            const newAgentRelation = BDD.bddService.applyRenaming(appliedPost, transfert);
-            DEBUGLOG("renamed, to get normal arrows, without '+'", newAgentRelation);
+        //     const agentMRelation: BDDNode = BDD.bddService.createCopy(M.getAgentSymbolicRelation(agent));
+        //     const keptCompatibleArcs = BDD.bddService.applyAnd([agentMRelation, agentEventRelation]);
+        //     DEBUGLOG("kept arrows that are compatible", keptCompatibleArcs)
+        //     const appliedPost = BDD.bddService.applyExistentialForget(keptCompatibleArcs, var_minus);
+        //     DEBUGLOG("forgot 'before' vars, i.e., performed postcondition", appliedPost);
+        //     const newAgentRelation = BDD.bddService.applyRenaming(appliedPost, transfert);
+        //     DEBUGLOG("renamed, to get normal arrows, without '+'", newAgentRelation);
 
-            agentMap.set(agent, newAgentRelation);
-        }
+        //     agentMap.set(agent, newAgentRelation);
+        // }
         
-        /* Find the new true world */
-        const bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation));
-        DEBUGLOG("pointed world bdd", bdd_valuation);        
-        const bdd_pointed_framed_post: BDDNode = this.getPointedAction().post;
-        DEBUGLOG("postcond bdd on pointed event", bdd_pointed_framed_post);        
-        const w = BDD.bddService.applyAnd([bdd_valuation, BDD.bddService.createCopy(bdd_pointed_framed_post)]);
-        DEBUGLOG("and new world", w)
+        // /* Find the new true world */
+        // const bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation));
+        // DEBUGLOG("pointed world bdd", bdd_valuation);        
+        // const bdd_pointed_framed_post: BDDNode = this.getPointedAction().post;
+        // DEBUGLOG("postcond bdd on pointed event", bdd_pointed_framed_post);        
+        // const w = BDD.bddService.applyAnd([bdd_valuation, BDD.bddService.createCopy(bdd_pointed_framed_post)]);
+        // DEBUGLOG("and new world", w)
 
-        if(BDD.bddService.isFalse(w)) throw new Error("An error has occured in the application of SymbolicEventModel on SymbolicEpistemicModel. Are sure that event '" +
-            this.pointed + "' can be apply on valuation " + M.getPointedWorld().valuation);
+        // if(BDD.bddService.isFalse(w)) throw new Error("An error has occured in the application of SymbolicEventModel on SymbolicEpistemicModel. Are sure that event '" +
+        //     this.pointed + "' can be apply on valuation " + M.getPointedWorld().valuation);
         
-        let res = BDD.bddService.applyExistentialForget(w, M.getPropositionalAtoms().concat(M.getPropositionalPrimes()));  //  Projection on + variables
-        DEBUGLOG("forget new world", res)
-        let listTransfert = []
-        for(let vari of M.getPropositionalAtoms())
-            listTransfert.push(vari)
-        // console.log("LISTES", listTransfert, SymbolicEventModel.getMapPostedToNotPosted(listTransfert))
-        res = BDD.bddService.applyRenaming(res, SymbolicEventModel.getMapPostedToNotPosted(listTransfert));  // Renaming + var into normal variables
-        DEBUGLOG("renamed new world", res)
-        //let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula(), BDD.bddService.toValuation(res));
-        let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), new SEModelDescriptorFormulaEvent());
+        // let res = BDD.bddService.applyExistentialForget(w, M.getPropositionalAtoms().concat(M.getPropositionalPrimes()));  //  Projection on + variables
+        // DEBUGLOG("forget new world", res)
+        // let listTransfert = []
+        // for(let vari of M.getPropositionalAtoms())
+        //     listTransfert.push(vari)
+        // // console.log("LISTES", listTransfert, SymbolicEventModel.getMapPostedToNotPosted(listTransfert))
+        // res = BDD.bddService.applyRenaming(res, SymbolicEventModel.getMapPostedToNotPosted(listTransfert));  // Renaming + var into normal variables
+        // DEBUGLOG("renamed new world", res)
+        // //let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula(), BDD.bddService.toValuation(res));
+        // let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), new SEModelDescriptorFormulaEvent());
 
 
-        /* DEBUG LOOP */
-        {
-          console.log("example new sucessors")
-          for(let agent of M.getAgents()){
-              console.log("successors", agent, newSEM.getAgentSymbolicRelation(agent))
-              DEBUGLOG("successors of " + agent,
-              BDD.bddService.applyRenaming(
-                  BDD.bddService.applyExistentialForget(
-                      BDD.bddService.applyAnd(
-                          [BDD.bddService.createCopy(newSEM.getAgentSymbolicRelation(agent)), BDD.bddService.createCopy(BDD.bddService.createCube(SymbolicEpistemicModel.valuationToMap((<WorldValuation>newSEM.getPointedWorld()).valuation)))]),
-                      newSEM.getPropositionalAtoms()), 
-                  SymbolicEpistemicModel.getMapPrimeToNotPrime(newSEM.getPropositionalAtoms()))
-              )
-          }
-        }
+        // /* DEBUG LOOP */
+        // {
+        //   console.log("example new sucessors")
+        //   for(let agent of M.getAgents()){
+        //       console.log("successors", agent, newSEM.getAgentSymbolicRelation(agent))
+        //       DEBUGLOG("successors of " + agent,
+        //       BDD.bddService.applyRenaming(
+        //           BDD.bddService.applyExistentialForget(
+        //               BDD.bddService.applyAnd(
+        //                   [BDD.bddService.createCopy(newSEM.getAgentSymbolicRelation(agent)), BDD.bddService.createCopy(BDD.bddService.createCube(SymbolicEpistemicModel.valuationToMap((<WorldValuation>newSEM.getPointedWorld()).valuation)))]),
+        //               newSEM.getPropositionalAtoms()), 
+        //           SymbolicEpistemicModel.getMapPrimeToNotPrime(newSEM.getPropositionalAtoms()))
+        //       )
+        //   }
+        // }
 
-        return newSEM;
+        return undefined;
     };
 
 
@@ -243,8 +244,8 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
         return this.getUniqueEvent(this.pointed);
     }
     
-    isApplicableIn(M: SymbolicEpistemicModel): boolean {
-      return M.check(this.getPointedAction().pre);
+    async isApplicableIn(M: SymbolicEpistemicModel): Promise<boolean> {
+      return await M.check(this.getPointedAction().pre);
     }
 
     /**
@@ -279,10 +280,10 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
      * @param vars list of atoms.
      * @param prime if prime, add prime to calculation : BigAnd[var_p<->+_var_p]
      */
-    static frame(vars: string[], prime: boolean): BDDNode {
+    static async frame(vars: string[], prime: boolean): Promise<BDDNode> {
         //console.log("call frame", vars, prime)
 
-        let pointeur = BDD.bddService.createTrue();
+        let pointeur = await BDDWorkerService.createTrue();
         for (let vari of vars) {
             let var1 = vari;
             if (SymbolicEventModel.isPosted(vari)) { var1.replace("/" + SymbolicEventModel.getPostedString() + "/g", ''); }
@@ -294,11 +295,11 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel>  {
                 var2 = SymbolicEpistemicModel.getPrimedVarName(var2);
             }
 
-            let equiv = BDD.bddService.applyEquiv(
-                BDD.bddService.createLiteral(var1),
-                BDD.bddService.createLiteral(var2));
+            let equiv : BDDNode = await BDDWorkerService.applyEquiv(
+                await BDDWorkerService.createLiteral(var1),
+                await BDDWorkerService.createLiteral(var2));
 
-            pointeur = BDD.bddService.applyAnd([BDD.bddService.createCopy(pointeur), BDD.bddService.createCopy(equiv)]);
+            pointeur = await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(pointeur), await BDDWorkerService.createCopy(equiv)]);
         }
         // console.log("end frame", vars, prime, BDD.bddService.pickSolutions(pointeur, 10));
         return pointeur;

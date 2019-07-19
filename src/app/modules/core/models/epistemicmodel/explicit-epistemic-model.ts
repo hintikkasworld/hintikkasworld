@@ -5,12 +5,11 @@ import { EpistemicModel } from './epistemic-model';
 import { WorldValuation } from './world-valuation';
 import { environment } from 'src/environments/environment';
 import { World } from './world';
-import { getNodeInjectable } from '@angular/core/src/render3/di';
 import { SuccessorSet } from './successor-set';
 
 export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
-    check(formula: types.Formula) {
-        return this.modelCheck(this.getPointedWorldID(), formula);
+    async check(formula: types.Formula) {
+        return await this.modelCheck(this.getPointedWorldID(), formula);
     }
 
     nodeToID: Map<World, string> = new Map();

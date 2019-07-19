@@ -148,7 +148,7 @@ export class DiningCryptographersProblem extends ExampleDescription {
             }
 
 
-            isApplicableIn(M: EpistemicModel): boolean {
+            async isApplicableIn(M: EpistemicModel): Promise<boolean> {
                 return M.check(FormulaFactory.createFormula("(not flipDone)"));
             }
             perform(M: ExplicitEpistemicModel): ExplicitEpistemicModel {
@@ -210,9 +210,10 @@ export class DiningCryptographersProblem extends ExampleDescription {
             }
 
 
-            isApplicableIn(M: EpistemicModel): boolean {
-                return M.check(FormulaFactory.createFormula("(flipDone and (not announcementDone))"));
+            async isApplicableIn(M: EpistemicModel): Promise<boolean> {
+                return await M.check(FormulaFactory.createFormula("(flipDone and (not announcementDone))"));
             }
+            
             perform(M: ExplicitEpistemicModel): ExplicitEpistemicModel {
 
                 function getActionModelPublicAnnouncementBit(agent): ExplicitEventModel {

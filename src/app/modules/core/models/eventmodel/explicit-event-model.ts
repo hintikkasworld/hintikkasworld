@@ -86,7 +86,7 @@ export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpis
     }
 
 
-    isApplicableIn(M: ExplicitEpistemicModel): boolean {
+    async isApplicableIn(M: ExplicitEpistemicModel): Promise<boolean> {
         return M.check(this.getPrecondition(this.getPointedAction()));
     }
 

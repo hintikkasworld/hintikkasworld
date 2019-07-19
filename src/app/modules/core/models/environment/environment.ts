@@ -1,6 +1,7 @@
 import { Action } from './action';
 import { ExampleDescription } from './exampledescription';
 import { EpistemicModel } from '../epistemicmodel/epistemic-model';
+import { Observable, of } from 'rxjs';
 
 export class Environment {
     private _epistemicModel: EpistemicModel;
@@ -35,6 +36,8 @@ export class Environment {
     }
 
     getExecutableActions(): Action[] {
+        //TO BE ASYNCHORNOUS
+        return [];
         if (this.executableActions == undefined) {
             // console.log("memoized executable actions : ", this.executableActions);
             // this.executableActions = []; //set to be true in case sbody else would like to compute it

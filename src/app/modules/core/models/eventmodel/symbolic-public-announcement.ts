@@ -1,9 +1,8 @@
+import { Formula } from './../epistemicmodel/formula';
+import { BDDNode } from 'src/app/services/bdd.service';
 import { EventModel } from './event-model';
-import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
-import { Formula } from '../formula/formula';
-import { BDD } from '../formula/bdd';
-
+import { BDDWorkerService } from 'src/app/services/bddworker.service';
 export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicModel> {
 
     /**
@@ -16,32 +15,45 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
     }
 
     apply(M: SymbolicEpistemicModel): SymbolicEpistemicModel {
-        const BS = BDD.bddService;
+        console.log("SymbolicPublicAnnouncement.apply");
+        const BS = BDDWorkerService;
 
         const descr = M.getInternalDescription();
+        const bddWorldsPromise = M.queryWorldsSatisfying(this.precondition);
 
         const newDescr = {
             getAgents: () => descr.getAgents(),
             getAtomicPropositions: () => descr.getAtomicPropositions(),
-            getSetWorldsBDDDescription: () => M.queryWorldsSatisfying(this.precondition),
-            getRelationBDD: (agent: string) => {
-                const possibleWorlds = M.queryWorldsSatisfying(this.precondition);
-                const possibleWorldsPrime = BS.applyRenaming(BS.createCopy(possibleWorlds), SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
-                const clique = BS.applyAnd([possibleWorlds, possibleWorldsPrime]);
+            getSetWorldsBDDDescription: async (): Promise<BDDNode> => await bddWorldsPromise,
 
-                if(this.observers == undefined || this.observers.includes(agent))
-                    return BS.applyAnd([BS.createCopy(descr.getRelationBDD(agent)), BS.createCopy(clique)]);
+            getRelationBDD: async (agent: string): Promise<BDDNode> => {
+                const previousRelation = await descr.getRelationBDD(agent);
+                await BS.debugInfo("previousRelation", previousRelation);
+
+                const possibleWorlds = await bddWorldsPromise;
+                await BS.debugInfo("possibleWorlds", possibleWorlds);
+
+                const possibleWorldsPrime = await BS.applyRenaming(await BS.createCopy(possibleWorlds),
+                    SymbolicEpistemicModel.getMapNotPrimeToPrime(M.getPropositionalAtoms()));
+                await BS.debugInfo("possibleWorldsPrime", possibleWorldsPrime);
+
+                const clique = await BS.applyAnd([await BS.createCopy(possibleWorlds), possibleWorldsPrime]);
+                await BS.debugInfo("clique", clique);
+                
+                if (this.observers == undefined || this.observers.includes(agent))
+                    return await BS.applyAnd([await BS.createCopy(previousRelation), await BS.createCopy(clique)]);
                 else
-                    return descr.getRelationBDD(agent);
+                    return await descr.getRelationBDD(agent);
             },
+
             getPointedValuation: () => descr.getPointedValuation()
         }
 
         return new SymbolicEpistemicModel(M.getWorldClass(), newDescr);
     }
 
-    isApplicableIn(M: SymbolicEpistemicModel): boolean {
-        return M.check(this.precondition);
+    async isApplicableIn(M: SymbolicEpistemicModel): Promise<boolean> {
+        return await M.check(this.precondition);
     }
 
     private precondition: Formula;

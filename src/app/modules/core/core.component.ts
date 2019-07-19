@@ -18,6 +18,7 @@ import { SymbolicEpistemicModel } from './models/epistemicmodel/symbolic-epistem
 
 
 
+
 @Component({
   selector: 'app-core',
   templateUrl: './core.component.html',
@@ -26,7 +27,7 @@ import { SymbolicEpistemicModel } from './models/epistemicmodel/symbolic-epistem
 export class CoreComponent implements OnInit {
 
   bsEnv: BehaviorSubject<Environment>;
-
+  doneDescriptor: boolean = false;
   constructor(private exampleService: ExampleService, private location: Location) { }
 
   ngOnInit() {
@@ -46,6 +47,8 @@ export class CoreComponent implements OnInit {
     this.bsEnv = new BehaviorSubject(env);
 
     this.bsEnv.subscribe(env => this.initModelChecking());
+  
+    
   }
 
 
@@ -53,10 +56,9 @@ export class CoreComponent implements OnInit {
     return FormulaFactory.createFormula(<string>$("#formula").val());
   }
 
-  modelChecking(): boolean {
+  async modelChecking(): Promise<boolean> {
     try {
-      const result = this.bsEnv.value.getEpistemicModel().check(this.getFormulaGUI());
-      console.log(result);
+      let result = await this.bsEnv.value.getEpistemicModel().check(this.getFormulaGUI());
       $('#modelCheckingButtonImage').attr("src", result ? "assets/img/ok.png" : "assets/img/notok.png");
       return result;
     }
@@ -71,8 +73,8 @@ export class CoreComponent implements OnInit {
   }
 
 
-  performPublicAnnouncement() {
-    if (!this.modelChecking()) return;
+  async performPublicAnnouncement() {
+    if (!await this.modelChecking()) return;
 
 
 

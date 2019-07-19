@@ -1,11 +1,12 @@
+import { BDDWorkerService } from 'src/app/services/bddworker.service';
 import { Formula, FormulaFactory, TrueFormula, AndFormula, EquivFormula, AtomicFormula} from '../formula/formula';
 import { SymbolicEpistemicModel } from './symbolic-epistemic-model';
 import { BddService, BDDNode } from '../../../../services/bdd.service';
-import { BDD } from '../formula/bdd';
+
 
 export interface SymbolicRelation {
     toFormula(): Formula;
-    toBDD(): BDDNode;
+    toBDD(): Promise<BDDNode>;
 }
 
 /**
@@ -44,17 +45,17 @@ export class Obs implements SymbolicRelation {
     /**
      * Return the BDD of the SymbolicRelation, build thanks to the toFormula()
      */
-    toBDD() : BDDNode {
+    async toBDD() : Promise<BDDNode> {
         let formula = this.toFormula();
      //   console.log(formula.prettyPrint());
        // console.log(formula);
         let res = null;
         try {
-            res = BDD.buildFromFormula(formula);
+            res = BDDWorkerService.formulaToBDD(formula);
         } catch (error) {
-            console.log(BDD.bddService.stackTrace());
+        //    console.log(BDD.bddService.stackTrace());
             console.log("Erreur dans la contruction de la formule !")
-            console.log("Trace : ", error.stack);
+            console.log("Trace : ", error);
             throw error;
         }
         return res;

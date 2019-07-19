@@ -20,7 +20,8 @@ export class SymbolicPublicAction implements EventModel<SymbolicEpistemicModel> 
     apply(M:SymbolicEpistemicModel): SymbolicEpistemicModel {
         throw new Error("Method not implemented.");
     }
-    isApplicableIn(M: SymbolicEpistemicModel): boolean {
+    
+    async isApplicableIn(M: SymbolicEpistemicModel): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
   
