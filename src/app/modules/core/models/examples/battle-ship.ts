@@ -26,7 +26,7 @@ class Point2D {
 function getRandomNumber(a: number, b: number) {
     return a + Math.round(Math.random() * (b - a));
 }
-function curryClass(SourceClass, arg1, arg2, arg3, arg4, arg5) {
+function curryClass(SourceClass, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
     var curriedArgs = Array.prototype.slice.call(arguments, 1);
 
     return function curriedConstructor() {
@@ -82,22 +82,37 @@ class BattleShipWorld extends WorldValuation {
     readonly cellSize: number;
     static imgShipHorizontal = BattleShipWorld.getImage("ship_horizontal.png");
     static imgShipVertical = BattleShipWorld.getImage("ship_vertical.png");
-    readonly clicked;
+    readonly clickeda;
+    readonly clickedb;
+    readonly hasshipa;
+    readonly hasshipb;
 
-    constructor(nbrows, nbcols, agents, ships, clicked, valuation: Valuation) {
+    constructor(nbrows, nbcols, agents, ships, clickeda, clickedb, hasshipa, hasshipb, valuation: Valuation) {
         super(valuation);
         this.nbrows = nbrows;
         this.nbcols = nbcols;
         this.agents = agents;
         this.ships = ships;
-        this.clicked = clicked;
+        this.clickeda = clickeda;
+        this.clickedb = clickedb;
+        this.hasshipa = hasshipa;
+        this.hasshipb = hasshipb;
         this.cellSize = Math.min(16, Math.min((64 - BattleShipWorld.yt) / (nbrows + 1), (128 - BattleShipWorld.xt) / (3 + 2 * nbcols)));
         this.agentPos["a"] = { x: 10, y: 32, r: 10 };
         this.agentPos["b"] = { x: 128 - 10, y: 32, r: 10 };
     }
 
-    isClicked(row, col) {
-        return this.clicked[row * (this.nbcols + 1) + col];
+    isClickedA(row, col) {
+        return this.clickeda[row * (this.nbcols + 1) + col];
+    }
+    isClickedB(row, col) {
+        return this.clickedb[row * (this.nbcols + 1) + col];
+    }
+    hasShipA(row, col) {
+        return this.hasshipa[row * (this.nbcols + 1) + col];
+    }
+    hasShipB(row, col) {
+        return this.hasShipB[row * (this.nbcols + 1) + col];
     }
 
     draw(context: CanvasRenderingContext2D) {
@@ -161,7 +176,27 @@ class BattleShipWorld extends WorldValuation {
                 }
             }
         }
-
+        for (let col = 1; col <= this.nbcols; col++) {
+            for (let row = 1; row <= this.nbrows; row++) {
+                if (this.isClickedA(row,col)) {
+                    if (!(this.hasShipA(row,col))) {
+                        context.fillStyle = "#0000CC";
+                    }
+                    else {
+                        context.fillStyle = "#FF3300"
+                    }
+                    context.fillRect(BattleShipWorld.xt + (col-1)*this.cellSize, (row-1)*this.cellSize, this.cellSize, this.cellSize )                }
+                if (this.isClickedB(row,col)) {
+                    if (!(this.hasShipB(row,col))) {
+                        context.fillStyle = "#0000CC";
+                    }
+                    else {
+                        context.fillStyle = "#FF3300"
+                    }
+                    context.fillRect(BattleShipWorld.xt + (col-1+this.nbcols+1)*this.cellSize, (row-1)*this.cellSize, this.cellSize, this.cellSize )
+                }                
+            }
+        }
     }
 
     /**
@@ -250,7 +285,10 @@ export class BattleShip extends ExampleDescription {
     readonly ships: number[];
     // Agents names.
     readonly agents = ["a", "b"];
-    clicked;
+    clickeda;
+    clickedb;
+    hasshipa;
+    hasshipb;
     // Atomic propositions
     
     readonly atmset: string[];
@@ -282,10 +320,6 @@ export class BattleShip extends ExampleDescription {
             }
         }
 
-    }
-
-    isClicked(row, col) {
-        return this.clicked[row * (this.nbcols+1) + col];
     }
 
     getAtomicPropositions(): string[] {
@@ -486,7 +520,10 @@ export class BattleShip extends ExampleDescription {
     getInitialEpistemicModel(): import("../epistemicmodel/epistemic-model").EpistemicModel {
         let example = this;
 
-        this.clicked = {};
+        this.clickeda = {};
+        this.clickedb = {};
+        this.hasshipa = {};
+        this.hasshipb = {};
         class SEModelDescriptorBattleShip implements SEModelDescriptor {
             getAgents(): string[] {
                 return example.agents;
@@ -607,7 +644,7 @@ export class BattleShip extends ExampleDescription {
 
 
     getWorldExample() : BattleShipWorld {
-        return new BattleShipWorld(this.nbrows, this.nbcols, this.ships, this.agents, false, this.getValuationExample());
+        return new BattleShipWorld(this.nbrows, this.nbcols, this.ships, this.agents, {},{},{},{}, this.getValuationExample());
     }
     onRealWorldClick(env: Environment, point) {
         let M: SymbolicEpistemicModel = <SymbolicEpistemicModel>env.getEpistemicModel();
@@ -619,22 +656,37 @@ export class BattleShip extends ExampleDescription {
         if (cella != undefined) {
             agent = "a"
             cell = cella
+            this.clickeda[cella.row * (this.nbcols+1) + cella.col] = true;
+            
         }
         else if (cellb != undefined) {
             agent = "b"
             cell = cellb
+            this.clickedb[cellb.row * (this.nbcols+1) + cellb.col] = true;
         }
         else {
             return;
         }
         let phi = this.getFormulaCellOccupied(agent,cell.col,cell.row)
         if (M.checkBooleanFormula(phi)) {
+            if (agent == "a") {
+                this.hasshipa[cella.row * (this.nbcols+1) + cella.col] = true;
+            }
+            else {
+                this.hasshipb[cellb.row * (this.nbcols+1) + cellb.col] = true;
+            }
             env.perform(new EventModelAction({
                 name: "give hint",
                 eventModel: new SymbolicPublicAnnouncement(phi)
             }));
         }
         else {
+            if (agent == "a") {
+                this.hasshipa[cella.row * (this.nbcols+1) + cella.col] = false;
+            }
+            else {
+                this.hasshipb[cellb.row * (this.nbcols+1) + cellb.col] = false;
+            }            
             env.perform(new EventModelAction({
                 name: "give hint",
                 eventModel: new SymbolicPublicAnnouncement(new NotFormula(phi))
@@ -646,7 +698,7 @@ export class BattleShip extends ExampleDescription {
     
 
     getWorldClass(): import("../epistemicmodel/world-valuation-type").WorldValuationType {
-        return <WorldValuationType><unknown>curryClass(BattleShipWorld, this.nbrows, this.nbcols, this.agents, this.ships, this.clicked);
+        return <WorldValuationType><unknown>curryClass(BattleShipWorld, this.nbrows, this.nbcols, this.agents, this.ships, this.clickeda, this.clickedb, this.hasshipa, this.hasshipb);
     }
     getDescription(): string[] {
         return [""]
