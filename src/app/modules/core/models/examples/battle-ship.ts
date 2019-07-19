@@ -8,6 +8,9 @@ import { Obs } from '../epistemicmodel/symbolic-relation';
 import { ExactlyFormula, TrueFormula, AndFormula, ImplyFormula, AtomicFormula, NotFormula, OrFormula, Formula } from '../formula/formula';
 import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
+import { Environment } from '../environment/environment';
+import { EventModelAction } from '../environment/event-model-action';
+import { SymbolicPublicAnnouncement } from '../eventmodel/symbolic-public-announcement';
 
 class Cell {
     row: number;
@@ -197,7 +200,7 @@ class BattleShipWorld extends WorldValuation {
     /*
      * returns the cell under the point (in point, x and y are in pixels)
      */
-    getCell(point: Point2D): Cell {
+    getCellA(point: Point2D): Cell {
         if (point.x < BattleShipWorld.xt) return undefined;
         if (point.x > BattleShipWorld.xt + this.nbcols * this.cellSize) return undefined;
         if (point.y < BattleShipWorld.yt) return undefined;
@@ -208,7 +211,17 @@ class BattleShipWorld extends WorldValuation {
             row: Math.floor((point.y - BattleShipWorld.yt) / this.cellSize) + 1
         };
     }
+    getCellB(point: Point2D): Cell {
+        if (point.x < BattleShipWorld.xt + (this.nbcols + 1) * this.cellSize) return undefined;
+        if (point.x > BattleShipWorld.xt + (2*this.nbcols + 1) * this.cellSize) return undefined;
+        if (point.y < BattleShipWorld.yt) return undefined;
+        if (point.y > BattleShipWorld.yt + this.nbrows  * this.cellSize) return undefined;
 
+        return {
+            col: Math.floor((point.x - (BattleShipWorld.xt + (this.nbcols + 1) * this.cellSize)) / this.cellSize) + 1,
+            row: Math.floor((point.y - BattleShipWorld.yt) / this.cellSize) + 1
+        };
+    }
     /*
      * @returns the number of bombs in the neighborhood of cell
      */
@@ -269,6 +282,10 @@ export class BattleShip extends ExampleDescription {
             }
         }
 
+    }
+
+    isClicked(row, col) {
+        return this.clicked[row * (this.nbcols+1) + col];
     }
 
     getAtomicPropositions(): string[] {
@@ -444,6 +461,28 @@ export class BattleShip extends ExampleDescription {
             return new TrueFormula
         }
     }    
+
+    getFormulaCellOccupied(agent:string,col:number,row:number):Formula {
+        let l2 = [];
+
+        for (let i2 = 0; i2 <= this.shipsduplfree.length - 1; i2++) {            
+            for (let row2 = row-this.shipsduplfree[i2] + 1; row2 <= row; row2++) {                                        
+                if ((row2 >= 1)&& (row2 + this.shipsduplfree[i2] -1 <= this.nbrows)){
+                     l2.push(new AtomicFormula(getAtomBeginningShip(agent, "ver", col, row2, this.shipsduplfree[i2])))
+                 }
+                        
+             }
+    
+            for (let col2 = col-this.shipsduplfree[i2] + 1; col2 <= col; col2++) {                                        
+                if ((col2 >= 1) && (col2 + this.shipsduplfree[i2] -1 <= this.nbcols)){
+                     l2.push(new AtomicFormula(getAtomBeginningShip(agent, "hor", col2, row, this.shipsduplfree[i2])))
+                    }
+                        
+                }
+        }
+        return new OrFormula(l2)
+
+    }
     getInitialEpistemicModel(): import("../epistemicmodel/epistemic-model").EpistemicModel {
         let example = this;
 
@@ -462,7 +501,6 @@ export class BattleShip extends ExampleDescription {
 
                        for (let col = 1; col <= example.nbcols; col++) {
                             for (let row = 1; row <= example.nbrows; row++) {
-                                
                             let f = example.getConstraintNotBothHorVer(example.agents[agent],example.shipsduplfree[i],col,row)
                             if (f instanceof OrFormula) {
                                 l.push(f)
@@ -571,7 +609,41 @@ export class BattleShip extends ExampleDescription {
     getWorldExample() : BattleShipWorld {
         return new BattleShipWorld(this.nbrows, this.nbcols, this.ships, this.agents, false, this.getValuationExample());
     }
+    onRealWorldClick(env: Environment, point) {
+        let M: SymbolicEpistemicModel = <SymbolicEpistemicModel>env.getEpistemicModel();
+        let pointedWorld: BattleShipWorld = <BattleShipWorld>M.getPointedWorld();
+        let cella = pointedWorld.getCellA(point)
+        let cellb = pointedWorld.getCellB(point)
+        let agent = ""
+        let cell = undefined
+        if (cella != undefined) {
+            agent = "a"
+            cell = cella
+        }
+        else if (cellb != undefined) {
+            agent = "b"
+            cell = cellb
+        }
+        else {
+            return;
+        }
+        let phi = this.getFormulaCellOccupied(agent,cell.col,cell.row)
+        if (M.checkBooleanFormula(phi)) {
+            env.perform(new EventModelAction({
+                name: "give hint",
+                eventModel: new SymbolicPublicAnnouncement(phi)
+            }));
+        }
+        else {
+            env.perform(new EventModelAction({
+                name: "give hint",
+                eventModel: new SymbolicPublicAnnouncement(new NotFormula(phi))
+            }));          
+        }
 
+        
+    }
+    
 
     getWorldClass(): import("../epistemicmodel/world-valuation-type").WorldValuationType {
         return <WorldValuationType><unknown>curryClass(BattleShipWorld, this.nbrows, this.nbcols, this.agents, this.ships, this.clicked);

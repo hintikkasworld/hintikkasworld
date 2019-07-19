@@ -244,6 +244,45 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return await BDDWorkerService.isConsistent(<BDDNode>res);
     }
 
+    checkBooleanFormula(phi:Formula): boolean {
+        if (phi instanceof types.TrueFormula) { 
+            return true
+        }
+        if (phi instanceof types.FalseFormula) { 
+            return false
+        }
+        if (phi instanceof types.AtomicFormula) {
+            return this.pointedValuation.isPropositionTrue((<types.AtomicFormula>phi).getAtomicString())
+        }
+        if (phi instanceof types.AndFormula) {
+            let b = true
+            for (let f of (<types.AndFormula>phi).formulas) {
+                if (! (this.checkBooleanFormula(f))) {
+                    b = false
+                    break
+                }
+            }
+            return b
+        }
+        if (phi instanceof types.OrFormula) {
+            let b = false
+            for (let f of (<types.OrFormula>phi).formulas) {
+                if (this.checkBooleanFormula(f)) {
+                    b = true
+                    break
+                }
+            }
+            return b
+        }
+        if (phi instanceof types.NotFormula) {
+            return !(this.checkBooleanFormula((<types.NotFormula> phi).formula))
+        }
+        
+        throw new Error("Not boolean formula phi:" + JSON.stringify(phi));  
+        
+            
+    }
+    
     async queryWorldsSatisfying(phi: Formula): Promise<BDDNode> {
 
         /*  let allWorlds: BDDNode = await BDDWorkerService.createFalse();
