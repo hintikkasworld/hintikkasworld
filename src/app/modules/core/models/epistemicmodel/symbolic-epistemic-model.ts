@@ -52,7 +52,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         // a binary decision diagram
         this.loadDescriptor(descr);
 
-        console.log("end of the construction")
+        console.log("end of SymbolicEpistemicModel.constructor")
 
     }
 

@@ -60,10 +60,10 @@ export class BDDWorkerService {
    * BDDWorkerService to pass a formula to the worker.
    */
   public static formulaToBDD(formula: Formula): Promise<BDDNode> {
-  /*  console.log("formulaToBDD begin... the formula is:");
+    console.log("formulaToBDD begin... the formula is:");
     let formulaString = formula.prettyPrint();
-    console.log(formulaString);*/
-    return BDDWorkerService.call("formulaToBDD", [formula]);
+    console.log(formulaString);
+    return BDDWorkerService.call("formulaToBDD", [FormulaFactory.createFormula(formulaString)]);
   }
 
   public static applyAnd(args: BDDNode[]): Promise<BDDNode> {

@@ -1,7 +1,5 @@
 import { Environment } from './../environment/environment';
 import { ActionSetEpistemicModel } from './../environment/action-set-epistemic-model';
-import { Action } from './../environment/action';
-import { SymbolicPublicAction } from './../eventmodel/symbolic-public-action';
 import { Valuation } from './../epistemicmodel/valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { SimpleWorld } from './simple';
