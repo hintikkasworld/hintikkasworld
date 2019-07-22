@@ -82,6 +82,7 @@ class BattleShipWorld extends WorldValuation {
     readonly cellSize: number;
     static imgShipHorizontal = BattleShipWorld.getImage("ship_horizontal.png");
     static imgShipVertical = BattleShipWorld.getImage("ship_vertical.png");
+    static imgExplosion = BattleShipWorld.getImage("explosion.png")
     readonly clickeda;
     readonly clickedb;
     readonly hasshipa;
@@ -176,24 +177,37 @@ class BattleShipWorld extends WorldValuation {
                 }
             }
         }
+        let imgExplosionPadding = 0;
         for (let col = 1; col <= this.nbcols; col++) {
             for (let row = 1; row <= this.nbrows; row++) {
                 if (this.isClickedA(row,col)) {
                     if (!(this.hasShipA(row,col))) {
                         context.fillStyle = "#0000CC";
+                        context.fillRect(BattleShipWorld.xt + (col-1)*this.cellSize, (row-1)*this.cellSize, this.cellSize, this.cellSize ) ;
                     }
                     else {
                         context.fillStyle = "#FF3300"
+                        context.drawImage(BattleShipWorld.imgExplosion,
+                            BattleShipWorld.xt + (col - 1) * this.cellSize + imgExplosionPadding,
+                            (row - 1) * this.cellSize + imgExplosionPadding,
+                            this.cellSize - 2 * imgExplosionPadding,
+                            this.cellSize - 2 * imgExplosionPadding);       
                     }
-                    context.fillRect(BattleShipWorld.xt + (col-1)*this.cellSize, (row-1)*this.cellSize, this.cellSize, this.cellSize )                }
+                                   }
                 if (this.isClickedB(row,col)) {
                     if (!(this.hasShipB(row,col))) {
                         context.fillStyle = "#0000CC";
+                        context.fillRect(BattleShipWorld.xt + (col-1+this.nbcols+1)*this.cellSize, (row-1)*this.cellSize, this.cellSize, this.cellSize );
                     }
                     else {
                         context.fillStyle = "#FF3300"
+                        context.drawImage(BattleShipWorld.imgExplosion,
+                            BattleShipWorld.xt + (this.nbcols + col) * this.cellSize + imgExplosionPadding,
+                            (row - 1) * this.cellSize + imgExplosionPadding,
+                            this.cellSize - 2 * imgExplosionPadding,
+                            this.cellSize - 2 * imgExplosionPadding);  
                     }
-                    context.fillRect(BattleShipWorld.xt + (col-1+this.nbcols+1)*this.cellSize, (row-1)*this.cellSize, this.cellSize, this.cellSize )
+                    
                 }                
             }
         }
