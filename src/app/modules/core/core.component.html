@@ -64,7 +64,7 @@
       </td>
 
       <td id="hintikkasWorldScene" valign="top">
-        <app-comics [obsEnv]='bsEnv.asObservable()'></app-comics>
+        <app-comics [obsEnv]='bsEnv.asObservable()' [readyObservable]='bsEnv.value.getEpistemicModel().isLoadedObservable()'></app-comics>
         
       </td>
       

@@ -2,7 +2,7 @@ import { SuccessorSet } from './../../models/epistemicmodel/successor-set';
 import { environment } from './../../../../../environments/environment';
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { Environment } from '../../models/environment/environment';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { World } from '../../models/epistemicmodel/world';
 
 @Component({
@@ -18,6 +18,8 @@ export class ComicsComponent implements OnInit {
   private _env: Environment;
   private perspectiveWorlds: SuccessorSet = undefined;
   @Input() obsEnv: Observable<Environment>;
+  @Input() readyObservable: BehaviorSubject<boolean>;
+  private ready: boolean;
 
   constructor() {
 
@@ -32,17 +34,22 @@ export class ComicsComponent implements OnInit {
        }, false);*/
 
       let canvasRealWorld = (<HTMLCanvasElement>$('#canvasRealWorld')[0]);
-
-      canvasRealWorld.addEventListener("click", (evt) => {
-
-        if (!this.modifyOpenWorldsClick(0, canvasRealWorld, this.env.getEpistemicModel().getPointedWorld())(evt)) {
-          let point = this.getMousePos(canvasRealWorld, evt);
-          /*console.log(evt.button); // the right button like this does not work
-          if(evt.button == 2)
-            this.env.getExampleDescription().onRealWorldClickRightButton(this.env, point);
-          else*/
-          this.env.getExampleDescription().onRealWorldClick(this.env, point);
-          this.drawCanvasWorld();
+      console.log('before ready;jakd;flkajl;kfjal;kdjfal;sdkfj;sdlakjf')
+      this.readyObservable.subscribe((ready) => {
+        console.log(ready);
+        if(ready) {
+          console.log("ready to be clicked")
+          canvasRealWorld.addEventListener("click", (evt) => {
+              if (!this.modifyOpenWorldsClick(0, canvasRealWorld, this.env.getEpistemicModel().getPointedWorld())(evt)) {
+                let point = this.getMousePos(canvasRealWorld, evt);
+                /*console.log(evt.button); // the right button like this does not work
+                if(evt.button == 2)
+                  this.env.getExampleDescription().onRealWorldClickRightButton(this.env, point);
+                else*/
+                this.env.getExampleDescription().onRealWorldClick(this.env, point);
+                this.drawCanvasWorld();
+              }
+          });
         }
       });
 
@@ -53,6 +60,7 @@ export class ComicsComponent implements OnInit {
         this.env.getExampleDescription().onRealWorldClickRightButton(this.env, point);
         evt.preventDefault();
         this.drawCanvasWorld();
+        console.log("Hello this is canva real world")
       });
 
 
@@ -70,7 +78,6 @@ export class ComicsComponent implements OnInit {
     this.compute(0);
 
   }
-
   public get env() {
     return this._env;
   }
@@ -375,7 +382,8 @@ export class ComicsComponent implements OnInit {
           };
           (<any>canvasWorld).draw();
           canvasWorld.addEventListener('mouseup',
-            comics.modifyOpenWorldsClick(level, canvasWorld, u), false);
+          comics.modifyOpenWorldsClick(level, canvasWorld, u), false);
+          
         }
       });
     }

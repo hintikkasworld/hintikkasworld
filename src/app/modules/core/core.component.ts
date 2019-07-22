@@ -27,7 +27,6 @@ import { SymbolicEpistemicModel } from './models/epistemicmodel/symbolic-epistem
 export class CoreComponent implements OnInit {
 
   bsEnv: BehaviorSubject<Environment>;
-  doneDescriptor: boolean = false;
   constructor(private exampleService: ExampleService, private location: Location) { }
 
   ngOnInit() {

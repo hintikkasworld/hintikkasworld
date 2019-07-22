@@ -14,7 +14,7 @@ import { SEModelDescriptor } from './descriptor/se-model-descriptor';
 import { SEModelInternalDescriptor } from './descriptor/se-model-internal-descriptor';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
 import { Observable } from 'rxjs/internal/Observable';
-import { of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 
 /**
@@ -28,6 +28,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return this._isLoaded;
     }
 
+    isLoadedObservable(): BehaviorSubject<boolean> {
+        return this._isLoaded$;
+    }
+    private _isLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private _isLoaded = false;
 
     /**
@@ -162,6 +166,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         }
 
         this._isLoaded = true;
+        this._isLoaded$.next(true);
     }
 
     private async loadModelDescriptor(descr: SEModelDescriptor) {
