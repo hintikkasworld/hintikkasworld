@@ -87,7 +87,7 @@ class BattleShipWorld extends WorldValuation {
     readonly hasshipa;
     readonly hasshipb;
 
-    constructor(nbrows, nbcols, agents, ships, clickeda, clickedb, hasshipa, hasshipb, valuation: Valuation) {
+    constructor(nbrows: number, nbcols: number, agents: string[], ships:number[], clickeda, clickedb, hasshipa, hasshipb, valuation: Valuation) {
         super(valuation);
         this.nbrows = nbrows;
         this.nbcols = nbcols;
@@ -644,7 +644,7 @@ export class BattleShip extends ExampleDescription {
 
 
     getWorldExample() : BattleShipWorld {
-        return new BattleShipWorld(this.nbrows, this.nbcols, this.ships, this.agents, {},{},{},{}, this.getValuationExample());
+        return new BattleShipWorld(this.nbrows, this.nbcols, this.agents, this.ships, {},{},{},{}, this.getValuationExample());
     }
     onRealWorldClick(env: Environment, point) {
         let M: SymbolicEpistemicModel = <SymbolicEpistemicModel>env.getEpistemicModel();
