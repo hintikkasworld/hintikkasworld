@@ -19,6 +19,7 @@ import { ExampleService } from 'src/app/services/example.service';
 import { SallyAndAnn } from '../core/models/examples/sally-and-ann';
 import { CommonknowledgeStrictlyMoreExpressive } from '../core/models/examples/commonknowledge-strictly-more-expressive';
 import { BattleShip } from '../core/models/examples/battle-ship';
+import { BlindTicTacToe } from '../core/models/examples/blind-tic-tac-toe';
 
 
 @Component({
@@ -40,6 +41,8 @@ export class MenuComponent implements OnInit {
     new BattleShip(4,4,[3,3]),
     new BattleShip(5,5,[3,3]),
     new BattleShip(8,8,[3,3]),
+    new BlindTicTacToe(3),
+    new BlindTicTacToe(4),
      new SimpleSymbolicHanabi(),  new Flatland(false), new Flatland(true)];
 
   technicalExamples = [new ClassOfModels(), new CommonknowledgeStrictlyMoreExpressive(), new CellularAutomaton()];

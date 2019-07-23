@@ -271,22 +271,6 @@ class BattleShipWorld extends WorldValuation {
             row: Math.floor((point.y - BattleShipWorld.yt) / this.cellSize) + 1
         };
     }
-    /*
-     * @returns the number of bombs in the neighborhood of cell
-     */
-    getHint(cell: Cell): number {
-        let c = 0;
-        for (let y = Math.max(1, cell.row - 1); y <= Math.min(this.nbrows, cell.row + 1); y++)
-            for (let x = Math.max(1, cell.col - 1); x <= Math.min(this.nbcols, cell.col + 1); x++)
-                if (this.modelCheck("m" + y + x))
-                    c++;
-        return c;
-    }
-
-    /*
-     * @returns true iff there is a bomb at cell
-     */
-    isMine(cell: Cell) { return this.modelCheck("m" + cell.row + cell.col); }
 }
 
 export class BattleShip extends ExampleDescription {

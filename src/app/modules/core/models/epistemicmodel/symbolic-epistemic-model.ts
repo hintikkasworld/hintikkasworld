@@ -285,7 +285,26 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         if (phi instanceof types.NotFormula) {
             return !(this.checkBooleanFormula((<types.NotFormula>phi).formula))
         }
-
+        if (phi instanceof types.ImplyFormula) {
+            let phi1 = (<types.ImplyFormula>phi).formula1;
+            let phi2 = (<types.ImplyFormula>phi).formula2;
+            if (this.checkBooleanFormula(phi1)) {
+                return this.checkBooleanFormula(phi2)
+            }
+            else {
+                return true;
+            }
+        }
+        if (phi instanceof types.EquivFormula) {
+            let phi1 = (<types.EquivFormula>phi).formula1;
+            let phi2 = (<types.EquivFormula>phi).formula2;
+            if (this.checkBooleanFormula(phi1)) {
+                return this.checkBooleanFormula(phi2)
+            }
+            else {
+                return !(this.checkBooleanFormula(phi2))
+            }
+        }
         throw new Error("Not boolean formula phi:" + JSON.stringify(phi));
 
 

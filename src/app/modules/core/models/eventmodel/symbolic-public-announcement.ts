@@ -3,6 +3,7 @@ import { BDDNode } from 'src/app/services/bdd.service';
 import { EventModel } from './event-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
+import { TrueFormula } from '../formula/formula';
 
 /**
  * warning !!! Now, it will work better but it assumes that the formula is Boolean!
@@ -19,6 +20,7 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
     }
 
     apply(M: SymbolicEpistemicModel): SymbolicEpistemicModel {
+
         console.log("SymbolicPublicAnnouncement.apply");
         const BS = BDDWorkerService;
 
