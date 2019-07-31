@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs';
 import { SuccessorSet } from './../epistemicmodel/successor-set';
 import * as types from './../formula/formula';
 import { environment } from 'src/environments/environment';
@@ -111,10 +112,10 @@ class FlatlandWorld extends World {
     modelCheck(phi: string) {
         var l = phi.split("_");
         if ((l.length == 3) && (l[1] == "sees") && (l[0] in this.positions) && (l[2] in this.positions)) {
-            return this.isSee(l[0],l[2])
+            return this.isSee(l[0], l[2])
         }
         else {
-            throw new Error("Invalid atomic proposition: "+phi)
+            throw new Error("Invalid atomic proposition: " + phi)
         }
     }
 
@@ -131,7 +132,7 @@ class FlatlandSuccessorSet implements SuccessorSet {
     private readonly w: FlatlandWorld;
     private readonly a: string;
     private readonly ckPositions: boolean;
-    private done : boolean;
+    private done: boolean;
 
     constructor(w: FlatlandWorld, a: string, ckPositions: boolean) {
         this.w = w;
@@ -198,11 +199,11 @@ class FlatlandSuccessorSet implements SuccessorSet {
 
     async getSomeSuccessors() {
         if (this.isSingleSuccessor()) {
-            if(this.done) return [];
+            if (this.done) return [];
             this.done = true;
             return [this.w];
         }
-            
+
         let succs = [];
         for (let i = 0; i < 5; i++) {
             let u: FlatlandWorld = await this.getRandomSuccessor();
@@ -220,6 +221,11 @@ class FlatlandSuccessorSet implements SuccessorSet {
 }
 
 class FlatlandEpistemicModel implements EpistemicModel {
+    isLoadedObservable(): BehaviorSubject<boolean> {
+        let isLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+        return isLoaded$;
+    }
+
     isLoaded(): boolean {
         return true;
     }
@@ -238,8 +244,8 @@ class FlatlandEpistemicModel implements EpistemicModel {
     getSuccessors(w: FlatlandWorld, a: string): SuccessorSet {
         return new FlatlandSuccessorSet(w, a, this.ckPositions);
     }
-    async check(formula: types.Formula) : Promise<boolean> {
-        return this.modelCheck(this.getPointedWorld() , formula);
+    async check(formula: types.Formula): Promise<boolean> {
+        return this.modelCheck(this.getPointedWorld(), formula);
     }
 
 
@@ -291,7 +297,7 @@ class FlatlandEpistemicModel implements EpistemicModel {
                 return (c == (<types.ExactlyFormula>phi).count)
             }
         }
-    }    
+    }
 }
 
 
@@ -316,7 +322,7 @@ export class Flatland extends ExampleDescription {
         let A = [];
         for (let agent in (this.getWorldExample() as FlatlandWorld).positions) {
             for (let agentb in (this.getWorldExample() as FlatlandWorld).positions) {
-                A.push(agent+"_sees_"+agentb)
+                A.push(agent + "_sees_" + agentb)
             }
         }
         return A;

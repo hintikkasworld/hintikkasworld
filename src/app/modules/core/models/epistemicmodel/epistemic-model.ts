@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs';
 import { SuccessorSet } from './successor-set';
 import { Formula } from './../formula/formula';
 import { World } from './world';
@@ -8,6 +9,8 @@ import { World } from './world';
  */
 export interface EpistemicModel {
     isLoaded(): boolean;
+
+    isLoadedObservable(): BehaviorSubject<boolean>;
     /**
      * @returns the pointed world (the current world)
      */
