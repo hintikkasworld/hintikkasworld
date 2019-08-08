@@ -1,0 +1,170 @@
+\documentclass[10pt]{beamer}
+
+\usetheme{Copenhagen}
+\usecolortheme{rose}
+\usecolortheme{dolphin}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[page number]
+\setbeamertemplate{background canvas}[vertical shading][bottom=red!10,top=blue!10]
+
+\AtBeginSection[]
+{
+	\begin{frame}%<beamer>
+	\frametitle{Outline}
+	\tableofcontents[currentsection,subsectionstyle=show/shaded/hide]
+\end{frame}
+}
+\AtBeginSubsection[]
+{
+\begin{frame}%<beamer>
+\frametitle{Outline}
+\tableofcontents[currentsection,subsectionstyle=show/shaded/hide]
+\end{frame}
+}
+
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+%\usepackage{ulem} % pour barrer ("\sout")
+
+\usepackage{amssymb} % pour "\mathbb"
+\usepackage{amsmath}
+\usepackage{xspace}
+\usepackage{color}
+\usepackage{tikz} % pour les dessins
+\usetikzlibrary{arrows,positioning,automata,shadows,
+	calc,decorations.pathmorphing,fit,shapes.geometric}
+\usetikzlibrary{fadings}
+\usetikzlibrary{decorations.text}
+\usetikzlibrary{shapes}
+\usetikzlibrary{decorations.pathreplacing}
+
+\usepackage{array} % pour bien centrer dans les tableaux
+\usepackage{xparse} % pour \NewDocumentCommand
+\usepackage{xspace}% for handling spaces after commands
+\usepackage{picture} % pour l'accolade à droite d'une énumération
+\usepackage{xifthen}
+\usepackage{diagbox}
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{bm}
+\usepackage[export]{adjustbox}
+
+\usepackage{cancel}
+
+\graphicspath{{./images/}} % chemin pour les images
+
+
+%\newcommand\CTLeKn{$\mathsf{CTL}^* \mathsf{K}_n$\xspace} % CTL*K_n correctement typographié
+%\newcommand{\rel}[1]{\stackrel{#1}{\MNSrcurvearrowright}}
+\newcommand{\sousArbre}[2]
+{\draw ({#1-1/2},{#2-sqrt(3)/6}) -- ({#1+1/2},{#2-sqrt(3)/6}) -- ({#1}, {#2+sqrt(3)/2-sqrt(3)/6}) -- cycle;}
+
+%% macros classes DEL
+\newcommand{\ont}{\text{\tt ontic}}
+\newcommand{\nont}{\text{\tt non-ontic}}
+\newcommand{\logpre}[2]{\mathcal{L}_{K}^{{#1},{#2}}}
+\newcommand{\Exec}{\mathbb{E}}
+\newcommand{\Lang}{\mathbb{L}}
+\newcommand{\md}{\textit{md}}
+\newcommand{\ad}{\textit{ad}}
+\NewDocumentCommand{\DEL}{m m O{\nont}}{DEL(\logpre{#1}{#2}{,#3})} % md,ad,effects
+\newcommand{\DELAltZero}[2]{\mathcal{D}({#1}, {#2})} % fragment de DEL : profondeur modale, onticité
+
+
+\newcommand{\exCFL}{L_{\textsf{CF}}} % nom du langage algébrique (CFL)
+\newcommand{\exCSL}{L_{\textsf{CS}}} % nom du langage non algébrique (CSL)
+
+\newcommand{\trans}[1]{\stackrel{#1}{\rightarrow}} % transition avec événement au-dessus
+
+\newcommand{\imgactionone}{\includegraphics[height=3.8mm]{images/action1.png}}
+\newcommand{\imgactiontwo}{\includegraphics[height=3.8mm]{images/action3.png}}
+%\newcommand{\imgactionthree}{\includegraphics[height=3.8mm]{images/action3.png}}
+
+
+\input{macros.tex}
+
+\usepackage[
+backend=biber,
+style=alphabetic,
+citestyle=authoryear
+]{biblatex}
+\addbibresource{../biblio.bib}
+\addbibresource{../francois.bib}
+
+
+
+\title{Hintikka's World: Scalable Higher-order Knowledge}% and protocol synthesis}}
+\author{Tristan Charrier ~~~~~ Sébastien Gamblin ~~~~~~ Alexandre Niveau ~~~~~~~~~ François Schwarzentruber}
+\institute{\includegraphics[height=8mm]{logoens.png} \\ École Normale Supérieure Rennes}
+\date{August 14th, 2019}
+
+
+ \AtBeginSection[]
+ {
+ 	\begin{frame}%<beamer>
+ 		\frametitle{Outline}
+ 		\tableofcontents[currentsection,subsectionstyle=show/shaded/hide, subsubsectionstyle=show/shaded/hide]
+ 	\end{frame}
+ }
+ \AtBeginSubsection[]
+ {
+ 	\begin{frame}%<beamer>
+ 		\frametitle{Outline}
+ 		\tableofcontents[currentsection,subsectionstyle=show/shaded/hide,subsubsectionstyle=show/shaded/hide]
+ 	\end{frame}
+ }
+ \AtBeginSubsubsection[]
+{
+	\begin{frame}%<beamer>
+	\frametitle{Outline}
+	\tableofcontents[currentsection,subsectionstyle=show/shaded/hide,subsubsectionstyle=show/shaded/hide]
+\end{frame}
+}
+\setbeamertemplate{navigation symbols}{} 
+
+\newcommand{\exampleinhintikkasworld}[1]{\colorbox{yellow!50!orange}{\footnotesize In Hintikka's World: #1}}
+
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\input{section_introduction.tex}
+
+\begin{frame}
+\frametitle{Outline}
+\tableofcontents[hideallsubsections]
+\end{frame}
+
+\section{The Hintikka's World project}
+\input{section_hintikkas_world}
+
+\section{Our contribution: Scalability}
+\input{section_scalability}
+
+\section{Future work}
+\input{section_conclusion.tex}
+
+%
+%\section{Epistemic logic}
+%\input{section_epistemic_logic}
+%
+%\section{Model checking}
+%\input{section_model_checking.tex}
+%
+%\section{Theorem proving}
+%\input{section_theorem_proving.tex}
+%
+%\section{Language properties}
+%\input{section_language_properties.tex}
+%\begin{frame}[allowframebreaks]
+%\frametitle{References}
+%\tiny
+%%\printbibliography
+%\end{frame}
+
+\end{document}

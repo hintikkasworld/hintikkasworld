@@ -1,0 +1,45 @@
+%%%%%%%%%%%% draft mode %%%%%%%%%%%
+\RequirePackage{manfnt}
+\RequirePackage{xcolor}
+\RequirePackage{ifdraft}
+
+\definecolor{britishracinggreen}{rgb}{0.0, 0.26, 0.15} %% almost black !
+\definecolor{cadmiumgreen}{rgb}{0.0, 0.42, 0.24}
+\definecolor{darkcandyapplered}{rgb}{0.64, 0.0, 0.0}
+\definecolor{darkcerulean}{rgb}{0.03, 0.27, 0.49}
+
+\ifdraft{ % mode brouillon
+\newcommand\modedraft[1]{#1}
+\newcommand{\showversion}{\textcolor{red}{\footnotesize\begin{center}\textbf{Version of \today~(\currenttime)}\end{center}}}
+\newcommand\todo[1]{{\color{purple} [\textbf{To do:} #1]}}
+\newcommand\slc[1]{{\color{darkcerulean}\small}{\color{darkcerulean}\small}{\footnotesize \color{darkcerulean}[#1 - \textbf{S\'ebastien}]}}
+\newcommand\fs[1]{{\color{brown}\small}{\color{brown}\small}{\footnotesize \color{brown}[#1 - \textbf{Fran\c{c}ois}]}}
+\renewcommand\sp[1]{{\color{blue}\small}{\color{blue}\small}{\footnotesize \color{blue}[#1 - \textbf{Sophie}]}}
+%% \newcommand\ma[1]{\marginpar[{\color{darkcerulean}\small\dbend}]{\color{darkcerulean}\small\dbend}{\footnotesize \color{darkcerulean}[#1 - \textbf{Maxime}]}}
+%% \newcommand\bk[1]{\marginpar[{\color{brown}\small\dbend}]{\color{brown}\small\dbend}{\footnotesize \color{brown}[#1 - \textbf{Barbara}]}}
+%% \renewcommand\sp[1]{\marginpar[{\color{blue}\small\dbend}]{\color{blue}\small\dbend}{\footnotesize \color{blue}[#1 - \textbf{Sophie}]}}
+ %% \newcommand\ma[1]{\footnotesize \color{darkcerulean}[#1 - \textbf{Maxime}]}
+ %% \newcommand\bk[1]{\footnotesize \color{brown}[#1 - \textbf{Barbara}]}
+ %% \renewcommand\sp[1]{\footnotesize \color{blue}[#1 - \textbf{Sophie}]}
+\newcommand{\slcchanged}[1]{{\color{darkcerulean}{#1}}}
+\newcommand{\fschanged}[1]{{\color{brown}{#1}}}
+\newcommand{\spchanged}[1]{{\color{blue}{#1}}}
+\pagestyle{plain}}
+% mode normal
+{\newcommand\modedraft[1]{}
+\newcommand\todo[1]{}
+\newcommand\slc[1]{}
+\newcommand\fs[1]{}
+\renewcommand\sp[1]{}
+\newcommand\slcchanged[1]{#1}
+\newcommand\fschanged[1]{#1}
+\newcommand\spchanged[1]{#1}
+\newcommand{\showversion}{}
+}
+
+\newcommand{\comment}[1]{}
+
+
+\newcommand{\spengl}{\sp{English}\xspace}
+\newcommand{\spstop}{\sp{------------------------------------stopped here for now ---------------------------------------}~\\\\}
+%%%%%%%%%%%% end draft mode %%%%%%%%%%% 
