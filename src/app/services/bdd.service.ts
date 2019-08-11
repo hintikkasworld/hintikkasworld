@@ -224,7 +224,7 @@ export class BddService {
     return res;
   }
 
-  applyRenaming(b: BDDNode, renaming: {[p:string]: string}) {
+  applyRenaming(b: BDDNode, renaming: { [p: string]: string }) {
     const oldvars: string[] = [];
     const newvars: string[] = [];
     for (const o in renaming) {
@@ -567,11 +567,11 @@ export class BddService {
   formulaToBDD(phi: Formula): BDDNode {
     console.log("computation on the webworker side begins at ", new Date());
     return this.formulaToBDDRec(phi);
-    
+
   }
 
 
-  createExactlyBDD(n: BDDNode, vars: string[]): BDDNode {
+  /* createExactlyBDD(n: BDDNode, vars: string[]): BDDNode {
 
     const cache: Map<string, BDDNode> = new Map();
 
@@ -608,8 +608,109 @@ export class BddService {
 
     return res;
 
+  } */
+
+
+  cacheExactly: Map<string, BDDNode> = new Map();
+
+
+
+  createExactlyBDD(n: number, vars: string[]): BDDNode {
+
+    const getCanonicalVar = (i: number) => { return "p" + i; }
+
+    const getNamongK = (n: number, k: number) => {
+
+      const key = n + "," + k;
+
+      if (this.cacheExactly.has(key)) return this.cacheExactly.get(key);
+      if (n == 0) {
+        const valuation = {};
+        for (let i = 0; i < k; i++) {
+          valuation[getCanonicalVar(i)] = false;
+        }
+        this.cacheExactly.set(key, this.createCube(valuation));
+        return this.cacheExactly.get(key);
+      }
+
+      if (k == 0) return this.createFalse();
+
+      let x = this.createLiteral(getCanonicalVar(k - 1));
+      let bdd_1 = this.createCopy(getNamongK(n - 1, k - 1));
+      let bdd_2 = this.createCopy(getNamongK(n, k - 1));
+      let res = this.applyIte(x, bdd_1, bdd_2);
+      this.cacheExactly.set(key, res);
+      return res;
+
+    }
+
+    let res = this.createCopy(getNamongK(n, vars.length));
+
+    let renaming = {};
+    for (let i = 0; i < vars.length; i++)
+      renaming[getCanonicalVar(i)] = vars[i];
+
+    return this.applyRenaming(res, renaming);
+
   }
 
+
+
+
+
+
+
+
+  /**
+   * @param bdd
+     @return a JSON object that represents (a copy of) the bdd rooted at bdd
+   */
+  getBDDJSON(bdd: number) {
+    let json = {}
+
+    let save = (b: number) => {
+      if (json[b] != undefined)
+        return;
+
+      if (this.isTrue(b))
+        json[b] = "true";
+      else if (this.isFalse(b))
+        json[b] = "false";
+      else
+        json[b] = { "atom": this.getAtomOf(b), "then": this.getThenOf(b), "else": this.getElseOf(b) };
+    }
+
+    save(bdd);
+    json["root"] = bdd;
+    return json;
+  }
+
+
+/**
+ * 
+ * @param json a JSON object of a BDD
+ * @return the address of the corresponding BDD in CUDD
+ */
+  createBDDFromJSON(json) {
+    let addr = {};
+    let load = (b) => {
+      if(addr[b] != undefined)
+        return addr[b];
+
+      if(json[b] == "true")
+        return this.createTrue();
+      else if(json[b] == "false")
+        return this.createFalse();
+      else {
+        let litteral = this.createLiteral(json[b]["atom"]);
+        let bThen = load(json[b]["then"]);
+        let bElse = load(json[b]["else"]);
+        return this.applyIte(litteral, bThen, bElse); //comment je suis sûr que bThen et bElse n'ont pas été réprocessé par CUDD ?
+      }
+    }
+
+    return load(json["root"]);
+  }
 
 }
 
