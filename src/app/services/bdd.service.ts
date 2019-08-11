@@ -666,53 +666,73 @@ export class BddService {
      @return a JSON object that represents (a copy of) the bdd rooted at bdd
    */
   getBDDJSON(bdd: number) {
-    let json = {}
+    let json = {};
 
+    let i = 0;
+    let goodNumber = []; //to each internal bdd we associate a "clean" number for the JSON data
+
+    //store the node in the topological order (deepest nodes first, the root ends the JSON object)
     let save = (b: number) => {
-      if (json[b] != undefined)
+      if (goodNumber[b] != undefined)
         return;
 
-      if (this.isTrue(b))
-        json[b] = "true";
-      else if (this.isFalse(b))
-        json[b] = "false";
-      else
-        json[b] = { "atom": this.getAtomOf(b), "then": this.getThenOf(b), "else": this.getElseOf(b) };
+      if (this.isTrue(b)) {
+        json[i] = "true";
+        goodNumber[b] = i;
+      }
+      else if (this.isFalse(b)) {
+        json[i] = "false";
+        goodNumber[b] = i;
+      }
+      else {
+        save(this.getThenOf(b));
+        save(this.getElseOf(b));
+        goodNumber[b] = i;
+        json[i] = { "atom": this.getAtomOf(b), "then": goodNumber[this.getThenOf(b)], "else": goodNumber[this.getElseOf(b)] };
+      }
+      i++;
     }
 
     save(bdd);
-    json["root"] = bdd;
+    json["root"] = goodNumber[bdd];
     return json;
   }
 
 
-/**
- * 
- * @param json a JSON object of a BDD
- * @return the address of the corresponding BDD in CUDD
- */
-  createBDDFromJSON(json) {
+  /**
+   * 
+   * @param json a JSON object of a BDD
+   * @return the address of the corresponding BDD in CUDD
+   */
+  createBDDFromJSON(json): number {
     let addr = {};
-    let load = (b) => {
-      if(addr[b] != undefined)
-        return addr[b];
 
-      if(json[b] == "true")
+    let load = (i: string) => {
+      if (json[i] == "true")
         return this.createTrue();
-      else if(json[b] == "false")
+      else if (json[i] == "false")
         return this.createFalse();
       else {
-        let litteral = this.createLiteral(json[b]["atom"]);
-        let bThen = load(json[b]["then"]);
-        let bElse = load(json[b]["else"]);
-        return this.applyIte(litteral, bThen, bElse); //comment je suis sûr que bThen et bElse n'ont pas été réprocessé par CUDD ?
+        let litteral = this.createLiteral(json[i]["atom"]);
+        let bThen = addr[json[i]["then"]];
+        let bElse = addr[json[i]["else"]];
+        
+        return this.applyIte(litteral, bThen, bElse); //comment je suis sûr que bThen et bElse n'ont pas été réprocessé par CUDD ? ICI, il faut createIte! Alexandre, HELP!
       }
     }
 
-    return load(json["root"]);
+    //the order is supposed to be the topological order in the graph of the bdd
+    for(let i in json) {
+      if(i == "root")
+        return addr[json[i]];
+      else
+        addr[i] = this.createCopy(load(i));
+      
+    }
+    
+
+    return undefined; //error, normally "root" should have been found
   }
 
 }
-
-
 

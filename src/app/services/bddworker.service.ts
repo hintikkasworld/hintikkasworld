@@ -72,6 +72,14 @@ export class BDDWorkerService {
   }
 
 
+  public static getBDDJSON(bdd: number): Promise<Object> {
+    return BDDWorkerService.call("getBDDJSON", [bdd]); 
+  }
+
+  public static createBDDFromJSON(json: Object): Promise<number> {
+    return BDDWorkerService.call("createBDDFromJSON", [json]); 
+  }
+
   public static createTrue(): Promise<BDDNode> {
     return BDDWorkerService.call("createTrue", []);
   }

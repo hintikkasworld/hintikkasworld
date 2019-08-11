@@ -16,6 +16,14 @@ import { BDDWorkerService } from 'src/app/services/bddworker.service';
 import { Observable } from 'rxjs/internal/Observable';
 import { BehaviorSubject } from 'rxjs';
 
+function showJSON(json) {
+      var theJSON = JSON.stringify(json);
+      var uri = "data:application/json;charset=UTF-8," + encodeURIComponent(theJSON);
+      var a = document.createElement('a');
+      a.href = uri;
+      a.innerHTML = "Right-click and choose 'save as...'";
+      document.body.appendChild(a);
+}
 
 /**
  * it implements an epistemic model described symbolically by means of BDDs
@@ -165,6 +173,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             await this.loadModelInternalDescriptor(<SEModelInternalDescriptor>descr);
         }
 
+        
         this._isLoaded = true;
         this._isLoaded$.next(true);
     }
@@ -173,6 +182,11 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         let descriptor = <SEModelDescriptor>descr;
         //from now on, it should done asynchronously
         this.bddSetWorlds = await this.getRulesAndRulesPrime(descriptor.getSetWorldsFormulaDescription());
+
+        showJSON(await BDDWorkerService.getBDDJSON(this.bddSetWorlds));
+        
+
+
         for (let agent of this.agents) {
             let bddRelation: BDDNode = await descriptor.getRelationDescription(agent).toBDD();
             //this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));

@@ -1,3 +1,5 @@
+import { BDDWorkerService } from './../../../../services/bddworker.service';
+import { SEModelInternalDescriptor } from './../epistemicmodel/descriptor/se-model-internal-descriptor';
 import { EventModelAction } from './../environment/event-model-action';
 import { SymbolicPublicAnnouncement } from './../eventmodel/symbolic-public-announcement';
 import { ExactlyFormula, AndFormula, AtomicFormula, NotFormula, Formula } from './../formula/formula';
@@ -10,6 +12,10 @@ import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-mod
 import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
+import jsonMineSweeper from '../../../../../assets/bdds/minesweeper.json';
+
+
+
 
 class Cell {
     row: number;
@@ -258,8 +264,34 @@ export class MineSweeper extends ExampleDescription {
                return new Obs([]);
             }
         }
+
+
+
+        class SEModelDescriptorInternalMineSweeper implements SEModelInternalDescriptor {
+            worlds = BDDWorkerService.createBDDFromJSON(jsonMineSweeper);
+
+            getAtomicPropositions() {
+                return example.getAtomicPropositions();
+            }           
+            
+            getAgents() {
+                return ["a"];
+            }
+
+            getSetWorldsBDDDescription(): Promise<number> {
+                return this.worlds;
+            }
+            getRelationBDD(agent: string): Promise<number> {
+                return this.worlds;
+            }
+            getPointedValuation(): Valuation {
+                return example.getValuationExample();
+            }
+
+
+        }
         this.clicked = {};
-        return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorFormulaMineSweeper());
+        return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorInternalMineSweeper());
     }
 
     /* @returns the Kripke model where the agent looses*/
