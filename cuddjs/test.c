@@ -286,6 +286,21 @@ Atom make_new_atom() {
 }
 
 /**
+ * 
+ */
+EMSCRIPTEN_KEEPALIVE
+Bdd make_node(Bdd f, Bdd g, Bdd h) {
+	DEBUG("make node");
+	DEBUG_ENSURE_NONNULL(f, "make_node got (NULL,*,*)");
+	DEBUG_ENSURE_NONNULL(g, "make_node got (*,NULL,*)");
+	DEBUG_ENSURE_NONNULL(h, "make_node got (*,*,NULL)");
+	DdNode *res = Cudd_bddIte(ddm, f, g, h);
+	ABORT_ON_NULL(res, "make node");
+	DEBUG("make node done");
+	return res;
+}
+
+/**
  * Create a new BDD equivalent to FALSE.
  */
 EMSCRIPTEN_KEEPALIVE
