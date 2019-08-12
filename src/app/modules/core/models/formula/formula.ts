@@ -361,6 +361,10 @@ export class ExactlyFormula implements Formula {
 
 
 export class FormulaFactory{
+    static createNegationOf(formula: Formula): Formula {
+        return new NotFormula(formula);
+    }
+    
     static createTrue() {
         return new TrueFormula();
     }

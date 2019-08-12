@@ -7,6 +7,7 @@ import { Formula, FormulaFactory } from './../formula/formula';
 import { EventModel } from './event-model';
 import { Graph } from './../graph';
 import { Event } from './event';
+import { World } from '../epistemicmodel/world';
 
 export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpistemicModel> {
 
@@ -125,10 +126,8 @@ export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpis
             for (let w in M.getNodes())
                 for (let e in E.nodes) {
                     if (M.modelCheck(w, E.getPrecondition(e))) {
-                        let we = createWorldActionName(w, e);
-
-                        let newcontent = E.getPostcondition(e).perform(M, w);
-                        newcontent.lastWorldID = w;
+                        const we = createWorldActionName(w, e);
+                        const newcontent : World = E.getPostcondition(e).perform(M, w);
                         ME.addWorld(we, newcontent);
                     }
                 }
@@ -219,7 +218,7 @@ export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpis
 
         var E = new ExplicitEventModel();
         E.addAction("e", formula, new TrivialPostcondition());
-        E.addAction("t", FormulaFactory.createFormula("top"), new TrivialPostcondition());
+        E.addAction("t", FormulaFactory.createNegationOf(formula), new TrivialPostcondition());
 
 
         E.addEdge(agent, "e", "e");
@@ -232,7 +231,6 @@ export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpis
                 E.addEdge(a, "t", "e");
                 E.addEdge(a, "t", "t");
                 E.addEdge(a, "e", "e");
-
             }
 
         return E;

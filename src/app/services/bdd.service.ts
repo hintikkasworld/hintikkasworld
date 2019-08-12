@@ -38,22 +38,6 @@ export class BddService {
     });
   }
 
-  //   private isAlive(bdd: BDDNode): boolean {
-  //     if (this.aliveBdds.has(bdd)) {
-  //       if (this.aliveBdds.get(bdd) > 0) {
-  //         return true;
-  //       }
-  //       this.aliveBdds.delete(bdd);
-  //     }
-  //     return false;
-  //   }
-  //   private killArgs(bdds: BDDNode[]): void {
-  //     for (const bdd of bdds) {
-  //       //TODO unfinished
-  //     }
-  //   }
-
-
   private async instantiateWasm(url: string, f: () => void) {
     // fetch the wasm file
     const wasmFile = await fetch(url);
@@ -723,6 +707,7 @@ export class BddService {
 
     //the order is supposed to be the topological order in the graph of the bdd
     for(let i in json) {
+      console.log(i)
       if(i == "root")
         return addr[json[i]];
       else

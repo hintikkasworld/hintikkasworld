@@ -4,7 +4,7 @@ import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 
 export class TrivialPostcondition implements Postcondition {
     perform(M: ExplicitEpistemicModel, w) {
-        return M.getNode(w);
+        return Postcondition.cloneWorld( M.getNode(w) );
     }
 
     toString() {

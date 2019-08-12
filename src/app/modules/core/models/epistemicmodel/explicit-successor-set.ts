@@ -5,6 +5,7 @@ export class ExplicitSuccessorSet implements SuccessorSet {
 
     private readonly successors: World[];
     private done: boolean = false;
+
     constructor(successors: World[]) {
         this.successors = successors;
     }
@@ -22,7 +23,6 @@ export class ExplicitSuccessorSet implements SuccessorSet {
         }
             
     }
-
 
     async getRandomSuccessor(): Promise<World> {
         return this.successors[Math.floor(Math.random() * this.successors.length)];

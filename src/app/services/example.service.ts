@@ -3,6 +3,7 @@ import { MuddyChildren } from './../modules/core/models/examples/muddy-children'
 import { Injectable } from '@angular/core';
 import { ExampleDescription } from '../modules/core/models/environment/exampledescription';
 import { SimpleSymbolicHanabi } from '../modules/core/models/examples/symbolic-hanabi';
+import { Simple } from '../modules/core/models/examples/simple';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import { SimpleSymbolicHanabi } from '../modules/core/models/examples/symbolic-h
 /** this service is to give the correct exampledescription from menu to core. */
 export class ExampleService {
 
-  private exampleDescription: ExampleDescription = new SimpleSymbolicHanabi();
+  private exampleDescription: ExampleDescription = new Simple();
   //by default, the loaded example is .... :)
 
   setExampleDescription(exampleDescription: ExampleDescription) {

@@ -23,9 +23,14 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
     }
 
     nodeToID: Map<World, string> = new Map();
+
+
     getSuccessors(w: World, a: string): SuccessorSet {
-        return new ExplicitSuccessorSet(this.getSuccessorsID(this.nodeToID.get(w), a).map((id) => this.getNode(id)));
+        let successorIDs = this.getSuccessorsID(this.nodeToID.get(w), a);
+        console.log(a + "-successors of " + this.nodeToID.get(w) + ": " +  successorIDs);
+        return new ExplicitSuccessorSet(successorIDs.map((id) => this.getNode(id)));
     }
+
     /**
     @param w ID of a node
     @example M.setPointedWorld("w")
@@ -57,7 +62,11 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
      * */
     addWorld(w: string, content: World) {
         this.addNode(w, content);
+        console.log("world of id " + w + " is added")
+        if(this.nodeToID.has(content))
+            throw "oups, this world has already been added!";
         this.nodeToID.set(content, w);
+        console.log("nodeToID contains " + this.nodeToID.size + " elements")
     }
 
 
