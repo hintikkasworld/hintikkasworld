@@ -12,7 +12,8 @@ import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-mod
 import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
-import jsonMineSweeper from '../../../../../assets/bdds/minesweeper.json';
+import jsonMineSweeper_8_8_10 from '../../../../../assets/bdds/minesweeper_8_8_10.json';
+import jsonMineSweeper_12_15_20 from '../../../../../assets/bdds/minesweeper_12_15_20.json';
 
 
 
@@ -70,7 +71,7 @@ class MineSweeperWorld extends WorldValuation {
     }
 
     isClicked(row, col) {
-        return this.clicked[row * (this.nbcols+1) + col];
+        return this.clicked[row * (this.nbcols + 1) + col];
     }
 
     draw(context: CanvasRenderingContext2D) {
@@ -93,19 +94,19 @@ class MineSweeperWorld extends WorldValuation {
         }
 
         context.fillStyle = "orange";
-        for (let col = 1; col <= this.nbcols; col++) 
-        for (let row = 1; row <= this.nbrows; row++) 
-            if(this.isClicked(row, col))
-                context.fillRect(MineSweeperWorld.xt + (col-1) * this.cellSize, MineSweeperWorld.yt + (row-1) * this.cellSize,
-                    this.cellSize,
-                    this.cellSize);
+        for (let col = 1; col <= this.nbcols; col++)
+            for (let row = 1; row <= this.nbrows; row++)
+                if (this.isClicked(row, col))
+                    context.fillRect(MineSweeperWorld.xt + (col - 1) * this.cellSize, MineSweeperWorld.yt + (row - 1) * this.cellSize,
+                        this.cellSize,
+                        this.cellSize);
 
 
         context.font = (this.cellSize - 2) + "px Verdana";
         let imgExplosionPadding = 0;
         for (let col = 1; col <= this.nbcols; col++)
             for (let row = 1; row <= this.nbrows; row++) {
-                if (this.modelCheck("m" + row + col))
+                if (this.modelCheck(MineSweeper.getAtomicProposition(row, col)))
                     context.drawImage(MineSweeperWorld.imgExplosion,
                         MineSweeperWorld.xt + (col - 1) * this.cellSize + imgExplosionPadding,
                         (row - 1) * this.cellSize + imgExplosionPadding,
@@ -147,7 +148,7 @@ class MineSweeperWorld extends WorldValuation {
         let c = 0;
         for (let y = Math.max(1, cell.row - 1); y <= Math.min(this.nbrows, cell.row + 1); y++)
             for (let x = Math.max(1, cell.col - 1); x <= Math.min(this.nbcols, cell.col + 1); x++)
-                if (this.modelCheck("m" + y + x))
+                if (this.modelCheck(MineSweeper.getAtomicProposition(y, x)))
                     c++;
         return c;
     }
@@ -155,7 +156,7 @@ class MineSweeperWorld extends WorldValuation {
     /*
      * @returns true iff there is a bomb at cell
      */
-    isMine(cell: Cell) { return this.modelCheck("m" + cell.row + cell.col); }
+    isMine(cell: Cell) { return this.modelCheck(MineSweeper.getAtomicProposition(cell.row, cell.col)); }
 }
 
 
@@ -173,10 +174,10 @@ export class MineSweeper extends ExampleDescription {
         var A = ["There is a grid with mines in certain cells. Other cells either contain the number of mines adjacent (including diagonals) or are empty."]
         A.push("")
         if (this.nbmines < 2) {
-            A.push("The grid is of size "+this.nbrows.toString()+"x"+this.nbcols.toString()+" and there is "+this.nbmines.toString()+" mine.")
+            A.push("The grid is of size " + this.nbrows.toString() + "x" + this.nbcols.toString() + " and there is " + this.nbmines.toString() + " mine.")
         }
         else {
-            A.push("The grid is of size "+this.nbrows.toString()+"x"+this.nbcols.toString()+ " and there are "+this.nbmines.toString()+" mines.")
+            A.push("The grid is of size " + this.nbrows.toString() + "x" + this.nbcols.toString() + " and there are " + this.nbmines.toString() + " mines.")
         }
         return A
     }
@@ -196,18 +197,22 @@ export class MineSweeper extends ExampleDescription {
 
 
     getName() {
-        if(this.nbrows == 8 && this.nbcols == 8 && this.nbmines == 10)
+        if (this.nbrows == 8 && this.nbcols == 8 && this.nbmines == 10)
             return "Minesweeper easy";
         else
             return "Minesweeper " + this.nbrows + "×" + this.nbcols + " with " + this.nbmines + " mines";
     }
 
 
+    static getAtomicProposition(r, c) {
+        return r.toString() + "_" + c.toString();
+    }
+
     getAtomicPropositions() {
         let A = [];
         for (let y = 1; y <= this.nbrows; y++)
             for (let x = 1; x <= this.nbcols; x++)
-                A.push("m" + y.toString() + x.toString());
+                A.push(MineSweeper.getAtomicProposition(y, x));
         return A;
     }
 
@@ -216,7 +221,7 @@ export class MineSweeper extends ExampleDescription {
         let A = [];
         for (let y = Math.max(1, cell.row - 1); y <= Math.min(this.nbrows, cell.row + 1); y++)
             for (let x = Math.max(1, cell.col - 1); x <= Math.min(this.nbcols, cell.col + 1); x++)
-                A.push("m" + y + x);
+                A.push(MineSweeper.getAtomicProposition(y, x));
         return A;
     }
 
@@ -224,7 +229,7 @@ export class MineSweeper extends ExampleDescription {
         let A = [];
         for (let y = Math.max(1, cell.row - 1); y <= Math.min(this.nbrows, cell.row + 1); y++)
             for (let x = Math.max(1, cell.col - 1); x <= Math.min(this.nbcols, cell.col + 1); x++)
-                A.push({row: y, col: x});
+                A.push({ row: y, col: x });
         return A;
     }
 
@@ -247,12 +252,12 @@ export class MineSweeper extends ExampleDescription {
         class SEModelDescriptorFormulaMineSweeper implements SEModelDescriptor {
             getAtomicPropositions() {
                 return example.getAtomicPropositions();
-            }           
-            
+            }
+
             getAgents() {
                 return ["a"];
             }
-        
+
             getPointedValuation() {
                 return example.getValuationExample();
             }
@@ -261,19 +266,27 @@ export class MineSweeper extends ExampleDescription {
             }
 
             getRelationDescription(agent: string): SymbolicRelation {
-               return new Obs([]);
+                return new Obs([]);
             }
         }
 
 
 
         class SEModelDescriptorInternalMineSweeper implements SEModelInternalDescriptor {
-            worlds = BDDWorkerService.createBDDFromJSON(jsonMineSweeper);
+            worlds = undefined;
+
+            constructor(r, c, m) {
+                if (r == 12 && c == 15 && m == 20)
+                    this.worlds = BDDWorkerService.createBDDFromJSON(jsonMineSweeper_12_15_20);
+                else if (r == 8 && c == 8 && m == 10) {
+                    this.worlds = BDDWorkerService.createBDDFromJSON(jsonMineSweeper_8_8_10);
+                }
+            }
 
             getAtomicPropositions() {
                 return example.getAtomicPropositions();
-            }           
-            
+            }
+
             getAgents() {
                 return ["a"];
             }
@@ -291,7 +304,14 @@ export class MineSweeper extends ExampleDescription {
 
         }
         this.clicked = {};
-        return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorInternalMineSweeper());
+
+        /*
+        if (this.nbrows == 12 && this.nbcols == 15 && this.nbmines == 20)
+            return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorInternalMineSweeper(12, 15, 20));
+        if (this.nbrows == 8 && this.nbcols == 8 && this.nbmines == 10)
+            return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorInternalMineSweeper(8, 8, 10));
+        else*/
+            return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorFormulaMineSweeper());
     }
 
     /* @returns the Kripke model where the agent looses*/
@@ -301,7 +321,7 @@ export class MineSweeper extends ExampleDescription {
         let A = [];
         for (let row = 1; row <= this.nbrows; row++)
             for (let col = 1; col <= this.nbcols; col++)
-                A.push("m" + row + col);
+                A.push(MineSweeper.getAtomicProposition(row, col));
 
         M.addWorld("w", new MineSweeperWorld(this.nbrows, this.nbcols, {}, new Valuation(A)));
         M.makeCompleteRelation("a");
@@ -316,8 +336,8 @@ export class MineSweeper extends ExampleDescription {
             while (true) {
                 const col = 1 + Math.round(Math.random() * (this.nbcols - 1));
                 const row = 1 + Math.round(Math.random() * (this.nbrows - 1));
-                if (!V.includes("m" + row + col)) {
-                    V.push("m" + row + col);
+                if (!V.includes(MineSweeper.getAtomicProposition(row, col))) {
+                    V.push(MineSweeper.getAtomicProposition(row, col));
                     break;
                 }
             }
@@ -336,32 +356,32 @@ export class MineSweeper extends ExampleDescription {
             let visited = {};
             let queue = [];
             queue.push(initCell);
-            
-            while(queue.length > 0) {
-                let cell = queue.pop();
-                
 
-                if(visited[cell.row * (this.nbcols+1) + cell.col] == undefined) {
-                    visited[cell.row * (this.nbcols+1) + cell.col] = true;
+            while (queue.length > 0) {
+                let cell = queue.pop();
+
+
+                if (visited[cell.row * (this.nbcols + 1) + cell.col] == undefined) {
+                    visited[cell.row * (this.nbcols + 1) + cell.col] = true;
                     const hint = pointedWorld.getHint(cell);
-                    this.clicked[cell.row * (this.nbcols+1) + cell.col] = true;
+                    this.clicked[cell.row * (this.nbcols + 1) + cell.col] = true;
 
                     const phi = new AndFormula([new ExactlyFormula(hint, this.getPropositionsNeightbor(cell)),
-                        new NotFormula(new AtomicFormula("m" + cell.row + cell.col))]);
+                    new NotFormula(new AtomicFormula(MineSweeper.getAtomicProposition(cell.row, cell.col)))]);
 
                     phis.push(phi);
-                    if(hint == 0) {
+                    if (hint == 0) {
                         queue = queue.concat(this.getCellsNeightbor(cell));
-                       
+
                     }
                 }
             }
 
             return new AndFormula(phis);
         }
-        
-        
-        
+
+
+
 
 
 

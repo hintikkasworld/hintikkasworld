@@ -705,7 +705,7 @@ export class BddService {
         let litteral = this.createLiteral(json[i]["atom"]);
         let bThen = addr[json[i]["then"]];
         let bElse = addr[json[i]["else"]];
-        
+
         return this.bddModule._make_node(litteral, bThen, bElse); //comment je suis sûr que bThen et bElse n'ont pas été réprocessé par CUDD ? ICI, il faut createIte! Alexandre, HELP!
       }
     }
@@ -716,20 +716,22 @@ export class BddService {
     //the order is supposed to be the topological order in the graph of the bdd
     //
     let result = null;
-    for(let i in json) {
-      if(Math.floor(parseInt(i) / 100) * 100 == parseInt(i)) console.log(i)
-      if(i == "root")
+    for (let i in json) {
+      if (Math.floor(parseInt(i) / 100) * 100 == parseInt(i)) console.log(i)
+      if (i == "root") {
+        this.bddModule._set_garbage_collection(true);
+        this.bddModule._set_dynamic_reordering(true);
         result = this.createCopy(addr[json[i]]);
+      }
+
       else
         addr[i] = load(i);
-      
+
     }
 
     if (result === null) throw new Error('normally "root" should have been found');
 
-    this.bddModule._set_garbage_collection(true);
-    this.bddModule._set_dynamic_reordering(true);
-    
+
     return result;
   }
 

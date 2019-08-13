@@ -78,7 +78,7 @@ class BeloteWorld extends WorldValuation {
 
 export class Belote extends ExampleDescription {
     static readonly cardSuits: string[] = ["♦", "♣", "♥", "♠"];
-    static readonly cardValues: string[] = ["1", "7",  "K"];//["1", "7", "8", "9", "10", "J", "Q", "K"];
+    static readonly cardValues: string[] = ["1", "7",  "Q", "K"];//["1", "7", "8", "9", "10", "J", "Q", "K"];
 
     getName() { return "Belote"; }
 
