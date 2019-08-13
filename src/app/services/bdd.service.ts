@@ -184,6 +184,10 @@ export class BddService {
     return this.bddModule._apply_ite(bIf, bThen, bElse);
   }
 
+  makeNode(bIf: BDDNode, bThen: BDDNode, bElse: BDDNode): BDDNode {
+    return this.bddModule._make_node(bIf, bThen, bElse);
+  }
+
   applyExistentialForget(b: BDDNode, atoms: string[]): BDDNode {
     let ptr = this.mallocAtomArray(atoms);
     let res = this.bddModule._apply_existential_forget(b, ptr, atoms.length);
@@ -701,17 +705,19 @@ export class BddService {
         let bThen = addr[json[i]["then"]];
         let bElse = addr[json[i]["else"]];
         
-        return this.applyIte(litteral, bThen, bElse); //comment je suis sûr que bThen et bElse n'ont pas été réprocessé par CUDD ? ICI, il faut createIte! Alexandre, HELP!
+        bThen = this.createCopy(bThen);
+        bElse = this.createCopy(bElse);
+        return this.makeNode(litteral, bThen, bElse); //comment je suis sûr que bThen et bElse n'ont pas été réprocessé par CUDD ? ICI, il faut createIte! Alexandre, HELP!
       }
     }
 
     //the order is supposed to be the topological order in the graph of the bdd
     for(let i in json) {
-      console.log(i)
+      if(Math.floor(parseInt(i) / 100) * 100 == parseInt(i)) console.log(i)
       if(i == "root")
         return addr[json[i]];
       else
-        addr[i] = this.createCopy(load(i));
+        addr[i] = load(i);
       
     }
     

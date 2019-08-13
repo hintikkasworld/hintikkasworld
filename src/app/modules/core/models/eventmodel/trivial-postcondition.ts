@@ -11,7 +11,7 @@ export class TrivialPostcondition implements Postcondition {
         return "idle";
     }
 
-    getValuation(){
+    getValuation() {
         return {};
     }
 }

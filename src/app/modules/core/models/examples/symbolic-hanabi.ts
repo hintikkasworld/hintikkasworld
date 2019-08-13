@@ -58,7 +58,7 @@ class SimpleHanabiWorld extends WorldValuation {
     static drawHanabiCardArray(context: CanvasRenderingContext2D, pos: { x: number, y: number, horizontal: boolean }, cards: number[], allVisible: boolean = true) {
         const dx = pos.horizontal ? (allVisible ? 2 * SimpleHanabiWorld.cardWidth : SimpleHanabiWorld.cardWidth / 2) : 0;
         const dy = pos.horizontal ? 0 : (allVisible ? SimpleHanabiWorld.cardHeight : SimpleHanabiWorld.cardHeight / 2);
-        console.log("drawing cards: ", cards);
+        //console.log("drawing cards: ", cards);
         for (const [posInHand, card] of Array.from(cards.entries())) {
             SimpleHanabiWorld.drawCard(context, {
                 x: pos.x + posInHand * dx, y: pos.y + posInHand * dy, w: SimpleHanabiWorld.cardWidth,
@@ -88,7 +88,7 @@ class SimpleHanabiWorld extends WorldValuation {
     static getCardUnderCursor(cursor: Point, agent: string, pos: { x: number, y: number, horizontal: boolean }, cards: number[], allVisible: boolean = true) {
         const dx = pos.horizontal ? (allVisible ? 2 * SimpleHanabiWorld.cardWidth : SimpleHanabiWorld.cardWidth / 2) : 0;
         const dy = pos.horizontal ? 0 : (allVisible ? SimpleHanabiWorld.cardHeight : SimpleHanabiWorld.cardHeight / 2);
-        console.log("drawing cards: ", cards);
+       // console.log("drawing cards: ", cards);
         for (const [posInHand, card] of Array.from(cards.entries())) {
 
             let cardGUI = {
