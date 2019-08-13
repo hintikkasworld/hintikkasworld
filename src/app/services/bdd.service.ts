@@ -681,7 +681,11 @@ export class BddService {
       i++;
     }
 
+    /* we disable dynamic reordering just in case… */
+    this.bddModule._set_dynamic_reordering(false);
     save(bdd);
+    this.bddModule._set_dynamic_reordering(true);
+
     json["root"] = goodNumber[bdd];
     return json;
   }

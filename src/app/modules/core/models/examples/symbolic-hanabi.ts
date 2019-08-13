@@ -56,7 +56,7 @@ class SimpleHanabiWorld extends WorldValuation {
     }
 
     static drawHanabiCardArray(context: CanvasRenderingContext2D, pos: { x: number, y: number, horizontal: boolean }, cards: number[], allVisible: boolean = true) {
-        const dx = pos.horizontal ? (allVisible ? 2 * SimpleHanabiWorld.cardWidth : SimpleHanabiWorld.cardWidth / 2) : 0;
+        const dx = pos.horizontal ? (allVisible ? SimpleHanabiWorld.cardWidth : SimpleHanabiWorld.cardWidth / 2) : 0;
         const dy = pos.horizontal ? 0 : (allVisible ? SimpleHanabiWorld.cardHeight : SimpleHanabiWorld.cardHeight / 2);
         //console.log("drawing cards: ", cards);
         for (const [posInHand, card] of Array.from(cards.entries())) {
@@ -184,23 +184,26 @@ class HanabiState {
  *   0..9     10..19  20..29   30..39   40..49 
  * 
  * Caution : This Hanabi doesn't use the position of cards.
- */
+ 4*/
 export class SimpleSymbolicHanabi extends ExampleDescription {
     getDescription(): string[] {
         return ["Each agent has some cards between 1 and 5 and either red, yellow, blue, white or green. Each agent can only see the cards of other agents."]
     }
 
     /**
-     * Number of cards in the game Hanabi
+     * Number of colors
      */
-    static readonly nbCards: number = 20;
+    static readonly nb_colors: number = 5;
 
     /**
-     * Number of colors
-     * Need to be in concordance with nbCards ! if 10:1 if 20:2 ...
-     * 10 cards per color
+     * Number of values per color. The values are given by the array "values"
      */
-    readonly nb_colors: number = 1;
+    static readonly nb_values_per_color: number = 4;
+
+    /**
+     * Number of cards in the game Hanabi
+     */
+    static readonly nbCards: number = SimpleSymbolicHanabi.nb_colors * SimpleSymbolicHanabi.nb_values_per_color;
 
     /**
      * Number of cards in hand
@@ -227,12 +230,14 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     private variables: string[];
 
     public static readonly colors = ["white", "red", "blue", "yellow", "green"]
+    public static readonly values = [1, 2, 3, 4, 5, 1, 2, 3, 4, 1]; // the order allows for easily creating smaller instances using nb_values_per_colors
+
 
     static getCardValue(card: number): string {
-        //return [1, 1, 1, 2, 2, 3, 3, 4, 4, 5][card % 10].toString();
-        return card.toString();
+        return SimpleSymbolicHanabi.values[card % (SimpleSymbolicHanabi.nb_values_per_color)].toString();
+        //return card.toString();
     }
-    static getCardSuit(card: number): string { return SimpleSymbolicHanabi.colors[card / 10]; }
+    static getCardSuit(card: number): string { return SimpleSymbolicHanabi.colors[Math.floor(card / SimpleSymbolicHanabi.nb_values_per_color)]; }
 
     /**
      * List of actions; lazily computed (only on demand)
@@ -503,10 +508,11 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
             // console.log("ValueAnnoucement " + agent + " has " + nbCards + " card(s) of value '" + value + "'")
 
+            if (SimpleSymbolicHanabi.nb_values_per_color != 10) throw new Error("ERROR: this method only works when SimpleSymbolicHanabi.nb_values_per_color == 10");
             let liste_var = [];
             let nbcardsbyvalue = [3, 2, 2, 2, 1]
             let sum = [0, 3, 5, 7, 9]
-            for (var color = 0; color < that.nb_colors; color++) {
+            for (var color = 0; color < SimpleSymbolicHanabi.nb_colors; color++) {
                 for (var c = 0; c < nbcardsbyvalue[value - 1]; c++) {
                     const n = c + (10 * color) + sum[value - 1]
                     if (n < SimpleSymbolicHanabi.nbCards)
