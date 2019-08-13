@@ -693,6 +693,7 @@ export class BddService {
    * @return the address of the corresponding BDD in CUDD
    */
   createBDDFromJSON(json): number {
+    console.log("LOUDING FROM JSON");
     let addr = {};
 
     let load = (i: string) => {
@@ -705,24 +706,31 @@ export class BddService {
         let bThen = addr[json[i]["then"]];
         let bElse = addr[json[i]["else"]];
         
-        bThen = this.createCopy(bThen);
-        bElse = this.createCopy(bElse);
-        return this.makeNode(litteral, bThen, bElse); //comment je suis sûr que bThen et bElse n'ont pas été réprocessé par CUDD ? ICI, il faut createIte! Alexandre, HELP!
+        return this.bddModule._make_node(litteral, bThen, bElse); //comment je suis sûr que bThen et bElse n'ont pas été réprocessé par CUDD ? ICI, il faut createIte! Alexandre, HELP!
       }
     }
 
+    this.bddModule._set_garbage_collection(false);
+    this.bddModule._set_dynamic_reordering(false);
+
     //the order is supposed to be the topological order in the graph of the bdd
+    //
+    let result = null;
     for(let i in json) {
       if(Math.floor(parseInt(i) / 100) * 100 == parseInt(i)) console.log(i)
       if(i == "root")
-        return addr[json[i]];
+        result = this.createCopy(addr[json[i]]);
       else
         addr[i] = load(i);
       
     }
-    
 
-    return undefined; //error, normally "root" should have been found
+    if (result === null) throw new Error('normally "root" should have been found');
+
+    this.bddModule._set_garbage_collection(true);
+    this.bddModule._set_dynamic_reordering(true);
+    
+    return result;
   }
 
 }

@@ -673,6 +673,28 @@ int get_nb_stored() {
 /******************************************************************************/
 
 EMSCRIPTEN_KEEPALIVE
+void set_garbage_collection(bool activate) {
+	if (activate) Cudd_EnableGarbageCollection(ddm);
+	else Cudd_DisableGarbageCollection(ddm);
+}
+
+EMSCRIPTEN_KEEPALIVE
+bool is_garbage_collection_activated() {
+	return Cudd_GarbageCollectionEnabled(ddm);
+}
+
+EMSCRIPTEN_KEEPALIVE
+void set_dynamic_reordering(bool activate) {
+	if (activate) Cudd_AutodynEnable(ddm, CUDD_REORDER_SAME);
+	else Cudd_AutodynDisable(ddm);
+}
+
+EMSCRIPTEN_KEEPALIVE
+bool is_dynamic_reordering_activated() {
+	return Cudd_ReorderingStatus(ddm, NULL);
+}
+
+EMSCRIPTEN_KEEPALIVE
 void print_info() {
 	Cudd_PrintInfo(ddm, stdout);
 }
