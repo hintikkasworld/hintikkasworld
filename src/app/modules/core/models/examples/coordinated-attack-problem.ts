@@ -9,7 +9,8 @@ import { WorldValuation } from '../epistemicmodel/world-valuation';
 
 export class CoordinatedAttackProblemWorld extends WorldValuation {
     static swordImg = SimpleWorld.getImage("sword.png");
-
+    static msgImg = SimpleWorld.getImage("enveloppe.png");
+    static errorImg = SimpleWorld.getImage("explosion.png");
 
     constructor(valuation) {
         super(valuation);
@@ -22,6 +23,24 @@ export class CoordinatedAttackProblemWorld extends WorldValuation {
         this.drawAgents(context);
         if (this.modelCheck(CoordinatedAttackProblem.proposition))
             context.drawImage(CoordinatedAttackProblemWorld.swordImg, 20, -0, 48, 48);
+
+        if (this.modelCheck(CoordinatedAttackProblem.msgReceivedByB))
+            context.drawImage(CoordinatedAttackProblemWorld.msgImg, this.agentPos["b"].x - 24, this.agentPos["b"].y, 16, 16);
+
+        if (this.modelCheck(CoordinatedAttackProblem.msgReceivedByA))
+            context.drawImage(CoordinatedAttackProblemWorld.msgImg, this.agentPos["a"].x + 16, this.agentPos["a"].y, 16, 16);
+
+       /** if (this.modelCheck(CoordinatedAttackProblem.msgErrorAtoB)) {
+            context.drawImage(CoordinatedAttackProblemWorld.msgImg, 48, 32, 16, 16);
+            context.drawImage(CoordinatedAttackProblemWorld.errorImg, 48+4, 32, 16, 16);
+        }
+        
+        if (this.modelCheck(CoordinatedAttackProblem.msgErrorBtoA)) {
+            context.drawImage(CoordinatedAttackProblemWorld.msgImg, 64, 32, 16, 16);
+            context.drawImage(CoordinatedAttackProblemWorld.errorImg, 64-4, 32, 16, 16);        
+        }
+         */
+            
     }
 
 }
@@ -30,6 +49,10 @@ export class CoordinatedAttackProblemWorld extends WorldValuation {
 
 export class CoordinatedAttackProblem extends ExampleDescription {
     static proposition = "p";
+    static msgReceivedByA = "msgReceivedByA";
+    static msgReceivedByB = "msgReceivedByB";
+    static msgErrorAtoB = "msgErrorAtoB";
+    static msgErrorBtoA = "msgErrorBtoA";
     depth = 0;
 
     getAtomicPropositions(): string[] {
@@ -42,7 +65,34 @@ export class CoordinatedAttackProblem extends ExampleDescription {
 
     static getEpistemicModel(depth: number) {
         let M = new ExplicitEpistemicModel();
-        for (let i = 0; i <= depth; i++)
+
+       /** if (depth == 0) {
+            M.addWorld("w0", new CoordinatedAttackProblemWorld(new Valuation([CoordinatedAttackProblem.proposition])));
+        }
+        else if (depth > 0 && depth % 2 == 0) {
+            M.addWorld("w0", new CoordinatedAttackProblemWorld(new Valuation([CoordinatedAttackProblem.proposition, CoordinatedAttackProblem.msgReceivedByA])));
+            M.addWorld("w1", new CoordinatedAttackProblemWorld(new Valuation([CoordinatedAttackProblem.proposition, CoordinatedAttackProblem.msgErrorBtoA])));
+        }
+        else {
+            M.addWorld("w0", new CoordinatedAttackProblemWorld(new Valuation([CoordinatedAttackProblem.proposition, CoordinatedAttackProblem.msgReceivedByB])));
+            M.addWorld("w1", new CoordinatedAttackProblemWorld(new Valuation([CoordinatedAttackProblem.proposition, CoordinatedAttackProblem.msgErrorAtoB])));
+        } */
+
+        if (depth == 0) {
+            M.addWorld("w0", new CoordinatedAttackProblemWorld(new Valuation([CoordinatedAttackProblem.proposition])));
+        }
+        else if (depth > 0 && depth % 2 == 0) {
+            M.addWorld("w0", new CoordinatedAttackProblemWorld(new Valuation([CoordinatedAttackProblem.proposition, CoordinatedAttackProblem.msgReceivedByA])));
+            M.addWorld("w1", new CoordinatedAttackProblemWorld(new Valuation([CoordinatedAttackProblem.proposition])));
+        }
+        else {
+            M.addWorld("w0", new CoordinatedAttackProblemWorld(new Valuation([CoordinatedAttackProblem.proposition, CoordinatedAttackProblem.msgReceivedByB])));
+            M.addWorld("w1", new CoordinatedAttackProblemWorld(new Valuation([CoordinatedAttackProblem.proposition])));
+        }
+
+
+
+        for (let i = 2; i <= depth; i++)
             M.addWorld("w" + i, new CoordinatedAttackProblemWorld(new Valuation([CoordinatedAttackProblem.proposition])));
 
         M.addWorld("w" + (depth + 1), new CoordinatedAttackProblemWorld(new Valuation([])));
@@ -53,6 +103,7 @@ export class CoordinatedAttackProblem extends ExampleDescription {
 
         for (let i = depth - 1; i >= 0; i -= 2)
             M.addEdgesCluster("a", ["w" + i, "w" + (i + 1)]);
+
 
         M.setPointedWorld("w0");
         return M;
