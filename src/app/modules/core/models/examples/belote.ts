@@ -1,8 +1,7 @@
-import { Formula, FormulaFactory, ExactlyFormula, AndFormula } from './../formula/formula';
+import { Formula, FormulaFactory, ExactlyFormula, AndFormula, XorFormula } from './../formula/formula';
 import { SymbolicEpistemicModel } from './../epistemicmodel/symbolic-epistemic-model';
 import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
-import { environment } from 'src/environments/environment';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
@@ -19,14 +18,13 @@ class BeloteWorld extends WorldValuation {
     static readonly cardWidth = 9;
     static readonly cardHeight = 8;
 
-
     constructor(valuation: Valuation) {
         super(valuation);
 
         this.agentPos["a"] = { x: 64, y: 16, r: 8 };
         this.agentPos["b"] = { x: 128 - BeloteWorld.cardWidth - 10, y: 32, r: 8 };
-        this.agentPos["c"] = { x: 64, y: 48, r: 8 };
-        this.agentPos["d"] = { x: 20, y: 32, r: 8 };
+        if(Belote.getAgents().length >= 3) this.agentPos["c"] = { x: 64, y: 48, r: 8 };
+        if(Belote.getAgents().length >= 4) this.agentPos["d"] = { x: 20, y: 32, r: 8 };
     }
 
 
@@ -49,7 +47,7 @@ class BeloteWorld extends WorldValuation {
     }
 
     draw(context: CanvasRenderingContext2D) {
-        for (let agent of environment.agents) {
+        for (let agent of Belote.getAgents()) {
             let i = 0;
             for (let cardSuit of Belote.cardSuits)
                 for (let cardValue of Belote.cardValues)
@@ -60,6 +58,8 @@ class BeloteWorld extends WorldValuation {
             this.drawAgents(context);
         }
     }
+
+    
 
 }
 
@@ -77,19 +77,24 @@ class BeloteWorld extends WorldValuation {
 
 
 export class Belote extends ExampleDescription {
-    static readonly cardSuits: string[] = ["♦", "♣", "♥", "♠"];
-    static readonly cardValues: string[] = ["1", "7",  "Q", "K"];//["1", "7", "8", "9", "10", "J", "Q", "K"];
+    static readonly cardSuits: string[] = ["♦", "♣", "♥", "♠"]; // 
+    static readonly cardValues: string[] = ["1", "7", "K"];//["1", "7", "8", "9", "10", "J", "Q", "K"];
+
+    static getAgents() : string[] {
+        return ["a", "b", "c"];
+    }
 
     getName() { return "Belote"; }
 
     static getInitialNumberOfCardsByAgent() {
-        return Belote.cardSuits.length * Belote.cardValues.length / 4;
+        return Belote.cardSuits.length * Belote.cardValues.length / Belote.getAgents().length;
     }
 
 
     getDescription(): string[] {
         return ["This example is a simplification of the belote game (see https://en.wikipedia.org/wiki/Belote).","", "Each player has 3 cards, whose value is either 1, 7 or K, and whose suit is either spade, diamond, clover, or heart."]
     }
+
     getInitialEpistemicModel() {
         let example = this;
 
@@ -97,9 +102,11 @@ export class Belote extends ExampleDescription {
             getAtomicPropositions(): string[] {
                 return example.getAtomicPropositions();
             }            
+
             getAgents(): string[] {
-                return ["a", "b", "c", "d"];
+                return Belote.getAgents();
             }
+
             getSetWorldsFormulaDescription(): Formula {
                 return Belote.getInitialSetWorldsFormula();
             }
@@ -110,7 +117,6 @@ export class Belote extends ExampleDescription {
                 return Belote.getRandomInitialValuation();
             }
         }
-        let relations = new Map();
         let M = new SymbolicEpistemicModel(BeloteWorld, new SEModelDescriptorFormulaBelote());
 
         return M;
@@ -140,9 +146,11 @@ export class Belote extends ExampleDescription {
             for (let i = nbCardsPerAgent; i < nbCardsPerAgent * 2; i++)
                 listPropositions.push("b" + A[i]);
 
+            if(Belote.getAgents().includes("c"))
             for (let i = nbCardsPerAgent * 2; i < nbCardsPerAgent * 3; i++)
                 listPropositions.push("c" + A[i]);
 
+                if(Belote.getAgents().includes("d"))
             for (let i = nbCardsPerAgent * 3; i < nbCardsPerAgent * 4; i++)
                 listPropositions.push("d" + A[i]);
 
@@ -154,14 +162,14 @@ export class Belote extends ExampleDescription {
     }
 
     static getInitialSetWorldsFormula(): Formula {
-        let formula = new AndFormula(environment.agents.map((a) => new ExactlyFormula(Belote.getInitialNumberOfCardsByAgent(), Belote.getVarsOfAgent(a))));
-        let formula2 = new AndFormula(Belote.getCardNames().map((card) => new ExactlyFormula(1, ['a' + card, 'b' + card, 'c' + card, 'd' + card])));
+        let formula = new AndFormula(Belote.getAgents().map((a) => new ExactlyFormula(Belote.getInitialNumberOfCardsByAgent(), Belote.getVarsOfAgent(a))));
+        let formula2 = new AndFormula(Belote.getCardNames().map((card) => new ExactlyFormula(1, Belote.getAgents().map((agent) => agent + card))));
         return new AndFormula([formula, formula2]);
     }
 
     static getInitialRelations(): Map<string, SymbolicRelation> {
         let R = new Map();
-        for (let agent of environment.agents)
+        for (let agent of Belote.getAgents())
             R.set(agent, Belote.getInitialRelation(agent));
         return R;
     }
@@ -184,7 +192,7 @@ export class Belote extends ExampleDescription {
 
     getAtomicPropositions(): string[] {
         let A = [];
-        for (let agent of environment.agents)
+        for (let agent of Belote.getAgents())
             for (let cardSuit of Belote.cardSuits)
                 for (let cardValue of Belote.cardValues)
                     A.push(Belote.getVar(agent, cardSuit, cardValue));
