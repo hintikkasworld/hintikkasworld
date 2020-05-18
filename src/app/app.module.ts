@@ -14,7 +14,7 @@ import { CoreModule } from './modules/core/core.module';
 const appRoutes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'menu', component: MenuComponent },
-    { path: 'core', component: CoreComponent },
+    { path: 'core', component: CoreComponent }
 ];
 
 @NgModule({
@@ -27,9 +27,9 @@ const appRoutes: Routes = [
         RouterModule.forRoot(
             appRoutes,
             { enableTracing: true } // <--- debugging purposes only
-        ),
+        )
     ],
     providers: [],
-    bootstrap: [AppComponent],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}

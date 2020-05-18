@@ -9,7 +9,7 @@ describe('SymbolicSuccessorSet', () => {
             getAgents: () => [],
             getSetWorldsFormulaDescription: () => undefined,
             getRelationDescription: (_) => undefined,
-            getPointedValuation: () => undefined,
+            getPointedValuation: () => undefined
         };
 
         let sem = new SymbolicEpistemicModel(WorldValuation, descr);

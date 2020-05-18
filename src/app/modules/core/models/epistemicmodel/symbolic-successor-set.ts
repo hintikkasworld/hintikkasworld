@@ -55,7 +55,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
 
         let bddRelationOnW = await BDDWorkerService.applyAnd([
             await BDDWorkerService.createCopy(this.M.getAgentSymbolicRelation(a)),
-            bddValuation,
+            bddValuation
         ]);
 
         //  console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))

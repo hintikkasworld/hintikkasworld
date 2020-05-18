@@ -71,7 +71,7 @@ class BeloteWorld extends WorldValuation {
             h: BeloteWorld.cardHeight,
             fontSize: 5,
             color,
-            text: cardValue + cardSuit,
+            text: cardValue + cardSuit
         });
     }
 
@@ -205,7 +205,7 @@ export class Belote extends ExampleDescription {
         return [
             'This example is a simplification of the belote game (see https://en.wikipedia.org/wiki/Belote).',
             '',
-            'Each player has 3 cards, whose value is either 1, 7 or K, and whose suit is either spade, diamond, clover, or heart.',
+            'Each player has 3 cards, whose value is either 1, 7 or K, and whose suit is either spade, diamond, clover, or heart.'
         ];
     }
 

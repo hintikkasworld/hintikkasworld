@@ -36,7 +36,7 @@ class HatsWorld extends WorldValuation {
 export class Hats extends ExampleDescription {
     getDescription(): string[] {
         return [
-            'Each agent has a hat, either blue or red. They know that there is at least one blue hat. Agents a and b do not see their own hat and agent c is blind.',
+            'Each agent has a hat, either blue or red. They know that there is at least one blue hat. Agents a and b do not see their own hat and agent c is blind.'
         ];
     }
 
@@ -90,7 +90,7 @@ export class Hats extends ExampleDescription {
             A.push(
                 new EventModelAction({
                     name: 'Agent ' + a + " says he doesn't know whether his hat is red or blue.",
-                    eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(phi),
+                    eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(phi)
                 })
             );
         }

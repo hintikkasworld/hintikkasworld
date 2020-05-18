@@ -154,7 +154,7 @@ class MineSweeperWorld extends WorldValuation {
 
         return {
             col: Math.floor((point.x - MineSweeperWorld.xt) / this.cellSize) + 1,
-            row: Math.floor((point.y - MineSweeperWorld.yt) / this.cellSize) + 1,
+            row: Math.floor((point.y - MineSweeperWorld.yt) / this.cellSize) + 1
         };
     }
 
@@ -201,7 +201,7 @@ export class MineSweeper extends ExampleDescription {
 
     getDescription(): string[] {
         let A = [
-            'There is a grid with mines in certain cells. Other cells either contain the number of mines adjacent (including diagonals) or are empty.',
+            'There is a grid with mines in certain cells. Other cells either contain the number of mines adjacent (including diagonals) or are empty.'
         ];
         A.push('');
         if (this.nbmines < 2) {
@@ -403,7 +403,7 @@ export class MineSweeper extends ExampleDescription {
 
                     const phi = new AndFormula([
                         new ExactlyFormula(hint, this.getPropositionsNeightbor(cell)),
-                        new NotFormula(new AtomicFormula(MineSweeper.getAtomicProposition(cell.row, cell.col))),
+                        new NotFormula(new AtomicFormula(MineSweeper.getAtomicProposition(cell.row, cell.col)))
                     ]);
 
                     phis.push(phi);
@@ -434,7 +434,7 @@ export class MineSweeper extends ExampleDescription {
             env.perform(
                 new EventModelAction({
                     name: 'give hint',
-                    eventModel: new SymbolicPublicAnnouncement(phi),
+                    eventModel: new SymbolicPublicAnnouncement(phi)
                 })
             );
         }

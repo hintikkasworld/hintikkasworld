@@ -52,7 +52,7 @@ export class SymbolicPublicAction implements EventModel<SymbolicEpistemicModel> 
                 return await BS.applyAnd([await BS.createCopy(previousRelation), await BS.createCopy(clique)]);
             },
 
-            getPointedValuation: () => descr.getPointedValuation(),
+            getPointedValuation: () => descr.getPointedValuation()
         };
 
         return new SymbolicEpistemicModel(M.getWorldClass(), newDescr);

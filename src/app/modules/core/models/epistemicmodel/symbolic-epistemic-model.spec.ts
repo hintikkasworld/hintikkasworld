@@ -18,7 +18,7 @@ describe('SymbolicEpistemicModel', () => {
 
             getRelationDescription: (agent: string) => relationsSymboliques[agent],
 
-            getPointedValuation: () => new Valuation(['var1']),
+            getPointedValuation: () => new Valuation(['var1'])
         };
 
         let sem = new SymbolicEpistemicModel(WorldValuation, descr);

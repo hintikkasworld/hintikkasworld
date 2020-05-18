@@ -4,7 +4,7 @@ import { Node } from '../models/node';
 import { Graph } from '../models/graph';
 
 @Directive({
-    selector: '[draggableNode]',
+    selector: '[draggableNode]'
 })
 export class DraggableDirective implements OnInit {
     @Input('draggableNode') draggableNode: Node;

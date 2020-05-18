@@ -9,7 +9,7 @@ import { World } from '../../models/epistemicmodel/world';
     selector: 'app-comics',
     templateUrl: './comics.component.html',
     styleUrls: ['./comics.component.css'],
-    encapsulation: ViewEncapsulation.None, // because of JQuery dynamics
+    encapsulation: ViewEncapsulation.None // because of JQuery dynamics
 })
 export class ComicsComponent implements OnInit {
     constructor() {
@@ -17,7 +17,7 @@ export class ComicsComponent implements OnInit {
             $('#explanationGUI').css({ top: 150, left: 50 });
             $('#canvasRealWorld').css({
                 top: 250,
-                left: $('#canvas').width() / 2 - $('#canvasRealWorld').width() / 2,
+                left: $('#canvas').width() / 2 - $('#canvasRealWorld').width() / 2
             });
 
             /*to prevent the use of contestmenu (right-click)*/
@@ -118,7 +118,7 @@ export class ComicsComponent implements OnInit {
                 left: x - r,
                 width: 2 * r,
                 height: 2 * r,
-                top: y - r,
+                top: y - r
             });
             $('#canvas-wrap').append(circleElement);
         }
@@ -203,7 +203,7 @@ export class ComicsComponent implements OnInit {
         let rect = canvas.getBoundingClientRect();
         return {
             x: (evt.clientX - rect.left) / this.getWorldZoomFactor(canvas),
-            y: (evt.clientY - rect.top) / this.getWorldZoomFactor(canvas),
+            y: (evt.clientY - rect.top) / this.getWorldZoomFactor(canvas)
         };
     }
 
@@ -390,7 +390,7 @@ export class ComicsComponent implements OnInit {
         $('#level' + level).css({
             left: levelLeft,
             width: levelWidth,
-            top: this.getYLevelBulle(level),
+            top: this.getYLevelBulle(level)
         });
     }
 
@@ -424,7 +424,7 @@ export class ComicsComponent implements OnInit {
         $('#canvas-wrap').animate({ top: shiftY });
         $('#canvasRealWorld').css({
             top: 250,
-            left: $('#canvasBackground').width() / 2 - $('#canvasRealWorld').width() / 2,
+            left: $('#canvasBackground').width() / 2 - $('#canvasRealWorld').width() / 2
         });
         $('.bullethought').remove();
 

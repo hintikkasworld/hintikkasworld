@@ -85,20 +85,20 @@ export class ClassOfModels extends ExampleDescription {
         return [
             new ActionSetEpistemicModel({
                 name: 'K',
-                epistemicModel: this.getModelK(),
+                epistemicModel: this.getModelK()
             }),
             new ActionSetEpistemicModel({
                 name: 'KT',
-                epistemicModel: this.getModelKT(),
+                epistemicModel: this.getModelKT()
             }),
             new ActionSetEpistemicModel({
                 name: 'KD45',
-                epistemicModel: this.getModelKD45(),
+                epistemicModel: this.getModelKD45()
             }),
             new ActionSetEpistemicModel({
                 name: 'S5',
-                epistemicModel: this.getModelS5(),
-            }),
+                epistemicModel: this.getModelS5()
+            })
         ];
     }
 

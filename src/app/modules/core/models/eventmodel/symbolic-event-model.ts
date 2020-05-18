@@ -134,7 +134,7 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel> {
 
             pointeur = await BDDWorkerService.applyAnd([
                 await BDDWorkerService.createCopy(pointeur),
-                await BDDWorkerService.createCopy(equiv),
+                await BDDWorkerService.createCopy(equiv)
             ]);
         }
         // console.log("end frame", vars, prime, BDD.bddService.pickSolutions(pointeur, 10));

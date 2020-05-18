@@ -98,18 +98,18 @@ export class Simple extends ExampleDescription {
         return [
             new EventModelAction({
                 name: 'Public announcement that there is a marble in the basket',
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(formula),
+                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(formula)
             }),
 
             new EventModelAction({
                 name: 'Private announcement to agent a of the content of the basket. Agent b knows that this private announcement occurs.',
-                eventModel: ExplicitEventModel.getActionModelSemiPrivateAnnouncement(formula, 'a'),
+                eventModel: ExplicitEventModel.getActionModelSemiPrivateAnnouncement(formula, 'a')
             }),
 
             new EventModelAction({
                 name: 'Private announcement to agent a that there is a marble in the basket. Agent b is ignorant about that.',
-                eventModel: ExplicitEventModel.getActionModelPrivateAnnouncement(formula, 'a'),
-            }),
+                eventModel: ExplicitEventModel.getActionModelPrivateAnnouncement(formula, 'a')
+            })
         ];
     }
 

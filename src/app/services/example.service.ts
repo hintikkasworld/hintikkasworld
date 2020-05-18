@@ -3,7 +3,7 @@ import { ExampleDescription } from '../modules/core/models/environment/examplede
 import { Simple } from '../modules/core/models/examples/simple';
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 
 /** this service is to give the correct exampledescription from menu to core. */

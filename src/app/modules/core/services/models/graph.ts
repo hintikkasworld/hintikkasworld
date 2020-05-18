@@ -6,7 +6,7 @@ import * as d3 from 'd3';
 const FORCES = {
     EDGES: 1 / 20,
     COLLISION: 100,
-    CHARGE: -300,
+    CHARGE: -300
 };
 
 export class Graph {

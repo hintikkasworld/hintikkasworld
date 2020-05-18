@@ -15,7 +15,7 @@ import { SymbolicEpistemicModel } from './models/epistemicmodel/symbolic-epistem
 @Component({
     selector: 'app-core',
     templateUrl: './core.component.html',
-    styleUrls: ['./core.component.css'],
+    styleUrls: ['./core.component.css']
 })
 export class CoreComponent implements OnInit {
     bsEnv: BehaviorSubject<Environment>;
@@ -73,7 +73,7 @@ export class CoreComponent implements OnInit {
                 eventModel:
                     this.bsEnv.value.getEpistemicModel() instanceof SymbolicEpistemicModel
                         ? new SymbolicPublicAnnouncement(this.getFormulaGUI())
-                        : ExplicitEventModel.getEventModelPublicAnnouncement(this.getFormulaGUI()),
+                        : ExplicitEventModel.getEventModelPublicAnnouncement(this.getFormulaGUI())
             })
         );
         this.bsEnv.next(this.bsEnv.value);

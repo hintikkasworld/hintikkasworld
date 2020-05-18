@@ -103,7 +103,7 @@ export class DiningCryptographersProblem extends ExampleDescription {
             ' - If the result is 0, it implies that none of the cryptographers paid (so the NSA must have paid the bill).',
             ' - Otherwise, one of the cryptographers paid, but their identity remains unknown to the other cryptographers.',
             '',
-            'See https://en.wikipedia.org/wiki/Dining_cryptographers_problem',
+            'See https://en.wikipedia.org/wiki/Dining_cryptographers_problem'
         ];
     }
 
@@ -115,7 +115,7 @@ export class DiningCryptographersProblem extends ExampleDescription {
             DiningCryptographersProblem.getPropositionPaid('nsa'),
             DiningCryptographersProblem.getPropositionSharedBit('ab'),
             DiningCryptographersProblem.getPropositionSharedBit('ac'),
-            DiningCryptographersProblem.getPropositionSharedBit('bc'),
+            DiningCryptographersProblem.getPropositionSharedBit('bc')
         ];
     }
 

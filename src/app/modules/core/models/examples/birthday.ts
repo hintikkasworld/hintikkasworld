@@ -97,7 +97,7 @@ export class Birthday extends ExampleDescription {
             '- They know that the possibilities are May 15, May 16, May 19, June 17, June 18, July 14, July 16, August 14, August 15 or August 17.',
             '- Agent a knows the month.',
             '- Agent b knows the day.',
-            'Agent a announces that she does not know the date but she knows that Agent b does not know either. Then Agent b announces that he now knows the date. What is this date?',
+            'Agent a announces that she does not know the date but she knows that Agent b does not know either. Then Agent b announces that he now knows the date. What is this date?'
         ];
     }
 
@@ -133,18 +133,18 @@ export class Birthday extends ExampleDescription {
         return [
             new EventModelAction({
                 name: "Agent a says he doesn't know the birthday and he knows Bernard doesn’t know either.",
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(phi)),
+                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(phi))
             }),
 
             new EventModelAction({
                 name: 'Agent b says he knows the birthday.',
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(phi)),
+                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(phi))
             }),
 
             new EventModelAction({
                 name: 'Agent a says he knows the birthday.',
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(aKnowsDate)),
-            }),
+                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(aKnowsDate))
+            })
         ];
     }
 

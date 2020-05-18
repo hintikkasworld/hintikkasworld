@@ -56,7 +56,7 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
                 }
             },
 
-            getPointedValuation: () => descr.getPointedValuation(),
+            getPointedValuation: () => descr.getPointedValuation()
         };
 
         return new SymbolicEpistemicModel(M.getWorldClass(), newDescr);

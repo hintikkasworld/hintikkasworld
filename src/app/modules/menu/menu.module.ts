@@ -7,6 +7,6 @@ import { ExampleComponent } from './components/example/example.component';
     declarations: [MenuComponent, ExampleComponent],
     imports: [CommonModule],
 
-    exports: [MenuComponent],
+    exports: [MenuComponent]
 })
 export class MenuModule {}

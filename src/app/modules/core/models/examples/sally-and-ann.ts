@@ -94,7 +94,7 @@ class SallyAndAnneWorld extends WorldValuation {
 export class SallyAndAnn extends ExampleDescription {
     getDescription(): string[] {
         return [
-            'There is a ball in a basket. Agent b goes out for a walk, and in the meantime, agent a hides the ball. When Agent b comes back, what does Agent a think of the position of the ball?',
+            'There is a ball in a basket. Agent b goes out for a walk, and in the meantime, agent a hides the ball. When Agent b comes back, what does Agent a think of the position of the ball?'
         ];
     }
 
@@ -134,7 +134,7 @@ export class SallyAndAnn extends ExampleDescription {
                 FormulaFactory.createFormula('(not bhere)'),
                 new PropositionalAssignmentsPostcondition({
                     bhere: FormulaFactory.createTrue(),
-                    bspy: 'bottom',
+                    bspy: 'bottom'
                 })
             );
             E.makeReflexiveRelation('a');
@@ -149,7 +149,7 @@ export class SallyAndAnn extends ExampleDescription {
                 'e',
                 FormulaFactory.createFormula('((not bhere) and (not bspy))'),
                 new PropositionalAssignmentsPostcondition({
-                    bspy: FormulaFactory.createTrue(),
+                    bspy: FormulaFactory.createTrue()
                 })
             );
             E.addAction('f', FormulaFactory.createTrue());
@@ -193,7 +193,7 @@ export class SallyAndAnn extends ExampleDescription {
                 FormulaFactory.createFormula('(bhere and marbleb)'),
                 new PropositionalAssignmentsPostcondition({
                     marbleBasket: FormulaFactory.createTrue(),
-                    marbleb: 'bottom',
+                    marbleb: 'bottom'
                 })
             );
             /*         else
@@ -212,7 +212,7 @@ export class SallyAndAnn extends ExampleDescription {
                 FormulaFactory.createFormula('(bhere and marbleBasket)'),
                 new PropositionalAssignmentsPostcondition({
                     marbleBasket: 'bottom',
-                    marbleBox: FormulaFactory.createTrue(),
+                    marbleBox: FormulaFactory.createTrue()
                 })
             );
 
@@ -228,7 +228,7 @@ export class SallyAndAnn extends ExampleDescription {
 
             let assignmentTransfer = new PropositionalAssignmentsPostcondition({
                 marbleBasket: 'bottom',
-                marbleBox: FormulaFactory.createTrue(),
+                marbleBox: FormulaFactory.createTrue()
             });
             E.addAction('e', FormulaFactory.createFormula('((not bhere) and marbleBasket and bspy)'), assignmentTransfer);
             E.addAction('f', FormulaFactory.createTrue(), assignmentTransfer);
@@ -255,7 +255,7 @@ export class SallyAndAnn extends ExampleDescription {
                 FormulaFactory.createFormula('((not bhere) and marbleBasket and (not bspy))'),
                 new PropositionalAssignmentsPostcondition({
                     marbleBasket: 'bottom',
-                    marbleBox: FormulaFactory.createTrue(),
+                    marbleBox: FormulaFactory.createTrue()
                 })
             );
             E.addAction('t', FormulaFactory.createTrue());
@@ -272,49 +272,49 @@ export class SallyAndAnn extends ExampleDescription {
         return [
             new EventModelAction({
                 name: 'Agent b goes out.',
-                eventModel: getExampleSallyAndAnneSallyOut(),
+                eventModel: getExampleSallyAndAnneSallyOut()
                 /*  message: "Bye. I go for a walk.",
                   saidby: "b"*/
             }),
 
             new EventModelAction({
                 name: 'Agent b goes in.',
-                eventModel: getExampleSallyAndAnneSallyIn(),
+                eventModel: getExampleSallyAndAnneSallyIn()
                 /*    message: "Hi ! I am home.",
                     saidby: "b"*/
             }),
 
             new EventModelAction({
                 name: 'Agent b starts spying.',
-                eventModel: actionSallySpyStart(),
+                eventModel: actionSallySpyStart()
             }),
 
             new EventModelAction({
                 name: 'Agent b stops spying.',
-                eventModel: actionSallySpyStop(),
+                eventModel: actionSallySpyStop()
             }),
 
             new EventModelAction({
                 name: 'Agent b puts the marble in the basket.',
-                eventModel: actionSallyMarbleSallyToMarbleBasket(),
+                eventModel: actionSallyMarbleSallyToMarbleBasket()
                 /*  message: "Let us put this marble in the basket.",
                   saidby: "b"*/
             }),
 
             new EventModelAction({
                 name: 'Agent a transfers the marble from the basket to the box and b is here.',
-                eventModel: actionAnneTransfersMarbleFromBasketToBoxWhenBHere(),
+                eventModel: actionAnneTransfersMarbleFromBasketToBoxWhenBHere()
             }),
 
             new EventModelAction({
                 name: 'Agent a transfers the marble from the basket to the box and b is outside.',
-                eventModel: actionAnneTransfersMarbleFromBasketToBoxWhenBOutsideNotSpying(),
+                eventModel: actionAnneTransfersMarbleFromBasketToBoxWhenBOutsideNotSpying()
             }),
 
             new EventModelAction({
                 name: 'Agent a transfers the marble from the basket to the box and b is outside and spying.',
-                eventModel: actionAnneTransfersMarbleFromBasketToBoxWhenBOutsideSpying(),
-            }),
+                eventModel: actionAnneTransfersMarbleFromBasketToBoxWhenBOutsideSpying()
+            })
         ];
     }
 }

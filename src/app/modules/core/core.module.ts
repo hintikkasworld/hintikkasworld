@@ -12,6 +12,6 @@ import { DraggableDirective } from './services/directives/draggable.directive';
     declarations: [CoreComponent, ComicsComponent, ActionListComponent, EdgeComponent, NodeComponent, GraphComponent, DraggableDirective],
     imports: [CommonModule],
 
-    exports: [CoreComponent],
+    exports: [CoreComponent]
 })
 export class CoreModule {}

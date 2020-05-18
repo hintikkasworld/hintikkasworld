@@ -435,7 +435,7 @@ export class Graph {
                         visited[u] = {
                             distance: visited[world].distance + 1,
                             parent: world,
-                            agent: a,
+                            agent: a
                         };
                         queue.push(u);
                     }
@@ -468,7 +468,7 @@ export class Graph {
                         visited[u] = {
                             distance: visited[world].distance + 1,
                             parent: world,
-                            agent: a,
+                            agent: a
                         };
                         queue.push(u);
                     }

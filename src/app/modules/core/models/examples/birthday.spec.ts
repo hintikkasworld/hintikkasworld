@@ -15,7 +15,7 @@ describe('Birthday', () => {
                     { day: 3, month: 'm' },
                     { day: 14, month: 'a' },
                     { day: 15, month: 'a' },
-                    { day: 17, month: 'a' },
+                    { day: 17, month: 'a' }
                 ],
                 { day: 3, month: 'm' }
             )

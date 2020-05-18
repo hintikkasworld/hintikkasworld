@@ -336,7 +336,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     async queryWorldsSatisfyingBooleanFormula(phi: Formula): Promise<BDDNode> {
         return await BDDWorkerService.applyAnd([
             await BDDWorkerService.formulaToBDD(phi),
-            await BDDWorkerService.createCopy(this.bddSetWorlds),
+            await BDDWorkerService.createCopy(this.bddSetWorlds)
         ]);
     }
 
@@ -355,7 +355,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             // console.log("Atom ", (<types.AtomicFormula>phi).getAtomicString())
             return await BDDWorkerService.applyAnd([
                 await BDDWorkerService.createLiteral((phi as types.AtomicFormula).getAtomicString()),
-                await BDDWorkerService.createCopy(all_worlds),
+                await BDDWorkerService.createCopy(all_worlds)
             ]);
         }
         if (phi instanceof types.AndFormula) {
@@ -422,7 +422,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             getAtomicPropositions: () => this.propositionalAtoms,
             getSetWorldsBDDDescription: async () => this.bddSetWorlds,
             getRelationBDD: async (agent: string) => this.symbolicRelations.get(agent),
-            getPointedValuation: () => this.pointedValuation,
+            getPointedValuation: () => this.pointedValuation
         };
     }
 

@@ -31,7 +31,7 @@ class SimpleHanabiWorld extends WorldValuation {
         this.agentPos['b'] = {
             x: 128 - SimpleHanabiWorld.cardWidth - 10,
             y: 32,
-            r: 8,
+            r: 8
         };
         this.agentPos['c'] = { x: 64, y: 48, r: 8 };
         this.agentPos['d'] = { x: 20, y: 32, r: 8 };
@@ -39,17 +39,17 @@ class SimpleHanabiWorld extends WorldValuation {
         this.agentHandPos['a'] = {
             x: 64 - (SimpleHanabiWorld.cardNumber / 2) * SimpleHanabiWorld.cardWidth,
             y: 0,
-            horizontal: true,
+            horizontal: true
         };
         this.agentHandPos['b'] = {
             x: 128 - SimpleHanabiWorld.cardWidth,
             y: 10,
-            horizontal: false,
+            horizontal: false
         };
         this.agentHandPos['c'] = {
             x: 64 - (SimpleHanabiWorld.cardNumber / 2) * SimpleHanabiWorld.cardWidth,
             y: 56,
-            horizontal: true,
+            horizontal: true
         };
         this.agentHandPos['d'] = { x: 0, y: 10, horizontal: false };
     }
@@ -78,7 +78,7 @@ class SimpleHanabiWorld extends WorldValuation {
                 h: SimpleHanabiWorld.cardHeight,
                 fontSize: 6,
                 background: SimpleSymbolicHanabi.getCardSuit(card),
-                text: SimpleSymbolicHanabi.getCardValue(card),
+                text: SimpleSymbolicHanabi.getCardValue(card)
             });
         }
     }
@@ -103,7 +103,7 @@ class SimpleHanabiWorld extends WorldValuation {
                 fontSize: 6,
                 background: SimpleSymbolicHanabi.getCardSuit(card),
                 text: SimpleSymbolicHanabi.getCardValue(card),
-                nb: card,
+                nb: card
             };
             if (cardGUI.x <= cursor.x && cursor.x < cardGUI.x + cardGUI.w && cardGUI.y <= cursor.y && cursor.y < cardGUI.y + cardGUI.h) {
                 return cardGUI;
@@ -123,7 +123,7 @@ class SimpleHanabiWorld extends WorldValuation {
                 {
                     x: 80,
                     y: colorY,
-                    horizontal: true,
+                    horizontal: true
                 },
                 this.state.playedCardsByColor.get(color),
                 false
@@ -295,7 +295,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
     getDescription(): string[] {
         return [
-            'Each agent has some cards between 1 and 5 and either red, yellow, blue, white or green. Each agent can only see the cards of other agents.',
+            'Each agent has some cards between 1 and 5 and either red, yellow, blue, white or green. Each agent can only see the cards of other agents.'
         ];
     }
 
@@ -491,7 +491,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
             // not +_var_pos1_value && +_var_post2_value
             let post = new AndFormula([
                 new AtomicFormula(SymbolicEventModel.getPostedVarName(var2)),
-                new NotFormula(new AtomicFormula(SymbolicEventModel.getPostedVarName(var1))),
+                new NotFormula(new AtomicFormula(SymbolicEventModel.getPostedVarName(var1)))
             ]);
             const postBdd = await BDDWorkerService.formulaToBDD(new AndFormula([pre, post]));
             // console.log("postBdd = ", BDD.bddService.pickAllSolutions(postBdd));

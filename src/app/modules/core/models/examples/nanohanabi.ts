@@ -42,7 +42,7 @@ class NanoHanabiWorld extends WorldValuation {
                             x: this.agentPos[a].x + xshift,
                             y: 12,
                             w: 16,
-                            text: i,
+                            text: i
                         });
                     }
                 }
@@ -54,7 +54,7 @@ class NanoHanabiWorld extends WorldValuation {
                     x: this.agentPos['c'].x - 4,
                     y: 12,
                     w: 16,
-                    text: i,
+                    text: i
                 });
             }
         }

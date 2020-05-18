@@ -405,7 +405,7 @@ export class ExactlyFormula implements Formula {
             const subform_if_not_x = rec(n, k - 1);
             const res = new OrFormula([
                 new AndFormula([new AtomicFormula(x), subform_if_x]),
-                new AndFormula([new NotFormula(new AtomicFormula(x)), subform_if_not_x]),
+                new AndFormula([new NotFormula(new AtomicFormula(x)), subform_if_not_x])
             ]);
             cache.set(key, res);
             return res;

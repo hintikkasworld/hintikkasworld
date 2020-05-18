@@ -11,8 +11,8 @@ export const environment = {
         a: 'assets/img/agenta.png',
         b: 'assets/img/agentb.png',
         c: 'assets/img/agentc.png',
-        d: 'assets/img/agentd.png',
-    },
+        d: 'assets/img/agentd.png'
+    }
 };
 
 /*

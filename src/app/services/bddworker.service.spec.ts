@@ -5,7 +5,7 @@ import { BDDWorkerService } from './bddworker.service';
 describe('BDDWorkerService', () => {
     beforeEach(() =>
         TestBed.configureTestingModule({
-            providers: [BDDWorkerService],
+            providers: [BDDWorkerService]
         })
     );
 

@@ -6,7 +6,7 @@ import { Edge } from '../../../services/models/edge';
 @Component({
     selector: '[app-edge]',
     templateUrl: './edge.component.html',
-    styleUrls: ['./edge.component.css'],
+    styleUrls: ['./edge.component.css']
 })
 export class EdgeComponent implements OnInit {
     @Input('app-edge') edge: Edge;

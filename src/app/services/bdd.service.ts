@@ -89,7 +89,7 @@ export class BddService {
                 this.bddModule._set_debug_mode(false);
                 f();
                 this.wasmReady.next(true);
-            },
+            }
         };
 
         // instantiate the module
@@ -695,7 +695,7 @@ export class BddService {
                 json[i] = {
                     atom: this.getAtomOf(b),
                     then: goodNumber[this.getThenOf(b)],
-                    else: goodNumber[this.getElseOf(b)],
+                    else: goodNumber[this.getElseOf(b)]
                 };
             }
             i++;

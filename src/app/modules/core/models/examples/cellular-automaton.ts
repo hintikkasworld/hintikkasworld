@@ -34,7 +34,7 @@ class CellularAutomataWorld extends World {
 
     static readonly cellsImg = {
         0: CellularAutomataWorld.getImage('cell0.png'),
-        1: CellularAutomataWorld.getImage('cell1.png'),
+        1: CellularAutomataWorld.getImage('cell1.png')
     };
     readonly cellState: string;
     readonly propositionRightTrue: boolean;
@@ -141,7 +141,7 @@ class CellularAutomatonPostcondition extends Postcondition {
 export class CellularAutomaton extends ExampleDescription {
     getDescription(): string[] {
         return [
-            "The model is a simulation of rule 110 in cellular automata. Agents' knowledge simulate the current word and the actions simulate the computation steps.",
+            "The model is a simulation of rule 110 in cellular automata. Agents' knowledge simulate the current word and the actions simulate the computation steps."
         ];
     }
 
@@ -277,8 +277,8 @@ export class CellularAutomaton extends ExampleDescription {
         return [
             new EventModelAction({
                 name: 'one-step computation',
-                eventModel: getCellularAutomataEventModel(getRule110CellularAutomataTransitionFunctionText()),
-            }),
+                eventModel: getCellularAutomataEventModel(getRule110CellularAutomataTransitionFunctionText())
+            })
         ];
     }
 

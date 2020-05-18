@@ -28,7 +28,7 @@ addEventListener('message', ({ data }) => {
     //  console.log("data received by the worker: " + data);
     const response = {
         id: data.id,
-        result: executeFunctionByName(data.functionName, data.args),
+        result: executeFunctionByName(data.functionName, data.args)
     };
 
     // console.log("data sent back by the worker: " + response);

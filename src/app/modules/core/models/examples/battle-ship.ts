@@ -287,7 +287,7 @@ class BattleShipWorld extends WorldValuation {
 
         return {
             col: Math.floor((point.x - BattleShipWorld.xt) / this.cellSize) + 1,
-            row: Math.floor((point.y - BattleShipWorld.yt) / this.cellSize) + 1,
+            row: Math.floor((point.y - BattleShipWorld.yt) / this.cellSize) + 1
         };
     }
 
@@ -307,7 +307,7 @@ class BattleShipWorld extends WorldValuation {
 
         return {
             col: Math.floor((point.x - (BattleShipWorld.xt + (this.nbcols + 1) * this.cellSize)) / this.cellSize) + 1,
-            row: Math.floor((point.y - BattleShipWorld.yt) / this.cellSize) + 1,
+            row: Math.floor((point.y - BattleShipWorld.yt) / this.cellSize) + 1
         };
     }
 
@@ -719,7 +719,7 @@ export class BattleShip extends ExampleDescription {
             env.perform(
                 new EventModelAction({
                     name: 'give hint',
-                    eventModel: new SymbolicPublicAnnouncement(phi),
+                    eventModel: new SymbolicPublicAnnouncement(phi)
                 })
             );
         } else {
@@ -731,7 +731,7 @@ export class BattleShip extends ExampleDescription {
             env.perform(
                 new EventModelAction({
                     name: 'give hint',
-                    eventModel: new SymbolicPublicAnnouncement(new NotFormula(phi)),
+                    eventModel: new SymbolicPublicAnnouncement(new NotFormula(phi))
                 })
             );
         }

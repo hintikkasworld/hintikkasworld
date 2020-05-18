@@ -30,7 +30,7 @@ class FlatlandWorld extends World {
             this.agentPos[agent] = {
                 x: this.positions[agent].x,
                 y: this.positions[agent].y,
-                r: 8,
+                r: 8
             };
         }
     }
@@ -45,12 +45,12 @@ class FlatlandWorld extends World {
 
             let p1: Point = {
                 x: pos.x + coneLength * Math.cos(angle + FlatlandWorld.angleCone),
-                y: pos.y + coneLength * Math.sin(angle + FlatlandWorld.angleCone),
+                y: pos.y + coneLength * Math.sin(angle + FlatlandWorld.angleCone)
             };
 
             let p2: Point = {
                 x: pos.x + coneLength * Math.cos(angle - FlatlandWorld.angleCone),
-                y: pos.y + coneLength * Math.sin(angle - FlatlandWorld.angleCone),
+                y: pos.y + coneLength * Math.sin(angle - FlatlandWorld.angleCone)
             };
 
             context.strokeStyle = environment.agentColor[agent];
@@ -327,7 +327,7 @@ export class Flatland extends ExampleDescription {
 
     getDescription(): string[] {
         let A = [
-            'Agents are placed in the plane, and see everything in front of them within a cone. They are uncertain about everything they do not see.',
+            'Agents are placed in the plane, and see everything in front of them within a cone. They are uncertain about everything they do not see.'
         ];
         if (this.ckPositions) {
             A.push('');

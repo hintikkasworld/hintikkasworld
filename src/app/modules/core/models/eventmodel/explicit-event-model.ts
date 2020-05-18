@@ -100,7 +100,7 @@ export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpis
                 } else {
                     return 'pre: ' + this.pre.prettyPrint() + '; post: ' + post.toString();
                 }
-            },
+            }
             // toHTML: function() {return ' <table><tr><td>pre: </td><td>' + formulaPrettyPrint(this.pre) + '</td></tr><tr><td>post: </td><td>' + post.toString() + '</td></tr></table>'}
         });
     }

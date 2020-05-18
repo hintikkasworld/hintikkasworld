@@ -19,7 +19,7 @@ export class BDDWorkerService {
      */
     static createWorker() {
         let worker = new Worker('../modules/core/services/bddworker.worker.ts', {
-            type: 'module',
+            type: 'module'
         });
         console.log('creating BDDWorkerService');
         console.log('Worker created');

@@ -24,7 +24,7 @@ import { BattleShip } from '../core/models/examples/battle-ship';
 @Component({
     selector: 'app-menu',
     templateUrl: './menu.component.html',
-    styleUrls: ['./menu.component.css'],
+    styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnInit {
     explicitExamples = [
@@ -38,7 +38,7 @@ export class MenuComponent implements OnInit {
         new ConsecutiveNumbers(),
         new NanoHanabi(),
         new Cherylsbirthday(),
-        new CoordinatedAttackProblem(),
+        new CoordinatedAttackProblem()
     ]; // , new LinesBirthday()];
 
     symbolicExamples = [
@@ -56,7 +56,7 @@ export class MenuComponent implements OnInit {
         new BattleShip(8, 8, [3, 3]),
         new SimpleSymbolicHanabi(),
         new Flatland(false),
-        new Flatland(true),
+        new Flatland(true)
     ];
 
     technicalExamples = [new ClassOfModels(), new CommonknowledgeStrictlyMoreExpressive(), new CellularAutomaton()];

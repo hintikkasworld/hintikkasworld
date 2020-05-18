@@ -5,7 +5,7 @@ describe('ActionSetEpistemicModel', () => {
         expect(
             new ActionSetEpistemicModel({
                 name: '',
-                epistemicModel: undefined,
+                epistemicModel: undefined
             })
         ).toBeTruthy();
     });

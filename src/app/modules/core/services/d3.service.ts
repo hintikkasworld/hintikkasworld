@@ -5,7 +5,7 @@ import { Edge } from './models/edge';
 import { Node } from './models/node';
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 export class D3Service {
     constructor() {}

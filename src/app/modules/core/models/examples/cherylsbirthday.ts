@@ -14,7 +14,7 @@ export class Cherylsbirthday extends Birthday {
                 { day: 16, month: 'jl' },
                 { day: 14, month: 'a' },
                 { day: 15, month: 'a' },
-                { day: 17, month: 'a' },
+                { day: 17, month: 'a' }
             ],
             { day: 16, month: 'jl' }
         );

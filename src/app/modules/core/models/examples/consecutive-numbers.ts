@@ -35,7 +35,7 @@ class ConsecutiveNumbersWorld extends WorldValuation {
                         x: this.agentPos[a].x,
                         y: 48,
                         w: 16,
-                        text: i,
+                        text: i
                     });
                 }
             }
@@ -46,7 +46,7 @@ class ConsecutiveNumbersWorld extends WorldValuation {
 export class ConsecutiveNumbers extends ExampleDescription {
     getDescription(): string[] {
         return [
-            "Agents a and b each own a number, say between 1 and 10. They know their number and that the one from the other agent is consecutive, so either -1 or +1. Is it possible for them by just announcing 'I know your number' or 'I do not know your number' to find each other's numbers?",
+            "Agents a and b each own a number, say between 1 and 10. They know their number and that the one from the other agent is consecutive, so either -1 or +1. Is it possible for them by just announcing 'I know your number' or 'I do not know your number' to find each other's numbers?"
         ];
     }
 
@@ -117,27 +117,27 @@ export class ConsecutiveNumbers extends ExampleDescription {
 
         return [
             { a: 'a', b: 'b' },
-            { a: 'b', b: 'a' },
+            { a: 'b', b: 'a' }
         ]
             .map(function (obj) {
                 return new EventModelAction({
                     name: 'Agent ' + obj.a + ' announces that ' + getPronom(obj.a) + ' knows the number of agent ' + obj.b + '.',
                     eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(
                         FormulaFactory.createFormula(getConsequenceNumberFormulaAgentKnowOtherNumber(obj.a))
-                    ),
+                    )
                 });
             })
             .concat(
                 [
                     { a: 'a', b: 'b' },
-                    { a: 'b', b: 'a' },
+                    { a: 'b', b: 'a' }
                 ].map(function (obj) {
                     return new EventModelAction({
                         name:
                             'Agent ' + obj.a + ' announces that ' + getPronom(obj.a) + ' does not know the number of agent ' + obj.b + '.',
                         eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(
                             FormulaFactory.createFormula('(not ' + getConsequenceNumberFormulaAgentKnowOtherNumber(obj.a) + ')')
-                        ),
+                        )
                     });
                 })
             );

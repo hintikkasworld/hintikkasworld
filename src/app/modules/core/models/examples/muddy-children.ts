@@ -26,7 +26,7 @@ class MuddyChildrenWorld extends WorldValuation {
             this.agentPos[String.fromCharCode(97 + i)] = {
                 x: 58 + 32 * Math.cos(angle),
                 y: 32 + 20 * Math.sin(angle),
-                r: this.size,
+                r: this.size
             };
         }
     }
@@ -67,7 +67,7 @@ export class MuddyChildren extends ExampleDescription {
     getDescription(): string[] {
         return [
             this.nbChildren +
-                " children play in the garden and some of them become muddy. Their father comes and say 'At least one of you has mud on her forehead'. He then asks several times 'Does any one of you know whether she has mud on her forehead?'",
+                " children play in the garden and some of them become muddy. Their father comes and say 'At least one of you has mud on her forehead'. He then asks several times 'Does any one of you know whether she has mud on her forehead?'"
         ];
     }
 
@@ -148,18 +148,18 @@ export class MuddyChildren extends ExampleDescription {
         return [
             new EventModelAction({
                 name: 'Father says at least one child is muddy.',
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(fatherann)),
+                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(fatherann))
             }),
 
             new EventModelAction({
                 name: 'Publicly a is muddy!',
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('ma')),
+                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('ma'))
             }),
 
             new EventModelAction({
                 name: 'Children say they do not know.',
-                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(donotknowann)),
-            }),
+                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula(donotknowann))
+            })
         ];
     }
 }

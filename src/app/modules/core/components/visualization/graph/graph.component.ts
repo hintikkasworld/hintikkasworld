@@ -10,7 +10,7 @@ import { ExplicitEpistemicModel } from '../../../models/epistemicmodel/explicit-
 @Component({
     selector: 'app-graph',
     templateUrl: './graph.component.html',
-    styleUrls: ['./graph.component.css'],
+    styleUrls: ['./graph.component.css']
 })
 export class GraphComponent implements OnInit {
     @Input() obsEnv: Observable<Environment>;
