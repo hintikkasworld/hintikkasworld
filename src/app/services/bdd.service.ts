@@ -1,5 +1,5 @@
 import * as types from './../modules/core/models/formula/formula';
-import { Formula } from './../modules/core/models/formula/formula';
+import { Formula } from '../modules/core/models/formula/formula';
 import { BehaviorSubject } from 'rxjs';
 
 import * as Module from './../../../cuddjs/release/cuddjs.js';

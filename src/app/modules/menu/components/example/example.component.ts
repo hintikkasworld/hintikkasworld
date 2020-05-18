@@ -1,4 +1,4 @@
-import { ExampleDescription } from './../../../core/models/environment/exampledescription';
+import { ExampleDescription } from '../../../core/models/environment/exampledescription';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 
 @Component({

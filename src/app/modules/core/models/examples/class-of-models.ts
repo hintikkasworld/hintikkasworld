@@ -1,7 +1,7 @@
-import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
+import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 import { SimpleWorld } from './simple';
-import { Valuation } from './../epistemicmodel/valuation';
-import { ActionSetEpistemicModel } from './../environment/action-set-epistemic-model';
+import { Valuation } from '../epistemicmodel/valuation';
+import { ActionSetEpistemicModel } from '../environment/action-set-epistemic-model';
 import { ExampleDescription } from '../environment/exampledescription';
 import { World } from '../epistemicmodel/world';
 

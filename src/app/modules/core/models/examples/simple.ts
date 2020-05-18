@@ -1,10 +1,10 @@
-import { FormulaFactory } from './../formula/formula';
-import { ExplicitEventModel } from './../eventmodel/explicit-event-model';
-import { EventModelAction } from './../environment/event-model-action';
-import { Valuation } from './../epistemicmodel/valuation';
-import { WorldValuation } from './../epistemicmodel/world-valuation';
-import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
-import { EpistemicModel } from './../epistemicmodel/epistemic-model';
+import { FormulaFactory } from '../formula/formula';
+import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
+import { EventModelAction } from '../environment/event-model-action';
+import { Valuation } from '../epistemicmodel/valuation';
+import { WorldValuation } from '../epistemicmodel/world-valuation';
+import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
+import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 import { ExampleDescription } from '../environment/exampledescription';
 import { World } from '../epistemicmodel/world';
 

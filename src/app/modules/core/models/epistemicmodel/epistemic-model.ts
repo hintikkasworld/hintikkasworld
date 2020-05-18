@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
 import { SuccessorSet } from './successor-set';
-import { Formula } from './../formula/formula';
+import { Formula } from '../formula/formula';
 import { World } from './world';
 
 /**

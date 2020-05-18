@@ -1,5 +1,5 @@
-import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
-import { WorldValuation } from './../epistemicmodel/world-valuation';
+import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
+import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 

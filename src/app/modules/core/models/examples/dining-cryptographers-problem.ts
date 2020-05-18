@@ -1,11 +1,11 @@
-import { Valuation } from './../epistemicmodel/valuation';
-import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositional-assignments-postcondition';
-import { FormulaFactory } from './../formula/formula';
-import { EpistemicModel } from './../epistemicmodel/epistemic-model';
-import { Action } from './../environment/action';
-import { ExplicitEventModel } from './../eventmodel/explicit-event-model';
-import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
-import { WorldValuation } from './../epistemicmodel/world-valuation';
+import { Valuation } from '../epistemicmodel/valuation';
+import { PropositionalAssignmentsPostcondition } from '../eventmodel/propositional-assignments-postcondition';
+import { FormulaFactory } from '../formula/formula';
+import { EpistemicModel } from '../epistemicmodel/epistemic-model';
+import { Action } from '../environment/action';
+import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
+import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
+import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 
 class DiningCryptographersWorld extends WorldValuation {

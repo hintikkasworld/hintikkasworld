@@ -1,7 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { ExplicitSuccessorSet } from './explicit-successor-set';
 import * as types from './../formula/formula';
-import { Graph } from './../graph';
+import { Graph } from '../graph';
 import { EpistemicModel } from './epistemic-model';
 import { environment } from 'src/environments/environment';
 import { World } from './world';
@@ -11,8 +11,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
     nodeToID: Map<World, string> = new Map();
 
     isLoadedObservable(): BehaviorSubject<boolean> {
-        let isLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-        return isLoaded$;
+        return new BehaviorSubject<boolean>(true);
     }
 
     isLoaded(): boolean {
@@ -20,7 +19,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
     }
 
     async check(formula: types.Formula) {
-        return await this.modelCheck(this.getPointedWorldID(), formula);
+        return this.modelCheck(this.getPointedWorldID(), formula);
     }
 
     getSuccessors(w: World, a: string): SuccessorSet {

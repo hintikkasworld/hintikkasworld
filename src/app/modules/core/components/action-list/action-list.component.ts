@@ -1,4 +1,4 @@
-import { Action } from './../../models/environment/action';
+import { Action } from '../../models/environment/action';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Environment } from '../../models/environment/environment';
 import { Observable } from 'rxjs';

@@ -1,8 +1,8 @@
 import { BehaviorSubject } from 'rxjs';
-import { SuccessorSet } from './../epistemicmodel/successor-set';
+import { SuccessorSet } from '../epistemicmodel/successor-set';
 import * as types from './../formula/formula';
 import { environment } from 'src/environments/environment';
-import { EpistemicModel } from './../epistemicmodel/epistemic-model';
+import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 import { ExampleDescription } from '../environment/exampledescription';
 import { World } from '../epistemicmodel/world';
 import { Environment } from '../environment/environment';
@@ -232,8 +232,7 @@ class FlatlandEpistemicModel implements EpistemicModel {
     readonly ckPositions: boolean;
 
     isLoadedObservable(): BehaviorSubject<boolean> {
-        let isLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-        return isLoaded$;
+        return new BehaviorSubject<boolean>(true);
     }
 
     isLoaded(): boolean {

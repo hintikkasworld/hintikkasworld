@@ -1,4 +1,4 @@
-import { WorldValuation } from './../epistemicmodel/world-valuation';
+import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { Valuation } from '../epistemicmodel/valuation';
 import { Postcondition } from './postcondition';
 

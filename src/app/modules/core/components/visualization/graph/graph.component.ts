@@ -1,8 +1,8 @@
-import { Node } from './../../../services/models/node';
-import { Edge } from './../../../services/models/edge';
-import { Environment } from './../../../models/environment/environment';
+import { Node } from '../../../services/models/node';
+import { Edge } from '../../../services/models/edge';
+import { Environment } from '../../../models/environment/environment';
 import { Observable } from 'rxjs';
-import { D3Service } from './../../../services/d3.service';
+import { D3Service } from '../../../services/d3.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { Graph } from '../../../services/models/graph';
 import { ExplicitEpistemicModel } from '../../../models/epistemicmodel/explicit-epistemic-model';

@@ -1,5 +1,5 @@
 import { Environment } from './environment';
-import { EpistemicModel } from './../epistemicmodel/epistemic-model';
+import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 import { World } from '../epistemicmodel/world';
 
 class Point {

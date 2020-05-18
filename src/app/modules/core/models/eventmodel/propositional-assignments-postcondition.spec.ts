@@ -1,5 +1,5 @@
-import { WorldValuation } from './../epistemicmodel/world-valuation';
-import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
+import { WorldValuation } from '../epistemicmodel/world-valuation';
+import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 import { PropositionalAssignmentsPostcondition } from './propositional-assignments-postcondition';
 import { Valuation } from '../epistemicmodel/valuation';
 

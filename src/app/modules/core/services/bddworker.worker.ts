@@ -1,4 +1,4 @@
-import { BddService } from './../../../services/bdd.service';
+import { BddService } from '../../../services/bdd.service';
 
 /// <reference lib="webworker" />
 

@@ -1,6 +1,6 @@
-import { AndFormula, ExactlyFormula, Formula } from './../formula/formula';
-import { SymbolicEpistemicModel } from './../epistemicmodel/symbolic-epistemic-model';
-import { WorldValuation } from './../epistemicmodel/world-valuation';
+import { AndFormula, ExactlyFormula, Formula } from '../formula/formula';
+import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
+import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
@@ -234,9 +234,7 @@ export class Belote extends ExampleDescription {
             }
         }
 
-        let M = new SymbolicEpistemicModel(BeloteWorld, new SEModelDescriptorFormulaBelote());
-
-        return M;
+        return new SymbolicEpistemicModel(BeloteWorld, new SEModelDescriptorFormulaBelote());
     }
 
     getAtomicPropositions(): string[] {

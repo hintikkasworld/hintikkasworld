@@ -1,15 +1,15 @@
-import { environment } from './../../../../../environments/environment';
-import { WorldValuation } from './../epistemicmodel/world-valuation';
+import { environment } from '../../../../../environments/environment';
+import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { AndFormula, AtomicFormula, ExactlyFormula, Formula, NotFormula } from '../formula/formula';
-import { EventModelAction } from './../environment/event-model-action';
+import { EventModelAction } from '../environment/event-model-action';
 import { SymbolicEventModel } from '../eventmodel/symbolic-event-model';
 import { SymbolicPublicAnnouncement } from '../eventmodel/symbolic-public-announcement';
 import { SymbolicEvent } from '../eventmodel/symbolic-event';
-import { BDDNode } from './../../../../services/bdd.service';
+import { BDDNode } from '../../../../services/bdd.service';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
 

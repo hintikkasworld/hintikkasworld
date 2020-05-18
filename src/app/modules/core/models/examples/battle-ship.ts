@@ -620,8 +620,7 @@ export class BattleShip extends ExampleDescription {
             }
         }
 
-        let M = new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorBattleShip());
-        return M;
+        return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorBattleShip());
     }
 
     getValuationExample(): Valuation {

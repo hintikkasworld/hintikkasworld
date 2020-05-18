@@ -1,5 +1,5 @@
-import { SuccessorSet } from './../../models/epistemicmodel/successor-set';
-import { environment } from './../../../../../environments/environment';
+import { SuccessorSet } from '../../models/epistemicmodel/successor-set';
+import { environment } from '../../../../../environments/environment';
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { Environment } from '../../models/environment/environment';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -157,7 +157,7 @@ export class ComicsComponent implements OnInit {
     /**
      @returns the coordinates of element in canvas-wrap
      */
-    private cumulativeOffset(element) {
+    private static cumulativeOffset(element) {
         let top = 0,
             left = 0;
         do {
@@ -177,7 +177,7 @@ export class ComicsComponent implements OnInit {
      @returns the coordinates of the world of ID worldID at level
      */
     private getWorldPosition(level: number, world: World) {
-        return this.cumulativeOffset(this.canvasFromWorld[level].get(world));
+        return ComicsComponent.cumulativeOffset(this.canvasFromWorld[level].get(world));
     }
 
     /**
@@ -235,7 +235,7 @@ export class ComicsComponent implements OnInit {
     /**
      @description make so that DOM element element is shown
      */
-    private checkIfInView(element) {
+    private static checkIfInView(element) {
         let parent = element.parent();
 
         let offset = element.offset().top + parent.scrollTop();
@@ -382,8 +382,9 @@ export class ComicsComponent implements OnInit {
             levelLeft = 0;
         }
 
-        if (levelLeft > $('#canvasBackground').width() - levelWidth) {
-            levelLeft = $('#canvasBackground').width() - levelWidth;
+        let w = $('#canvasBackground').width();
+        if (levelLeft > w - levelWidth) {
+            levelLeft = w - levelWidth;
         }
 
         $('#level' + level).css({

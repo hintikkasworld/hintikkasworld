@@ -1,4 +1,4 @@
-import { EpistemicModel } from './../epistemicmodel/epistemic-model';
+import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 
 export interface EventModel<EpistemicModelType extends EpistemicModel> {
     apply(M: EpistemicModelType): EpistemicModelType;

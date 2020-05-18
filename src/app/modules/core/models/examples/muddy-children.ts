@@ -1,5 +1,5 @@
-import { ExplicitEventModel } from './../eventmodel/explicit-event-model';
-import { EventModelAction } from './../environment/event-model-action';
+import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
+import { EventModelAction } from '../environment/event-model-action';
 import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';

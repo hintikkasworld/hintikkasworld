@@ -3,7 +3,7 @@ import { Action } from './models/environment/action';
 import { MuddyChildren } from './models/examples/muddy-children';
 
 import { Location } from '@angular/common';
-import { ExampleService } from './../../services/example.service';
+import { ExampleService } from '../../services/example.service';
 import { Environment } from './models/environment/environment';
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';

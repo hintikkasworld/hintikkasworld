@@ -271,10 +271,7 @@ export class Graph {
     }
 
     hasNode(idnode: string) {
-        if (idnode in this.nodes) {
-            return true;
-        }
-        return false;
+        return idnode in this.nodes;
     }
 
     /**

@@ -23,11 +23,7 @@ export class Scheme {
     private static unifyConstructVal(objectToBeMatched, pattern, val) {
         if (pattern instanceof Array) {
             if (pattern[0] === 'quote') {
-                if (pattern[1] === objectToBeMatched) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return pattern[1] === objectToBeMatched;
             } else {
                 if (objectToBeMatched instanceof Array) {
                     if (objectToBeMatched.length != pattern.length) {

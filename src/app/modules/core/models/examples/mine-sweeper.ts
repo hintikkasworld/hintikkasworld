@@ -1,10 +1,10 @@
-import { BDDWorkerService } from './../../../../services/bddworker.service';
-import { SEModelInternalDescriptor } from './../epistemicmodel/descriptor/se-model-internal-descriptor';
-import { EventModelAction } from './../environment/event-model-action';
-import { SymbolicPublicAnnouncement } from './../eventmodel/symbolic-public-announcement';
-import { AndFormula, AtomicFormula, ExactlyFormula, Formula, NotFormula } from './../formula/formula';
-import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
-import { WorldValuation } from './../epistemicmodel/world-valuation';
+import { BDDWorkerService } from '../../../../services/bddworker.service';
+import { SEModelInternalDescriptor } from '../epistemicmodel/descriptor/se-model-internal-descriptor';
+import { EventModelAction } from '../environment/event-model-action';
+import { SymbolicPublicAnnouncement } from '../eventmodel/symbolic-public-announcement';
+import { AndFormula, AtomicFormula, ExactlyFormula, Formula, NotFormula } from '../formula/formula';
+import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
+import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Environment } from '../environment/environment';
 import { Valuation } from '../epistemicmodel/valuation';

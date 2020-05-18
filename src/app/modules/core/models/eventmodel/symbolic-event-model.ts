@@ -260,8 +260,7 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel> {
     }
 
     copyWithAnotherPointedEvent(e: EventId): SymbolicEventModel {
-        const newSEM = new SymbolicEventModel(this.agents, this.variables, this.uniqueEvents, this.agentRelations, e);
-        return newSEM;
+        return new SymbolicEventModel(this.agents, this.variables, this.uniqueEvents, this.agentRelations, e);
     }
 
     /**

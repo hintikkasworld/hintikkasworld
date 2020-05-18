@@ -1,4 +1,4 @@
-import { Formula, FormulaFactory } from './../formula/formula';
+import { Formula, FormulaFactory } from '../formula/formula';
 import { Postcondition } from './postcondition';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 
