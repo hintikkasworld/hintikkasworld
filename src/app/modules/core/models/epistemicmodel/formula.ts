@@ -1,6 +1,9 @@
 export interface Formula {
-    isBoolean(): boolean;
     readonly type: string;
+
+    isBoolean(): boolean;
+
     prettyPrint(): string;
+
     renameAtoms(f: (s: string) => string): Formula;
 }

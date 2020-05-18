@@ -6,8 +6,8 @@ module.exports = {
             {
                 test: /\.wasm$/,
                 type: 'javascript/auto',
-                loaders: ['arraybuffer-loader']
-            }
-        ]
-    }
+                loaders: ['arraybuffer-loader'],
+            },
+        ],
+    },
 };

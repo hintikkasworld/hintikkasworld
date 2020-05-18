@@ -4,7 +4,7 @@
     cursor: pointer;
     vertical-align: top;
     widows: 150px;
-    margin:8px;
+    margin: 8px;
     display: inline-block;
     height: 84px;
 }
@@ -12,22 +12,17 @@
 .CanvasWorldExample {
     width: 120px;
     height: 60px;
-    border-radius:16px;
-    background-color: #FFDD88;
-    padding:8px;
-    vertical-align:middle;
+    border-radius: 16px;
+    background-color: #ffdd88;
+    padding: 8px;
+    vertical-align: middle;
 }
-
-
 
 :host:hover {
-    background-color: #DDDDFF;
+    background-color: #ddddff;
 }
-
 
 div {
     padding: 0px;
     margin: 0px;
 }
-
-

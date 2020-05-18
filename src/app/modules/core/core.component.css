@@ -1,119 +1,111 @@
 #mainscreen {
-    background-color: #F7D64F;
+    background-color: #f7d64f;
     height: 100vh;
 }
-  
-  body {
-  margin: 0px;
-  background-color: #F7D64F;
-  }
 
-  #exampleName {
+body {
+    margin: 0px;
+    background-color: #f7d64f;
+}
+
+#exampleName {
     display: inline-block;
     font-size: 22px;
     height: 48px;
     margin: 8px;
-  }
-
-  
-  
-input[type="radio"] {
-	display: none;
 }
 
-input[type="radio"]:checked + label {
-  background-color: #8888FF;
+input[type='radio'] {
+    display: none;
 }
 
-input[type="radio"] + label {
-  background-color: white;
-  border-radius: 16px;
-  padding: 4px;
+input[type='radio']:checked + label {
+    background-color: #8888ff;
+}
+
+input[type='radio'] + label {
+    background-color: white;
+    border-radius: 16px;
+    padding: 4px;
 }
 
 #hintikkasWorldLogo {
-  margin: 0px;
-  padding: 0px;
-  height:120px;
+    margin: 0px;
+    padding: 0px;
+    height: 120px;
 }
 
 #loadingSymbol {
-  background-color: #F7D64F;
-  margin: 0px;
-  padding: 0px;
-  height:120px;
+    background-color: #f7d64f;
+    margin: 0px;
+    padding: 0px;
+    height: 120px;
 }
 
 button {
-  background-color: white;
-  border-radius: 16px;
-  margin-top: 8px;
-  margin-left: 2px;
-  margin-bottom: 0px;
-  padding: 4px 4px 4px 4px;
+    background-color: white;
+    border-radius: 16px;
+    margin-top: 8px;
+    margin-left: 2px;
+    margin-bottom: 0px;
+    padding: 4px 4px 4px 4px;
 }
 
 #topbar button {
-  height:42px;
+    height: 42px;
 }
-
 
 button:focus {
-  outline: none;
+    outline: none;
 }
 
- button :hover {
-  background-color: #EEDDAA;
+button :hover {
+    background-color: #eeddaa;
 }
 
 .vr {
-  border-left:1px solid #000;
-  height:42px;
-  transform: rotate(20deg);
-  margin-left:16px;
-  margin-right:16px;
-  display: inline-block;
-   vertical-align: text-bottom;
+    border-left: 1px solid #000;
+    height: 42px;
+    transform: rotate(20deg);
+    margin-left: 16px;
+    margin-right: 16px;
+    display: inline-block;
+    vertical-align: text-bottom;
 }
 
 #internalPerspectiveAgent {
-  display: inline-block;
+    display: inline-block;
 }
-
 
 .proposition {
-  display: inline;
-  margin:2px;
-  background-color: #EEDDAA;
+    display: inline;
+    margin: 2px;
+    background-color: #eeddaa;
 }
-
-
 
 #atomicPropositionList {
-  max-width: 500px;
-  border-radius: 20px;
-  border-color: brown;
-  border-width: 3px;
-  border-style: solid;
-  overflow: auto;
-  
+    max-width: 500px;
+    border-radius: 20px;
+    border-color: brown;
+    border-width: 3px;
+    border-style: solid;
+    overflow: auto;
 }
 #description {
-  max-width: 500px;
-  max-height:200px;
-  height:200px;
-  border-radius: 20px;
-  border-color: brown;
-  border-width: 3px;
-  border-style: solid;
-  overflow: auto;
-  
+    max-width: 500px;
+    max-height: 200px;
+    height: 200px;
+    border-radius: 20px;
+    border-color: brown;
+    border-width: 3px;
+    border-style: solid;
+    overflow: auto;
 }
 .descriptiontext {
-  display: inline;
+    display: inline;
 }
 #error {
-  color: red;
+    color: red;
 }
 
 /*
@@ -121,33 +113,33 @@ styles for spinner
 */
 
 .lds-hourglass {
-  display: inline-block;
-  position: relative;
-  width: 64px;
-  height: 64px;
+    display: inline-block;
+    position: relative;
+    width: 64px;
+    height: 64px;
 }
 .lds-hourglass:after {
-  content: " ";
-  display: block;
-  border-radius: 50%;
-  width: 0;
-  height: 0;
-  margin: 6px;
-  box-sizing: border-box;
-  border: 26px solid #fff;
-  border-color: #fff transparent #fff transparent;
-  animation: lds-hourglass 1.2s infinite;
+    content: ' ';
+    display: block;
+    border-radius: 50%;
+    width: 0;
+    height: 0;
+    margin: 6px;
+    box-sizing: border-box;
+    border: 26px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: lds-hourglass 1.2s infinite;
 }
 @keyframes lds-hourglass {
-  0% {
-    transform: rotate(0);
-    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
-  }
-  50% {
-    transform: rotate(900deg);
-    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-  }
-  100% {
-    transform: rotate(1800deg);
-  }
+    0% {
+        transform: rotate(0);
+        animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    }
+    50% {
+        transform: rotate(900deg);
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    100% {
+        transform: rotate(1800deg);
+    }
 }

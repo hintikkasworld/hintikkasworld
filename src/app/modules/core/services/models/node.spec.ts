@@ -1,7 +1,7 @@
 import { Node } from './node';
 
 describe('Node', () => {
-  it('should create an instance', () => {
-    expect(new Node(null, null)).toBeTruthy();
-  });
+    it('should create an instance', () => {
+        expect(new Node(null, null)).toBeTruthy();
+    });
 });

@@ -11,6 +11,7 @@ export interface EpistemicModel {
     isLoaded(): boolean;
 
     isLoadedObservable(): BehaviorSubject<boolean>;
+
     /**
      * @returns the pointed world (the current world)
      */
@@ -22,21 +23,20 @@ export interface EpistemicModel {
     getAgents(): string[];
 
     /**
-     * 
-     * @param w 
-     * @param a 
-     * @returns a list of possible worlds for agent a in world w. The list may be exhaustive, that 
+     *
+     * @param w
+     * @param a
+     * @returns a list of possible worlds for agent a in world w. The list may be exhaustive, that
      * list the set of all possible worlds for agent a in world w (typically, we would require that
      * for an explicit representation). Otherwise, for a symbolic representation, and if there
      * are many successors, we expect this method to return *some* possible worlds.
      */
     getSuccessors(w: World, a: string): SuccessorSet;
-    
+
     /**
-     * 
-     * @param formula 
+     *
+     * @param formula
      * @returns true if the formula is true in the pointed world
      */
     check(formula: Formula): Promise<boolean>;
-
 }

@@ -1,19 +1,18 @@
 button {
-  border-radius: 18px;
-  border-color: black;
-  background-color: white;
-  font-weight: bold;
-  color: brown;
-  margin: 8px;
-  padding: 8px;
-  font-size: 18;
-  min-width: 240px;
-  max-width: 240px;
-  text-align: left;
-  outline: none;
-  
+    border-radius: 18px;
+    border-color: black;
+    background-color: white;
+    font-weight: bold;
+    color: brown;
+    margin: 8px;
+    padding: 8px;
+    font-size: 18;
+    min-width: 240px;
+    max-width: 240px;
+    text-align: left;
+    outline: none;
 }
 
 button :hover {
-  background-color: #FFFF88;
+    background-color: #ffff88;
 }

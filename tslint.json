@@ -4,6 +4,8 @@
     "codelyzer"
   ],
   "rules": {
+    "no-string-literal": false,
+    "prefer-const": false,
     "array-type": false,
     "arrow-parens": false,
     "deprecation": {
@@ -31,7 +33,7 @@
         ]
       }
     ],
-    "no-consecutive-blank-lines": false,
+    "no-consecutive-blank-lines": true,
     "no-console": [
       true,
       "debug",

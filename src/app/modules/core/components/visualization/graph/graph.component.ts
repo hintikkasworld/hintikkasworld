@@ -7,67 +7,70 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Graph } from '../../../services/models/graph';
 import { ExplicitEpistemicModel } from '../../../models/epistemicmodel/explicit-epistemic-model';
 
-
 @Component({
-  selector: 'app-graph',
-  templateUrl: './graph.component.html',
-  styleUrls: ['./graph.component.css']
+    selector: 'app-graph',
+    templateUrl: './graph.component.html',
+    styleUrls: ['./graph.component.css'],
 })
-
 export class GraphComponent implements OnInit {
-  @Input() obsEnv: Observable<Environment>;
-  nodes: Node[] = [];
-  edges: Edge[] = [];
+    @Input() obsEnv: Observable<Environment>;
+    nodes: Node[] = [];
+    edges: Edge[] = [];
 
-  graph: Graph;
+    graph: Graph;
 
-  private readonly _options: { width, height } = { width: 500, height: 400 };
-  constructor(private d3Service: D3Service) { }
+    private readonly _options: { width; height } = { width: 500, height: 400 };
 
-  ngOnInit() {
-    this.obsEnv.subscribe((env) => {
-      if (env.getEpistemicModel() instanceof ExplicitEpistemicModel)
-        this.update(<ExplicitEpistemicModel>env.getEpistemicModel());
-    });
+    constructor(private d3Service: D3Service) {}
 
-  }
-
-
-  private update(M: ExplicitEpistemicModel) {
-    let dictionnaryNode = {};
-
-    this.nodes = [];
-    for (let idnode in M.getNodes()) {
-      dictionnaryNode[idnode] = new Node(idnode, M.getNode(idnode).toString());
-      this.nodes.push(dictionnaryNode[idnode]);
+    ngOnInit() {
+        this.obsEnv.subscribe((env) => {
+            if (env.getEpistemicModel() instanceof ExplicitEpistemicModel) {
+                this.update(env.getEpistemicModel() as ExplicitEpistemicModel);
+            }
+        });
     }
 
-    this.edges = [];
-    for (let agent of M.getAgents())
-      for (let idnode in M.getNodes())
-        for (let idnode2 of M.getSuccessorsID(idnode, agent))
-          this.edges.push(new Edge(dictionnaryNode[idnode], dictionnaryNode[idnode2], agent));
+    private update(M: ExplicitEpistemicModel) {
+        let dictionnaryNode = {};
 
-    this.graph = this.d3Service.getGraph(this.nodes, this.edges, this.options);
-  }
+        this.nodes = [];
+        for (let idnode in M.getNodes()) {
+            dictionnaryNode[idnode] = new Node(idnode, M.getNode(idnode).toString());
+            this.nodes.push(dictionnaryNode[idnode]);
+        }
 
-  ngAfterViewInit() {
-    if (this.graph != undefined)
-      this.graph.initSimulation(this.options);
-  }
+        this.edges = [];
+        for (let agent of M.getAgents()) {
+            for (let idnode in M.getNodes()) {
+                for (let idnode2 of M.getSuccessorsID(idnode, agent)) {
+                    this.edges.push(new Edge(dictionnaryNode[idnode], dictionnaryNode[idnode2], agent));
+                }
+            }
+        }
 
-  getNodeById(id) {
-    for (var node of this.nodes)
-      if (node.id == id)
-        return node;
-    return null;
-  }
+        this.graph = this.d3Service.getGraph(this.nodes, this.edges, this.options);
+    }
 
-  get options() {
-    return this._options;/* = {
+    ngAfterViewInit() {
+        if (this.graph != undefined) {
+            this.graph.initSimulation(this.options);
+        }
+    }
+
+    getNodeById(id) {
+        for (let node of this.nodes) {
+            if (node.id == id) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    get options() {
+        return this._options; /* = {
       width: window.innerWidth,
       height: window.innerHeight
     };*/
-  }
-
+    }
 }

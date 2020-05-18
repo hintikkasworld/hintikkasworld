@@ -1,17 +1,17 @@
 <div id="examplesscreen">
-  <img src="assets/img/hintikkas_world_logo.png" height=300px onclick="showTitleScreen()" /><br />
-  <div id="examplesscreenexplanation">Please select an example below.</div>
-  <h1>Examples with explicit models</h1>
-  <div id="examples" *ngFor="let example of explicitExamples">
-   <app-example (click)="openExampleDescription(example)" [exampleDescription]='example'></app-example>
-  </div>
-  <h1>Examples with symbolic models</h1>
-  Warning: some examples may be very long to load. For the possible demo at IJCAI2019, examples will be preloaded.<br/>
-  <div id="examples" *ngFor="let example of symbolicExamples">
-   <app-example (click)="openExampleDescription(example)" [exampleDescription]='example'></app-example>
-  </div>
-  <h1>Technical examples</h1>
-  <div id="examples" *ngFor="let example of technicalExamples">
-    <app-example (click)="openExampleDescription(example)" [exampleDescription]='example'></app-example>
-   </div>
+    <img src="assets/img/hintikkas_world_logo.png" height="300px" onclick="showTitleScreen()" /><br />
+    <div id="examplesscreenexplanation">Please select an example below.</div>
+    <h1>Examples with explicit models</h1>
+    <div id="examples" *ngFor="let example of explicitExamples">
+        <app-example (click)="openExampleDescription(example)" [exampleDescription]="example"></app-example>
+    </div>
+    <h1>Examples with symbolic models</h1>
+    Warning: some examples may be very long to load. For the possible demo at IJCAI2019, examples will be preloaded.<br />
+    <div id="examples" *ngFor="let example of symbolicExamples">
+        <app-example (click)="openExampleDescription(example)" [exampleDescription]="example"></app-example>
+    </div>
+    <h1>Technical examples</h1>
+    <div id="examples" *ngFor="let example of technicalExamples">
+        <app-example (click)="openExampleDescription(example)" [exampleDescription]="example"></app-example>
+    </div>
 </div>

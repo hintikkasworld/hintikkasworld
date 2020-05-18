@@ -4,11 +4,9 @@ import { MenuComponent } from './menu.component';
 import { ExampleComponent } from './components/example/example.component';
 
 @NgModule({
-  declarations: [MenuComponent, ExampleComponent],
-  imports: [
-    CommonModule
-  ],
+    declarations: [MenuComponent, ExampleComponent],
+    imports: [CommonModule],
 
-  exports: [MenuComponent]
+    exports: [MenuComponent],
 })
-export class MenuModule { }
+export class MenuModule {}

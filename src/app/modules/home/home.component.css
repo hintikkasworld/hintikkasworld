@@ -1,21 +1,18 @@
-
 #titlescreen {
-    background-color: #CCCCFF;
+    background-color: #ccccff;
     height: 100%;
     text-align: center;
 }
-  
-  
-  #titlescreen div {
+
+#titlescreen div {
     display: inline-block;
-      text-align: justify;
-      width: 500px;
-  }
-  
-  
-  #titlescreenenter {
+    text-align: justify;
+    width: 500px;
+}
+
+#titlescreenenter {
     color: black;
     font-weight: bold;
     cursor: pointer;
     font-size: 150%;
-  }
+}

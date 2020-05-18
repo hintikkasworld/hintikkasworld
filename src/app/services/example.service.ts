@@ -6,22 +6,22 @@ import { SimpleSymbolicHanabi } from '../modules/core/models/examples/symbolic-h
 import { Simple } from '../modules/core/models/examples/simple';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 
 /** this service is to give the correct exampledescription from menu to core. */
 export class ExampleService {
+    private exampleDescription: ExampleDescription = new Simple();
 
-  private exampleDescription: ExampleDescription = new Simple();
-  //by default, the loaded example is .... :)
+    // by default, the loaded example is .... :)
 
-  setExampleDescription(exampleDescription: ExampleDescription) {
-    this.exampleDescription = exampleDescription;
-  }
+    setExampleDescription(exampleDescription: ExampleDescription) {
+        this.exampleDescription = exampleDescription;
+    }
 
-  getExampleDescription() {
-    return this.exampleDescription;
-  }
+    getExampleDescription() {
+        return this.exampleDescription;
+    }
 
-  constructor() { }
+    constructor() {}
 }

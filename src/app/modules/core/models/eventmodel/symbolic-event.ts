@@ -7,9 +7,9 @@ import { Formula } from './../epistemicmodel/formula';
 export class SymbolicEvent<PropRepr> {
     readonly pre: Formula;
     readonly post: PropRepr;
-    
+
     constructor(pre: Formula, post: PropRepr) {
-      this.pre = pre;
-      this.post = post;
+        this.pre = pre;
+        this.post = post;
     }
 }

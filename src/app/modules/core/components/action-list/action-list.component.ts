@@ -5,26 +5,20 @@ import { Environment } from '../../models/environment/environment';
 import { Observable } from 'rxjs';
 import { from } from 'rxjs';
 
-
-
 @Component({
-  selector: 'app-action-list',
-  templateUrl: './action-list.component.html',
-  styleUrls: ['./action-list.component.css']
+    selector: 'app-action-list',
+    templateUrl: './action-list.component.html',
+    styleUrls: ['./action-list.component.css'],
 })
 export class ActionListComponent implements OnInit {
+    @Input() obsEnv: Observable<Environment>;
+    @Output() toPerform: EventEmitter<Action> = new EventEmitter();
 
-  @Input() obsEnv: Observable<Environment>;
-  @Output() toPerform: EventEmitter<Action> = new EventEmitter();
+    constructor() {}
 
-  constructor() { }
+    ngOnInit() {}
 
-  ngOnInit() {
-
-  }
-
-  perform(action: Action) {
-    this.toPerform.emit(action);
-  }
-
+    perform(action: Action) {
+        this.toPerform.emit(action);
+    }
 }

@@ -5,7 +5,7 @@ export class ActionSetEpistemicModel implements Action {
     name: string;
     epistemicModel: EpistemicModel;
 
-    constructor(option: { name: string, epistemicModel: EpistemicModel }) {
+    constructor(option: { name: string; epistemicModel: EpistemicModel }) {
         this.name = option.name;
         this.epistemicModel = option.epistemicModel;
     }
@@ -17,8 +17,8 @@ export class ActionSetEpistemicModel implements Action {
     async isApplicableIn(M: EpistemicModel): Promise<boolean> {
         return true;
     }
+
     perform(M: EpistemicModel): EpistemicModel {
         return this.epistemicModel;
     }
-
 }

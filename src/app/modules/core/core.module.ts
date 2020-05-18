@@ -9,14 +9,9 @@ import { GraphComponent } from './components/visualization/graph/graph.component
 import { DraggableDirective } from './services/directives/draggable.directive';
 
 @NgModule({
-  declarations: [CoreComponent, ComicsComponent,
-    ActionListComponent, EdgeComponent,
-    NodeComponent, GraphComponent,
-    DraggableDirective],
-  imports: [
-    CommonModule
-  ],
+    declarations: [CoreComponent, ComicsComponent, ActionListComponent, EdgeComponent, NodeComponent, GraphComponent, DraggableDirective],
+    imports: [CommonModule],
 
-  exports: [CoreComponent]
+    exports: [CoreComponent],
 })
-export class CoreModule { }
+export class CoreModule {}

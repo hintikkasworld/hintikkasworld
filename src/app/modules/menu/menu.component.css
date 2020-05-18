@@ -1,20 +1,15 @@
 #examplesscreen {
     text-align: center;
-    min-height:100vh;
-    background-color: #CCCCFF;
+    min-height: 100vh;
+    background-color: #ccccff;
     margin: 0px;
     padding: 0px;
-
 }
 
-#examplesscreen div  {
+#examplesscreen div {
     padding: 32px;
 }
 
-
-#examples {    
+#examples {
     display: inline-block;
 }
-
-
-

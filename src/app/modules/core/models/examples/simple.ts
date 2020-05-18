@@ -15,15 +15,15 @@ import { World } from '../epistemicmodel/world';
  * @example new MuddyChildrenWorld(["ma", "mb"])
  * */
 export class SimpleWorld extends WorldValuation {
-    static basketImg = SimpleWorld.getImage("basket.svg");
-    static basketWithMarbleImg = SimpleWorld.getImage("basket_with_marble.svg");
-    static proposition = "p";
+    static basketImg = SimpleWorld.getImage('basket.svg');
+    static basketWithMarbleImg = SimpleWorld.getImage('basket_with_marble.svg');
+    static proposition = 'p';
 
     constructor(valuation) {
         super(valuation);
-        this.agentPos["a"] = { x: 24, y: 32, r: 24 };
-        this.agentPos["b"] = { x: 128 - 24, y: 32, r: 24 };
-        this.agentPos["c"] = undefined;
+        this.agentPos['a'] = { x: 24, y: 32, r: 24 };
+        this.agentPos['b'] = { x: 128 - 24, y: 32, r: 24 };
+        this.agentPos['c'] = undefined;
     }
 
     draw(context) {
@@ -31,16 +31,11 @@ export class SimpleWorld extends WorldValuation {
 
         context.drawImage(SimpleWorld.basketImg, 64 - 16, 0, 32, 32);
 
-        if (this.modelCheck(SimpleWorld.proposition))
+        if (this.modelCheck(SimpleWorld.proposition)) {
             context.drawImage(SimpleWorld.basketWithMarbleImg, 64 - 16, 0, 32, 32);
+        }
     }
-
 }
-
-
-
-
-
 
 /*
 function setExampleSimple() {
@@ -54,23 +49,20 @@ function setExampleSimple() {
   addExplanation("Agent a and agent b are initially ignorant whether there is a marble in the basket or not. This situation is common knowledge.",
                  "((not (K a " + SimpleWorld.proposition + ")) and (not (K b " + SimpleWorld.proposition + ")))");
 
-  addAction({label: "Public announcement that there is a marble in the basket", 
+  addAction({label: "Public announcement that there is a marble in the basket",
              actionModel: getActionModelPublicAnnouncement(SimpleWorld.proposition, ["a", "b"]),
              perform: () => {performAction(getActionModelPublicAnnouncement(SimpleWorld.proposition, ["a", "b"])); speak("c", "There is a marble in the basket");},
             });
-  
-  addAction({label: "Private announcement to agent a of the content of the basket. Agent b knows that this private announcement occurs.", 
+
+  addAction({label: "Private announcement to agent a of the content of the basket. Agent b knows that this private announcement occurs.",
              precondition: "(not (K a " + SimpleWorld.proposition + "))",
-             actionModel: getActionModelSemiPrivateAnnouncement(SimpleWorld.proposition, "a", ["a", "b"])             
+             actionModel: getActionModelSemiPrivateAnnouncement(SimpleWorld.proposition, "a", ["a", "b"])
             });
 
-  addAction({label: "Private announcement to agent a that there is a marble in the basket. Agent b is ignorant about that.", 
+  addAction({label: "Private announcement to agent a that there is a marble in the basket. Agent b is ignorant about that.",
              precondition: "(not (K a " + SimpleWorld.proposition + "))",
-             actionModel: getActionModelPrivateAnnouncement(SimpleWorld.proposition, "a", ["a", "b"])             
+             actionModel: getActionModelPrivateAnnouncement(SimpleWorld.proposition, "a", ["a", "b"])
             });
-  
-  
-
 
  compute();
  computeButtonsVisibleOrNot();
@@ -80,49 +72,49 @@ function setExampleSimple() {
 
 export class Simple extends ExampleDescription {
     getDescription(): string[] {
-        return ["A simple example."]
-    }
-    getAtomicPropositions(): string[] {
-        return ["p"];
-    }
-    getName() {
-        return "Simple example";
+        return ['A simple example.'];
     }
 
+    getAtomicPropositions(): string[] {
+        return ['p'];
+    }
+
+    getName() {
+        return 'Simple example';
+    }
 
     getInitialEpistemicModel(): EpistemicModel {
         let M = new ExplicitEpistemicModel();
-        M.addWorld("w", new SimpleWorld(new Valuation([SimpleWorld.proposition])));
-        M.addWorld("u", new SimpleWorld(new Valuation([])));
-        M.setPointedWorld("w");
-        M.addEdgesCluster("a", ["w", "u"]);
-        M.addEdgesCluster("b", ["w", "u"]);
+        M.addWorld('w', new SimpleWorld(new Valuation([SimpleWorld.proposition])));
+        M.addWorld('u', new SimpleWorld(new Valuation([])));
+        M.setPointedWorld('w');
+        M.addEdgesCluster('a', ['w', 'u']);
+        M.addEdgesCluster('b', ['w', 'u']);
         return M;
     }
 
     getActions() {
         let formula = FormulaFactory.createFormula(SimpleWorld.proposition);
-        
-        return [new EventModelAction({
-            name: "Public announcement that there is a marble in the basket",
-            eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(formula)
-        }),
 
-        new EventModelAction({
-            name: "Private announcement to agent a of the content of the basket. Agent b knows that this private announcement occurs.",
-            eventModel: ExplicitEventModel.getActionModelSemiPrivateAnnouncement(formula, "a")
-        }),
+        return [
+            new EventModelAction({
+                name: 'Public announcement that there is a marble in the basket',
+                eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(formula),
+            }),
 
-        new EventModelAction({
-            name: "Private announcement to agent a that there is a marble in the basket. Agent b is ignorant about that.",
-            eventModel: ExplicitEventModel.getActionModelPrivateAnnouncement(formula, "a")
-        })
+            new EventModelAction({
+                name: 'Private announcement to agent a of the content of the basket. Agent b knows that this private announcement occurs.',
+                eventModel: ExplicitEventModel.getActionModelSemiPrivateAnnouncement(formula, 'a'),
+            }),
+
+            new EventModelAction({
+                name: 'Private announcement to agent a that there is a marble in the basket. Agent b is ignorant about that.',
+                eventModel: ExplicitEventModel.getActionModelPrivateAnnouncement(formula, 'a'),
+            }),
         ];
     }
+
     getWorldExample(): World {
-        return new SimpleWorld(new Valuation(["p"]));
+        return new SimpleWorld(new Valuation(['p']));
     }
-
-
-
 }

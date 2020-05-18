@@ -3,24 +3,24 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { GraphComponent } from './graph.component';
 
 describe('GraphComponent', () => {
-  let component: GraphComponent;
-  let fixture: ComponentFixture<GraphComponent>;
+    let component: GraphComponent;
+    let fixture: ComponentFixture<GraphComponent>;
 
-  /**
-  beforeEach(async(() => {
+    /**
+     beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ GraphComponent ]
     })
     .compileComponents();
   }));
 
-  beforeEach(() => {
+     beforeEach(() => {
     fixture = TestBed.createComponent(GraphComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+     it('should create', () => {
     expect(component).toBeTruthy();
   }); */
 });
