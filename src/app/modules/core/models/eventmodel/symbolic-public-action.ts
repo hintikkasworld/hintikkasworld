@@ -1,7 +1,6 @@
 import { BDDNode } from './../epistemicmodel/bddnode';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
 import { EventModel } from './event-model';
-import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Formula } from '../formula/formula';
 

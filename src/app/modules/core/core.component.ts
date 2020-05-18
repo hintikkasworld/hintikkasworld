@@ -1,17 +1,13 @@
 import { EventModelAction } from './models/environment/event-model-action';
 import { Action } from './models/environment/action';
 import { MuddyChildren } from './models/examples/muddy-children';
-import { environment } from './../../../environments/environment';
 
 import { Location } from '@angular/common';
 import { ExampleService } from './../../services/example.service';
 import { Environment } from './models/environment/environment';
-import { Component, OnInit, Input } from '@angular/core';
-import { ExampleDescription } from './models/environment/exampledescription';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
-import { FormulaFactory, Formula } from './models/formula/formula';
+import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { Formula, FormulaFactory } from './models/formula/formula';
 import { ExplicitEventModel } from './models/eventmodel/explicit-event-model';
 import { SymbolicPublicAnnouncement } from './models/eventmodel/symbolic-public-announcement';
 import { SymbolicEpistemicModel } from './models/epistemicmodel/symbolic-epistemic-model';

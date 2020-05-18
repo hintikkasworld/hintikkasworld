@@ -1,12 +1,10 @@
-import { Formula, FormulaFactory, ExactlyFormula, AndFormula, XorFormula } from './../formula/formula';
+import { AndFormula, ExactlyFormula, Formula } from './../formula/formula';
 import { SymbolicEpistemicModel } from './../epistemicmodel/symbolic-epistemic-model';
-import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
-import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
+import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
-import { BDDWorkerService } from 'src/app/services/bddworker.service';
 
 /**
  * @param truePropositions an array of true propositions

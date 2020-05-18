@@ -1,21 +1,15 @@
-import { Environment } from './../environment/environment';
-import { Action } from './../environment/action';
-
 import { environment } from './../../../../../environments/environment';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
-import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
+import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
-import { Formula, ExactlyFormula, AndFormula, AtomicFormula, NotFormula, KFormula, OrFormula, EquivFormula } from '../formula/formula';
+import { AndFormula, AtomicFormula, ExactlyFormula, Formula, NotFormula } from '../formula/formula';
 import { EventModelAction } from './../environment/event-model-action';
-import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
 import { SymbolicEventModel } from '../eventmodel/symbolic-event-model';
 import { SymbolicPublicAnnouncement } from '../eventmodel/symbolic-public-announcement';
 import { SymbolicEvent } from '../eventmodel/symbolic-event';
-import { PropositionalAssignmentsPostcondition } from './../eventmodel/propositional-assignments-postcondition';
 import { BDDNode } from './../../../../services/bdd.service';
-import { CachedSource } from 'webpack-sources';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
 

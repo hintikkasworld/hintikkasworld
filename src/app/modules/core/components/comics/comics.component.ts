@@ -1,8 +1,8 @@
 import { SuccessorSet } from './../../models/epistemicmodel/successor-set';
 import { environment } from './../../../../../environments/environment';
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { Environment } from '../../models/environment/environment';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { World } from '../../models/epistemicmodel/world';
 
 @Component({

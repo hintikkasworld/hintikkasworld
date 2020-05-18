@@ -1,10 +1,7 @@
-import { ExplicitEventModel } from './../eventmodel/explicit-event-model';
 import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
-import { environment } from 'src/environments/environment';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
-import { World } from '../epistemicmodel/world';
 
 /**
  * @param valuation a valuation

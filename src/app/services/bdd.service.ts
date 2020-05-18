@@ -1,7 +1,6 @@
-import { Formula } from './../modules/core/models/formula/formula';
 import * as types from './../modules/core/models/formula/formula';
+import { Formula } from './../modules/core/models/formula/formula';
 import { BehaviorSubject } from 'rxjs';
-import { Valuation } from '../modules/core/models/epistemicmodel/valuation';
 
 import * as Module from './../../../cuddjs/release/cuddjs.js';
 import '!!file-loader?name=wasm/cuddjs.wasm2!./../../../cuddjs/release/cuddjs.wasm2';

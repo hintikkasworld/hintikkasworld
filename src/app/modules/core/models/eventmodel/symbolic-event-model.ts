@@ -1,14 +1,7 @@
 import { EventModel } from './event-model';
 import { SymbolicEvent } from './symbolic-event';
-import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
-import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
-import { WorldValuation } from '../epistemicmodel/world-valuation';
-import { BddService, BDDNode } from '../../../../services/bdd.service';
-import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
-import { Formula } from '../formula/formula';
-import { SymbolicRelation } from '../epistemicmodel/symbolic-relation';
-import { Valuation } from '../epistemicmodel/valuation';
+import { BDDNode } from '../../../../services/bdd.service';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
 
 type EventId = string;

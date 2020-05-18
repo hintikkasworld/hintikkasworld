@@ -5,7 +5,6 @@ import { EventModelAction } from './../environment/event-model-action';
 import { EpistemicModel } from './../epistemicmodel/epistemic-model';
 import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
 import { Rectangle } from './../rectangle';
-import { environment } from 'src/environments/environment';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExplicitEventModel } from '../eventmodel/explicit-event-model';
 import { ExampleDescription } from '../environment/exampledescription';

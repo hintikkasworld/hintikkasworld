@@ -2,7 +2,6 @@ import { BehaviorSubject } from 'rxjs';
 import { SuccessorSet } from './../epistemicmodel/successor-set';
 import * as types from './../formula/formula';
 import { environment } from 'src/environments/environment';
-import { Formula } from './../formula/formula';
 import { EpistemicModel } from './../epistemicmodel/epistemic-model';
 import { ExampleDescription } from '../environment/exampledescription';
 import { World } from '../epistemicmodel/world';

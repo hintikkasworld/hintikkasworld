@@ -1,5 +1,4 @@
 import { Environment } from './environment';
-import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
 import { EpistemicModel } from './../epistemicmodel/epistemic-model';
 import { World } from '../epistemicmodel/world';
 

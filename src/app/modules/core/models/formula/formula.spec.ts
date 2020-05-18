@@ -1,4 +1,4 @@
-import { Formula, AtomicFormula, TrueFormula, OrFormula, FormulaFactory } from './formula';
+import { AtomicFormula, Formula, FormulaFactory, OrFormula } from './formula';
 
 describe('Formula', () => {
     it('should be able to create an atom', () => {

@@ -1,7 +1,6 @@
 import { environment } from 'src/environments/environment';
 import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';
 import { Postcondition } from './postcondition';
-import { PropositionalAssignmentsPostcondition } from './propositional-assignments-postcondition';
 import { TrivialPostcondition } from './trivial-postcondition';
 import { Formula, FormulaFactory } from './../formula/formula';
 import { EventModel } from './event-model';

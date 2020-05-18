@@ -1,8 +1,7 @@
 import { WorldValuation } from './world-valuation';
 import { SymbolicEpistemicModel } from './symbolic-epistemic-model';
-import { SymbolicRelation, Obs } from './symbolic-relation';
-import { AtomicFormula, Formula } from '../formula/formula';
-import { BDDNode } from './bddnode';
+import { Obs, SymbolicRelation } from './symbolic-relation';
+import { AtomicFormula } from '../formula/formula';
 import { Valuation } from './valuation';
 
 describe('SymbolicEpistemicModel', () => {

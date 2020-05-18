@@ -1,7 +1,6 @@
 import { FormulaFactory } from './../formula/formula';
 import { ExplicitEventModel } from './../eventmodel/explicit-event-model';
 import { EventModelAction } from './../environment/event-model-action';
-import { Environment } from './../environment/environment';
 import { Valuation } from './../epistemicmodel/valuation';
 import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { ExplicitEpistemicModel } from './../epistemicmodel/explicit-epistemic-model';

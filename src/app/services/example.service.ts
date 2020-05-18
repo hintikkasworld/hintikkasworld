@@ -1,8 +1,5 @@
-import { MineSweeper } from './../modules/core/models/examples/mine-sweeper';
-import { MuddyChildren } from './../modules/core/models/examples/muddy-children';
 import { Injectable } from '@angular/core';
 import { ExampleDescription } from '../modules/core/models/environment/exampledescription';
-import { SimpleSymbolicHanabi } from '../modules/core/models/examples/symbolic-hanabi';
 import { Simple } from '../modules/core/models/examples/simple';
 
 @Injectable({

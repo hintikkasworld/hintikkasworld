@@ -1,6 +1,4 @@
-import { WorldValuation } from './../epistemicmodel/world-valuation';
 import { Formula, FormulaFactory } from './../formula/formula';
-import * as jQuery from 'jquery';
 import { Postcondition } from './postcondition';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 

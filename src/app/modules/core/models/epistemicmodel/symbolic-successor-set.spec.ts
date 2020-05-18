@@ -1,8 +1,5 @@
 import { SymbolicSuccessorSet } from './symbolic-successor-set';
 import { SymbolicEpistemicModel } from './symbolic-epistemic-model';
-import { Obs, SymbolicRelation } from './symbolic-relation';
-import { AtomicFormula } from '../formula/formula';
-import { Valuation } from './valuation';
 import { WorldValuation } from './world-valuation';
 
 describe('SymbolicSuccessorSet', () => {

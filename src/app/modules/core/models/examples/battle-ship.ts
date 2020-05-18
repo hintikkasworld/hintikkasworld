@@ -1,11 +1,9 @@
 import { ExampleDescription } from '../environment/exampledescription';
-import { Birthday } from './birthday';
-import { Flatland } from './flatland';
 import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Obs } from '../epistemicmodel/symbolic-relation';
-import { ExactlyFormula, TrueFormula, AndFormula, ImplyFormula, AtomicFormula, NotFormula, OrFormula, Formula } from '../formula/formula';
+import { AndFormula, AtomicFormula, ExactlyFormula, Formula, ImplyFormula, NotFormula, OrFormula, TrueFormula } from '../formula/formula';
 import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 import { Environment } from '../environment/environment';

@@ -1,4 +1,3 @@
-import { Formula } from './../formula/formula';
 import { EpistemicModel } from './../epistemicmodel/epistemic-model';
 
 export interface Action {

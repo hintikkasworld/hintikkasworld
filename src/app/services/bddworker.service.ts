@@ -1,5 +1,5 @@
 import { BDDNode } from '../modules/core/models/epistemicmodel/bddnode';
-import { Formula, TrueFormula, FormulaFactory } from '../modules/core/models/formula/formula';
+import { Formula } from '../modules/core/models/formula/formula';
 
 /**
  * This class create a worker and transfer data to

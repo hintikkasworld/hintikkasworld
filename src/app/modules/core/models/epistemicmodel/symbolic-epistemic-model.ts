@@ -3,27 +3,14 @@ import { SymbolicSuccessorSet } from './symbolic-successor-set';
 import { EpistemicModel } from './epistemic-model';
 import { WorldValuation } from './world-valuation';
 import { Valuation } from './valuation';
-import { ExampleDescription } from '../environment/exampledescription';
 import { World } from './world';
-import { SymbolicRelation, Obs } from './symbolic-relation';
-import {
-    Formula,
-    AndFormula,
-    ExactlyFormula,
-    NotFormula,
-    EquivFormula,
-    AtomicFormula,
-    FormulaFactory,
-    TrueFormula,
-    KposFormula,
-} from '../formula/formula';
+import { AndFormula, AtomicFormula, Formula, NotFormula } from '../formula/formula';
 import * as types from './../formula/formula';
-import { BddService, BDDNode } from '../../../../services/bdd.service';
+import { BDDNode } from '../../../../services/bdd.service';
 import { WorldValuationType } from './world-valuation-type';
 import { SEModelDescriptor } from './descriptor/se-model-descriptor';
 import { SEModelInternalDescriptor } from './descriptor/se-model-internal-descriptor';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
-import { Observable } from 'rxjs/internal/Observable';
 import { BehaviorSubject } from 'rxjs';
 
 function showJSON(json) {

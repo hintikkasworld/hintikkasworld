@@ -1,4 +1,3 @@
-import { SymbolicRelation } from './symbolic-relation';
 import { Obs } from './symbolic-relation';
 
 describe('Program', () => {

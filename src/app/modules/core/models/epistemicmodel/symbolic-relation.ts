@@ -1,7 +1,7 @@
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
-import { Formula, FormulaFactory, TrueFormula, AndFormula, EquivFormula, AtomicFormula } from '../formula/formula';
+import { AndFormula, AtomicFormula, EquivFormula, Formula } from '../formula/formula';
 import { SymbolicEpistemicModel } from './symbolic-epistemic-model';
-import { BddService, BDDNode } from '../../../../services/bdd.service';
+import { BDDNode } from '../../../../services/bdd.service';
 
 export interface SymbolicRelation {
     toFormula(): Formula;

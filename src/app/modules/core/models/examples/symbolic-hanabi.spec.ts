@@ -1,7 +1,4 @@
-import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
-import { SymbolicRelation, Obs } from '../epistemicmodel/symbolic-relation';
-import { AtomicFormula } from '../formula/formula';
 import { SimpleSymbolicHanabi } from './symbolic-hanabi';
 
 describe('SymbolicEpistemicModel', () => {

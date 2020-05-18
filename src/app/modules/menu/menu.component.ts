@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
 import { ConsecutiveNumbers } from './../core/models/examples/consecutive-numbers';
 import { MuddyChildren } from './../core/models/examples/muddy-children';
 import { ExampleDescription } from './../core/models/environment/exampledescription';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ExampleService } from 'src/app/services/example.service';
 import { SallyAndAnn } from '../core/models/examples/sally-and-ann';
 import { CommonknowledgeStrictlyMoreExpressive } from '../core/models/examples/commonknowledge-strictly-more-expressive';

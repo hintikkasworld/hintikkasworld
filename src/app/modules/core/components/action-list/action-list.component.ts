@@ -1,9 +1,7 @@
 import { Action } from './../../models/environment/action';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { environment } from 'src/environments/environment.prod';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Environment } from '../../models/environment/environment';
 import { Observable } from 'rxjs';
-import { from } from 'rxjs';
 
 @Component({
     selector: 'app-action-list',

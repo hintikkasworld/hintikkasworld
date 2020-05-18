@@ -1,5 +1,5 @@
 import { ExampleDescription } from './../../../core/models/environment/exampledescription';
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 
 @Component({
     selector: 'app-example',
