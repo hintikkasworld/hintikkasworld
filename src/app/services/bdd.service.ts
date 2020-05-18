@@ -1,6 +1,5 @@
 import { Formula } from './../modules/core/models/formula/formula';
 import * as types from './../modules/core/models/formula/formula';
-// import { Injectable } from "@angular/core";
 import { BehaviorSubject } from 'rxjs';
 import { Valuation } from '../modules/core/models/epistemicmodel/valuation';
 
@@ -11,10 +10,6 @@ import '!!file-loader?name=wasm/cuddjs.wasm2!./../../../cuddjs/release/cuddjs.wa
 export type BDDNode = number;
 type BDDAtom = number;
 type pointer = number;
-
-/*@Injectable({
-  providedIn: 'root'
-})*/
 
 export class BddService {
     constructor(f: () => void) {

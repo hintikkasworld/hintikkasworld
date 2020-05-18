@@ -11,7 +11,7 @@ describe('PropositionalAssignmentsPostcondition', () => {
     let M = new ExplicitEpistemicModel();
     let world = new WorldValuation(new Valuation([]));
     M.addWorld('w', world);
-    M.addWorld('u', world);
+    M.addWorld('u', new WorldValuation(new Valuation([])));
 
     it('PropositionalAssignmentsPostcondition: p is false initially', () => {
         expect(!world.modelCheck('p')).toBeTruthy();

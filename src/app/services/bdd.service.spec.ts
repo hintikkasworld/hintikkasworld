@@ -3,13 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { BddService } from './bdd.service';
 
 describe('BddService', () => {
-    beforeEach(() => TestBed.configureTestingModule({}));
-
-    it('should be created', () => {
-        const service: BddService = TestBed.get(BddService);
-        expect(service).toBeTruthy();
-    });
-
     it('true should work', (done) => {
         expect(
             (function test() {
@@ -37,16 +30,6 @@ describe('BddService', () => {
                     done();
                 });
             })()
-        ).toBeTruthy();
-    });
-
-    it('literal should work', () => {
-        let service: BddService = TestBed.get(BddService);
-        expect(
-            (function test() {
-                let b = service.createLiteral('p');
-                return service.getAtomOf(b) == 'p';
-            })()
-        ).toBeTruthy();
+        ).toBeUndefined();
     });
 });
