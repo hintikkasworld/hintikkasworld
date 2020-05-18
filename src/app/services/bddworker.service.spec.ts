@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BDDWorkerService } from './bddservice-worker.service';
+import { BDDWorkerService } from './bddworker.service';
 
 describe('BDDWorkerService', () => {
     beforeEach(() => TestBed.configureTestingModule({}));
