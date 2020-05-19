@@ -168,13 +168,14 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
      @example let Mcontracted = M.contract();
      **/
     contract() {
-        function getClassNumberToWorldName(i) {
+        function getClassNumberToWorldName(i: number) {
             return 'w' + i;
         }
 
-        function getSameValuationDictionnary(M) {
+        function getSameValuationDictionnary(M: ExplicitEpistemicModel): {[id: string]: string[]} {
             // regroupe par valuation identiques => val est un dict (valuation, [idnode1,idnode2,..])
-            let val = {};
+            let val: {[id: string]: string[]} = {};
+
             for (let idnode in M.nodes) {
                 let valuation = M.nodes[idnode].toString();
 
@@ -187,50 +188,50 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
             return val;
         }
 
-        function getPiFromValuation(val) {
+        function getPiFromValuation(val: { [val: string]: string[] }): { pi: { [val: string]: number[] }; nb: number } {
             // crée l'objet pi qui à un idnode associe un groupe.
             let pi = {}; // dictionnary containing (idnode,group)
             let groupe = 1;
             for (let valuation in val) {
-                for (let idnode in val[valuation]) {
-                    pi[val[valuation][idnode]] = groupe;
+                for (let node of val[valuation]) {
+                    pi[node] = groupe;
                 }
                 groupe = groupe + 1;
             }
             return { pi, nb: groupe - 1 };
         }
 
-        function raffine(pi, model, nbgroupes) {
-            function constructSignature(pi, model) {
+        function raffine(pi: { [val: string]: number[] }, model: ExplicitEpistemicModel, nbgroupes) {
+            function constructSignature(pi: { [val: string]: number[] }, model: ExplicitEpistemicModel): {[w: string]: number[][]} {
                 /**
                  * Supress duplication
                  */
-                function cleanArray(array) {
-                    let i,
-                        j,
-                        len = array.length,
+                function cleanArray(array: number[]): number[] {
+                    let i: number,
+                        j: number,
+                        len: number = array.length,
                         out = [],
-                        obj = {};
+                        obj: {[x: number]: {}} = {};
                     for (i = 0; i < len; i++) {
-                        obj[array[i]] = 0;
+                        obj[array[i]] = {};
                     }
-                    for (j in obj) {
+                    for (let j in obj) {
                         out.push(j);
                     }
                     return out;
                 }
 
-                let signature = {};
+                let signature: {[w: string]: number[][]} = {};
                 for (let w in pi) {
                     let sig = [];
                     sig.push(pi[w]);
 
-                    for (let agent of environment.agents) {
-                        let sig2 = [];
-                        let successors = model.getSuccessors(w, agent);
+                    for (let agent of model.getAgents()) {
+                        let sig2: number[] = [];
+                        let successors = model.getSuccessorsID(w, agent);
                         if (!(successors == undefined)) {
                             for (let s of successors) {
-                                sig2.push(pi[s]);
+                                sig2.concat(pi[s]);
                             }
                         }
                         sig2 = cleanArray(sig2);
@@ -241,7 +242,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
                 return signature;
             }
 
-            function getStatesSortedAccordingToSignature(pi, signature) {
+            function getStatesSortedAccordingToSignature(pi: { [val: string]: number[] }, signature: {[w: string]: number[][]}): string[] {
                 let sigma = Object.keys(pi);
 
                 sigma.sort(function (w, u) {
@@ -256,7 +257,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
                 return sigma;
             }
 
-            function renameStates(sigma, signature) {
+            function renameStates(sigma: string[], signature: {[w: string]: number[][]}) {
                 let pi2 = {}; // result
                 let num = 1;
                 pi2[sigma[0]] = num;
@@ -266,7 +267,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
                     } else {
                         let diff = false;
                         let j = 1;
-                        while (!diff && j < environment.agents.length) {
+                        while (!diff && j < model.getAgents().length) {
                             if (signature[sigma[i]][j].length != signature[sigma[i - 1]][j].length) {
                                 num = num + 1;
                                 diff = true;
@@ -305,7 +306,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
             }
         }
 
-        function writeContractedVersionAfterRaffinement(piraffined, M) {
+        function writeContractedVersionAfterRaffinement(piraffined, M: ExplicitEpistemicModel) {
             let contracted = new ExplicitEpistemicModel();
 
             let pireversed = [];
@@ -318,7 +319,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
             }
             for (let i = 1; i < pireversed.length; i++) {
                 // boucle de création des mondes et du pointage
-                contracted.addWorld(getClassNumberToWorldName(i), M.nodes[pireversed[i][0]]); // crée le monde
+                contracted.addWorld(getClassNumberToWorldName(i), M.nodes[pireversed[i][0]] as World); // crée le monde
                 if (pireversed[i].includes(M.getPointedWorldID())) {
                     contracted.setPointedWorld(getClassNumberToWorldName(i)); // ajoute le pointage
                 }
@@ -326,9 +327,9 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
 
             for (let i = 1; i < pireversed.length; i++) {
                 // boucle de créations des arrêtes
-                for (let ag of environment.agents) {
-                    if (M.getSuccessors(pireversed[i][0], ag) !== undefined) {
-                        let successors = M.getSuccessors(pireversed[i][0], ag);
+                for (let ag of M.getAgents()) {
+                    if (M.getSuccessorsID(pireversed[i][0], ag) !== undefined) {
+                        let successors = M.getSuccessorsID(pireversed[i][0], ag);
                         for (let s of successors) {
                             contracted.addEdge(ag, getClassNumberToWorldName(i), getClassNumberToWorldName(piraffined[s]));
                         }
