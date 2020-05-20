@@ -38,7 +38,7 @@ export class Obs implements SymbolicRelation {
                 list_formula.push(
                     new EquivFormula(
                         form,
-                        form.renameAtoms((name) => SymbolicEpistemicModel.getPrimedVarName(name))
+                        form.renameAtoms(SymbolicEpistemicModel.getPrimedVarName)
                     )
                 );
             }

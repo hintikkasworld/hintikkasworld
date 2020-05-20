@@ -12,8 +12,11 @@ import { SEModelDescriptor } from './descriptor/se-model-descriptor';
 import { SEModelInternalDescriptor } from './descriptor/se-model-internal-descriptor';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
 import { BehaviorSubject } from 'rxjs';
-import { SuccessorSet } from './successor-set';
 
+/**
+ * Allows the user to download the symbolic model as a JSON file, using a link at the bottom.
+ * @param json the json to show
+ */
 function showJSON(json) {
     let theJSON = JSON.stringify(json);
     let uri = 'data:application/json;charset=UTF-8,' + encodeURIComponent(theJSON);
@@ -47,7 +50,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         this.pointedValuation = descr.getPointedValuation();
         this.agents = descr.getAgents();
 
-        this.symbolicRelations = new Map();
+        this.symbolicRelations = {};
         // loadDescriptor will call the worker to pass down the heavy part of constructing
         // a binary decision diagram
         this.loadDescriptor(descr);
@@ -55,22 +58,21 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         console.log('end of SymbolicEpistemicModel.constructor');
     }
 
-    private _isLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    private _isLoaded = false;
+    private _isLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-    protected pointedValuation: Valuation; // the valuation that corresponds to the pointed world
-    protected propositionalAtoms: string[];
-    protected propositionalPrimes: string[];
+    private pointedValuation: Valuation; // the valuation that corresponds to the pointed world
+    private propositionalAtoms: string[];
+    private propositionalPrimes: string[];
 
-    protected bddSetWorlds: BDDNode;
-    protected readonly agents: string[];
+    private bddSetWorlds: BDDNode;
+    private readonly agents: string[];
 
-    protected readonly worldClass: WorldValuationType;
+    private readonly worldClass: WorldValuationType;
 
     /**
-     * Store for each agent the correspondant BDDNode
+     * Store for each agent the corresponding BDDNode
      */
-    protected symbolicRelations: Map<string, BDDNode>;
+    private symbolicRelations: { [agent: string]: BDDNode };
 
     /**
      * stores the worlds (that are of type WorldValuation) that the user already asked for.
@@ -78,15 +80,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * but I do not know how to improve it yet)
      * values are the worlds themselves.
      */
-    private readonly worlds = {};
+    private worlds: { [val: string]: WorldValuation } = {};
 
     static getPrimedAtomicPropositions(propositionalAtoms: string[]): string[] {
-        let propositionalPrimes = [];
-        propositionalAtoms.forEach((value) => {
-            let prime = SymbolicEpistemicModel.getPrimedVarName(value);
-            propositionalPrimes.push(prime);
-        });
-        return propositionalPrimes;
+        return propositionalAtoms.map(SymbolicEpistemicModel.getPrimedVarName);
     }
 
     /**
@@ -105,28 +102,19 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return '_pr';
     }
 
-    /**
-     * @param str
-     * @returns true if the variable is a prime variable
-     * TODO: François says: only containing "_p" is not correct. It should finish by "_p" no?
-     */
-    static isPrimed(str: string) {
-        return str.includes(SymbolicEpistemicModel.getPrimedString());
-    }
-
     static getMapNotPrimeToPrime(atoms: string[]): { [p: string]: string } {
         let map = {};
-        atoms.forEach((value) => {
+        for (const value of atoms) {
             map[value] = SymbolicEpistemicModel.getPrimedVarName(value);
-        });
+        }
         return map;
     }
 
     static getMapPrimeToNotPrime(atoms: string[]): { [p: string]: string } {
         let map = {};
-        atoms.forEach((value) => {
+        for (const value of atoms) {
             map[SymbolicEpistemicModel.getPrimedVarName(value)] = value;
-        });
+        }
         return map;
     }
 
@@ -150,15 +138,15 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     getRelationBDD(agent: string): number {
-        return this.symbolicRelations.get(agent);
+        return this.symbolicRelations[agent];
     }
 
     isLoaded(): boolean {
-        return this._isLoaded;
+        return this._isLoaded.value;
     }
 
     isLoadedObservable(): BehaviorSubject<boolean> {
-        return this._isLoaded$;
+        return this._isLoaded;
     }
 
     /**
@@ -204,8 +192,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             await this.loadModelInternalDescriptor(descr as SEModelInternalDescriptor);
         }
 
-        this._isLoaded = true;
-        this._isLoaded$.next(true);
+        this._isLoaded.next(true);
     }
 
     private async loadModelDescriptor(descr: SEModelDescriptor) {
@@ -218,10 +205,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         for (let agent of this.agents) {
             let bddRelation: BDDNode = await descriptor.getRelationDescription(agent).toBDD();
             // this.symbolicRelations.set(agent, BDD.bddService.applyAnd([BDD.bddService.createCopy(this.bddSetWorlds), bddRelation]));
-            this.symbolicRelations.set(
-                agent,
-                await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(this.bddSetWorlds), bddRelation])
-            );
+            this.symbolicRelations[agent] = await BDDWorkerService.applyAnd([
+                await BDDWorkerService.createCopy(this.bddSetWorlds),
+                bddRelation
+            ]);
         }
     }
 
@@ -231,26 +218,22 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         for (let agent of this.agents) {
             let bddRelation: BDDNode = await descriptor.getRelationBDD(agent);
             console.log('bdd relation for agent ' + agent + ' is: ' + bddRelation);
-            this.symbolicRelations.set(agent, bddRelation);
+            this.symbolicRelations[agent] = bddRelation;
             /* await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(this.bddSetWorlds),
                  bddRelation]));*/
         }
     }
 
-    async loadBddNode(w: World, a: string): Promise<BDDNode> {
+    async loadSuccessorBddNode(w: World, a: string): Promise<BDDNode> {
         // console.log("getSucessors", a, this.getAgentSymbolicRelation(a))
         console.log('begin BDD successor computation...');
 
         let bddValuation = await BDDWorkerService.createCube((w as WorldValuation).valuation.getPropositionMap());
         console.log('bddValuation has ' + (await BDDWorkerService.countSolutions(bddValuation, this.propositionalAtoms)) + '.');
 
-        let bddRelationOnW = await BDDWorkerService.applyAnd([
-            await BDDWorkerService.createCopy(this.getAgentSymbolicRelation(a)),
-            bddValuation
-        ]);
+        let bddRelationOnW = await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(this.symbolicRelations[a]), bddValuation]);
 
-        //  console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))
-        // console.log("AND", BDD.bddService.pickAllSolutions(bdd_and));
+        // console.log("before forget", await BDDWorkerService.pickAllSolutions(bddRelationOnW, this.propositionalAtoms.concat(this.propositionalPrimes)));
 
         let bddSetSuccessorsWithPrime = await BDDWorkerService.applyExistentialForget(bddRelationOnW, this.propositionalAtoms);
         console.log(
@@ -259,8 +242,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                 '.'
         );
 
-        // console.log("after forget", BDD.bddService.pickAllSolutions(bddSetSuccessorsWithPrime))
-        // console.log("forget", this.propositionalAtoms, BDD.bddService.pickAllSolutions(forget));
+        // console.log("after forget", await BDDWorkerService.pickAllSolutions(bddSetSuccessorsWithPrime, this.propositionalPrimes));
 
         let bddSetSuccessors = await BDDWorkerService.applyRenaming(
             bddSetSuccessorsWithPrime,
@@ -282,16 +264,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     }
 
     getSuccessors(w: World, a: string): SymbolicSuccessorSet {
-        // console.log("Solutions", sols);
-        return new SymbolicSuccessorSet((val: Valuation) => this.getWorld(val), this.propositionalAtoms, this.loadBddNode(w, a));
-    }
-
-    getAgentSymbolicRelation(agent: string): BDDNode {
-        return this.symbolicRelations.get(agent);
-    }
-
-    setAgentSymbolicRelation(agent: string, bddPointer: BDDNode): void {
-        this.symbolicRelations.set(agent, bddPointer);
+        return new SymbolicSuccessorSet((val: Valuation) => this.getWorld(val), this.propositionalAtoms, this.loadSuccessorBddNode(w, a));
     }
 
     getInitialFormula(): BDDNode {
@@ -300,10 +273,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     getPropositionalAtoms() {
         return this.propositionalAtoms;
-    }
-
-    getPropositionalPrimes() {
-        return this.propositionalPrimes;
     }
 
     getWorldClass() {
@@ -331,24 +300,10 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             return this.pointedValuation.isPropositionTrue((phi as types.AtomicFormula).getAtomicString());
         }
         if (phi instanceof types.AndFormula) {
-            let b = true;
-            for (let f of (phi as types.AndFormula).formulas) {
-                if (!this.checkBooleanFormula(f)) {
-                    b = false;
-                    break;
-                }
-            }
-            return b;
+            return (phi as types.AndFormula).formulas.every((f) => this.checkBooleanFormula(f));
         }
         if (phi instanceof types.OrFormula) {
-            let b = false;
-            for (let f of (phi as types.OrFormula).formulas) {
-                if (this.checkBooleanFormula(f)) {
-                    b = true;
-                    break;
-                }
-            }
-            return b;
+            return (phi as types.OrFormula).formulas.some((f) => this.checkBooleanFormula(f));
         }
         if (phi instanceof types.NotFormula) {
             return !this.checkBooleanFormula((phi as types.NotFormula).formula);
@@ -378,9 +333,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         ]);
     }
 
-    /*
-
-    */
     private async _query(all_worlds: BDDNode, phi: Formula): Promise<BDDNode> {
         // console.log("Query", bdd, phi)
         if (phi instanceof types.TrueFormula) {
@@ -432,7 +384,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
                 SymbolicEpistemicModel.getMapPrimeToNotPrime(this.propositionalAtoms)
             );
             // console.log("mp", BDD.bddService.pickAllSolutions(mp));
-            let bdd_a = await this.getAgentSymbolicRelation((phi as types.KposFormula).agent);
+            let bdd_a = this.symbolicRelations[(phi as types.KposFormula).agent];
             let bdd_and = await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(bdd_a), mp]);
             // console.log("bdd_and", BDD.bddService.pickAllSolutions(bdd_and).map(v => v.toAssignment(this.propositionalAtoms.concat(this.propositionalPrimes))), this.propositionalPrimes);
             let res = await BDDWorkerService.applyExistentialForget(bdd_and, this.propositionalPrimes);
@@ -450,7 +402,6 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             return await this._query(all_worlds, phi.convertToNormalFormula() as types.ExactlyFormula);
         }
 
-        /* else */
         throw new Error('Unknown instance of phi:' + JSON.stringify(phi));
     }
 
@@ -459,7 +410,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             getAgents: () => this.agents,
             getAtomicPropositions: () => this.propositionalAtoms,
             getSetWorldsBDDDescription: async () => this.bddSetWorlds,
-            getRelationBDD: async (agent: string) => this.symbolicRelations.get(agent),
+            getRelationBDD: async (agent: string) => this.symbolicRelations[agent],
             getPointedValuation: () => this.pointedValuation
         };
     }

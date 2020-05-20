@@ -59,7 +59,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
                     this.alreadyOutput[val_s] = {};
                 }
             }
-            console.log('getSomeSuccessors outputs ' + sols.length + ' solutions.');
+            console.log('getSomeSuccessors outputs ' + sols.length + ' solutions, ' + (n - this.successors_given) + ' to go');
             this.successors_given += sols.length;
             return sols;
         }
