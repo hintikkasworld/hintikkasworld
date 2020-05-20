@@ -2,43 +2,19 @@ import { BDDWorkerService } from '../../../../services/bddworker.service';
 import { SuccessorSet } from './successor-set';
 import { World } from './world';
 import { Valuation } from './valuation';
-import { SymbolicEpistemicModel } from './symbolic-epistemic-model';
 import { BDDNode } from './bddnode';
-import { WorldValuation } from './world-valuation';
 
 export class SymbolicSuccessorSet implements SuccessorSet {
     private bdd: Promise<BDDNode>;
     private atoms: string[];
     private toWorld: (Valuation) => World;
-    private number: number = undefined; // number of successors (memoization)
-    private finished = false;
+    private n_sucessors: number = undefined; // number of successors (memoization)
+    private successors_given = 0;
 
     /**
-     * stores the worlds (that are of type WorldValuation) that the user already asked for.
-     * keys are strings (from a valuation, you call valuation.toString() to get the key... hhmm.. still a bit weird
-     * but I do not know how to improve it yet)
-     * values are the worlds themselves.
+     * Set of worlds already output where identifier is their valuation as strings
      */
-    private readonly alreadyOutput = {};
-
-    /**
-     * @param valuation
-     * @retuns yes if the corresponding world has already been output
-     */
-    private isAlreadyBeenOutput(valuation: Valuation): boolean {
-        let key = valuation.toString();
-        return this.alreadyOutput[key] != undefined;
-    }
-
-    /**
-     *
-     * @param valuation
-     * declare that the (world corresponding to) valuation has already been output by getSomeSuccessors
-     */
-    private declareAlreadyOutput(valuation: Valuation) {
-        let key = valuation.toString();
-        this.alreadyOutput[key] = true;
-    }
+    private readonly alreadyOutput: { [val: string]: {} } = {};
 
     constructor(toWorld: (Valuation) => World, atoms: string[], bdd: Promise<BDDNode>) {
         this.toWorld = toWorld;
@@ -51,42 +27,41 @@ export class SymbolicSuccessorSet implements SuccessorSet {
      */
     async getNumber(): Promise<number> {
         console.log('le BDD est : ' + (await this.bdd));
-        if (this.number == undefined) {
-            this.number = await BDDWorkerService.countSolutions(await this.bdd, this.atoms);
-        } // memoization
-        return this.number;
+        if (this.n_sucessors == undefined) {
+            this.n_sucessors = await BDDWorkerService.countSolutions(await this.bdd, this.atoms);
+        }
+        return this.n_sucessors;
     }
 
     async getSomeSuccessors(): Promise<World[]> {
         console.log('load getSomeSuccessors');
-        const arrayValToArrayWorlds = (A: Valuation[]): World[] => {
-            return A.map((val: Valuation) => this.toWorld(val));
-        };
 
-        if ((await this.getNumber()) < 10) {
-            console.log('...less than 10 succs');
-            if (this.finished) {
-                console.log('set of successors finished!');
-                return [];
-            } else {
-                this.finished = true;
-                console.log('set of successors: we compute the ' + (await this.getNumber()) + ' successors!');
-                let A = await BDDWorkerService.pickAllSolutions(await this.bdd, this.atoms);
-                let V = A.map((props) => new Valuation(props));
-                return arrayValToArrayWorlds(V);
-            }
+        let n = await this.getNumber();
+        if (this.successors_given >= n) {
+            console.log('set of successors finished!');
+            return [];
+        }
+
+        if (n < 10) {
+            console.log('...less than 10 succs, we compute all ' + n + ' of them.');
+            this.successors_given = n;
+
+            let A = await BDDWorkerService.pickAllSolutions(await this.bdd, this.atoms);
+            return A.map((props) => this.toWorld(new Valuation(props)));
         } else {
             console.log('...more than 10 succs');
-            const sols = [];
+            let sols = [];
             for (let i = 0; i < 5; i++) {
                 const val: Valuation = new Valuation(await BDDWorkerService.pickRandomSolution(await this.bdd, this.atoms));
-                if (!this.isAlreadyBeenOutput(val)) {
-                    sols.push(val);
-                    this.declareAlreadyOutput(val);
+                let val_s = val.toString();
+                if (!this.alreadyOutput.hasOwnProperty(val_s)) {
+                    sols.push(this.toWorld(val));
+                    this.alreadyOutput[val_s] = {};
                 }
             }
             console.log('getSomeSuccessors outputs ' + sols.length + ' solutions.');
-            return arrayValToArrayWorlds(sols);
+            this.successors_given += sols.length;
+            return sols;
         }
     }
 
