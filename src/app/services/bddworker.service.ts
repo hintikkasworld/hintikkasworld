@@ -95,6 +95,12 @@ export class BDDWorkerService {
         return BDDWorkerService.call('createCube', [valuation]);
     }
 
+    /**
+     * 
+     * @param b 
+     * @param atoms 
+     * @returns the BDDNode that represents the formula "\exists atoms, b"
+     */
     public static applyExistentialForget(b: BDDNode, atoms: string[]): Promise<BDDNode> {
         return BDDWorkerService.call('applyExistentialForget', [b, atoms]);
     }

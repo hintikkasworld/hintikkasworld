@@ -71,6 +71,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     /**
      * Store for each agent the corresponding BDDNode
+     * this.symbolicRelations[a] represents the relation ---- a --> = {(w, u') | w -- a --> u'}
      */
     private symbolicRelations: { [agent: string]: BDDNode };
 
@@ -228,29 +229,20 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         // console.log("getSucessors", a, this.getAgentSymbolicRelation(a))
         console.log('begin BDD successor computation...');
 
-        let bddValuation = await BDDWorkerService.createCube((w as WorldValuation).valuation.getPropositionMap());
-        console.log('bddValuation has ' + (await BDDWorkerService.countSolutions(bddValuation, this.propositionalAtoms)) + '.');
 
-        let bddRelationOnW = await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(this.symbolicRelations[a]), bddValuation]);
+        const wValuation = await BDDWorkerService.createCube((w as WorldValuation).valuation.getPropositionMap());
 
-        // console.log("before forget", await BDDWorkerService.pickAllSolutions(bddRelationOnW, this.propositionalAtoms.concat(this.propositionalPrimes)));
+        // computes {(u,v') | u --a-> v', u, v' are worlds} and {w}, i.e. {(w, v') | w --> a v', v' is a world}
+        const bddRelationOnW = await BDDWorkerService.applyAnd([await BDDWorkerService.createCopy(this.symbolicRelations[a]), wValuation]);
 
-        let bddSetSuccessorsWithPrime = await BDDWorkerService.applyExistentialForget(bddRelationOnW, this.propositionalAtoms);
-        console.log(
-            'bddSetSuccessorsWithPrime has ' +
-                (await BDDWorkerService.countSolutions(bddSetSuccessorsWithPrime, this.propositionalPrimes)) +
-                '.'
-        );
+        //computes {v' |  w --> a v', v' is a world}
+        const bddSetSuccessorsWithPrime = await BDDWorkerService.applyExistentialForget(bddRelationOnW, this.propositionalAtoms);
 
-        // console.log("after forget", await BDDWorkerService.pickAllSolutions(bddSetSuccessorsWithPrime, this.propositionalPrimes));
-
-        let bddSetSuccessors = await BDDWorkerService.applyRenaming(
+        //computes {v |  w --> a v, v is a world} (without primes)
+        const bddSetSuccessors = await BDDWorkerService.applyRenaming(
             bddSetSuccessorsWithPrime,
             SymbolicEpistemicModel.getMapPrimeToNotPrime(this.propositionalAtoms)
         );
-        console.log('bddSetSuccessors has ' + (await BDDWorkerService.countSolutions(bddSetSuccessors, this.propositionalAtoms)) + '.');
-
-        console.log('BDD successor computed!');
         return bddSetSuccessors;
 
         // console.log("Calcul bdd sucessors", BDD.bddService.pickAllSolutions(bddSetSuccessors));
