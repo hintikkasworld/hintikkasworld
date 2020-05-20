@@ -325,6 +325,12 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         ]);
     }
 
+    /**
+     * 
+     * @param all_worlds 
+     * @param phi 
+     * @return a promise of a BDD that represents all worlds that satisfy phi
+     */
     private async _query(all_worlds: BDDNode, phi: Formula): Promise<BDDNode> {
         // console.log("Query", bdd, phi)
         if (phi instanceof types.TrueFormula) {
@@ -391,7 +397,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         }
         if (phi instanceof types.ExactlyFormula) {
             // return BDD.bddService.applyAnd([BDD.buildFromFormula(phi), BDD.bddService.createCopy(all_worlds)])
-            return await this._query(all_worlds, phi.convertToNormalFormula() as types.ExactlyFormula);
+            return await this._query(all_worlds, phi.convertToNormalFormula());
         }
 
         throw new Error('Unknown instance of phi:' + JSON.stringify(phi));

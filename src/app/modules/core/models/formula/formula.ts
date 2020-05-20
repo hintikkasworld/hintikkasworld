@@ -352,6 +352,10 @@ export class EquivFormula implements Formula {
     }
 }
 
+/**
+ * ExactlyFormula implements a formula that says that exactly c propositions in v are true
+ * @example new ExactlyFormula(3, ["p", "q", "r", "s", "t"])
+ */
 export class ExactlyFormula implements Formula {
     constructor(c: number, v: Array<string>) {
         this._count = c;
