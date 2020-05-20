@@ -547,7 +547,6 @@ export class Scheme {
     }
 
     /*read a string as "'(1 2)" and returns a string representing the evaluation of it, for instance "(1 2)"*/
-
     static evalprettyprint(s) {
         return Scheme.prettyprint(Scheme.evalte(Scheme.parser(s)));
     }
@@ -555,46 +554,4 @@ export class Scheme {
     static apply(functionName, argument) {
         return Scheme.evalte([functionName, argument]);
     }
-
-    /*load a scheme file on the web and evaluate it (it puts all the definition in the global environment)*/
-
-    /* loadfile(url) {
-
-         var result;
-
-         $.ajax(
-
-             {
-
-                 mimeType: 'text/plain; charset=x-user-defined',
-
-                 type: 'GET',
-
-                 async: false,
-
-                 url: url,
-
-                 dataType: "text",
-
-                 success: function (data) {
-
-                     result = data;
-
-                     var t = tokenize(data);
-
-                     while (t.length > 0) {
-
-                         evalte(read_from(t));
-
-                     }
-
-                 }
-
-             });
-
-         return result;
-
-     }
-
- };*/
 }

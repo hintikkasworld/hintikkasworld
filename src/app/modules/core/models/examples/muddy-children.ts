@@ -104,11 +104,11 @@ export class MuddyChildren extends ExampleDescription {
 
         let A = this.generateAllBinaryStrings(this.nbChildren);
         for (let i = 0; i < A.length; i++) {
-            let v: Map<string, boolean> = new Map();
+            let v = {};
             for (let k = 0; k <= A[i].length; k++) {
-                v.set('m' + MuddyChildren.getAgentName(k), A[i].charAt(k) == '1');
+                v['m' + MuddyChildren.getAgentName(k)] = A[i].charAt(k) == '1';
             }
-            M.addWorld('w' + A[i], new MuddyChildrenWorld(Valuation.buildFromMap(v), this.nbChildren));
+            M.addWorld('w' + A[i], new MuddyChildrenWorld(new Valuation(v), this.nbChildren));
         }
 
         for (let i = 0; i < this.nbChildren; i++) {

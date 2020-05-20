@@ -16,6 +16,9 @@ export class EdgeComponent implements OnInit {
      * returns the path code to be put in the d attribute of the <path></path> that is the line of the edge
      */
     getPathAttributeD() {
+        if (this.edge.source === undefined || this.edge.target === undefined) {
+            return;
+        }
         let factorCurve = { a: 1, b: 1.8, c: 2.6, d: 3 };
         let x1 = this.edge.source.x;
         let y1 = this.edge.source.y;
@@ -73,6 +76,9 @@ export class EdgeComponent implements OnInit {
      * path for the arrow
      */
     getPathArrowAttributeD() {
+        if (this.edge.source === undefined || this.edge.target === undefined) {
+            return;
+        }
         const factorAngle = { a: 0.45, b: 0.2, c: 0.15, d: 0.1 };
         const x1 = this.edge.source.x;
         const y1 = this.edge.source.y;

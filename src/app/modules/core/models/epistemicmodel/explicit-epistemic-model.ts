@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 import { World } from './world';
 import { SuccessorSet } from './successor-set';
 
-export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
+export class ExplicitEpistemicModel extends Graph<World> implements EpistemicModel {
     nodeToID: Map<World, string> = new Map();
 
     isLoadedObservable(): BehaviorSubject<boolean> {
@@ -24,8 +24,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
 
     getSuccessors(w: World, a: string): SuccessorSet {
         let successorIDs = this.getSuccessorsID(this.nodeToID.get(w), a);
-        console.log(a + '-successors of ' + this.nodeToID.get(w) + ': ' + successorIDs);
-        return new ExplicitSuccessorSet(successorIDs.map((id) => this.getNode(id)));
+        return new ExplicitSuccessorSet(successorIDs.map(this.getNode));
     }
 
     /**
@@ -59,12 +58,10 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
      * */
     addWorld(w: string, content: World) {
         this.addNode(w, content);
-        console.log('world of id ' + w + ' is added');
         if (this.nodeToID.has(content)) {
-            throw new Error('oups, this world has already been added!');
+            throw new Error('oops, this world has already been added!');
         }
         this.nodeToID.set(content, w);
-        console.log('nodeToID contains ' + this.nodeToID.size + ' elements');
     }
 
     /**
@@ -72,6 +69,8 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
      */
     getWorldsPrettyPrint() {
         let s = '';
+
+        this.getNodes();
 
         for (let w in this.getNodes()) {
             s += w + ', ';

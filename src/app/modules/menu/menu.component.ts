@@ -38,8 +38,9 @@ export class MenuComponent implements OnInit {
         new ConsecutiveNumbers(),
         new NanoHanabi(),
         new Cherylsbirthday(),
+        //new LinesBirthday(),
         new CoordinatedAttackProblem()
-    ]; // , new LinesBirthday()];
+    ];
 
     symbolicExamples = [
         new MineSweeper(2, 2, 1),

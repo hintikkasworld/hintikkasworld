@@ -1,15 +1,15 @@
-import { BDDNode } from './../epistemicmodel/bddnode';
+import { BDDNode } from '../epistemicmodel/bddnode';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
 import { EventModel } from './event-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Formula } from '../formula/formula';
 
-/*
-Nouvelles formules :
-post(AP) = bigand_{a in AP} (p <-> Old(post(p)))
-chi = Forget(Old(pre and chi) and post(AP))
-Ra = Forget(Old(Ra) and post(AP) and post(AP'))
-*/
+/**
+ *  New formulas :
+ *  post(AP) = bigand_{a in AP} (p <-> Old(post(p)))
+ *  chi = Forget(Old(pre and chi) and post(AP))
+ *  Ra = Forget(Old(Ra) and post(AP) and post(AP'))
+ */
 
 export class SymbolicPublicAction implements EventModel<SymbolicEpistemicModel> {
     private precondition: Formula;
@@ -21,17 +21,17 @@ export class SymbolicPublicAction implements EventModel<SymbolicEpistemicModel> 
     }
 
     apply(M: SymbolicEpistemicModel): SymbolicEpistemicModel {
-        // TODO il faut faire les post !!!
-        console.log('SymbolicPublicAnnouncement.apply');
+        // TODO We have to do the post (!)
         const BS = BDDWorkerService;
 
         const descr = M.getInternalDescription();
         const bddWorldsPromise = M.queryWorldsSatisfying(this.precondition);
 
         const newDescr = {
-            getAgents: () => descr.getAgents(),
-            getAtomicPropositions: () => descr.getAtomicPropositions(),
-            getSetWorldsBDDDescription: async (): Promise<BDDNode> => await bddWorldsPromise,
+            getAgents: descr.getAgents,
+            getAtomicPropositions: descr.getAtomicPropositions,
+            getSetWorldsBDDDescription: async () => await bddWorldsPromise,
+            getPointedValuation: descr.getPointedValuation,
 
             getRelationBDD: async (agent: string): Promise<BDDNode> => {
                 const previousRelation = await descr.getRelationBDD(agent);
@@ -50,9 +50,7 @@ export class SymbolicPublicAction implements EventModel<SymbolicEpistemicModel> 
                 await BS.debugInfo('clique', clique);
 
                 return await BS.applyAnd([await BS.createCopy(previousRelation), await BS.createCopy(clique)]);
-            },
-
-            getPointedValuation: () => descr.getPointedValuation()
+            }
         };
 
         return new SymbolicEpistemicModel(M.getWorldClass(), newDescr);

@@ -1,11 +1,11 @@
-import { Formula } from './../epistemicmodel/formula';
+import { Formula } from '../formula/formula';
 import { BDDNode } from 'src/app/services/bdd.service';
 import { EventModel } from './event-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
 
 /**
- * warning !!! Now, it will work better but it assumes that the formula is Boolean!
+ * Only supports boolean formulas for now
  */
 export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicModel> {
     /**
@@ -13,6 +13,9 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
      * @param observers the list of agents who hear the announcement. if left out, the announcement is fully public.
      */
     constructor(precondition: Formula, observers?: string[]) {
+        if (!precondition.isBoolean()) {
+            throw new Error('precondition should be a boolean, but got ' + precondition);
+        }
         this.precondition = precondition;
         this.observers = observers;
     }

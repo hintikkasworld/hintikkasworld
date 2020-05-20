@@ -6,7 +6,6 @@ import { ExampleComponent } from './components/example/example.component';
 @NgModule({
     declarations: [MenuComponent, ExampleComponent],
     imports: [CommonModule],
-
     exports: [MenuComponent]
 })
 export class MenuModule {}

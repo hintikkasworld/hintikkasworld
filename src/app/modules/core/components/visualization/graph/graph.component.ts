@@ -25,8 +25,8 @@ export class GraphComponent implements OnInit {
 
     ngOnInit() {
         this.obsEnv.subscribe((env) => {
-            if (env.getEpistemicModel() instanceof ExplicitEpistemicModel) {
-                this.update(env.getEpistemicModel() as ExplicitEpistemicModel);
+            if (env.epistemicModel instanceof ExplicitEpistemicModel) {
+                this.update(env.epistemicModel as ExplicitEpistemicModel);
             }
         });
     }

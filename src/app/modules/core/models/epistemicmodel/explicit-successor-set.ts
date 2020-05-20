@@ -9,17 +9,16 @@ export class ExplicitSuccessorSet implements SuccessorSet {
         this.successors = successors;
     }
 
-    async getNumber(): Promise<number> {
+    async length(): Promise<number> {
         return this.successors.length;
     }
 
     async getSomeSuccessors(): Promise<World[]> {
         if (this.done) {
             return [];
-        } else {
-            this.done = true;
-            return this.successors;
         }
+        this.done = true;
+        return this.successors;
     }
 
     async getRandomSuccessor(): Promise<World> {

@@ -9,8 +9,4 @@ export class TrivialPostcondition implements Postcondition {
     toString() {
         return 'idle';
     }
-
-    getValuation() {
-        return {};
-    }
 }

@@ -5,9 +5,9 @@ export interface Formula {
 
     isBoolean(): boolean;
 
-    prettyPrint(): string;
-
     renameAtoms(f: (s: string) => string): Formula;
+
+    prettyPrint(): string;
 }
 
 export class TrueFormula implements Formula {
@@ -79,13 +79,8 @@ export class OrFormula implements Formula {
     readonly type = 'or';
     private _formulas: Array<Formula>;
 
-    isBoolean() {
-        for (let f of this._formulas) {
-            if (!f.isBoolean()) {
-                return false;
-            }
-        }
-        return true;
+    isBoolean(): boolean {
+        return this._formulas.every((x) => x.isBoolean());
     }
 
     renameAtoms(f: (s: string) => string): Formula {
@@ -119,12 +114,7 @@ export class AndFormula implements Formula {
     private _formulas: Array<Formula>;
 
     isBoolean() {
-        for (let f of this._formulas) {
-            if (!f.isBoolean()) {
-                return false;
-            }
-        }
-        return true;
+        return this._formulas.every((x) => x.isBoolean());
     }
 
     renameAtoms(f: (s: string) => string): Formula {
@@ -268,12 +258,7 @@ export class XorFormula implements Formula {
     private _formulas: Array<Formula>;
 
     isBoolean() {
-        for (let f of this._formulas) {
-            if (!f.isBoolean()) {
-                return false;
-            }
-        }
-        return true;
+        return this._formulas.every((x) => x.isBoolean());
     }
 
     renameAtoms(f: (s: string) => string): Formula {
@@ -418,7 +403,9 @@ export class ExactlyFormula implements Formula {
     }
 }
 
-/* export enum FormulaType {
+/*
+// Todo: use formula types instead of strings
+export enum FormulaType {
     Atomic, Or, And, K, Kpos, Kw, Not, Xor, Imply, Equiv, True, False
 } */
 

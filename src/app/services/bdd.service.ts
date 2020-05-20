@@ -13,8 +13,7 @@ type pointer = number;
 export class BddService {
     constructor(f: () => void) {
         this.instantiateWasm('wasm/cuddjs.wasm2', f).catch((e) => {
-            // alert("Problem initializing WASM module, maybe the browser does not have enough memory?");
-            console.log('problem instantiate wasm');
+            console.log('problem instantiating wasm');
             throw e;
         });
     }
@@ -26,49 +25,8 @@ export class BddService {
 
     wasmReady = new BehaviorSubject<boolean>(false);
 
-    aliveBdds: Map<BDDNode, number> = new Map();
-
     private nodeForWhichRatioCacheIsValid = null;
     private randomSolutionRatioCache = null;
-
-    /* createExactlyBDD(n: BDDNode, vars: string[]): BDDNode {
-
-      const cache: Map<string, BDDNode> = new Map();
-
-      const getNamongK = (n: number, k: number) => {
-
-        const key = n + "," + k;
-
-        if (cache.has(key)) return cache.get(key);
-        if (n == 0) {
-          const valuation = {};
-          for (let v of vars.slice(0, k)) {
-            valuation[v] = false;
-          }
-          cache.set(key, this.createCube(valuation));
-          return cache.get(key);
-        }
-
-        if (k == 0) return this.createFalse();
-
-        let x = this.createLiteral(vars[k - 1]);
-        let bdd_1 = this.createCopy(getNamongK(n - 1, k - 1));
-        let bdd_2 = this.createCopy(getNamongK(n, k - 1));
-        let res = this.applyIte(x, bdd_1, bdd_2);
-        cache.set(key, res);
-        return res;
-
-      }
-
-      let res = this.createCopy(getNamongK(n, vars.length));
-
-      cache.forEach((value, key) => {
-        this.destroy(value);
-      });
-
-      return res;
-
-    } */
 
     cacheExactly: Map<string, BDDNode> = new Map();
 

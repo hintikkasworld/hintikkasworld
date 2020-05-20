@@ -1,4 +1,4 @@
-import { Formula } from '../epistemicmodel/formula';
+import { Formula } from '../formula/formula';
 
 /**
  * A symbolic event. The precondition is an epistemic formula,

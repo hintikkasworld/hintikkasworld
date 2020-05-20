@@ -18,19 +18,14 @@ function executeFunctionByName(functionName, args) {
         throw new Error(functionName + ' is not a method of bddService');
     }
 
-    // console.log("we apply " + functionName + " on [" + args + "]");
-    let result = bddService[functionName].apply(bddService, args);
-    //  console.log("the result is: " + result);
-    return result;
+    return bddService[functionName].apply(bddService, args);
 }
 
 addEventListener('message', ({ data }) => {
-    //  console.log("data received by the worker: " + data);
     const response = {
         id: data.id,
         result: executeFunctionByName(data.functionName, data.args)
     };
 
-    // console.log("data sent back by the worker: " + response);
     postMessage(response);
 });

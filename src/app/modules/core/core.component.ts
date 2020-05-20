@@ -40,7 +40,7 @@ export class CoreComponent implements OnInit {
     }
 
     isEpistemicModelReady(): boolean {
-        return this.bsEnv.value.getEpistemicModel().isLoaded();
+        return this.bsEnv.value.epistemicModel.isLoaded();
     }
 
     getFormulaGUI(): Formula {
@@ -49,7 +49,7 @@ export class CoreComponent implements OnInit {
 
     async modelChecking(): Promise<boolean> {
         try {
-            let result = await this.bsEnv.value.getEpistemicModel().check(this.getFormulaGUI());
+            let result = await this.bsEnv.value.epistemicModel.check(this.getFormulaGUI());
             $('#modelCheckingButtonImage').attr('src', result ? 'assets/img/ok.png' : 'assets/img/notok.png');
             return result;
         } catch (error) {
@@ -71,7 +71,7 @@ export class CoreComponent implements OnInit {
             new EventModelAction({
                 name: 'public announcement',
                 eventModel:
-                    this.bsEnv.value.getEpistemicModel() instanceof SymbolicEpistemicModel
+                    this.bsEnv.value.epistemicModel instanceof SymbolicEpistemicModel
                         ? new SymbolicPublicAnnouncement(this.getFormulaGUI())
                         : ExplicitEventModel.getEventModelPublicAnnouncement(this.getFormulaGUI())
             })
@@ -104,16 +104,16 @@ export class CoreComponent implements OnInit {
     }
 
     getAgents(): string[] {
-        return this.bsEnv.value.getEpistemicModel().getAgents();
+        return this.bsEnv.value.epistemicModel.getAgents();
     }
 
     getAtomicPropositions(): string[] {
-        return this.bsEnv.value.getExampleDescription().getAtomicPropositions();
+        return this.bsEnv.value.exampleDescription.getAtomicPropositions();
     }
 
     getDescription(): string[] {
         try {
-            return this.bsEnv.value.getExampleDescription().getDescription();
+            return this.bsEnv.value.exampleDescription.getDescription();
         } catch (e) {
             console.log(e);
             return [];

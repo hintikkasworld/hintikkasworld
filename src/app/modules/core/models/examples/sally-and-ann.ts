@@ -20,7 +20,7 @@ class SallyAndAnneWorld extends WorldValuation {
      */
     constructor(valuation: Valuation) {
         super(valuation);
-        this.agentPos['a'] = {};
+        this.agentPos['a'] = { x: 0, y: 0, r: 0 };
     }
 
     static readonly basketImg = SallyAndAnneWorld.getImage('basket.svg');

@@ -416,7 +416,7 @@ export class MineSweeper extends ExampleDescription {
             return new AndFormula(phis);
         };
 
-        let M: SymbolicEpistemicModel = env.getEpistemicModel() as SymbolicEpistemicModel;
+        let M: SymbolicEpistemicModel = env.epistemicModel as SymbolicEpistemicModel;
         let pointedWorld: MineSweeperWorld = M.getPointedWorld() as MineSweeperWorld;
 
         let cell: Cell = pointedWorld.getCell(point);

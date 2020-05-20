@@ -8,13 +8,13 @@ import { Graph } from '../graph';
 import { Event } from './event';
 import { World } from '../epistemicmodel/world';
 
-export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpistemicModel> {
+export class ExplicitEventModel extends Graph<Event> implements EventModel<ExplicitEpistemicModel> {
     static getEventModelPublicAnnouncement(formula: Formula): ExplicitEventModel {
         let E = new ExplicitEventModel();
         E.addAction('e', formula, new TrivialPostcondition());
 
         for (let a of environment.agents) {
-            E.addEdge(a, 'e', 'e');
+            E.addLoop(a, 'e');
         }
 
         E.setPointedAction('e');
@@ -27,14 +27,14 @@ export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpis
         E.addAction('e', formula, new TrivialPostcondition());
         E.addAction('t', FormulaFactory.createFormula('top'), new TrivialPostcondition());
 
-        E.addEdge(agent, 'e', 'e');
-        E.addEdge(agent, 't', 't');
+        E.addLoop(agent, 'e');
+        E.addLoop(agent, 't');
         E.setPointedAction('e');
 
         for (let a of environment.agents) {
             if (a != agent) {
                 E.addEdge(a, 'e', 't');
-                E.addEdge(a, 't', 't');
+                E.addLoop(a, 't');
             }
         }
 
@@ -46,16 +46,16 @@ export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpis
         E.addAction('e', formula, new TrivialPostcondition());
         E.addAction('t', FormulaFactory.createNegationOf(formula), new TrivialPostcondition());
 
-        E.addEdge(agent, 'e', 'e');
-        E.addEdge(agent, 't', 't');
+        E.addLoop(agent, 'e');
+        E.addLoop(agent, 't');
         E.setPointedAction('e');
 
         for (let a of environment.agents) {
             if (a != agent) {
                 E.addEdge(a, 'e', 't');
                 E.addEdge(a, 't', 'e');
-                E.addEdge(a, 't', 't');
-                E.addEdge(a, 'e', 'e');
+                E.addLoop(a, 't');
+                E.addLoop(a, 'e');
             }
         }
 
@@ -74,10 +74,6 @@ export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpis
         return this.getPointedNode();
     }
 
-    /*	this.nodes = new Array();
-      this.successors = new Array();
-      this.dotstyle = "[shape=box, fillcolor=lightblue2, style=filled]";*/
-
     /**
      * @memberof ActionModel
      * @param e event identifier
@@ -92,34 +88,17 @@ export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpis
      * */
     addAction(e: string, pre: Formula, post: Postcondition = new TrivialPostcondition()) {
         this.addNode(e, {
-            pre,
-            post,
-            getShortDescription() {
-                if (post.toString() == 'idle') {
-                    return 'pre: ' + this.pre.prettyPrint();
-                } else {
-                    return 'pre: ' + this.pre.prettyPrint() + '; post: ' + post.toString();
-                }
-            }
-            // toHTML: function() {return ' <table><tr><td>pre: </td><td>' + formulaPrettyPrint(this.pre) + '</td></tr><tr><td>post: </td><td>' + post.toString() + '</td></tr></table>'}
+            pre: pre,
+            post: post
         });
     }
 
-    /**
-    @descrption Same specification as addAction.
-    */
-    addEvent(e, pre, post) {
-        this.addAction(e, pre, post);
-    }
     /**
      * @param e event identifier
      * @returns (the internal representation of) a formula that is the
      precondition of e
      * */
     getPrecondition(e): Formula {
-        if (this.nodes[e] == undefined) {
-            console.log(e);
-        }
         return (this.nodes[e] as Event).pre;
     }
 
@@ -143,19 +122,9 @@ export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpis
          * @returns the identifier of (w, e)
          */
         function createWorldActionName(w: string, e: string): string {
-            // return "(" + w + ", " + e + ")";
             return w + '_' + e;
         }
 
-        function getActionFromWorldAction(we: string) {
-            let i = we.lastIndexOf('_');
-            return we.substring(i);
-        }
-
-        function getWorldFromWorldAction(we: string) {
-            let i = we.lastIndexOf('_');
-            return we.substring(0, i);
-        }
         /**
          * @param M epistemic model
          * @param E action model
@@ -204,7 +173,6 @@ export class ExplicitEventModel extends Graph implements EventModel<ExplicitEpis
                 }
             }
 
-            console.log(ME);
             return ME;
         }
 

@@ -28,21 +28,13 @@ export class Obs implements SymbolicRelation {
      * Return the formula of the SymbolicRelation
      */
     toFormula(): Formula {
-        let list_formula: Formula[] = [];
-        for (let form of this.observedVariables) {
-            if (typeof form == 'string') {
-                list_formula.push(
-                    new EquivFormula(new AtomicFormula(form), new AtomicFormula(SymbolicEpistemicModel.getPrimedVarName(form)))
-                );
+        let list_formula: Formula[] = this.observedVariables.map((form) => {
+            if (typeof form === 'string') {
+                return new EquivFormula(new AtomicFormula(form), new AtomicFormula(SymbolicEpistemicModel.getPrimedVarName(form)));
             } else {
-                list_formula.push(
-                    new EquivFormula(
-                        form,
-                        form.renameAtoms(SymbolicEpistemicModel.getPrimedVarName)
-                    )
-                );
+                return new EquivFormula(form, form.renameAtoms(SymbolicEpistemicModel.getPrimedVarName));
             }
-        }
+        });
         return new AndFormula(list_formula);
     }
 
@@ -51,17 +43,12 @@ export class Obs implements SymbolicRelation {
      */
     async toBDD(): Promise<BDDNode> {
         let formula = this.toFormula();
-        //   console.log(formula.prettyPrint());
-        // console.log(formula);
-        let res = null;
         try {
-            res = BDDWorkerService.formulaToBDD(formula);
+            return BDDWorkerService.formulaToBDD(formula);
         } catch (error) {
-            //    console.log(BDD.bddService.stackTrace());
             console.log('Erreur dans la contruction de la formule !');
             console.log('Trace : ', error);
             throw error;
         }
-        return res;
     }
 }

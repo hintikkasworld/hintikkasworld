@@ -282,7 +282,6 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
     static getCardValue(card: number): string {
         return SimpleSymbolicHanabi.values[card % SimpleSymbolicHanabi.nb_values_per_color].toString();
-        // return card.toString();
     }
 
     static getCardSuit(card: number): string {
@@ -367,11 +366,9 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                     }
                     for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                         for (let i = 0; i < example.nbCardsInHand_Begin + 1; i++) {
-                            //      console.log(i, his_cards)
                             seenFormulas.push(new ExactlyFormula(i, his_cards));
                         }
                     }
-                    //   console.log("ListeRel", liste_rel);
                     symbolicRelations.set(agent, new Obs(seenFormulas));
                 });
                 return symbolicRelations.get(agent);
@@ -419,46 +416,10 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         this.variables = this.getAtomicPropositions();
 
-        console.log('Variables', this.variables);
-
         /* Create Obs <<SymbolicRelation>> which represent relations of each agent like var_a_c <-> var_a_c_p */
 
-        // console.log("RelationsSymboliques", relationsSymboliques);
-
         // SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, this.variables, symbolicRelations, rules, new Valuation(propositions));
-        let M = new SymbolicEpistemicModel(SimpleHanabiWorld, new SEModelDescriptorHanabi());
-
-        console.log('Fin SEM');
-
-        /*   function test(M: SymbolicEpistemicModel) {
-               console.log("TEST");
-
-               console.log("Graphe a", M.getAgentSymbolicRelation("a"));
-
-               //console.log("Pick one", BDD.bddService.pickOneSolution(M.getAgentSymbolicRelation("a")));
-
-               console.log(BDD.bddService.pickSolutions(M.getAgentSymbolicRelation("a"), 10));
-
-               let form = new KFormula("a", new AtomicFormula(SimpleSymbolicHanabi.getVarName("a", 0)));
-               console.log(form.prettyPrint(), M.check(form));
-               let form2 = new KFormula("a", new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)));
-               console.log(form2.prettyPrint(), M.check(form2));
-
-               let form3 = new KFormula("b", new AtomicFormula(SimpleSymbolicHanabi.getVarName("a", 0)));
-               console.log(form3.prettyPrint(), M.check(form3));
-               let form4 = new KFormula("b", new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)));
-               console.log(form4.prettyPrint(), M.check(form4));
-
-               let form5 = new KFormula("a", new OrFormula([
-                   new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 1)),
-                   new AtomicFormula(SimpleSymbolicHanabi.getVarName("b", 2))]));
-               console.log(form5.prettyPrint(), M.check(form5));
-
-           }*/
-
-        // test(M);
-
-        return M;
+        return new SymbolicEpistemicModel(SimpleHanabiWorld, new SEModelDescriptorHanabi());
     }
 
     async getEventModelPlay(agent: string, card: number, destination: string): Promise<SymbolicEventModel> {
@@ -649,7 +610,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
     /**
      onRealWorldClick(env: Environment, point: { x: number; y: number; }) {
-        let w = <SimpleHanabiWorld>env.getEpistemicModel().getPointedWorld();
+        let w = <SimpleHanabiWorld>env.epistemicModel.getPointedWorld();
         let card = w.getCardUnderCursor(point);
         if (card != undefined)
             env.perform(new EventModelAction({
@@ -659,7 +620,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     }
 
      onRealWorldClickRight(env: Environment, point: { x: number; y: number; }) {
-        let w = <SimpleHanabiWorld>env.getEpistemicModel().getPointedWorld();
+        let w = <SimpleHanabiWorld>env.epistemicModel.getPointedWorld();
         let card = w.getCardUnderCursor(point);
         console.log(card)
         if (card != undefined)

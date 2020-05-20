@@ -72,6 +72,21 @@ function getAtomBeginningShip(agent: string, direction: string, col: number, row
 }
 
 class BattleShipWorld extends WorldValuation {
+    static readonly xt = 16;
+    static readonly yt = 0;
+    static imgShipHorizontal = BattleShipWorld.getImage('ship_horizontal.png');
+    static imgShipVertical = BattleShipWorld.getImage('ship_vertical.png');
+    static imgExplosion = BattleShipWorld.getImage('explosion.png');
+    readonly nbcols: number;
+    readonly nbrows: number;
+    readonly agents: string[];
+    readonly ships: number[];
+    readonly cellSize: number;
+    readonly clickeda;
+    readonly clickedb;
+    readonly hasshipa;
+    readonly hasshipb;
+
     constructor(
         nbrows: number,
         nbcols: number,
@@ -96,21 +111,6 @@ class BattleShipWorld extends WorldValuation {
         this.agentPos['a'] = { x: 10, y: 32, r: 10 };
         this.agentPos['b'] = { x: 128 - 10, y: 32, r: 10 };
     }
-
-    static readonly xt = 16;
-    static readonly yt = 0;
-    static imgShipHorizontal = BattleShipWorld.getImage('ship_horizontal.png');
-    static imgShipVertical = BattleShipWorld.getImage('ship_vertical.png');
-    static imgExplosion = BattleShipWorld.getImage('explosion.png');
-    readonly nbcols: number;
-    readonly nbrows: number;
-    readonly agents: string[];
-    readonly ships: number[];
-    readonly cellSize: number;
-    readonly clickeda;
-    readonly clickedb;
-    readonly hasshipa;
-    readonly hasshipb;
 
     isClickedA(row, col) {
         return this.clickeda[row * (this.nbcols + 1) + col];
@@ -651,6 +651,7 @@ export class BattleShip extends ExampleDescription {
                         for (let x = row; x <= row + this.ships[i] - 1; x++) {
                             if (filled[agent][x][col]) {
                                 b = false;
+                                break;
                             }
                         }
                         if (b) {
@@ -660,24 +661,23 @@ export class BattleShip extends ExampleDescription {
                             V.push(getAtomBeginningShip(this.agents[agent], dir, col, row, this.ships[i]));
                             break;
                         }
-                    } else {
-                        if (this.ships[i] <= this.nbcols) {
-                            const dir = 'hor';
-                            const col = getRandomNumber(1, this.nbcols + 1 - this.ships[i]);
-                            const row = getRandomNumber(1, this.nbrows);
-                            let b = true;
-                            for (let y = col; y <= col + this.ships[i] - 1; y++) {
-                                if (filled[agent][row][y]) {
-                                    b = false;
-                                }
-                            }
-                            if (b) {
-                                for (let y = col; y <= col + this.ships[i] - 1; y++) {
-                                    filled[agent][row][y] = true;
-                                }
-                                V.push(getAtomBeginningShip(this.agents[agent], dir, col, row, this.ships[i]));
+                    } else if (this.ships[i] <= this.nbcols) {
+                        const dir = 'hor';
+                        const col = getRandomNumber(1, this.nbcols + 1 - this.ships[i]);
+                        const row = getRandomNumber(1, this.nbrows);
+                        let b = true;
+                        for (let y = col; y <= col + this.ships[i] - 1; y++) {
+                            if (filled[agent][row][y]) {
+                                b = false;
                                 break;
                             }
+                        }
+                        if (b) {
+                            for (let y = col; y <= col + this.ships[i] - 1; y++) {
+                                filled[agent][row][y] = true;
+                            }
+                            V.push(getAtomBeginningShip(this.agents[agent], dir, col, row, this.ships[i]));
+                            break;
                         }
                     }
                 }
@@ -692,7 +692,7 @@ export class BattleShip extends ExampleDescription {
     }
 
     onRealWorldClick(env: Environment, point) {
-        let M: SymbolicEpistemicModel = env.getEpistemicModel() as SymbolicEpistemicModel;
+        let M: SymbolicEpistemicModel = env.epistemicModel as SymbolicEpistemicModel;
         let pointedWorld: BattleShipWorld = M.getPointedWorld() as BattleShipWorld;
         let cella = pointedWorld.getCellA(point);
         let cellb = pointedWorld.getCellB(point);

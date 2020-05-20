@@ -25,6 +25,4 @@ export abstract class ExampleDescription {
     public onRealWorldClickRightButton(env: Environment, point: Point): void {
         return;
     }
-
-    // getAtomicPropositions(): string[] {return []}; //should be abstract and implemented in every subclass
 }

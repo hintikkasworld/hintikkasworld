@@ -5,15 +5,15 @@ export abstract class World {
     protected static readonly agentImages: {
         [id: string]: HTMLImageElement;
     } = World.getAgentImages();
-    protected agentPos = {}; // : {[id: string]: {x: number, y:number, r:number}};
+    /**
+     * example on how to initialize agents position:
+     * this.agentPos["a"] = {x: 32, y:32, r: 16};
+     * this.agentPos["b"] = {x: 64, y:32, r: 16};
+     * this.agentPos["c"] = {x: 96, y:32, r: 16};
+     */
+    protected agentPos: { [id: string]: { x: number; y: number; r: number } } = {};
 
-    constructor() {
-        /*
-              example on how to initialize agents position:
-               this.agentPos["a"] = {x: 32, y:32, r: 16};
-              this.agentPos["b"] = {x: 64, y:32, r: 16};
-              this.agentPos["c"] = {x: 96, y:32, r: 16};*/
-    }
+    protected constructor() {}
 
     static getAgents() {
         return environment.agents;

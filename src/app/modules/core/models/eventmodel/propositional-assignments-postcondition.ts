@@ -37,8 +37,4 @@ export class PropositionalAssignmentsPostcondition extends Postcondition {
         }
         return s;
     }
-
-    getValuation() {
-        return this.post;
-    }
 }

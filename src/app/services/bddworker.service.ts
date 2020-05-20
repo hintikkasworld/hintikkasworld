@@ -26,25 +26,10 @@ export class BDDWorkerService {
         /** function called when the worker has computed the result of sth */
         worker.onmessage = (msg) => {
             const { id, err, result } = msg.data;
-            //  console.log("data received from the worker: ");
-            //  console.log(msg.data.result.toString());
-            //  if (result) {
-            //  console.log("the worker answered : " + result);
             const resolve = BDDWorkerService.promises[id].resolve;
             if (resolve) {
                 resolve(result);
             }
-            /*  } else {
-                // error condition
-                const reject = BDDWorkerService.promises[id].reject
-                if (reject) {
-                  if (err) {
-                    reject(err)
-                  } else {
-                    reject('Got nothing from the worker')
-                  }
-                }
-              }*/
 
             // purge used callbacks
             delete BDDWorkerService.promises[id].resolve;
@@ -60,10 +45,6 @@ export class BDDWorkerService {
      * BDDWorkerService to pass a formula to the worker.
      */
     public static formulaToBDD(formula: Formula): Promise<BDDNode> {
-        /*console.log("formulaToBDD begin... the formula is:");
-        let formulaString = formula.prettyPrint();
-        console.log(formulaString);*/
-        console.log('on the client side, we ask for the computation at ', new Date());
         return BDDWorkerService.call('formulaToBDD', [formula]);
     }
 
@@ -96,9 +77,9 @@ export class BDDWorkerService {
     }
 
     /**
-     * 
-     * @param b 
-     * @param atoms 
+     *
+     * @param b
+     * @param atoms
      * @returns the BDDNode that represents the formula "\exists atoms, b"
      */
     public static applyExistentialForget(b: BDDNode, atoms: string[]): Promise<BDDNode> {

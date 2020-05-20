@@ -138,7 +138,7 @@ class FlatlandSuccessorSet implements SuccessorSet {
         this.ckPositions = ckPositions;
     }
 
-    async getNumber(): Promise<number> {
+    async length(): Promise<number> {
         if (this.isSingleSuccessor()) {
             return 1;
         } else {

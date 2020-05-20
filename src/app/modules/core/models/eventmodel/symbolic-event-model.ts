@@ -28,6 +28,8 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel> {
         this.pointed = pointedEvent;
     }
 
+    /** Effectively immutable */
+
     private agents: AgentId[];
     private variables: string[];
     private uniqueEvents: Map<EventId, SymbolicEvent<BDDNode>>;
@@ -35,14 +37,10 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel> {
     private pointed: EventId;
 
     /**
-     * Implementation d'un Modele Epistemique Symbolique
-     * Ici via des BDD, et Cudd
+     * Implementation of a Symbolic Epistemic Model
+     * Using Binary Decision Diagrams and the C library CUDD
      * TODO: remove dependency on BDDs, this should work with any kind of propositional language
      */
-
-    /*********
-     * STATIC
-     *********/
 
     /**
      * Return the string of variable string, posted.

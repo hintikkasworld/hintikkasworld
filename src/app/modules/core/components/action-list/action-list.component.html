@@ -1,3 +1,3 @@
-<div *ngFor="let action of (obsEnv | async)?.getExecutableActions()">
+<div *ngFor="let action of (obsEnv | async)?.executableActions">
     <button (click)="perform(action)">{{ action.getName() }}</button>
 </div>

@@ -36,39 +36,6 @@ export class SimpleWorld extends WorldValuation {
     }
 }
 
-/*
-function setExampleSimple() {
- M = getSimpleExampleInitialEpistemicModel();
-
- $('#panelExampleFormulas').html('Example of formulas: '
-+ "<ul><li>(ma or mb)</li>" +
-  "<li>((not (K a ma)) and (not (K b mb)))</li>" +
-  "</ul>");
-
-  addExplanation("Agent a and agent b are initially ignorant whether there is a marble in the basket or not. This situation is common knowledge.",
-                 "((not (K a " + SimpleWorld.proposition + ")) and (not (K b " + SimpleWorld.proposition + ")))");
-
-  addAction({label: "Public announcement that there is a marble in the basket",
-             actionModel: getActionModelPublicAnnouncement(SimpleWorld.proposition, ["a", "b"]),
-             perform: () => {performAction(getActionModelPublicAnnouncement(SimpleWorld.proposition, ["a", "b"])); speak("c", "There is a marble in the basket");},
-            });
-
-  addAction({label: "Private announcement to agent a of the content of the basket. Agent b knows that this private announcement occurs.",
-             precondition: "(not (K a " + SimpleWorld.proposition + "))",
-             actionModel: getActionModelSemiPrivateAnnouncement(SimpleWorld.proposition, "a", ["a", "b"])
-            });
-
-  addAction({label: "Private announcement to agent a that there is a marble in the basket. Agent b is ignorant about that.",
-             precondition: "(not (K a " + SimpleWorld.proposition + "))",
-             actionModel: getActionModelPrivateAnnouncement(SimpleWorld.proposition, "a", ["a", "b"])
-            });
-
- compute();
- computeButtonsVisibleOrNot();
-
-}
-*/
-
 export class Simple extends ExampleDescription {
     getDescription(): string[] {
         return ['A simple example.'];

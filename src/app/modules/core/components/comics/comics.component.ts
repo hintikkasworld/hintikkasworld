@@ -20,11 +20,6 @@ export class ComicsComponent implements OnInit {
                 left: $('#canvas').width() / 2 - $('#canvasRealWorld').width() / 2
             });
 
-            /*to prevent the use of contestmenu (right-click)*/
-            /* document.addEventListener("contextmenu", function(e){
-               e.preventDefault();
-             }, false);*/
-
             let canvasRealWorld = $('#canvasRealWorld')[0] as HTMLCanvasElement;
             console.log('before ready;jakd;flkajl;kfjal;kdjfal;sdkfj;sdlakjf');
             this.readyObservable.subscribe((ready) => {
@@ -32,13 +27,9 @@ export class ComicsComponent implements OnInit {
                 if (ready) {
                     console.log('ready to be clicked');
                     canvasRealWorld.addEventListener('click', (evt) => {
-                        if (!this.modifyOpenWorldsClick(0, canvasRealWorld, this.env.getEpistemicModel().getPointedWorld())(evt)) {
+                        if (!this.modifyOpenWorldsClick(0, canvasRealWorld, this.env.epistemicModel.getPointedWorld())(evt)) {
                             let point = this.getMousePos(canvasRealWorld, evt);
-                            /*console.log(evt.button); // the right button like this does not work
-                            if(evt.button == 2)
-                              this.env.getExampleDescription().onRealWorldClickRightButton(this.env, point);
-                            else*/
-                            this.env.getExampleDescription().onRealWorldClick(this.env, point);
+                            this.env.exampleDescription.onRealWorldClick(this.env, point);
                             this.drawCanvasWorld();
                         }
                     });
@@ -48,7 +39,7 @@ export class ComicsComponent implements OnInit {
             canvasRealWorld.addEventListener('contextmenu', (evt) => {
                 let point = this.getMousePos(canvasRealWorld, evt);
                 console.log('right click : ' + point.x + ',' + point.y);
-                this.env.getExampleDescription().onRealWorldClickRightButton(this.env, point);
+                this.env.exampleDescription.onRealWorldClickRightButton(this.env, point);
                 evt.preventDefault();
                 this.drawCanvasWorld();
                 console.log('Hello this is canva real world');
@@ -79,18 +70,19 @@ export class ComicsComponent implements OnInit {
     @Input() readyObservable: BehaviorSubject<boolean>;
     private ready: boolean;
 
-    private openWorlds: { world: World; agent: string }[] = [];
-    /*
+    /**
      if openWorld = [], no thoughts are shown
      if openWorld = [{world: "w", agent: "a"}], the real world is w and the GUI shows the thoughts of agent a
      if openWorld = [{world: "w", agent: "a"}, {world: "u", agent: "b"}], then the real world is w, the GUI shows the thouhts of agent a, in which
            there is a possible world u where we show the thoughts of agent b.
     */
+    private openWorlds: { world: World; agent: string }[] = [];
+
     private canvasRealWorldTop = 250;
     private canvasFromWorld: Map<World, HTMLCanvasElement>[] = [];
     private readonly canvasWorldStandardWidth = 128;
     private zoomWorldCanvasInBubble = 1.5;
-    private levelheight = 170; // this.zoomWorldCanvasInBubble * this.canvasWorldStandardWidth + 40; //170
+    private levelheight = 170;
 
     ngOnInit() {
         this.obsEnv.subscribe((env) => (this.env = env)); // pas bon... pas besoin de compute
@@ -99,7 +91,7 @@ export class ComicsComponent implements OnInit {
     private getMaxLevelWidth = () => 480;
 
     private getYLevelBulle(level: number): number {
-        if (this.openWorlds.length == 1 && this.env.getEpistemicModel().getAgents().length == 1) {
+        if (this.openWorlds.length == 1 && this.env.epistemicModel.getAgents().length == 1) {
             return this.canvasRealWorldTop - level * this.levelheight * 1.4;
         } else {
             return this.canvasRealWorldTop - level * this.levelheight;
@@ -110,7 +102,7 @@ export class ComicsComponent implements OnInit {
      @description draw thinking circles (like in comics)
      */
     private drawThinkingCircles(x1: number, y1: number, x2: number, y2: number) {
-        /* draw a circle center x, y and radius r */
+        /** draw a circle center x, y and radius r */
         function circle(x: number, y: number, r: number) {
             let circleElement = $('<div>');
             circleElement.addClass('bullethought');
@@ -244,7 +236,7 @@ export class ComicsComponent implements OnInit {
         let offset_end = offset + height;
         if (!element.is(':visible')) {
             element.css({ visibility: 'hidden' }).show();
-            let offset = element.offset().top;
+            offset = element.offset().top;
             element.css({ visibility: '', display: '' });
         }
 
@@ -266,7 +258,6 @@ export class ComicsComponent implements OnInit {
      */
     private guiError() {
         this.openWorlds = [];
-        //  graphClear();
 
         ($('#canvasRealWorld')[0] as any).draw = () => 0;
         $('#canvasRealWorld').hide();
@@ -302,8 +293,7 @@ export class ComicsComponent implements OnInit {
         levelDiv.attr('id', 'level' + level);
         levelDiv.addClass('bulle');
 
-        successorSet.getNumber().then((number) => {
-            // if (number > 10)
+        successorSet.length().then((number) => {
             levelDiv.prepend(`<div class="count">${number} possible worlds</div>`);
         });
 
@@ -326,7 +316,7 @@ export class ComicsComponent implements OnInit {
         this.canvasFromWorld[level] = new Map();
         levelContainer.empty();
 
-        successorSet.getNumber().then((number) => {
+        successorSet.length().then((number) => {
             if (number == 0) {
                 $('#level' + level).addClass('error');
             } else {
@@ -399,11 +389,7 @@ export class ComicsComponent implements OnInit {
      @description update the GUI
      */
     private compute(fromlevel: number) {
-        function getRandomElementInArray(array) {
-            return array[Math.floor(Math.random() * array.length)];
-        }
-
-        if (this.env.getEpistemicModel().getPointedWorld() == undefined) {
+        if (this.env.epistemicModel.getPointedWorld() == undefined) {
             this.guiError();
             return;
         }
@@ -435,13 +421,13 @@ export class ComicsComponent implements OnInit {
         if (fromlevel == 0) {
             let canvas = $('#canvasRealWorld')[0];
             this.canvasFromWorld[0] = new Map();
-            this.canvasFromWorld[0].set(this.env.getEpistemicModel().getPointedWorld(), canvas as HTMLCanvasElement);
+            this.canvasFromWorld[0].set(this.env.epistemicModel.getPointedWorld(), canvas as HTMLCanvasElement);
             (canvas as any).draw = () => {
                 let context = this.getContext(document.getElementById('canvasRealWorld') as HTMLCanvasElement);
 
                 if (this.env.agentPerspective != undefined) {
                     let comics = this;
-                    let M = comics.env.getEpistemicModel();
+                    let M = comics.env.epistemicModel;
                     this.perspectiveWorlds = M.getSuccessors(M.getPointedWorld(), comics.env.agentPerspective);
                     let loop = function () {
                         comics.perspectiveWorlds.getRandomSuccessor().then((world) => {
@@ -455,7 +441,7 @@ export class ComicsComponent implements OnInit {
                     };
                     loop();
                 } else {
-                    this.env.getEpistemicModel().getPointedWorld().draw(context);
+                    this.env.epistemicModel.getPointedWorld().draw(context);
                 }
             };
         }
@@ -480,13 +466,11 @@ export class ComicsComponent implements OnInit {
             this.drawThinkingCircles(x1, y1, x1, y);
 
             if (level > fromlevel) {
-                let successors = this.env.getEpistemicModel().getSuccessors(worldagent.world, worldagent.agent);
+                let successors = this.env.epistemicModel.getSuccessors(worldagent.world, worldagent.agent);
                 this.addLevelDiv(level, successors);
                 this.levelFillWithWorlds(level, successors);
                 this.levelAdjustPosition(x1, level, 20 * this.getCanvasWorldInBubbleWidth() + 64); // FIX ME
             }
-            //    else
-            //      $('#level' + level).css({top: getYLevelBulle(level)});
         }
         this.drawCanvasWorld();
     }

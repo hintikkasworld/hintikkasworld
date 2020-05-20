@@ -25,7 +25,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
     /**
      * @returns the number of successors
      */
-    async getNumber(): Promise<number> {
+    async length(): Promise<number> {
         console.log('le BDD est : ' + (await this.bdd));
         if (this.n_sucessors == undefined) {
             this.n_sucessors = await BDDWorkerService.countSolutions(await this.bdd, this.atoms);
@@ -36,7 +36,7 @@ export class SymbolicSuccessorSet implements SuccessorSet {
     async getSomeSuccessors(): Promise<World[]> {
         console.log('load getSomeSuccessors');
 
-        let n = await this.getNumber();
+        let n = await this.length();
         if (this.successors_given >= n) {
             console.log('set of successors finished!');
             return [];
