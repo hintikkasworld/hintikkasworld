@@ -1,6 +1,6 @@
-export class Graph {
-    protected nodes: { [id: string]: object };
-    protected successors: { [key: string]: any };
+export class Graph<T> {
+    protected nodes: { [id: string]: T };
+    protected successors: { [agent: string]: { [id: string]: string[] } };
     private dotstyle: any;
     protected pointed: string;
 
@@ -18,7 +18,7 @@ export class Graph {
      * @returns a dictionnary containing pairs (nodeid, node)
      */
 
-    getNodes() {
+    getNodes(): { [id: string]: T } {
         return this.nodes;
     }
 
@@ -67,22 +67,6 @@ export class Graph {
         });
         this.removeUnvisitedNodes(nodesVisited);
 
-        /*function explore(inode)
-        {
-        if(nodesVisited[inode])
-        return;
-        nodesVisited[inode] = true;
-
-        for(let a in graph.successors)
-        {
-        if(graph.getSuccessors(inode, a) != undefined)
-        for(let inode2 of graph.getSuccessors(inode, a))
-        {
-        explore(inode2);
-        }
-        }
-        }*/
-
         function explore(inode) {
             let stack = [];
             stack.push(inode);
@@ -109,11 +93,9 @@ export class Graph {
      * */
     getNodesNumber(): number {
         let c = 0;
-
         for (let o in this.nodes) {
             c++;
         }
-
         return c;
     }
 
@@ -122,7 +104,7 @@ export class Graph {
      * @param agent, an agent (label)
      * @returns an array of all successors of node via the agent
      * */
-    getSuccessorsID(node, agent) {
+    getSuccessorsID(node, agent): string[] {
         if (this.nodes[node] == undefined) {
             throw new Error('getSuccessors : There is no source node of ID ' + node);
         }
@@ -139,8 +121,7 @@ export class Graph {
      @param agent
      @result true iff the relation for agent is reflexive (there is a self-loop over all nodes)
      */
-
-    isReflexive(agent: string) {
+    isReflexive(agent: string): boolean {
         for (let inode in this.nodes) {
             if (!this.isEdge(agent, inode, inode)) {
                 return false;
@@ -152,7 +133,7 @@ export class Graph {
     /**
      @returns a string that represents the graph in the DOT format (for graphviz)
      */
-    getDOTNotation() {
+    getDOTNotation(): string {
         let graphDOTnotation = 'digraph G {\n     node ' + this.dotstyle + '\n';
 
         for (let i in this.nodes) {
@@ -235,26 +216,12 @@ export class Graph {
     }
 
     /**
-     @returns a clone of the graph.
-     */
-
-    /**   clone() {
-        var g = new Graph();
-
-        g.nodes = this.nodes.clone();
-        g.successors = this.successors.clone();
-
-        return g;
-    }
-     */
-
-    /**
      @param idnode is the ID of the node to be added
      @param content, an objet that is the node (for e.g. a valuation)
      @description Add a node of ID idnode and of content content
      @example G.addNode("w", new Valuation(["p"]))
      */
-    addNode(idnode, content) {
+    addNode(idnode: string, content: T) {
         if (this.nodes[idnode] != undefined) {
             throw new Error('The structure already contains a node of ID ' + idnode);
         }
@@ -266,44 +233,44 @@ export class Graph {
      @param idnode is the ID of the node to be added
      @returns the content of the node
      */
-    getNode(idnode: string) {
+    getNode(idnode: string): T {
         return this.nodes[idnode];
     }
 
-    hasNode(idnode: string) {
+    hasNode(idnode: string): boolean {
         return idnode in this.nodes;
     }
 
     /**
      @param agent
-     @param idsource ID of the source node
-     @param iddestination ID of the destination node
+     @param src ID of the source node
+     @param dst ID of the destination node
      @pre we suppose that the edge (idsource agent iddestination) is not in the graph
      @description Add an edge from idsource to iddestination labelled by agent
      @example G.addEdge("a", "w", "u")
      */
-    addEdge(agent, idsource, iddestination) {
-        if (this.nodes[idsource] == undefined) {
-            throw new Error('There is no source node of ID ' + idsource);
+    addEdge(agent: string, src: string, dst: string) {
+        if (this.nodes[src] == undefined) {
+            throw new Error('There is no source node of ID ' + src);
         }
-        if (this.nodes[iddestination] == undefined) {
-            throw new Error('There is no destination node of ID ' + iddestination);
+        if (this.nodes[dst] == undefined) {
+            throw new Error('There is no destination node of ID ' + dst);
         }
 
         if (this.successors[agent] == undefined) {
             this.successors[agent] = {};
         }
 
-        if (this.successors[agent][idsource] == undefined) {
-            this.successors[agent][idsource] = [];
+        if (this.successors[agent][src] == undefined) {
+            this.successors[agent][src] = [];
         }
 
-        if (this.successors[agent][idsource].indexOf(iddestination) < 0) {
-            this.successors[agent][idsource].push(iddestination);
+        if (this.successors[agent][src].indexOf(dst) < 0) {
+            this.successors[agent][src].push(dst);
         }
     }
 
-    addLoop(agent, idnode) {
+    addLoop(agent: string, idnode: string) {
         this.addEdge(agent, idnode, idnode);
     }
 
@@ -313,7 +280,7 @@ export class Graph {
      @description Add edges between all nodes of ID in array
      @example G.addEdgesCluster("a", ["w", "u"])
      */
-    addEdgesCluster(agent: string, idnodes) {
+    addEdgesCluster(agent: string, idnodes: string[]) {
         for (let i1 of idnodes) {
             for (let i2 of idnodes) {
                 this.addEdge(agent, i1, i2);
@@ -328,7 +295,7 @@ export class Graph {
      @description add edges labelled by agent with respect to the function conditionFunction
      @example G.addEdgeIf("a", function(n1, n2) {return n1.modelCheck("p") == n2.modelCheck("p");})
      */
-    addEdgeIf(agent: string, conditionFunction: (n1: any, n2: any) => boolean) {
+    addEdgeIf(agent: string, conditionFunction: (n1: T, n2: T) => boolean) {
         for (let inode1 in this.nodes) {
             for (let inode2 in this.nodes) {
                 if (conditionFunction(this.nodes[inode1], this.nodes[inode2])) {
@@ -362,7 +329,7 @@ export class Graph {
      is added between any pair of nodes
      @example G.makeCompleteRelation("a")
      */
-    makeCompleteRelation(agent) {
+    makeCompleteRelation(agent: string) {
         for (let i in this.nodes) {
             for (let j in this.nodes) {
                 this.addEdge(agent, i, j);
@@ -376,9 +343,9 @@ export class Graph {
      is added on any node
      @example G.makeReflexiveRelation("a")
      */
-    makeReflexiveRelation(agent) {
+    makeReflexiveRelation(agent: string) {
         for (let i in this.nodes) {
-            this.addEdge(agent, i, i);
+            this.addLoop(agent, i);
         }
     }
 
@@ -400,24 +367,24 @@ export class Graph {
 
     /**
      @param agent
-     @param idsource
-     @param iddestination
+     @param src
+     @param dst
      @returns true if there is an edge from idsource to iddestination  labelled by agent
      @example G.isEdge("a", "w", "u")
      */
-    isEdge(agent, idsource, iddestination) {
+    isEdge(agent: string, src: string, dst: string) {
         if (this.successors[agent] == undefined) {
             return false;
         }
 
-        if (this.successors[agent][idsource] == undefined) {
+        if (this.successors[agent][src] == undefined) {
             return false;
         }
 
-        return this.successors[agent][idsource].indexOf(iddestination) > -1;
+        return this.successors[agent][src].indexOf(dst) >= 0;
     }
 
-    dfs(sourceNode, maxDistance) {
+    dfs(sourceNode: string, maxDistance: number) {
         let visited = {};
         let queue = [];
         queue.push(sourceNode);
@@ -445,21 +412,21 @@ export class Graph {
         return visited;
     }
 
-    pruneBehond(depth) {
+    pruneBehond(depth: number) {
         let visited = this.dfs(this.getPointedNode(), depth);
         this.removeUnvisitedNodes(visited);
     }
 
-    getShortestPathVisited(sourceNode, destinationNode) {
+    getShortestPathVisited(src: string, dst: string) {
         let visited = {};
         let queue = [];
-        queue.push(sourceNode);
-        visited[sourceNode] = { distance: 0, parent: null };
+        queue.push(src);
+        visited[src] = { distance: 0, parent: null };
 
         while (queue.length != 0) {
             let world = queue.shift();
 
-            if (world == destinationNode) {
+            if (world == dst) {
                 return visited;
             }
             for (let a of this.getAgents()) {
@@ -479,8 +446,8 @@ export class Graph {
     }
 
     /**
-     @param sourceNode ID of a source node
-     @param destinationNode ID of a destination node
+     @param src ID of a source node
+     @param dst ID of a destination node
      @returns a shortest path from sourceNode to destinationNode or undefined if
      no path exists.
      The is represented as follows:
@@ -489,15 +456,15 @@ export class Graph {
      sourceNode --a1--> n1 --a2--> n2 --.............. --ak--> nk = destinationNode
      @example G.getShortestPath("w", "u")
      **/
-    getShortestPath(sourceNode, destinationNode) {
-        let visited = this.getShortestPathVisited(sourceNode, destinationNode);
+    getShortestPath(src: string, dst: string) {
+        let visited = this.getShortestPathVisited(src, dst);
 
         if (visited == undefined) {
             return undefined;
         }
 
         let path = [];
-        let world = destinationNode;
+        let world = dst;
         while (visited[world].parent != null) {
             path.unshift({ world, agent: visited[world].agent });
             world = visited[world].parent;
@@ -510,7 +477,7 @@ export class Graph {
      @param w ID of a node
      @example G.setPointedNode("w")
      **/
-    setPointedNode(w) {
+    setPointedNode(w: string) {
         if (this.nodes[w] == undefined) {
             throw new Error('the graph does not contain any node of ID ' + w);
         }
@@ -520,7 +487,7 @@ export class Graph {
     /**
      @returns the ID of the pointed node
      **/
-    getPointedNode() {
+    getPointedNode(): string {
         return this.pointed;
     }
 }
