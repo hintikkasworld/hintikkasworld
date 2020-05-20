@@ -12,6 +12,7 @@ import { SEModelDescriptor } from './descriptor/se-model-descriptor';
 import { SEModelInternalDescriptor } from './descriptor/se-model-internal-descriptor';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
 import { BehaviorSubject } from 'rxjs';
+import { SuccessorSet } from './successor-set';
 
 function showJSON(json) {
     let theJSON = JSON.stringify(json);
@@ -236,6 +237,43 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         }
     }
 
+    async loadBddNode(w: World, a: string): Promise<BDDNode> {
+        // console.log("getSucessors", a, this.getAgentSymbolicRelation(a))
+        console.log('begin BDD successor computation...');
+
+        let bddValuation = await BDDWorkerService.createCube((w as WorldValuation).valuation.getPropositionMap());
+        console.log('bddValuation has ' + (await BDDWorkerService.countSolutions(bddValuation, this.propositionalAtoms)) + '.');
+
+        let bddRelationOnW = await BDDWorkerService.applyAnd([
+            await BDDWorkerService.createCopy(this.getAgentSymbolicRelation(a)),
+            bddValuation
+        ]);
+
+        //  console.log("after and", BDD.bddService.pickAllSolutions(bddRelationOnW))
+        // console.log("AND", BDD.bddService.pickAllSolutions(bdd_and));
+
+        let bddSetSuccessorsWithPrime = await BDDWorkerService.applyExistentialForget(bddRelationOnW, this.propositionalAtoms);
+        console.log(
+            'bddSetSuccessorsWithPrime has ' +
+                (await BDDWorkerService.countSolutions(bddSetSuccessorsWithPrime, this.propositionalPrimes)) +
+                '.'
+        );
+
+        // console.log("after forget", BDD.bddService.pickAllSolutions(bddSetSuccessorsWithPrime))
+        // console.log("forget", this.propositionalAtoms, BDD.bddService.pickAllSolutions(forget));
+
+        let bddSetSuccessors = await BDDWorkerService.applyRenaming(
+            bddSetSuccessorsWithPrime,
+            SymbolicEpistemicModel.getMapPrimeToNotPrime(this.propositionalAtoms)
+        );
+        console.log('bddSetSuccessors has ' + (await BDDWorkerService.countSolutions(bddSetSuccessors, this.propositionalAtoms)) + '.');
+
+        console.log('BDD successor computed!');
+        return bddSetSuccessors;
+
+        // console.log("Calcul bdd sucessors", BDD.bddService.pickAllSolutions(bddSetSuccessors));
+    }
+
     /**
      @returns the pointed world
      **/
@@ -245,7 +283,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
 
     getSuccessors(w: World, a: string): SymbolicSuccessorSet {
         // console.log("Solutions", sols);
-        return new SymbolicSuccessorSet(this, w, a);
+        return new SymbolicSuccessorSet((val: Valuation) => this.getWorld(val), this.propositionalAtoms, this.loadBddNode(w, a));
     }
 
     getAgentSymbolicRelation(agent: string): BDDNode {

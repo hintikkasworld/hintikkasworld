@@ -172,9 +172,9 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
             return 'w' + i;
         }
 
-        function getSameValuationDictionnary(M: ExplicitEpistemicModel): {[id: string]: string[]} {
+        function getSameValuationDictionnary(M: ExplicitEpistemicModel): { [id: string]: string[] } {
             // regroupe par valuation identiques => val est un dict (valuation, [idnode1,idnode2,..])
-            let val: {[id: string]: string[]} = {};
+            let val: { [id: string]: string[] } = {};
 
             for (let idnode in M.nodes) {
                 let valuation = M.nodes[idnode].toString();
@@ -202,7 +202,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
         }
 
         function raffine(pi: { [val: string]: number[] }, model: ExplicitEpistemicModel, nbgroupes) {
-            function constructSignature(pi: { [val: string]: number[] }, model: ExplicitEpistemicModel): {[w: string]: number[][]} {
+            function constructSignature(pi: { [val: string]: number[] }, model: ExplicitEpistemicModel): { [w: string]: number[][] } {
                 /**
                  * Supress duplication
                  */
@@ -211,7 +211,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
                         j: number,
                         len: number = array.length,
                         out = [],
-                        obj: {[x: number]: {}} = {};
+                        obj: { [x: number]: {} } = {};
                     for (i = 0; i < len; i++) {
                         obj[array[i]] = {};
                     }
@@ -221,7 +221,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
                     return out;
                 }
 
-                let signature: {[w: string]: number[][]} = {};
+                let signature: { [w: string]: number[][] } = {};
                 for (let w in pi) {
                     let sig = [];
                     sig.push(pi[w]);
@@ -242,7 +242,10 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
                 return signature;
             }
 
-            function getStatesSortedAccordingToSignature(pi: { [val: string]: number[] }, signature: {[w: string]: number[][]}): string[] {
+            function getStatesSortedAccordingToSignature(
+                pi: { [val: string]: number[] },
+                signature: { [w: string]: number[][] }
+            ): string[] {
                 let sigma = Object.keys(pi);
 
                 sigma.sort(function (w, u) {
@@ -257,7 +260,7 @@ export class ExplicitEpistemicModel extends Graph implements EpistemicModel {
                 return sigma;
             }
 
-            function renameStates(sigma: string[], signature: {[w: string]: number[][]}) {
+            function renameStates(sigma: string[], signature: { [w: string]: number[][] }) {
                 let pi2 = {}; // result
                 let num = 1;
                 pi2[sigma[0]] = num;
