@@ -1,4 +1,4 @@
-import { Formula } from '../formula/formula';
+import { Formula } from 'src/app/modules/core/models/formula/formula';
 import { BDDNode } from 'src/app/services/bdd.service';
 import { EventModel } from './event-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';

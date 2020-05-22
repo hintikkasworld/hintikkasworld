@@ -1,0 +1,163 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}     % UTF 8
+\usepackage{xspace} %space after a command
+\usepackage{eurosym} %for the symbol euro
+
+%\usepackage{listings}
+%\lstset{language=Lisp}
+
+%\usepackage[verbose,a4paper,portrait,twoside,twocolumn=false]{geometry}
+
+\usepackage{calc} % for doing computations in LaTEX :)
+\usepackage{url}
+\usepackage{color}
+\usepackage{todonotes}
+
+% Tikz a besoin d'au moins ces versions
+\def\xkeyvalversion{1.8}
+\def\xcolorversion{2.00}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows,patterns,topaths}
+% d'autres librairies possibles : matrix, calendar, folding, petri, mindmap, trees, backgrounds, automata, 3d, plotmarks
+\usepackage{xparse}
+
+\usepackage{graphicx}
+
+
+\usepackage{array} % extends environments «array» et «tabular»
+
+
+
+% maths things
+\usepackage{amsmath}
+\usepackage{amssymb}  % \mathbb
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it} % \mathpzc
+\usepackage{mathrsfs} % \mathscr
+
+
+
+\usepackage{fancyvrb}
+\usepackage[bookmarks={true},bookmarksopen={true}]{hyperref}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+
+\input{macros.tex}
+\renewcommand{\card}[1]{|#1|}
+
+
+\begin{document}
+
+\title{Debugging agents reasoning about knowledge}
+\author{Authors}
+
+\maketitle
+
+
+\section{Introduction}
+
+The objective of this paper is to offer debugging possibilities for understand how agents reason about knowledge. To this aim, we need to explore Kripke structures. The problem is that Kripke structures are huge in real applications. Figure~\ref{figure:exploration} shows a screenshot of \emph{Hintikka's World} in the user explores the current Kripke structure in a card game called \emph{Belote}.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=6cm]{images/hintikkasworld_exploration.png}
+	\end{center}
+	\caption{Exploration of a Kripke structure.}
+\end{figure}
+
+The succinct representation in \emph{Hintikka's World} relies on BDD (binary decision diagrams) \cite{DBLP:conf/ijcai/CharrierGNS19}. However, the tool does not scale up. That is why we propose to rely on \emph{model sampling}  \cite{DBLP:conf/lpar/SharmaGRM18} instead of using BDDs.
+
+\todo{we could also propose solutions to handle reasoning about real numbers like positions of objects}
+
+\section{Background on Dynamic Epistemic Logic}
+
+See \url{http://people.irisa.fr/Francois.Schwarzentruber/hdr/}
+\todo{copy here the background on DEL, from HDR of François}
+
+
+\todo{add succinct description of event models too, from HDR of François}
+
+\section{Succinct description of an epistemic model}
+
+An epistemic model is succinctly described by a collection of Boolean formulas $\chi_a(\vec x, \vec x')$ for each agent $a$, and a collection of Boolean formulas $\chi_p(\vec x)$ for all atomic propositions $p$.
+
+Variables $\vec x$ are `abstract' propositional variables. A valuation over $\vec x$ describes a possible world. The formula $\chi_a(\vec x, \vec x')$ describes that the world described a valuation over $\vec x'$ is possible for agent $a$ in the world  the world described a valuation over $\vec x$. The formula $\chi_p(\vec x)$ represents the truth value of the atomic proposition $p$ that is interesting for the user.
+
+
+\section{Exploration of Huge Kripke structures}
+
+
+In this section, we aim at solving the following problem.
+
+\begin{itemize}
+	\item input: the succinct description of an epistemic model $\modelM$, the description of a world $w$; an agent $a$;
+	\item output: a \emph{random} description of a world $u$ such that $u \in R_a(w)$.
+\end{itemize}
+
+The idea is to sample a valuation for variables $\vec x'$ such that $\chi_a(\vec x, \vec x')$ when $\vec x$ describes the world $w$.
+\todo{Rely on one of the tools of \cite{DBLP:conf/lpar/SharmaGRM18}}
+
+
+
+\section{Succinct description of epistemic model after actions}
+
+In this section, we explain how to compute a succinct description of the epistemic model obtained after the execution of an action. 
+
+\begin{itemize}
+	\item input: the succinct description of an epistemic model $\modelM$, the description of a world $w$ in $\modelM$; the description of an event model $\eventmodel$, the description of an event $\event$ in $\eventmodel$;
+	\item output: the succinct description of the epistemic model $\modelM \otimes \eventmodel$, the description of the world $(w, \event)$.
+\end{itemize}
+
+\todo{to be defined! also propose simplification of the formulas etc.}
+%
+%
+%\begin{itemize}
+%	\item input: the description of the pointed initial epistemic model $\modelM, w$, the description of an ambiant $\eventmodel$, a finite sequence of events $\event_1, \dots, \event_n$;
+%	\item output: 
+%\end{itemize}
+
+
+
+\fbox{\begin{minipage}{10cm}
+		Tasks to do (if you agree, of course)
+		
+		~
+		
+		
+		Frédéric
+		\begin{itemize}
+			\item Make Touist as a webservice
+			\item Connection with Sampling method
+		\end{itemize}
+	
+	
+	~
+	
+	Pâris
+	
+	\begin{itemize}
+		\item Data structure in TypeScript
+		\item Design an example
+	\end{itemize}
+
+
+
+
+~
+
+François
+
+\begin{itemize}
+	\item Think about the succinct descriptions
+\end{itemize}
+	\end{minipage}}
+
+\bibliographystyle{plain}
+\bibliography{biblio}
+
+
+\end{document}
+
+
+
