@@ -84,7 +84,7 @@ See \url{http://people.irisa.fr/Francois.Schwarzentruber/hdr/}
 An epistemic model is succinctly described by a collection of Boolean formulas $\chi_a(\vec x, \vec x')$ for each agent $a$.
 \end{definition}
 
-Variables $\vec x$ are `abstract' propositional variables. A valuation over $\vec x$ describes a possible world. The formula $\chi_a(\vec x, \vec x')$ describes that the world described a valuation over $\vec x'$ is possible for agent $a$ in the world  the world described a valuation over $\vec x$. 
+A valuation over $\vec x$ describes a possible world. The formula $\chi_a(\vec x, \vec x')$ describes that the world described a valuation over $\vec x'$ is possible for agent $a$ in the world  the world described a valuation over $\vec x$. 
 
 
 \section{Exploration of Huge Kripke structures}
@@ -119,22 +119,19 @@ In this section, we explain how to compute a succinct description of the epistem
 
 Let us consider an epistemic model $\modelM$ described by:
 \begin{itemize}
-	\item  $\chi_p(\vec x)$ 
 	\item $\chi_a(\vec x, \vec x')$ for all agents $a$.
 \end{itemize}
 
 
 The epistemic model after the announcement of a propositional formula $\phi$ is described by:
 \begin{itemize}
-	\item  $\chi_p(\vec x) \land \phi$ 
-	\item $\chi_a(\vec x, \vec x')$ for all agents $a$.
+	\item $\chi_a(\vec x, \vec x')\land \phi$ for all agents $a$.
 \end{itemize}
 
 
 The epistemic model after the announcement of a modal formula $\phi$ is described by:
 \begin{itemize}
-	\item  $\chi_p(\vec x) \land tr(\phi)$ 
-	\item $\chi_a(\vec x, \vec x')$ for all agents $a$.
+	\item $\chi_a(\vec x, \vec x') \land tr(\phi)$ for all agents $a$.
 \end{itemize}
 
 where $tr(\phi)$ is the translation of $\phi$ in QBF (close to the standard translation of modal logic in first-order logic), the relation behind modalities $K_a$ being represented by $\chi_a(\vec x, \vec x')$.
@@ -154,15 +151,16 @@ where $tr(\phi)$ is the translation of $\phi$ in QBF (close to the standard tran
 
 Let us consider an epistemic model $\modelM$ described by:
 \begin{itemize}
-	\item  $\chi_p(\vec x)$ 
-	\item $\chi_a(\vec x, \vec x')$ for all agents $a$.
+	\item a Boolean formula $\chi_a(\vec x, \vec x')$ for all agents $a$, that represents epistemic relation for agent $a$;
+	\item a valuation $w$ representing the real world;
 \end{itemize}
 
 
 Let us consider a public action of Boolean precondition $\phi$ and postconditions $\set{x_1 := \phi_1, \dots, x_n := \phi_n}$ where $\phi_1, \dots, \phi_n$ are Boolean. The epistemic model obtained after executing that particular public action is described by:
 \begin{itemize}
-	\item  $\chi_p(\vec x := \vec y) \land \phi(\vec x := \vec y) \land \lbigand_{i=1..n} [x_i \lequiv \phi_i(\vec x := \vec y)]$ 
-	\item $\chi_a(\vec y, \vec y') \land \lbigand_{i=1..n} [x_i \lequiv \phi_i(\vec x := \vec y)] \land \lbigand_{i=1..n} [x_i' \lequiv \phi_i(\vec x := \vec y')]$ for all agents $a$.
+%	\item  $\chi_p(\vec x := \vec y) \land \phi(\vec x := \vec y) \land \lbigand_{i=1..n} [x_i \lequiv \phi_i(\vec x := \vec y)]$ 
+	\item $\chi_a(\vec y, \vec y')  \land \phi(\vec x := \vec y) \land \lbigand_{i=1..n} [x_i \lequiv \phi_i(\vec x := \vec y)] \land \lbigand_{i=1..n} [x_i' \lequiv \phi_i(\vec x := \vec y')]$ for all agents $a$.
+	\item the valuation $[y_1 := w[x_1], \dots, x_1 := (w \models \phi_1), \dots]$
 \end{itemize}
 
 
@@ -191,7 +189,7 @@ Let us consider a public action of Boolean precondition $\phi$ and postcondition
 		
 		Frédéric
 		\begin{itemize}
-			\item Make Touist as a webservice
+			\item Verify that "exactly 5 propositions among 8 are true" is efficient
 			\item Connection with Sampling method
 		\end{itemize}
 	
@@ -201,6 +199,7 @@ Let us consider a public action of Boolean precondition $\phi$ and postcondition
 	Pâris
 	
 	\begin{itemize}
+		\item Make Touist as a webservice
 		\item Data structure in TypeScript
 		\item Design an example
 	\end{itemize}
@@ -214,8 +213,8 @@ François
 
 \begin{itemize}
 	\item Think about the succinct descriptions
-	\item Can we sample valuations of a QBF formula?
-	\item Touist handles QBF, right?
+%	\item Can we sample valuations of a QBF formula? Not sure. 
+%	\item Touist handles QBF, right? yes
 \end{itemize}
 	\end{minipage}}
 
