@@ -80,9 +80,11 @@ See \url{http://people.irisa.fr/Francois.Schwarzentruber/hdr/}
 
 \section{Succinct description of an epistemic model}
 
-An epistemic model is succinctly described by a collection of Boolean formulas $\chi_a(\vec x, \vec x')$ for each agent $a$, and a collection of Boolean formulas $\chi_p(\vec x)$ for all atomic propositions $p$.
+\begin{definition}
+An epistemic model is succinctly described by a collection of Boolean formulas $\chi_a(\vec x, \vec x')$ for each agent $a$.
+\end{definition}
 
-Variables $\vec x$ are `abstract' propositional variables. A valuation over $\vec x$ describes a possible world. The formula $\chi_a(\vec x, \vec x')$ describes that the world described a valuation over $\vec x'$ is possible for agent $a$ in the world  the world described a valuation over $\vec x$. The formula $\chi_p(\vec x)$ represents the truth value of the atomic proposition $p$ that is interesting for the user.
+Variables $\vec x$ are `abstract' propositional variables. A valuation over $\vec x$ describes a possible world. The formula $\chi_a(\vec x, \vec x')$ describes that the world described a valuation over $\vec x'$ is possible for agent $a$ in the world  the world described a valuation over $\vec x$. 
 
 
 \section{Exploration of Huge Kripke structures}
@@ -95,7 +97,7 @@ In this section, we aim at solving the following problem.
 	\item output: a \emph{random} description of a world $u$ such that $u \in R_a(w)$.
 \end{itemize}
 
-The idea is to sample a valuation for variables $\vec x'$ such that $\chi_a(\vec x, \vec x')$ when $\vec x$ describes the world $w$.
+The idea is to sample a valuation for variables $\vec x'$ such that $\chi_a(\vec x, \vec x')$ where $\vec x$ describes the world $w$.
 \todo{Rely on one of the tools of \cite{DBLP:conf/lpar/SharmaGRM18}}
 
 
@@ -109,7 +111,69 @@ In this section, we explain how to compute a succinct description of the epistem
 	\item output: the succinct description of the epistemic model $\modelM \otimes \eventmodel$, the description of the world $(w, \event)$.
 \end{itemize}
 
-\todo{to be defined! also propose simplification of the formulas etc.}
+
+
+\subsection{Public announcements}
+
+
+
+Let us consider an epistemic model $\modelM$ described by:
+\begin{itemize}
+	\item  $\chi_p(\vec x)$ 
+	\item $\chi_a(\vec x, \vec x')$ for all agents $a$.
+\end{itemize}
+
+
+The epistemic model after the announcement of a propositional formula $\phi$ is described by:
+\begin{itemize}
+	\item  $\chi_p(\vec x) \land \phi$ 
+	\item $\chi_a(\vec x, \vec x')$ for all agents $a$.
+\end{itemize}
+
+
+The epistemic model after the announcement of a modal formula $\phi$ is described by:
+\begin{itemize}
+	\item  $\chi_p(\vec x) \land tr(\phi)$ 
+	\item $\chi_a(\vec x, \vec x')$ for all agents $a$.
+\end{itemize}
+
+where $tr(\phi)$ is the translation of $\phi$ in QBF (close to the standard translation of modal logic in first-order logic), the relation behind modalities $K_a$ being represented by $\chi_a(\vec x, \vec x')$.
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Public actions}
+
+Let us consider an epistemic model $\modelM$ described by:
+\begin{itemize}
+	\item  $\chi_p(\vec x)$ 
+	\item $\chi_a(\vec x, \vec x')$ for all agents $a$.
+\end{itemize}
+
+
+Let us consider a public action of Boolean precondition $\phi$ and postconditions $\set{x_1 := \phi_1, \dots, x_n := \phi_n}$ where $\phi_1, \dots, \phi_n$ are Boolean. The epistemic model obtained after executing that particular public action is described by:
+\begin{itemize}
+	\item  $\chi_p(\vec x := \vec y) \land \phi(\vec x := \vec y) \land \lbigand_{i=1..n} [x_i \lequiv \phi_i(\vec x := \vec y)]$ 
+	\item $\chi_a(\vec y, \vec y') \land \lbigand_{i=1..n} [x_i \lequiv \phi_i(\vec x := \vec y)] \land \lbigand_{i=1..n} [x_i' \lequiv \phi_i(\vec x := \vec y')]$ for all agents $a$.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
 %
 %
 %\begin{itemize}
@@ -150,8 +214,16 @@ François
 
 \begin{itemize}
 	\item Think about the succinct descriptions
+	\item Can we sample valuations of a QBF formula?
+	\item Touist handles QBF, right?
 \end{itemize}
 	\end{minipage}}
+
+
+
+
+
+
 
 \bibliographystyle{plain}
 \bibliography{biblio}
