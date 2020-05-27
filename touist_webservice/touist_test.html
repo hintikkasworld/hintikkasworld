@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Touist webservice test</title>
+    <style type="text/css">
+        .split {
+            height: 100%;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            overflow-x: hidden;
+        }
+
+        .left {
+            width: 50%;
+            left: 0;
+        }
+
+        .right {
+            width: 50%;
+            right: 0;
+        }
+
+        .interior {
+            padding: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+<div class="split left">
+    <div class="interior">
+        <h3>Touist input</h3>
+        <label for="args">Args: </label>
+        <textarea type="text" id="args" rows="1" res></textarea>
+
+        <br/>
+
+        <label for="stdin">Stdin:</label>
+        <textarea id="stdin" rows="30"></textarea>
+
+        <br/>
+        <br/>
+
+        <input type="submit" value="Envoyer" onclick="onSubmit()">
+        <br/>
+        <br/>
+
+        <input type="button" value="Example 1" onclick="example1()">
+        <br/>
+        <input type="button" value="Example 2" onclick="example2()">
+        <br/>
+        <input type="button" value="Example 3" onclick="example3()">
+        <br/>
+        <input type="button" value="Example 4" onclick="example4()">
+    </div>
+</div>
+<div class="split right">
+    <div class="interior">
+        <h3> Response </h3>
+        <textarea id="answer" rows="15" readonly></textarea>
+    </div>
+</div>
+</body>
+
+<script type="application/javascript">
+    async function onSubmit() {
+        let data = new FormData();
+        data.append("args", document.getElementById("args").value);
+        data.append("stdin", document.getElementById("stdin").value);
+
+        let methodInit = {
+            method: "POST",
+            body: data,
+        };
+
+        let response = await fetch(window.location.origin + "/touist_cmd", methodInit);
+        let text = await response.text();
+        console.log(text);
+        document.getElementById("answer").value = text;
+        document.getElementById("answer").rows = text.split('\n').length;
+    }
+
+    function example1() {
+        document.getElementById("args").value = "";
+        document.getElementById("stdin").value = "rain => wet_road\nrain\nnot wet_road";
+    }
+
+    function example2() {
+        document.getElementById("args").value = "--solve";
+        document.getElementById("stdin").value = "rain => wet_road\nrain\nnot wet_road";
+    }
+
+    function example3() {
+        document.getElementById("args").value = "--solve --limit=10";
+        document.getElementById("stdin").value = "a or b";
+    }
+
+    function example4() {
+        document.getElementById("args").value = "--help";
+        document.getElementById("stdin").value = "";
+    }
+</script>
+</html>
