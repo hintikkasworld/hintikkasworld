@@ -1,0 +1,1605 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\mb}[1]{\mathbb{#1}}
+\newcommand{\mf}[1]{\mathfrak{#1}}
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% AGENTS %%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\agent}{{a}}
+\newcommand{\agenta}{{a}}
+\newcommand{\agentb}{{b}}
+\newcommand{\agentc}{{c}}
+\newcommand{\agentd}{{d}}
+\newcommand{\agente}{{e}}
+\newcommand{\agentf}{{f}} % father in the muddy children
+\newcommand{\agentaone}{{\agent_1}}
+\newcommand{\agentatwo}{{\agent_2}}
+\newcommand{\group}{G}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%% PROPOSITIONS %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\atom}{p}
+\newcommand{\atomb}{q}
+\newcommand{\atomc}{r}
+\newcommand{\atmset}{\ensuremath{\mathit{AP}}\xspace}
+\newcommand{\AP}{{\atmset}}
+\newcommand{\ap}{\atmset}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% LANGUAGES %%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\languagePropositional}{\mathscr{L}_{Prop}}
+\newcommand{\languageDEL}{\ensuremath{\mathcal{L}_{\mathbf{DEL}}}}
+\newcommand{\languageEL}{\ensuremath{\mathcal{L}_{\mathbf{EL}}}}
+\newcommand{\languageELCK}{\ensuremath{\mathcal{L}_{\mathbf{ELCK}}}}
+\newcommand{\languageDELCK}{\ensuremath{\mathcal{L}_{\mathbf{DELCK}}}}
+\newcommand{\languageELPA}{\ensuremath{\mathcal{L}_{\mathbf{ELPA}}}}
+\newcommand{\languageELCKPA}{\ensuremath{\mathcal{L}_{\mathbf{ELCKPA}}}}
+\newcommand{\languageDELCKsuccinct}{\ensuremath{\mathcal{L}_{\mathbf{DELCK}}^{suc}}}
+
+\protected\def\MSO{\ifmmode \mbox{\sc MSO} \else {\sc MSO}\xspace\fi}
+\protected\def\FO{\ifmmode \mbox{\sc FO} \else {\sc FO}\xspace\fi}
+\protected\def\MMSO{\ifmmode {\mbox{\sc M}\MSO} \else {{\sc M}\MSO}\xspace\fi}
+\protected\def\MFO{\ifmmode \mbox{\sc MFO} \else {\sc MFO}\xspace\fi}
+
+
+
+
+
+%% rajouté par Sophie
+\newcommand{\lang}{\ensuremath{\mathcal{L}}}
+\newcommand{\logic}{\ensuremath{\mathcal{L}}}
+
+%% transducers
+\newcommand{\transd}{{\mathcal M}}
+\newcommand{\blank}{\perp}
+\newcommand{\pad}{\square}
+\newcommand{\alphabet}{\Sigma}
+\newcommand{\extalphabetconv}{\Sigma_{\pad}}
+\newcommand{\extalphabet}{\Sigma_{\blank}}
+\newcommand{\transddelta}{\transd_\Dom}
+\newcommand{\transdepsilon}{\transd_\epsilon}
+\newcommand{\transdi}[1][i]{\transd_{#1}}
+
+\newcommand{\U}{\text{\textsf{U}}}
+\newcommand{\X}{\text{\textsf{X}}}
+\newcommand{\E}{\text{\textsf{E}}}
+\newcommand{\A}{\text{\textsf{A}}}
+\newcommand{\F}{\text{\textsf{F}}}
+\newcommand{\G}{\text{\textsf{G}}}
+
+\newcommand{\mso}{{\textsf{MSO}}\xspace}
+\newcommand{\cmso}{{\textsf{cMSO}}\xspace}
+\newcommand{\chainmso}{{\textsf{chain-MSO}}\xspace}
+\newcommand{\pmso}{{\textsf{path-MSO}}\xspace}
+\newcommand{\logicCTLstar}{{\textsf{CTL$^*$}}\xspace}
+\newcommand{\logicCTLstarK}{{\textsf{CTL$^*$K}}\xspace}
+\newcommand{\cmsok}{{\textsf{cMSO}}\text{K}\xspace}
+\newcommand{\fo}{\textsf{FO}}
+\newcommand{\fow}{\textsf{FO}\text{$(\exists^\omega)$}}
+\newcommand{\ltl}{\textsf{LTL}}
+\newcommand{\ctl}{\textsf{CTL}}
+\newcommand{\ctlk}{\text{\textsf{CTLK}}}
+\newcommand{\ctls}{$\textsf{CTL}^*$}
+\newcommand{\ctlsk}{\text{\textsf{CTL}$^*$K}}
+\newcommand{\ectls}{\text{\textsf{ECTL}$^*$}\xspace}
+\newcommand{\lmulin}{\text{\textsf{L}$^{\textsf{lin}}_{\mu}$}} % linear-time mu-calculus
+\newcommand{\blmulin}{\text{B}\lmulin} % branching linear-time mu-calculus
+\newcommand{\blmulink}{\text{B}\lmulin\text{K}} % branching linear-time mu-calculus
+%\newcommand{\blmulink}{\text{\textsf{L}$^*${lin$_{\mu}$K}} % branching linear-time mu-calculus
+%\newcommand{\muc}{{\mu\textsf{CTL}}}
+\newcommand{\muc}{\blmulin}
+%% Buchi
+\newcommand{\Bautomaton}[1][]{{\mathcal B}_{#1}}
+\newcommand{\BautomatonChain}[1][m]{\mathcal{C}_{#1}}
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%EPISTEMIC LOGIC SEMANTICS%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\kripkemodel}{\mathcal M}
+\newcommand{\modelM}{\mathcal M}
+\newcommand{\model}{\modelM} % neighbourhood function
+\newcommand{\aworld}{w}
+\newcommand{\aworldb}{u}
+\newcommand{\aworldc}{v}
+\newcommand{\aworldd}{s}
+\newcommand{\world}{\aworld}
+\newcommand\worldinitial{\world_0}
+\newcommand{\worldb}{u}
+\newcommand{\worldc}{v}
+\newcommand{\setworlds}{W}
+\newcommand{\setworldsb}{U}
+\newcommand{\setworldsc}{T}
+\newcommand{\initialmodelrelationagent}[1]{\xrightarrow{#1}}
+\newcommand{\epistemicrelation}[1]{R_{#1}}
+\newcommand{\relworlds}{\textit{R}}
+\newcommand{\relworldsa}[1][\agent]{\relworlds_{#1}}
+\newcommand{\valuationfunction}{V}
+\newcommand{\worldsset}{\setworlds}
+\newcommand{\worldssetb}{\setworldsb}
+\newcommand{\setworldsoflist}[1]{\setworlds_{#1}}
+\newcommand{\eventmodel}{\mathcal E}
+\newcommand{\eventmodeltuple}{(\setevents, (\epistemicrelationevents{\agent})_{\agent \in \agtset}, \pre, \post)}
+\newcommand{\actionmodel}{\mathcal A}
+\newcommand{\modelAction}{\eventmodel}
+\newcommand\modelActionrelation{\rightarrow}
+\newcommand{\atmseteventmodel}{\atmset_\eventmodel}
+\newcommand{\atmsetkripkemodel}{\atmset_\kripkemodel}
+\newcommand{\atmsetinitialkripkemodel}{\atmset_\kripkemodel}
+\newcommand{\multipointevent}{\setevents_0}
+\newcommand{\multipoint}{\multipointevent}
+\newcommand{\pre}{pre}
+\newcommand{\post}{post}
+\newcommand{\setevents}{\mathsf E}
+\newcommand{\epistemicrelationevents}[1]{{R^\eventmodel_{#1}}}
+\newcommand{\epistemicrelationarg}[2]{{R^{#2}_{#1}}}
+\newcommand{\relevents}{\modelActionrelation}
+\newcommand{\releventsa}[1][a]{\relevents_{#1}}
+\newcommand{\event}{e}
+\newcommand{\eventb}{f}
+\newcommand{\eventc}{g}
+\newcommand{\eventinitial}{e_0}
+\newcommand{\plandom}{\mathbb E\xspace}
+\newcommand{\kripkemodeltuple}{(\setworlds, (\epistemicrelation{\agent})_{\agent \in \agtset}, \valuationfunction)}
+\newcommand{\kripkemodeltupleprime}{(\setworlds', (\epistemicrelation{\agent}')_{\agent \in \agtset}, \valuationfunction')}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%SUCCINCT KRIPKE MODELS %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\symbolickripkemodeltuple}{\tuple{\atmsetkripkemodel, (\program_\agent)_{\agent \in \agtset}}}
+\newcommand{\symbolickripkemodel}{\mathfrak M}
+\newcommand{\program}{\pi}
+\newcommand{\programb}{\pi'}
+\newcommand{\protocol}{\gamma}
+\newcommand{\protocolb}{\gamma'}
+\newcommand{\protocolaf}{\tau}
+\newcommand{\assignment}{{\leftarrow}}
+\newcommand{\mentalprogramarrow}[1]{\xrightarrow{#1}}
+\newcommand{\change}{\texttt{assign}}
+\newcommand{\succinctkripkemodelformula}{\beta_\kripkemodel}
+\newcommand{\succinctkripkemodeltuple}{\tuple{\atmsetkripkemodel, \succinctkripkemodelformula, (\program_\agent)_{\agent \in \agtset}}}
+\newcommand{\succinctkripkemodel}{\mathfrak M}
+\newcommand{\kripkemodelof}[1]{\hat\kripkemodel({#1})}
+\newcommand\kripkemodelofsymbolickripkemodel{\kripkemodelof{\symbolickripkemodel}}
+\newcommand{\formulainthetestconstruction}{\booleanformula}
+\newcommand{\succinctkripkemodellist}{L}
+\newcommand{\listcons}{{::}}
+\newcommand{\succinctkripkemodelcollectionpia}{ (\program_\agent)_{\agent \in \agtset}}
+\newcommand{\kripkemodelofsuccinctkripkemodel}{\modelM_{\succinctkripkemodel}}
+\newcommand\xrsquigarrow[1]{%
+	\mathrel{%
+		\begin{tikzpicture}[%
+		baseline={(current bounding box.south)}
+		]
+		\node[%
+		,inner sep=.3ex
+		,align=center
+		] (tmp) {~$\scriptstyle #1$~};
+		\path[%
+		,draw,<-
+		,decorate,decoration={%
+			,zigzag
+			,amplitude=0.5pt
+			,segment length=1.2mm,pre length=3.5pt
+		}
+		]
+		(tmp.south east) -- (tmp.south west);
+		\end{tikzpicture}
+	}
+}
+\newcommand{\relationgamma}[1]{\xrsquigarrow{#1}}
+\newcommand{\kripkemodelwithmentalprogram}[1]{\setworlds_{#1}, V_{#1}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%SUCCINCT EVENT MODELS %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\succincteventmodel}{\mathfrak E}
+\newcommand{\succinctmultipoint}{ \booleanformula_0}
+\newcommand{\multipointedsuccincteventmodel}{\succincteventmodel, \succinctmultipoint}
+\newcommand{\succinctpre}{\chi}
+
+\newcommand{\succinctpost}{\mathsf{post}}
+\newcommand{\succincteventmodeltuple}{ \tuple{\atmsetinitialkripkemodel, \atmseteventmodel, \succinctpre_\eventmodel, (\program_{\agent,\eventmodel})_{\agent \in \agtset}, \succinctpost}}
+\newcommand\subformulaschiE{sub}
+\newcommand{\mentalprogramsuccincteventmodel}[1]{\program_{#1, \eventmodel}}
+\newcommand{\valavant}{{\valuationfont v_{\text{pre}}}}
+\newcommand{\valapres}{{\valuationfont v_{\text{post}}}}
+\newcommand{\eventmodelof}[1]{\hat\eventmodel({#1})}
+
+\newcommand{\succincteventmodeltuplenew}{ \tuple{ \atmseteventmodel, \succinctpre_\eventmodel, (\program_{\agent,\eventmodel})_{\agent \in \agtset}, \succinctprecond, \succinctpost}}
+\newcommand{\chievent}{\succinctpre}
+\newcommand{\succinctprecond}{\mathsf{pre}}
+\newcommand{\valevent}{{\valuationfont v_{\text{e}}}}
+\newcommand{\valeventb}{{\valuationfont v_{\text{f}}}}
+\newcommand{\succincteventmodelproduct}{\overrightarrow{\succincteventmodel}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%SUCCINCT PRODUCT %%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newcommand{\succinctsuccinctkripkemodelsuccincteventmodelsproduct}{\succinctkripkemodel \otimes \vec \succincteventmodel}
+\newcommand{\phrasereject}[2]{\ensuremath{#1} rejects \ensuremath{#2}}
+	\newcommand{\ribanbelledeproduits}{\modelM \otimes
+	\modelAction^{\sum_{i=1}^\nbeventsinalltheformulas{} n_{i}}, \worldtuplewn}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newcommand\AEXPTIMEpol{A{$_{pol}$}EXPTIME}
+
+
+
+
+
+
+
+%%%% SETS %%%%%%%%%%%%%%%%%%%%
+\newcommand{\union}{\cup}
+\newcommand{\Union}{\bigcup}
+\newcommand{\bigunion}{\bigcup}
+\newcommand{\disjointunion}{\sqcup}
+\newcommand{\compose}{\circ}
+\newcommand{\compl}[1]{{\overline{{#1}}}}
+
+\newcommand{\inter}{\cap}
+\newcommand{\intersection}{\inter}
+
+
+\newcommand{\Inter}{\bigcap}
+\newcommand{\biginter}{\bigcap}
+\newcommand{\bigintersection}{\bigcap}
+
+\newcommand{\bigtimes}{\prod}
+
+\newcommand{\infinity}{\infty}
+\newcommand{\card}[1]{{\emph{card}(#1)}}
+\newcommand{\partiede}[1]{2^{#1}}
+
+\newcommand{\set}[1]{{\{#1\}}}
+\newcommand{\privede}{\setminus}
+
+\newcommand{\vide}{\emptyset}
+
+\newcommand{\inclu}{\subseteq}
+\newcommand{\suchthat}{\mid}
+\newcommand{\converse}{^{-1}}
+
+
+
+\newcommand{\eqdefine}{=^{\text{def}}}
+\newcommand{\eqdef}{\eqdefine}
+
+%%%%% LOGICS %%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\bigand}{\bigwedge}
+\newcommand{\lbigand}{\bigand}
+\newcommand{\lAnd}{\bigand}
+\newcommand{\bigor}{\bigvee}
+\newcommand{\lbigor}{\bigor}
+\newcommand{\true}{\top}
+\newcommand{\false}{\bot}
+\newcommand{\limply}{\rightarrow}
+\newcommand{\logimply}{\limply}
+\newcommand{\imp}{\limply}
+\newcommand{\imply}{\limply}
+
+\newcommand{\bottom}{\bot}
+\newcommand{\lequiv}{\leftrightarrow}
+
+
+\renewcommand{\phi}{\varphi}
+
+\newcommand{\valuation}{\valuationfont w}
+\newcommand{\valuationb}{\valuationfont u}
+\newcommand{\valuationc}{\valuationfont v}
+
+\newcommand{\subformulasset}[1]{SF(#1)}
+
+\newcommand{\thereisaproof}{\vdash}
+
+\newcommand{\formulalength}[1]{|#1|}
+
+
+\newcommand{\lbox}{\square}
+\newcommand{\logbox}{\lbox}
+
+\newcommand{\ldiamond}{\Diamond}
+\newcommand{\tuple}[1]{\langle #1 \rangle}
+
+\newcommand{\frameF}{\mathcal{F}}
+
+
+\newcommand{\classC}{\ensuremath{\mathcal{C}}\xspace}
+
+\newcommand{\logfusion}{\oplus}
+\newcommand{\logicfusion}{\logfusion}
+
+\newcommand{\lboxarg}[1]{[#1]}
+\newcommand{\logboxarg}[1]{\lboxarg{#1}}
+
+\newcommand{\logdiamarg}[1]{\langle #1 \rangle}
+\newcommand{\ldiaarg}[1]{\logdiamarg{#1}}
+\newcommand{\ldiamarg}[1]{\logdiamarg{#1}}
+
+\newcommand{\lknow}[1]{K_{#1}}
+\newcommand{\lknowpos}[1]{\hat K_{#1}}
+\newcommand{\lcommonknow}[1]{C_{#1}}
+\newcommand{\formula}{\phi}
+\newcommand{\formulab}{\psi}
+\newcommand{\formulac}{\chi}
+
+
+\newcommand{\lcommonknowdia}[1]{\hat{C}_{#1}}
+\newcommand{\lcommonknowpos}[1]{\hat C_{#1}}
+\newcommand{\possknw}{\lknowpos}
+
+\newcommand{\ldiadiaarg}[1]{\langle \langle #1\rangle \rangle}
+\newcommand{\latl}[1]{\ldiadiaarg{#1}}
+\newcommand{\logdiaboxarg}[1]{\langle[#1]\rangle}
+\newcommand{\ldiamboxarg}[1]{\logdiaboxarg{#1}}
+\newcommand{\ldiaboxarg}[1]{\logdiaboxarg{#1}}
+\newcommand{\logiclanguage}[1]{{\ensuremath{\mathcal{L}_{#1}}\xspace}}
+
+\newcommand{\lognext}{X}
+\newcommand{\loginthefuture}{F}
+\newcommand{\lnext}{\lognext}
+\newcommand{\linthefuture}{\loginthefuture}
+
+\newcommand{\loguntil}{U}
+\newcommand{\luntil}{\loguntil}
+
+\newcommand{\agtset}{\ensuremath{\textit{AGT}}\xspace}
+\newcommand{\actset}{\ensuremath{\textit{ACT}}\xspace}
+\newcommand{\AGT}{\ensuremath{\textit{AGT}}\xspace}
+
+\newcommand{\lposempty}{\ldiaarg{\emptyset}}
+
+
+\newcommand{\grammaris}{\hspace{2mm}::=\hspace{2mm}}
+\newcommand{\grammarseparation}{\hspace{2mm}\mid\hspace{2mm}}
+\newcommand{\grammarsep}{\grammarseparation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% SPECIFIC SETS %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\inN}{\in \mathbb{N}}
+\newcommand{\ZnZ}[1]{ \mathbb{Z}/ { {#1} \mathbb{Z} } }
+
+\newcommand{\setN}{\mathbb{N}}
+\newcommand{\setn}{\mb{N}}
+\newcommand{\Nset}{\setN}
+\newcommand{\ensN}{\setN}
+
+\newcommand{\setZ}{\mathbb{Z}}
+\newcommand{\Zset}{\setZ}
+\newcommand{\ensZ}{\setZ}
+
+\newcommand{\setR}{\mathbb{R}}
+\newcommand{\Rset}{\setR}
+\newcommand{\ensR}{\setR}
+
+\newcommand{\setQ}{\mathbb{Q}}
+\newcommand{\Qset}{\setQ}
+\newcommand{\ensQ}{\setQ}
+
+\newcommand{\setW}{\mathbb{W}}
+\newcommand{\Wset}{\setW}
+\newcommand{\ensW}{\setW}
+
+\newcommand{\propP}{\mathcal P}
+
+%% LOGIC NAMES %%%%%%%%%%%%%%%
+
+%&latex
+\newcommand{\logicCSTIT}{\textsf{CSTIT}\xspace}
+\newcommand{\logicXCSTIT}{\textsf{XCSTIT}\xspace}
+\newcommand{\logicSTIT}{\textsf{STIT}\xspace}
+\newcommand{\logicCL}{\textsf{CL}\xspace}
+\newcommand{\logicATL}{\textsf{ATL}\xspace}
+\newcommand{\logicATLstar}{\ensuremath{\textsf{ATL}^*}\xspace}
+\newcommand{\logicCTL}{\textsf{CTL}\xspace}
+\newcommand{\logicInt}{\textsf{Int}\xspace}
+
+\newcommand{\logicATLbox}[1]{\langle \langle #1 \rangle \rangle}
+\newcommand{\logicSfive}{\textsf{S5}\xspace}
+\newcommand{\logicKDfourfive}{\textsf{KD45}\xspace}
+
+\newcommand{\logicSfour}{\textsf{S4}\xspace}
+\newcommand{\logicSfourdottree}{\textsf{S4.3}\xspace}
+\newcommand{\logicK}{\textsf{K}\xspace}
+\newcommand{\logicPDL}{\textsf{PDL}\xspace}
+\newcommand{\logicPTL}{\textsf{PTL}\xspace}
+\newcommand{\logicLTL}{\textsf{LTL}\xspace}
+\newcommand{\logicAlt}{\textsf{Alt}\xspace}
+
+\newcommand{\logicindividualSTIT}{ind\logicSTIT}
+\newcommand{\logicindSTITbox}[1]{\lboxarg{#1}}
+\newcommand{\logicindSTITposbox}{\lbox}
+\newcommand{\logiclog}[1]{\textsf{log}(#1)}
+
+\newcommand{\logicLCC}{\ensuremath{\mathbf{LCC}}\xspace}
+\newcommand\logicEL{\ensuremath{\mathbf{EL}}\xspace}
+\newcommand\logicELCK{\ensuremath{\mathbf{ELCK}}\xspace}
+\newcommand\logicDEL{\ensuremath{\mathbf{DEL}}\xspace}
+\newcommand\logicDELCK{\ensuremath{\mathbf{DELCK}}\xspace}
+
+\newcommand{\momentsset}{M}
+\newcommand{\historiesset}{H}
+\newcommand{\amoment}{m}
+\newcommand{\ahistory}{h}
+
+\newcommand{\cstit}[1]{[#1]}
+
+
+
+
+
+
+
+
+
+
+
+%%%%%% ENVIRONMENTS %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\newtheorem{theorem}{Theorem}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{remark}{Remark}
+\newtheorem{proposition}{Proposition}
+\newtheorem{question}{Question}
+\newtheorem{property}{Property}
+\newtheorem{notation}{Notation}
+\newtheorem{definitionThm}{Definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proofThm}{Proof}
+
+\newenvironment{proof}{
+ \textsc{Proof.}
+   {~\\}
+   \normalfont
+   \indent
+ }{$\blacksquare$}
+
+\newcommand{\proofof}[1]{\fbox{#1}}
+
+%\newenvironment{definition}[1][]{%
+%\begin{definitionThm}[#1]~\\%
+%\normalfont%
+%}
+%{
+%\end{definitionThm}%
+%}
+
+
+
+
+
+%%%%%% ALGORITHMS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\algofunction}{\textbf{function }}
+\newcommand{\algofunctionul}{\textbf{function }}
+\newcommand{\algoprocedure}{\textbf{procedure }}
+\newcommand{\recursive}{\textbf{recursive }}
+\newcommand{\algoendfunction}{\textbf{endFunction }}
+\newcommand{\algoendprocedure}{\textbf{endProcedure }}
+\newcommand{\algofor}{\textbf{for }}
+\newcommand{\algodo}{\textbf{do }}
+\newcommand{\algoendfor}{\textbf{endFor }}
+
+
+\definecolor{algocommentbackgroundcolor}{rgb}{1,1,0.5}
+
+\newcommand{\algocomment}[1]{\colorbox{algocommentbackgroundcolor}{\begin{minipage}{\textwidth}\small{#1}\end{minipage}}}
+
+\newcommand{\algocommentoneline}[1]{\colorbox{algocommentbackgroundcolor}{\small{#1}}}
+\newcommand{\algowhile}{\textbf{while }}
+\newcommand{\algoendwhile}{\textbf{endWhile }}
+
+\newcommand{\algoif}{\textbf{if }}
+\newcommand{\algothen}{\textbf{then }}
+\newcommand{\algoelse}{\textbf{else }}
+\newcommand{\algoendif}{\textbf{endIf }}
+
+\newcommand{\algomatch}{\textbf{match }}
+\newcommand{\algoendmatch}{\textbf{endMatch }}
+
+\newcommand{\algocase}{\textbf{case }}
+
+
+\newcommand{\return}{\textbf{return }}
+\newcommand{\algoreturn}{\textbf{return }}
+\newcommand{\algochoose}{\textbf{choose }}
+\newcommand{\algochooseexists}{\textbf{choose ($\exists$)}}
+\newcommand{\algochooseforall}{\textbf{choose ($\forall$)}}
+\newcommand{\algocall}{\textbf{call }}
+
+\newcommand{\algoaccept}{\textbf{accept }}
+\newcommand{\algoreject}{\textbf{reject }}
+
+\newlength{\algoindentlongueur}
+\setlength{\algoindentlongueur}{1cm}
+\newcommand{\algoindent}{\hspace*{\algoindentlongueur}}
+
+\newlength{\algoindentavantvrulelongueur}
+\setlength{\algoindentavantvrulelongueur}{0.2cm}
+\newcommand{\algoindentavantvrule}{\hspace*{\algoindentavantvrulelongueur}}
+
+\newcommand{\functionname}[1]{\underline{#1}}
+
+
+\newcommand{\algocommentaire}[1]{\emph{commentaire : #1}}
+\newlength{\dummy}
+
+\newcommand{\algoand}{\textbf{and }}
+\newcommand{\algoor}{\textbf{or }}
+\newcommand{\algonot}{\textbf{not }}
+\newcommand{\algoforall}{\pmb{(\forall) }}
+\newcommand{\algoexists}{\pmb{(\exists) }}
+
+\newsavebox{\frameminipageboiteavecunnomsuperlongdesortequonnepuissepaslereutiliser}
+\newenvironment{frameminipage}[2][c]{%
+\begin{lrbox}{\frameminipageboiteavecunnomsuperlongdesortequonnepuissepaslereutiliser}%
+\begin{minipage}[#1]{#2}%
+} {%
+\end{minipage}%
+\end{lrbox}%
+\framebox{\usebox{\frameminipageboiteavecunnomsuperlongdesortequonnepuissepaslereutiliser}}%
+}
+
+
+\newenvironment{algo} {
+  \begin{frameminipage}{\linewidth}
+} {
+  \end{frameminipage}
+}
+
+\newenvironment{algobloc}{\setlength{\dummy}{\linewidth}\addtolength{\dummy}{- \algoindentlongueur}\addtolength{\dummy}{- \algoindentavantvrulelongueur}\algoindentavantvrule\vrule\algoindent\begin{minipage}{\dummy}}{\end{minipage}}
+
+\newenvironment{algoblocprocedure}[1]
+{\algoprocedure #1 \\  \begin{algobloc}}
+	{\end{algobloc}}
+
+\newenvironment{algoblocfunction}[1]
+{\algofunction #1 \\  \begin{algobloc}}
+{\end{algobloc} \algoendfunction}
+
+\newenvironment{algoblocif}[1]
+{\algoif #1 \algothen \\  \begin{algobloc}}
+{\end{algobloc} \algoendif}
+
+\newenvironment{algoblocfor}[1]
+{\algofor #1 \algodo \\  \begin{algobloc}}
+{\end{algobloc} \algoendfor}
+
+\newenvironment{algoblocwhile}[1]
+{\algowhile #1 \algodo \\  \begin{algobloc}}
+	{\end{algobloc}% \algoendwhile
+}
+
+\newenvironment{algoblocmatch}[1]
+{\algomatch #1 \algodo \\  \begin{algobloc}}
+	{\end{algobloc}}
+
+\newenvironment{algobloccase}[1]
+{\algocase #1 : \\  \begin{algobloc}}
+	{\end{algobloc}}
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%% INDEX %%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\indexprint}[1]{#1\index{#1}}
+\newcommand{\indexemph}[1]{\emph{#1}\index{#1}}
+\newcommand{\emphindex}[1]{\emph{#1}\index{#1}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newcommand{\unpeudespace}{~}
+
+
+
+
+
+
+
+
+
+
+\newcommand{\restrictedto}[1]{_{\mid #1}}
+\newcommand{\updatedmodel}[1]{\modelM^{#1}}
+\newcommand{\formulatoannounce}{\phi_S}
+\newcommand{\bblepistemicprogram}[1]{\pi_{#1}}
+\newcommand{\ajout}[1]{{\color{red} #1}}
+\newcommand{\cartes}[8]{\scalebox{#8}{\begin{tikzpicture}
+		\tikzstyle{carte} = [draw, top color=white, bottom color=gray!50!white, minimum width = 0.5cm, minimum height = 0.75cm, rounded corners, ];
+		\node[carte] at (0,0) {#1};
+		\node[carte] at (0.75,0) {#2};
+		\node[carte] at (1.5,0) {#3};
+		\node[carte] at (3,0) {#4};
+		\node[carte] at (3.75,0) {#5};
+		\node[carte] at (4.5,0) {#6};
+		\node[carte] at (6,0) {#7};
+		\node[] at (0.75,-0.75) {$a$};
+		\node[] at (3.75,-0.75) {$b$};
+		\node[] at (6,-0.75) {$c$};
+		\end{tikzpicture}}}
+
+
+\tikzstyle{zoneprogramcounter} = [fill=gray!40, draw=none]
+\tikzstyle{zonedatacounter} = [fill=gray!40, draw=none, decorate, decoration={snake, amplitude=1pt, segment length=4pt}]
+\tikzstyle{portion} = [densely dotted, shade, top color = white, bottom color = gray!40]
+\tikzstyle{portiondata} = [densely dotted, shade, top color = white, bottom color = gray!40, decorate, decoration={snake, amplitude=1pt, segment length=4pt}]
+\tikzset{
+	double arrow/.style args={#1 colored by #2 and #3}{
+		-stealth,line width=#1,#2, % first arrow
+		postaction={draw,-triangle 90 cap,#3,line width=(#1)-4pt,
+			shorten <=4pt,shorten >=4}, % second arrow
+	}
+}
+\tikzstyle{tapearrow} = [double arrow=10pt colored by black!50!white and black!20!white, -triangle 90 cap, fill = white]%
+\tikzstyle{execarrow} = [line width=1pt,->]%
+
+
+\newcommand{\stateexample}[4]{#1, #2, #3, #4}
+\newcommand{\hear}[1]{h_#1}
+\newcommand{\eventattentionbasedannouncement}[3]{\eventinfigure{#1 {\land} #2 {\land} #3}{\postconditiontrivial}}
+
+
+
+
+
+\newcommand{\muddyproposition}[1]{m_{#1}}
+
+
+\newcommand{\languageDELsuccinct}{\mathscr{L}_{succDEL}}
+
+
+
+\newcommand{\booleanformula}{\beta}
+
+
+
+\newcommand\valuationset[1]{\mathcal V(#1)}
+\newcommand{\formulaofvaluation}[1]{desc(#1)}
+\newcommand{\formulaexistenceunicite}[1]{\exists!(#1)}
+
+
+
+\newcommand{\valuationelement}{v}
+
+
+\newcommand{\valuationfont}{\mathtt}
+
+\newcommand{\mainprocedure}{main}
+
+
+\tikzstyle{world}=[inner sep=0.5mm]
+\tikzstyle{event}=[fill=gray!30, inner sep=0.5mm]
+\tikzstyle{realworldarrowfromleft} = [initial left, initial text={}]
+\tikzstyle{realworldarrowfromright} = [initial right, initial text={}]
+
+
+\newcommand{\eventinfigure}[2]{\scriptsize\hspace{-1mm}\ensuremath{\begin{array}{l}pre: #1 \\ post: #2\end{array}}\hspace{-2mm}}
+
+\newcommand{\postconditiontrivial}{\raisebox{0.5mm}{\text{\tiny /}}}
+\newcommand{\postconditionpfalse}{\raisebox{0.5mm}{\text{\tiny p $\leftarrow$ $\bottom$}}}
+
+\newcommand\eventinfigurewithtrivialpostcondition[1]
+{\eventinfigure{#1}{\postconditiontrivial}}
+
+\newcommand{\mybisimilation}{B}
+
+
+\newcommand\defcase[4]{\left\{\begin{array}{ll}
+		#1 & \text{#2} \\
+		#3 & \text{#4}\end{array}
+	\right.}
+
+
+
+
+
+
+\newcommand{\productwithoutspaces}{{\otimes}}
+
+
+
+
+
+\newcommand{\issuccessorfunction}{issucc}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newcommand{\diaPAL}[1]{\mathbf{\langle}#1!\mathbf{\rangle}}
+\newcommand{\modelmud}{\modelM_{mud}}
+\newcommand{\languageformcorsat}{\mathcal L}
+
+
+
+
+\newcommand{\modelallvaluations}{\modelM^{all}}
+\newcommand{\titredanstable}[1]{
+	\\[-3.5mm]
+	\hlineintableconstructionsmeanings
+	\multicolumn{2}{|c|}{\cellcolor{gray!20}\begin{tikzpicture}[baseline=(current bounding box.north)]
+		\node[inner sep=0mm]{#1};
+		\end{tikzpicture}
+	}}
+
+
+	\newcommand{\propositionallogicmodels}{\models_{PL}}
+	\newcommand{\setvaluations}{\Wall}
+	\newcommand{\semantics}[1]{||{#1}||}
+	\newcommand{\setpossiblesem}{S}
+	\newcommand{\semanticsformula}[1]{\truthset{}{#1}}
+	\newcommand{\semanticsformularestriction}[2]{\truthset{#2}{#1}}
+	\newcommand{\semanticsprogram}[1]{\truthset{}{#1}}
+
+	\newcommand{\semanticsarbitraryannouncementwithexistformula}{\semanticsformularestriction{\annarbitrarydia_{ (\pi_1,...,\pi_n)} \phi}{} & = \set{(W,w) \in \setpossiblesem \suchthat \text{there exist $\ldiamond$-free formulas $\psi_1,...,\psi_n$ s.t.\ $(W,w) \in \semanticsformularestriction{\anndia {\bigwedge\limits_{i = 1}^n K_{\pi_i} \psi_i} \phi}{}$}}}
+
+	\newcommand{\semanticsarbitraryannouncementwithexistset}{\semanticsformularestriction{\annarbitrarydia_{\vec{\pi}} \phi}{} &  = \set{(W,u) \in \setpossiblesem \suchthat \text{\begin{minipage}{10cm}there exists $U_1,...,U_n$ such that for all i, $\{u\} \subseteq U_i  \subseteq W$, $U_i = \stackrel{\sim}{pre}_{\pi_i,W}(post_{\pi_i,W}(U_i))$  and $\bigcap\limits_{i=1}^n U_i,u \satisfies \phi$\end{minipage}}}}
+
+	\newcommand{\atmsetphi}{\atmset'}
+	\newcommand{\restreint}[1]{_{\mid #1}}
+
+	\newcommand\presimpiW{{\stackrel{\sim}{pre}_{\pi,W}}}
+
+	\newcommand{\relationjusteunefleche}[1]{\raisebox{1mm}{\begin{tikzpicture}\draw[#1, ->] (0, 0) -- (0.5, 0);\end{tikzpicture}}}
+
+	\newcommand{\lboxknowmuddychildren}[1]{\programbox{\change(p_{#1})}}
+	\newcommand{\fragmentquelconque}{\mathcal{L}_f\xspace}
+	\newcommand{\Hpath}{H_{\text{path}}}
+
+	\newcommand\boxforconstructingtherestriction[1]{\begin{tikzpicture}\node[dashed, draw=lightgray] {\begin{minipage}{3.5cm}#1\end{minipage}};\end{tikzpicture}}
+
+
+	\newcommand{\testbigformulaandputinparenthesis}[1]{\left(#1\right)?}
+	\newcommand{\putinbigparenthesis}[1]{\left(#1\right)}
+	\newcommand{\problemNEXPTIMEgeneric}{L}
+	\newcommand{\inputturingmachine}{\omega}
+	\newcommand{\inputturingmachinefirstsymbol}{\inputturingmachine_0}
+	\newcommand{\myTuringmachine}{M}
+	\newcommand{\transitiontm}{\delta}
+	\newcommand{\lettertm}{a}
+	\newcommand{\lettertmb}{b}
+	\newcommand{\lettertmc}{c}
+	\newcommand{\reductionfonction}{tr}
+	\newcommand{\reductionfunction}{\reductionfonction}
+	\newcommand{\astate}{q}
+	\newcommand{\statereject}{{q_{rej}}}
+	
+	\newcommand{\statestm}{Q}
+	\newcommand{\tapealphabet}{\Gamma}
+	\newcommand{\programdecx}{\vect x {\assignment} \vect x {-} 1}
+	\newcommand{\programincx}{\vect x {\assignment} \vect x {+} 1}
+	\newcommand{\programinct}{\vect t {\assignment} \vect t {+} 1}
+	\newcommand{\testxequal}[1]{\vect x {=} #1}
+	\newcommand{\testtequal}[1]{\vect t {=} #1}
+	\newcommand{\testxgeq}[1]{\vect x {\geq} #1}
+	\newcommand{\stateinit}{{init}}
+	\newcommand{\stateaccept}{{accept}}
+
+	\newcommand{\formulathatsaythatibehavelikeaturingmachine}{\phi_{exe}}
+	\newcommand{\formulathatsaythatiamwellinitialized}{\phi_{init}}
+	\newcommand{\formulathatsaythatiamanacceptingexecution}{\phi_{accept}}
+
+	\newcommand{\symboleblanc}{\text{\textvisiblespace}}
+	\newcommand{\numberofbitsneeded}{n}
+	\newcommand{\sizeofthegrid}{2^{P(|\inputturingmachine|)}}
+	\newcommand{\vect}[1]{{#1}}
+	\newcommand{\cellindex}{\vect x}
+	\newcommand{\timeindex}{t}
+	\newcommand{\varchoose}{v}
+	\newcommand{\eventmodelchoose}[1]{{\eventmodel_{}^{#1}}}
+\newcommand{\eventinitialchoose}[1]{\setevents_{0}^{#1}}
+	\newcommand{\eventchooseyes}[1]{\event_{}^{#1}}
+	\newcommand{\eventchooseno}[1]{\eventb_{}^{#1}}
+	
+	\newcommand{\universalprogram}{\change(\atmsetformachineM)}
+	\newcommand{\universalprogramdiamond}{\programdia{ \universalprogram }}
+
+	\newcommand{\portionexecution}{part\xspace}
+	\newcommand{\portionsexecution}{parts\xspace}
+	\newcommand{\problemAPOLYexpgeneric}{L}
+	\newcommand\nbofalternations{A(|\inputturingmachine|)}
+	\newcommand{\sizeofaportion}{2^{F(|\inputturingmachine|)}}
+	\newcommand\sizeofthegridAPOLYexp{\nbofalternations {\times} \sizeofaportion}
+
+	\newcommand{\fragmentoneannarbitrarydia}{\logiclanguage{1\annarbitrarydia}}
+
+
+	\newcommand{\atmsetformachineM}{\atmset'}
+	\newcommand\formulaconjunctinthereduction[2]{ \item $#1$ \hfill{\small \raisebox{0mm}{\begin{minipage}{7cm}\scriptsize #2\end{minipage}}} \\[1mm] }
+
+	\newcommand{\labeluniexi}{\ell}
+
+	\newcommand{\formulathatsaythatibehavelikeaturingmachineexists}{\phi_{exe}^\exists}
+	\newcommand{\formulathatsaythatibehavelikeaturingmachineforall}{\phi_{exe}^\forall}
+
+	\newcommand{\sequenceformula}[1]{\psi_{#1}}
+	\newcommand\universalportion[1]{\mathscr{U}_{#1}}
+	\newcommand\universalportionafter[1]{\mathscr{U}^{\text{after}}_{#1}}
+	\newcommand\universalportionbox[1]{\programbox{\mathscr{U}_{#1}}}
+	\newcommand\universalportionafterbox[1]{\programbox{\mathscr{U}^{\text{after}}_{#1}}}
+	\newcommand{\phiunchanged}{\phi_{\text{unfixed}}}
+	\newcommand{\universaldiamond}{\langle \mathscr{U}\rangle}
+	\newcommand{\phiexeexisttoforall}[1]{\phi_{exe, #1}^{\exists \rightarrow \forall}}
+	\newcommand{\phiexeforalltoexists}[1]{\phi_{exe, #1}^{ \forall \rightarrow \exists}}
+
+	\newcommand\formulawithitsowndescription[2]{\item #2:
+		%
+		#1}
+
+
+
+	\newcommand\formulawithitsowndescriptiontwolines[2]{\item #2:
+
+		\hfill	#1}
+
+	\newcommand{\anndia}[1]{ \langle #1 \rangle}
+	%\newcommand{\programdia}[1]{ \left\langle #1 \right\rangle}
+	\newcommand{\programdia}[1]{\hat K_{#1}}
+	\newcommand{\programbox}[1]{ K_{#1}}
+	\newcommand{\programboxcommon}[1]{C_{#1}}
+	\newcommand{\annbox}[1]{ [ #1 ! ]}
+
+	\newcommand{\annarbitrarybox}{ \lbox}
+	\newcommand{\annarbitrarydia}{ \Diamond}
+	\newcommand{\annarbitrarydiagroup}[1]{\Diamond_{#1}}
+
+
+
+	\newcommand\defineproperty[2]{ \colorbox{gray!15}{\begin{minipage}{15cm}#2\end{minipage}}}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%% COMPLEXITY CLASSES %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% needs \usepackage{relsize} and \usepackage{xspace}
+
+\protected\def\DTIME{\ifmmode \mbox{\sc Dtime} \else {\sc Dtime}\xspace\fi}
+\protected\def\NTIME{\ifmmode \mbox{\sc Ntime} \else {\sc Ntime}\xspace\fi}
+\protected\def\DSPACE{\ifmmode \mbox{\sc Dspace} \else {\sc Dspace}\xspace\fi}
+\protected\def\NSPACE{\ifmmode \mbox{\sc Nspace} \else {\sc Nspace}\xspace\fi}
+\protected\def\NP{\ifmmode \mbox{\sc NP} \else {\sc NP}\xspace\fi}
+\protected\def\coNP{\ifmmode \mbox{\sc coNP} \else {\sc coNP}\xspace\fi}
+\protected\def\NPSPACE{\ifmmode \mbox{\sc NPspace} \else {\sc NPspace}\xspace\fi}
+\protected\def\PSPACE{\ifmmode \mbox{\sc Pspace} \else {\sc Pspace}\xspace\fi}
+\protected\def\EXPSPACE{\ifmmode \mbox{\sc Expspace} \else {\sc Expspace}\xspace\fi}
+\protected\def\TWOEXPSPACE{\ifmmode \mbox{\sc 2Expspace} \else {\sc 2Expspace}\xspace\fi}
+\protected\def\PTIME{\ifmmode \mbox{\sc P} \else {\sc P}\xspace\fi}
+\protected\def\NPTIME{\ifmmode \mbox{\sc NP} \else {\sc NP}\xspace\fi}
+\protected\def\EXPTIME{\ifmmode \mbox{\sc Exptime} \else {\sc Exptime}\xspace\fi}
+\protected\def\AEXPTIME{\ifmmode \mbox{\sc Aexptime} \else {\sc Aexptime}\xspace\fi}
+\protected\def\NEXPTIME{\ifmmode \mbox{\sc NExptime} \else {\sc NExptime}\xspace\fi}
+\protected\def\2EXPTIME{\ifmmode \mbox{\sc 2-Exptime} \else {\sc
+		2-Exptime}\xspace\fi}
+\DeclareRobustCommand{\kEXPTIME}[1][k]{\ifmmode \mbox{\sc $#1$-Exptime}
+	\else {\sc $#1$-Exptime}\xspace\fi}
+\DeclareRobustCommand{\kNEXPTIME}[1][k]{\ifmmode \mbox{\sc $#1$-NExptime}
+	\else {\sc $#1$-NExptime}\xspace\fi}
+\DeclareRobustCommand{\kEXPSPACE}[1][k]{\ifmmode \mbox{\sc $#1$-Expspace}
+	\else {\sc $#1$-Expspace}\xspace\fi}
+\protected\def\ELEMENTARY{\ifmmode \mbox{\sc Elementary} \else {\sc Elementary}\xspace\fi}
+\protected\def\AEXPpol{\ifmmode \mbox{{\sc A}_{\text{pol}}\EXPTIME} \else
+	{\sc A}$_{\text{pol}}$\EXPTIME\fi}
+\protected\def\APTIME{\ifmmode \mbox{\sc Aptime} \else {\sc Aptime}\xspace\fi}
+\protected\def\AEXPSPACE{\ifmmode \mbox{\sc Aexpspace} \else {\sc Aexpspace}\xspace\fi}
+\newcommand{\pspace}{\PSPACE}
+\newcommand{\npspace}{\NPSPACE}
+\newcommand{\expspace}{\EXPSPACE}
+\newcommand{\mydecisionproblem}{L}
+\newcommand{\myinstance}{\initialword}
+
+\newcommand{\problemdefinition}[2]{\begin{itemize}
+		\item input: #1
+		\item output: #2\end{itemize}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% ASYNC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\smallsymbolconsistent}{\raisebox{-0.008\linewidth}{\includegraphics[width=.025\linewidth]{fish.png}}\xspace}
+%\newcommand{\consistent}{\checkmark}%{\begin{tikzpicture}\node[draw, inner sep=0.7mm] {$\checkmark$};\end{tikzpicture}}
+%\newcommand{\consistent}{\textrm{\PHeagle}}
+%\newcommand{\consistent}{{\textrm{\PHram}}}
+%\newcommand{\consistent}{\reflectbox{\textrm{\PHcat}}}
+%\newcommand{\consistent}{\reflectbox{\textrm{\PHtunny}}}
+
+\newcommand{\consistent}{\mbox{$\checkmark$}}
+
+\newcommand{\cuttwoagents}[2]{\footnotesize\begin{array}{lll}\agent & \mapsto & #1 \\[-1mm] \agentb & \mapsto & #2 \end{array}}
+\newcommand{\cta}{\cuttwoagents}
+\newcommand{\gloops}[1]{\bigcirc_{#1}}
+\newcommand{\gloups}[1]{\bigcirc}
+
+
+\newcommand{\cut}{c}
+\newcommand{\cutnull}{\mathbf{0}}
+\newcommand{\cutoneagent}[1]{\agent \mapsto #1}
+
+\newcommand{\modelA}[1][\setannouncements]{\kripkemodel\otimes #1}
+\newcommand{\setstates}{\mathcal S}
+\newcommand{\setstatesMA}{\setstates_{\kripkemodel,\setannouncements}}
+
+\newcommand{\wsymbol}{\textsl{w}}
+\newcommand{\wsymbolu}{\textsl{u}}
+\newcommand{\wsymbolv}{\textsl{v}}
+
+
+\newcommand{\interpretmap}{f}
+\newcommand{\prerelation}[1][\agent]{R_{#1}}
+
+\newcommand\asynchronousknows{K}
+\newcommand{\K}{\asynchronousknows}
+
+\newcommand{\ldiaargasync}[1]{\langle#1\rangle_{async}}
+\newcommand{\cutgloupsagent}[2]{{#1}^{+#2}}
+\newcommand{\ldiaargPAL}{\ldiaarg}
+\newcommand\ldiaargprivate[1]{{\ldiaarg{#1}_{private}}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%% EPISTEMIC PLANNING
+\newcommand{\setactions}{\mathbb A}
+\newcommand{\setactionssmith}{\mathbb A_{\text{Smith}}}
+\newcommand{\newsetactionssmith}{\mathbb A'_{\text{Smith}}}
+
+
+%% notations for particular knowledge states
+\newcommand{\modelI}{{\mathcal I}} %finite interval of integers
+\newcommand{\modelZ}{{\mathcal Z}} %all integers
+\newcommand{\valuationZ}{U} %all integers
+
+%\newcommand{\propr}{\e}
+\newcommand{\propr}{\heartsuit}
+% trucs à François
+
+\newcommand{\wordappears}{appears}
+\newcommand{\isword}{\mathsf{wenc}}
+
+\newcommand{\state}{S}
+\newcommand{\statefulltuple}{(\setworlds, (\epistemicrelation \agent)_{\agent \in \agtset}, \valuation, \worldinitial)}
+\newcommand\statefulltuplea{(\setworlds, (\epistemicrelation \agent)_{\agent \in \agtset}, \valuation, \world)}
+\newcommand\statefulltupleb{(\setworlds, (\epistemicrelation \agent)_{\agent \in \agtset}, \valuation, \worldb)}
+\newcommand{\initialstate}[1]{\state_{#1}}
+
+\newcommand\action{\actionfont A}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CELLULAR AUTOMATA
+\newcommand{\cellularautomaton}{{\mathcal A}}
+\newcommand{\cellularautomatontransitionfunction}{f}
+\newcommand{\lindgrenandnordahlfunction}{f_7}
+\newcommand{\lindgrenandnordahlsymbolset}{\Sigma_7}
+\newcommand{\textvisiblespacemath}{\text{\textvisiblespace}}
+\newcommand{\lindgrenandnordahlautomaton}{\cellularautomaton_{7}}
+
+
+\tikzstyle{cell} = [draw,minimum height=5mm,minimum width=5mm]
+\tikzset{
+	cellcolor/.cd,
+	0/.style={fill=gray!20!white},
+	1/.style={fill=yellow!20!white}
+}
+\tikzstyle{cellalive} = [fill=yellow!20!white]
+\newcommand{\cellularautomatontransitionfunctionpicture}[4]
+{\scalebox{0.7}{\begin{tikzpicture}[scale=0.5]
+		\node[cell,cellcolor/#1] at (-1,0) {#1};
+		\node[cell,cellcolor/#2] at (0,0) {#2};
+		\node[cell,cellcolor/#3] at (1,0) {#3};
+		\node[cell,cellcolor/#4,line width=0.7mm] at (0,-1) {#4};
+		\end{tikzpicture}}}
+
+\newcommand{\cellularautomatontransitionfunctionpicturenocolor}[4]
+{\scalebox{1}{\begin{tikzpicture}[scale=0.5]
+		\node[cell] at (-1,0) {#1};
+		\node[cell] at (0,0) {#2};
+		\node[cell] at (1,0) {#3};
+		\node[cell,line width=0.7mm] at (0,-1) {#4};
+		\end{tikzpicture}}}
+
+\newcommand{\configurationexample}[9]
+{\scalebox{0.7}{\begin{tikzpicture}[scale=0.5]
+		\node at (-0.2,0) {$\dots$};
+		\node[cell,cellcolor/#1] at (1,0) {#1};
+		\node[cell,cellcolor/#2] at (2,0) {#2};
+		\node[cell,cellcolor/#3] at (3,0) {#3};
+		\node[cell,cellcolor/#4] at (4,0) {#4};
+		\node[cell,cellcolor/#5] at (5,0) {#5};
+		\node[cell,cellcolor/#6] at (6,0) {#6};
+		\node[cell,cellcolor/#7] at (7,0) {#7};
+		\node[cell,cellcolor/#8] at (8,0) {#8};
+		\node[cell,cellcolor/#9] at (9,0) {#9};
+		\node at (10.2,0) {$\dots$};
+		\end{tikzpicture}}}
+
+\newcommand{\smithautomaton}{\cellularautomaton_{\text{Smith}}}
+\newcommand{\smithalphabet}{\Sigma_{\text{Smith}}}
+\newcommand{\smithtransitionfunction}{f_{\text{Smith}}}
+\newcommand{\minskyturingmachine}{M_{\text{Minsky}}}
+\newcommand{\smithfinalword}{\haltingword_{\text{Smith}}}
+\newcommand{\haltingword}{h}
+\newcommand{\haltingworldruleoneonezero}{\haltingword_{\text{R110}}}
+\newcommand{\rightarrowruleoneonezero}{\rightarrow_{\cellularautomatononeonezero}}
+\newcommand{\cellularautomatonconfiguration}{c} %\sigma pas bon car on a l'impression que c'est un élément de \Sigma
+\newcommand{\cellularautomatonalphabet}{\Sigma}
+\newcommand{\epistemicplanningproblemC}[1]{\text{EPC}_{\text{#1}}}
+\newcommand{\epistemicplanningproblemK}[1]{\text{EPK}_{\text{#1}}}
+
+
+%%%%%%%%%%%%%%%%%%%% remarkable actions %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\actionfont}[1]{\mathbf{#1}}
+\newcommand{\actionf}{\actionfont F}
+\newcommand{\actionfsmith}{\actionf_{\text{Smith}}}
+\newcommand{\newactionfsmith}{\actionfsmith'}
+\newcommand{\actionfruleoneonezero}{\actionf_{\text{R110}}}
+\newcommand{\newactionfruleoneonezero}{\actionfruleoneonezero'}
+\newcommand{\actiongrow}{\actionfont G}
+\newcommand{\actionshiftlsmith}{\actionfont L_{\text{Smith}}}
+\newcommand{\actionshiftrsmith}{\actionfont R_{\text{Smith}}}
+\newcommand{\actionshiftlruleoneonezero}{\actionfont L_{\text{R110}}}
+\newcommand{\actionshiftrruleoneonezero}{\actionfont R_{\text{R110}}}
+\newcommand{\eventruleoneonezero}{e_{\text{R110}}}
+
+
+%%%%%%%%%%%%%% remarkable atomic propositions %%%%%%%%%%%%%%%%
+
+\newcommand{\shiftprop}{s}
+\newcommand{\grow}{g}
+
+
+%%%%% finite words %%%%%%%%
+\newcommand{\word}{\alpha}
+\newcommand{\worda}{\alpha}
+\newcommand{\wordb}{\beta}
+\newcommand{\wordc}{\gamma}
+\newcommand{\infword}{\sigma}
+\newcommand{\periodicword}{\worda^\omega\wordb\wordc^\omega}
+\newcommand{\size}[1]{|#1|}
+\newcommand{\letter}{\ell}
+
+\newcommand{\aword}{\eta}
+\newcommand{\awordb}{\zeta}
+%%%%%%%%%% finite-word automata %%%%%%%%%%%%
+\newcommand{\automaton}{{\mathcal B}}
+
+
+
+%%% truc tikz de François
+\newcommand{\putworldinfigure}[1]{\node[world] (q#1)  at (#1*2, 0) {${#1}$};}
+
+\newcommand{\oneright}{\propr}
+\newcommand{\alive}{a}
+\newcommand{\propleft}{x}
+\newcommand{\prophere}{y}
+\newcommand{\propright}{z}
+\newcommand{\cellularautomatononeonezero}{\cellularautomaton_{\text{\tiny R110}}}
+\newcommand{\binaryalphabet}{\set{0, 1}}
+\newcommand{\psiruleoneonezero}{{f_{\text{\tiny 110}}}}
+
+\newcommand\encodingofsymbol[1]{\mathsf{enc}(#1)}
+
+\newcommand{\vecpmoins}{\vec p^{~\!-}}
+\newcommand{\vecp}{\vec p}
+\newcommand{\vecpplus}{\vec p^{~\!+}}
+
+\newcommand{\param}{m}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% TABLEAU RULES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\sequence}{;}
+\newcommand{\tableauinfer}[3]{\infer[#1]{#3}{#2}}
+
+\newcommand\sigmanew{\sigma_\text{new}}
+
+
+\newcommand{\worldinproductwi}{\sigma ~~ \vec e~~}
+\newcommand{\worldinproductwiplus}{\sigma ~~ \vec e\sequence e~~}
+\newcommand{\worldinproductwisummary}{\sigma\;\vec e\;}
+\newcommand{\worldinproductui}{\sigma_1 ~~ \vec f~~}
+\newcommand{\worldinproductuinew}{\sigmanew ~~ \vec f~~}
+\newcommand{\notok}{\otimes}
+\newcommand{\ok}{\checkmark}
+
+\newcommand{\fail}{\bot}
+\newcommand{\tableaulabels}{\mathfrak{Lab}}
+
+\newcommand{\concatenation}{{::}}
+
+\newcommand\listeventsempty\epsilon
+\newcommand{\listevents}{{\overrightarrow{\event}}}
+\newcommand{\listeventmodels}{\overrightarrow \eventmodel}
+\newcommand{\listeventsb}{{\listevents'}}
+\newcommand{\tableauterm}[2]{(#1~~ #2)}
+\newcommand\propositionsurvives[1]{in_{#1}}
+\newcommand{\phitableaurules}{\Phi_{tableau}(\phi)}
+
+
+
+\newcommand{\closureofformula}[1]{Cl(#1)}
+\newcommand{\closureofformulaphi}{\closureofformula \Phi}
+\newcommand{\closure}[2]{Cl_{#1}(#2)}
+\newcommand\hintikkaset{h}
+\newcommand\hintikkastructure{\mathcal H}
+\newcommand\hintikkasetsets{H}
+\newcommand{\dmd}{dmd}
+\newcommand{\algorithmdelcksat}{is$\logicDELCK$-sat?}
+\newcommand{\logtwo}{\log_2}
+
+\newcommand{\indicedanschemin}[1]{^{(#1)}}
+\newcommand{\formulatotestsat}{\Phi}
+\newcommand{\negationnnf}{\sim\!}
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%% SAT DEL CK EN VRAC %%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\atomuniv}{p_\forall}
+\newcommand{\atomexists}{p_\exists}
+\newcommand{\initialword}{\omega}
+\newcommand{\tapesize}{N}
+\newcommand{\execagent}{{ex}}
+\newcommand{\tapeagent}{{t}}
+\newcommand{\statequantification}{g}
+\newcommand{\languageof}[1]{\mathcal{L}(#1)}
+\newcommand{\atmsettm}{{\atmset_{\myTuringmachine}}}
+\newcommand{\atomwin}{\atom_{win}}
+
+\newcommand{\logboxmarg}[1]{[#1]}
+\newcommand{\choosepruning}{\logboxmarg{\mathtt{choosev}}}
+
+\newcommand{\transitionformula}[1]{\formula_{#1}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% EPISTEMIC PLANNING PROPOSITIONAL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\dirset}{\setevents}%{{\mc{E}}}
+\newcommand{\direction}{e}
+
+
+%% automatic structures
+\newcommand{\Dom}{D}
+\newcommand{\elem}{d}
+\newcommand{\rel}{R}
+\newcommand{\func}{r}
+\newcommand{\treearity}{n}
+
+\newcommand{\FOstruct}{{\mathcal A}}
+\newcommand{\FOstructtuple}{\FOstruct = \langle \Dom, \rel_1 \dots \rel_p \rangle}
+\newcommand{\FOtreetuple}{\langle \Dom, r,\suc_1, \dots, \suc_n, R_1, \dots, R_p \rangle}
+\newcommand{\AS}{A}
+\newcommand{\AStuple}{(\transddelta, \transdi[1], \ldots, \transdi[p])}
+\newcommand{\ASpresent}{\AS=\AStuple}
+
+\newcommand{\Chainstruct}{\mc{C}}
+\newcommand{\Chain}{Ch}
+\newcommand{\chain}{C}
+\newcommand{\Chainstructtuple}[1][\Chain]{\Chainstruct = \langle \Dom, \rel_1 \dots \rel_p,#1 \rangle}
+
+\newcommand{\decfunc}{\encfunc^{-1}}
+\newcommand{\encfunc}{\texttt{enc}}
+
+\newcommand{\langdelta}{L_{\Dom}}
+\newcommand{\langepsilon}{L_{\epsilon}}
+\newcommand{\langrel}[1][i]{L_{#1}}
+
+\newcommand{\wordchain}{C}
+%% regular automatic trees
+\newcommand{\rootnode}{r}
+\newcommand{\addresse}{\encfunc}
+\newcommand{\suc}{S}
+\newcommand{\FOtree}{{\mathcal T}}
+\newcommand{\FOKtreetuple}{\FOtree = \langle \Dom, \rootnode, \suc_1, \ldots, \suc_n,\lknow{1} \dots \lknow{m},(p)_{p \in AP} \rangle}
+\newcommand{\AT}{T}
+\newcommand{\ATtuple}{\langle \transddelta, \transd_\rootnode, (\transdi')_{1 \leq i \leq  \treearity}, (\transdi)_{1 \leq i \leq  p} \rangle}
+\newcommand{\ATpresent}{\AT=\ATtuple}
+\newcommand{\el}{\textsf{el}}
+
+%\newcommand{\Branch}{\Pi}
+\newcommand{\branch}{\pi}
+\newcommand{\Branches}{\textsf{Branches}}
+\newcommand{\encoding}{\gamma}
+\newcommand{\Tree}{\textsf{Tree}}
+
+\newcommand{\mbranch}{\textsf{mbranch}}
+\newcommand{\code}{\encfunc}%{\textsf{code}}
+% logics
+\newcommand{\valu}{\sigma}
+\newcommand{\Var}{\mathcal{V}}
+\newcommand{\Varfo}{\Var_1}
+\newcommand{\Varmso}{\Var_2}
+\newcommand{\Sing}[1]{\textsf{Sing}(#1)}
+\newcommand{\Singonly}{\textsf{Sing}}
+\newcommand{\isBranchfrom}[2]{\textsf{pathfrom}[#1,#2]}
+%\newcommand{\isBranchto}[2]{\textsf{pathto}[#1,#2]}
+%\newcommand{\fromtoBranch}[3]{\textsf{pathfromto}[#1,#2,#3]}
+\newcommand{\Inf}{\textsf{Inf}}
+
+\newcommand{\lettera}{\mathsf a}
+\newcommand{\letterb}{\mathsf b}
+\newcommand{\letterainteger}{\mathtt 0}
+\newcommand{\letterbinteger}{\mathtt 1}
+\newcommand{\pairvertical}[2]{\left(\substack{#1\\ #2}\right)}
+\newcommand{\tripletvertical}[3]{\left(\substack{#1\\ #2\\ #3}\right)}
+
+\newcommand{\pc}{\preccurlyeq}
+\newcommand{\bin}{\texttt{bin}}
+
+
+
+
+\newcommand{\relhist}{\bm{\rightarrow}} % symbole pour relation épistémique d'un modèle épistémique
+\newcommand{\relhiststar}{\relhist^*}
+\newcommand{\trace}{h}
+\newcommand{\traceSet}{\mathcal H}
+\newcommand{\DELpres}{(\modelM,\eventmodel)}
+\NewDocumentCommand{\update}{O{}}{\modelM \otimes \eventmodel^{#1}}
+\NewDocumentCommand{\DELstruct}{O{*}}{\modelM \eventmodel^{#1}}
+\newcommand{\DELstructfull}{\DELstruct=
+	(\traceSet,\relhist, \relhiststar, \{\relM{\agent}\}_{\agent\in\agtset},\valuationfunction)}
+\newcommand{\DELstructOnlyKnowledgeAndRelHistfull}{\DELstruct=
+	(\traceSet,(\suc_\event)_{\event\in\dirset}, (\epistemicrelation{\agent})_{\agent\in\agtset},(\atom)_{\atom \in \atmset})}
+\newcommand{\DELstructOnlyKnowledgefull}{\DELstruct=
+	(\traceSet, \{\relM{\agent}\}_{\agent\in\agtset},\valuationfunction)}
+
+
+	
+	
+\newcommand{\chapteradaptedfrom}[1]{\begin{center}
+		\fbox{This chapter is adapted from \cite{#1}.}
+\end{center}}
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%% TILINGS %%%%%%%%%%%%%%%%
+
+%\tile x y colorleft colorup colorright colorbottom
+\newcommand{\tile}[6]{
+	%left
+	\draw[fill=#3] (#1,#2) -- (#1,#2+1) -- (#1+0.5, #2+0.5) -- (#1, #2);
+	%
+	%up
+	\draw[fill=#4] (#1,#2+1)-- (#1+1,#2+1) -- (#1 +0.5, #2+0.5) -- (#1, #2+1);
+	%
+	%right
+	\draw[fill=#5] (#1+1,#2)-- (#1+1,#2+1) -- (#1 +0.5, #2+0.5) -- (#1 +1, #2);
+	%
+	%bottom
+	\draw[fill=#6] (#1,#2)-- (#1 +1,#2) -- (#1 +0.5, #2+0.5) -- (#1, #2);
+	%
+	\draw[fill=black] (#1+0.5, #2+0.5) -- (#1+0.6, #2+0.4) -- (#1+0.4, #2+0.4) -- cycle;
+}
+
+
+
+
+\newcommand{\tiletext}[6]{
+	\tile {#1} {#2} {none} {none} {none} {none}
+	\node at (#1+0.25, #2+0.5) {#3}; %left
+	\node at (#1+0.5, #2+0.8) {#4}; %up
+	\node at (#1+0.75, #2+0.5) {#5}; %right
+	\node at (#1+0.5, #2+0.1) {#6}; %bottom
+}
+
+
+
+
+\newcommand{\tilered}{red!80}
+\newcommand{\tileyellow}{yellow!50}
+\newcommand{\tilegreen}{green!70}
+\newcommand{\tileblue}{blue!50}
+
+
+\newcommand{\whitetile}[2]{\tile{#1}{#2}{white}{white}{white}{white}}
+
+
+
+\newcommand{\espace}{\textvisiblespace}
+
+
+\definecolor{C}{rgb}{1,1,1}
+\definecolor{C }{rgb}{0.8,0.8,0.8}
+
+\definecolor{Ca}{rgb}{0.95,1,0.5}
+\definecolor{Cb}{rgb}{1,0.9,0.5}
+\definecolor{Cw_2}{rgb}{0.95,1,0.5}
+\definecolor{Cw_n}{rgb}{1,0.9,0.5}
+
+\definecolor{Cq'-}{rgb}{0.5,0.5,1}
+\definecolor{C-q_0}{rgb}{0.5,0.5,1}
+\definecolor{C-q_1}{rgb}{0.5,0.4,1}
+\definecolor{C-q'}{rgb}{0.5,0.8,0.5}
+\definecolor{Cq_f-}{rgb}{0.4,0.9,0.5}
+
+
+\definecolor{Cq_0,w_1}{rgb}{1,0.6,0.5}
+\definecolor{Cq_0,}{rgb}{1,0.6,0.4}
+\definecolor{Cq_2,}{rgb}{0.8,0.9,0.4}
+\definecolor{Cq_2,a}{rgb}{0.8,0.9,0.4}
+\definecolor{Cq_f,a}{rgb}{0.7,0.9,0.4}
+\definecolor{Cq_0,a}{rgb}{1,0.6,0.5}
+\definecolor{Cq_0,b}{rgb}{1,0.5,0.5}
+\definecolor{Cq_1,a}{rgb}{1,0.5,0.4}
+\definecolor{Cq_1,b}{rgb}{1,0.4,0.4}
+\definecolor{Cq,a}{rgb}{1,0.5,0.5}
+\definecolor{Cq',a}{rgb}{1,0.5,0.5}
+\definecolor{Cq',b}{rgb}{1,0.5,0.5}
+\definecolor{Cq_0,1}{rgb}{0.5,0.5,0.5}
+
+%\newcommand\nettoyerforcolor[1]{\StrSubstitute{#1}{_}{_}[#1]}
+\newcommand{\tiletextcolor}[6]{
+	\def\templeft{C#3}	
+	\def\tempup{C#4}
+	\def\tempright{C#5}
+	\def\tempdown{C#6}
+	\tile{#1}{#2}{\templeft}{\tempup}{\tempright}{\tempdown}
+	\tiletext {#1} {#2} {$#3$} {$#4$} {$#5$} {$#6$}}
+
+\newcommand{\tileinit}[3]{
+	\tiletextcolor {#1} {#2} {} { } {} {#3}}
+
+
+\newcommand{\tilecopy}[3]{
+	\tiletextcolor {#1} {#2} {} {#3} {} {#3}}
+
+%x y q a b q2
+\newcommand{\tilegotoright}[6]{
+	\tiletextcolor {#1} {#2} {} {#3,#4} {-#6} {#5}}
+
+%x y q a b q2
+\newcommand{\tilegotoleft}[6]{
+	\tiletextcolor {#1} {#2} {#6-} {#3,#4} {} {#5}}
+
+%x y q a b q2
+\newcommand{\tilegoto}[6]{
+	\tiletextcolor {#1} {#2} {} {#3,#4} {} {#6,#5}}
+
+
+%x y q a
+\newcommand{\tilerecfromright}[4]{
+	\tiletextcolor {#1} {#2} {-#3} {#4} {} {#3,#4}}
+
+
+%x y q a
+\newcommand{\tilerecfromleft}[4]{
+	\tiletextcolor {#1} {#2} {} {#4} {#3-} {#3,#4}}
+
