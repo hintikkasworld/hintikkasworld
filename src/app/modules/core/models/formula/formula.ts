@@ -302,7 +302,7 @@ export class ImplyFormula implements Formula {
     }
 
     prettyPrint(): string {
-        return '(' + this._formula1.prettyPrint() + ' -> ' + this._formula2.prettyPrint() + ')';
+        return '(' + this._formula1.prettyPrint() + ' => ' + this._formula2.prettyPrint() + ')';
     }
 }
 
@@ -333,7 +333,7 @@ export class EquivFormula implements Formula {
     }
 
     prettyPrint(): string {
-        return '(' + this._formula1.prettyPrint() + ' <-> ' + this._formula2.prettyPrint() + ')';
+        return '(' + this._formula1.prettyPrint() + ' <=> ' + this._formula2.prettyPrint() + ')';
     }
 }
 
@@ -483,9 +483,9 @@ export class FormulaFactory {
                     formulas.push(this.installFormula(ast[i]));
                 }
                 return new XorFormula(formulas);
-            } else if (ast[1] == '->' || ast[1] == 'imply') {
+            } else if (ast[1] == '=>' || ast[1] == 'imply') {
                 return new ImplyFormula(this.installFormula(ast[0]), this.installFormula(ast[2]));
-            } else if (ast[1] == '<->' || ast[1] == 'equiv') {
+            } else if (ast[1] == '<=>' || ast[1] == 'equiv') {
                 return new EquivFormula(this.installFormula(ast[0]), this.installFormula(ast[2]));
             } else if (ast[0] == 'exactly' && !+ast[1].isNaN) {
                 // The operator +ast[1] converts the string ast[1] into an int.
