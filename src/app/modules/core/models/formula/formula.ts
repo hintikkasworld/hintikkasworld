@@ -376,6 +376,10 @@ export class ExactlyFormula implements Formula {
         return s;
     }
 
+
+    /**
+     * convert the Exactly formula in a Boolean formula that contains only And, Or, Not operators
+     */
     convertToNormalFormula(): Formula {
         const cache = new Map<string, Formula>();
         const rec = (n, k) => {
