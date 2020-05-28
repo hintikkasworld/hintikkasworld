@@ -196,7 +196,7 @@ export class MineSweeper extends ExampleDescription {
     clicked;
 
     static getAtomicProposition(r, c) {
-        return r.toString() + '_' + c.toString();
+        return "p_" + r.toString() + '_' + c.toString();
     }
 
     getDescription(): string[] {
@@ -296,7 +296,9 @@ export class MineSweeper extends ExampleDescription {
             }
 
             getSetWorldsFormulaDescription(): Formula {
-                return new ExactlyFormula(example.nbmines, this.getAtomicPropositions());
+                let f = new ExactlyFormula(example.nbmines, this.getAtomicPropositions());
+                console.log(f.convertToNormalFormula());
+                return f;
             }
 
             getRelationDescription(agent: string): SymbolicRelation {
