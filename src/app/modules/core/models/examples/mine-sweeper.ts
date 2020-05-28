@@ -297,7 +297,7 @@ export class MineSweeper extends ExampleDescription {
 
             getSetWorldsFormulaDescription(): Formula {
                 let f = new ExactlyFormula(example.nbmines, this.getAtomicPropositions());
-                console.log(f.convertToNormalFormula());
+                console.log(f.convertToNormalFormula().prettyPrint());
                 return f;
             }
 
