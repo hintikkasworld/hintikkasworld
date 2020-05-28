@@ -382,6 +382,13 @@ export class ExactlyFormula implements Formula {
      */
     convertToNormalFormula(): Formula {
         const cache = new Map<string, Formula>();
+
+        /**
+         * 
+         * @param n 
+         * @param k 
+         * @returns the formula expressing that n variables are true among the first k variables
+         */
         const rec = (n, k) => {
             const key = [n, k].join(';');
             if (cache.has(key)) {
