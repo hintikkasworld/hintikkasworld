@@ -22,7 +22,7 @@ export class TrueFormula implements Formula {
     }
 
     prettyPrint(): string {
-        return 'true';
+        return 'Top';
     }
 }
 
@@ -38,7 +38,7 @@ export class FalseFormula implements Formula {
     }
 
     prettyPrint(): string {
-        return 'false';
+        return 'Bot';
     }
 }
 
@@ -381,53 +381,53 @@ export class ExactlyFormula implements Formula {
      * convert the Exactly formula in a Boolean formula that contains only And, Or, Not operators
      */
     convertToNormalFormula(): Formula {
-        const cache = new Map<string, Formula>();
-        let rec_formulas = [];
 
-        let uid = Math.random().toString(36).substr(2, 9); // only need one uid per exact formula, reduces chances of collision
+        let uid = Math.random().toString(36).substr(2, 9);
 
         /**
-      * 
-      * @param n 
-      * @param k 
-      * @returns the formula expressing that n variables are true among the first k variables
-      */
-        const rec = (n, k) => {
-            if (k == 0) {
-                return new FalseFormula();
-            }
-
-            const key = [n, k].join(';');
-            if (cache.has(key)) {
-                return cache.get(key);
-            }
-
-            let res;
+         * Name of the k choose n variable or its formula if trivial
+         *
+         * @param k number of picks
+         * @param n number of variables
+         */
+        const name = (k, n) => {
 
             if (n == 0) {
-                res = new AndFormula(this.variables.slice(0, k).map((v) => new NotFormula(new AtomicFormula(v))));
-            } else {
-                const x = this.variables[k - 1];
-                const subform_if_x = rec(n - 1, k - 1);
-                const subform_if_not_x = rec(n, k - 1);
-                res = new OrFormula([
-                    new AndFormula([new AtomicFormula(x), subform_if_x]),
-                    new AndFormula([new NotFormula(new AtomicFormula(x)), subform_if_not_x])
-                ]);
+                if (k == 0)
+                    return new TrueFormula();
+                else
+                    return new FalseFormula();
             }
 
-            let name = new AtomicFormula("C" + uid + "_" + n + "_" + k);
+            if (k == 0) {
+                return new AndFormula(this.variables.slice(0, n).map((v) => new NotFormula(new AtomicFormula(v))));
+            }
 
-            res = new EquivFormula(name, res);
-            rec_formulas.push(res);
-
-            cache.set(key, name);
-            return name;
+            return new AtomicFormula("C" + uid + "_" + k + "_" + n);
         };
 
-        rec(this.count, this.variables.length);
+        let conjuction = [];
 
-        return new AndFormula(rec_formulas);
+        for(let n = 1; n <= this.variables.length; n++) {
+            for (let k = Math.max(1, this.count - (this.variables.length - n)); k <= this.count; k++) {
+                let Cnk = name(k, n);
+
+                const x = new AtomicFormula(this.variables[n - 1]);
+                const subform_if_x = name(k - 1, n - 1);
+                const subform_if_not_x = name(k, n - 1);
+
+                let res = new OrFormula([
+                    new AndFormula([x, subform_if_x]),
+                    new AndFormula([new NotFormula(x), subform_if_not_x])
+                ]);
+
+                conjuction.push(new EquivFormula(Cnk, res));
+            }
+        }
+
+        conjuction.push(name(this.count, this.variables.length));
+
+        return new AndFormula(conjuction);
     }
 }
 
