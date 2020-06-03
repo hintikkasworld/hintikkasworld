@@ -4,7 +4,6 @@ import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Obs } from '../epistemicmodel/symbolic-relation';
 import { AndFormula, AtomicFormula, ExactlyFormula, Formula, ImplyFormula, NotFormula, OrFormula, TrueFormula } from '../formula/formula';
-import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 import { Environment } from '../environment/environment';
 import { EventModelAction } from '../environment/event-model-action';
@@ -22,28 +21,6 @@ class Point2D {
 
 function getRandomNumber(a: number, b: number) {
     return a + Math.round(Math.random() * (b - a));
-}
-
-function curryClass(SourceClass, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
-    let curriedArgs = Array.prototype.slice.call(arguments, 1);
-
-    return function curriedConstructor() {
-        let combinedArgs = curriedArgs.concat(Array.prototype.slice.call(arguments, 0));
-
-        // Create an object that inherits from `proto`
-        let hasOwnProto = Object(SourceClass.prototype) === SourceClass.prototype;
-        let obj = Object.create(hasOwnProto ? SourceClass.prototype : Object.prototype);
-
-        // Apply the function setting `obj` as the `this` value
-        let ret = SourceClass.apply(obj, combinedArgs);
-
-        if (Object(ret) === ret) {
-            // the result is an object?
-            return ret;
-        }
-
-        return obj;
-    };
 }
 
 /**
@@ -620,7 +597,20 @@ export class BattleShip extends ExampleDescription {
             }
         }
 
-        return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorBattleShip());
+        let valToWorld = (val: Valuation): WorldValuation => {
+            return new BattleShipWorld(
+                this.nbrows,
+                this.nbcols,
+                this.agents,
+                this.ships,
+                this.clickeda,
+                this.clickedb,
+                this.hasshipa,
+                this.hasshipb,
+                val);
+        }
+
+        return new SymbolicEpistemicModel(valToWorld, new SEModelDescriptorBattleShip());
     }
 
     getValuationExample(): Valuation {
@@ -735,20 +725,6 @@ export class BattleShip extends ExampleDescription {
                 })
             );
         }
-    }
-
-    getWorldClass(): import('../epistemicmodel/world-valuation-type').WorldValuationType {
-        return (curryClass(
-            BattleShipWorld,
-            this.nbrows,
-            this.nbcols,
-            this.agents,
-            this.ships,
-            this.clickeda,
-            this.clickedb,
-            this.hasshipa,
-            this.hasshipb
-        ) as unknown) as WorldValuationType;
     }
 
     getDescription(): string[] {

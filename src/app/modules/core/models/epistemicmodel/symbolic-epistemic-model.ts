@@ -7,7 +7,6 @@ import { World } from './world';
 import { AndFormula, AtomicFormula, Formula, NotFormula } from '../formula/formula';
 import * as types from './../formula/formula';
 import { BDDNode } from '../../../../services/bdd.service';
-import { WorldValuationType } from './world-valuation-type';
 import { SEModelDescriptor } from './descriptor/se-model-descriptor';
 import { SEModelInternalDescriptor } from './descriptor/se-model-internal-descriptor';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
@@ -41,12 +40,12 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * symbolic examples. SEModelInternalDescriptor is used in the
      * clone a model.
      * For more example, please check symbolic models like belote or minesweeper
-     * @param worldClass
+     * @param valToWorld a function to transform a valuation into the symbolic world
      * @param descr a descriptor to initialize every
      */
-    constructor(worldClass: WorldValuationType, descr: SEModelDescriptor | SEModelInternalDescriptor) {
+    constructor(valToWorld: (val: Valuation) => WorldValuation, descr: SEModelDescriptor | SEModelInternalDescriptor) {
         console.log('SymbolicEpistemicModel.constructor');
-        this.worldClass = worldClass;
+        this.valToWorld = valToWorld;
         this.pointedValuation = descr.getPointedValuation();
         this.agents = descr.getAgents();
 
@@ -65,7 +64,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     private bddSetWorlds: BDDNode;
     private readonly agents: string[];
 
-    private readonly worldClass: WorldValuationType;
+    private readonly valToWorld: (val: Valuation) => WorldValuation;
 
     /**
      * Store for each agent the corresponding BDDNode
@@ -155,7 +154,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
     public getWorld(valuation: Valuation): WorldValuation {
         let key = valuation.toString();
         if (this.worlds[key] == undefined) {
-            this.worlds[key] = new this.worldClass(valuation);
+            this.worlds[key] = this.valToWorld(valuation);
         }
         // console.log("GET WORLD", this.worlds[key], this.worlds[key].valuation)
         return this.worlds[key];
@@ -255,8 +254,8 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return this.propositionalAtoms;
     }
 
-    getWorldClass(): WorldValuationType {
-        return this.worldClass;
+    getValToWorld(): ((Valuation) => WorldValuation) {
+        return this.valToWorld;
     }
 
     /**

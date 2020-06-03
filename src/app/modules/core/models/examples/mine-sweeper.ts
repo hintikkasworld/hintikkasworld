@@ -8,7 +8,6 @@ import { Environment } from '../environment/environment';
 import { Valuation } from '../epistemicmodel/valuation';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
-import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 
 class Cell {
@@ -19,28 +18,6 @@ class Cell {
 class Point2D {
     x: number;
     y: number;
-}
-
-function curryClass(SourceClass, arg1, arg2, arg3) {
-    let curriedArgs = Array.prototype.slice.call(arguments, 1);
-
-    return function curriedConstructor() {
-        let combinedArgs = curriedArgs.concat(Array.prototype.slice.call(arguments, 0));
-
-        // Create an object that inherits from `proto`
-        let hasOwnProto = Object(SourceClass.prototype) === SourceClass.prototype;
-        let obj = Object.create(hasOwnProto ? SourceClass.prototype : Object.prototype);
-
-        // Apply the function setting `obj` as the `this` value
-        let ret = SourceClass.apply(obj, combinedArgs);
-
-        if (Object(ret) === ret) {
-            // the result is an object?
-            return ret;
-        }
-
-        return obj;
-    };
 }
 
 class MineSweeperWorld extends WorldValuation {
@@ -254,10 +231,6 @@ export class MineSweeper extends ExampleDescription {
         return A;
     }
 
-    getWorldClass(): WorldValuationType {
-        return (curryClass(MineSweeperWorld, this.nbrows, this.nbcols, this.clicked) as unknown) as WorldValuationType;
-    }
-
     /*
      * @returns the initial Kripke model of MineSweeper
      * where agent 2 only knows there are exactly two bombs.
@@ -296,7 +269,11 @@ export class MineSweeper extends ExampleDescription {
 
         this.clicked = {};
 
-        return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorFormulaMineSweeper());
+        let valToWorld = (val: Valuation): WorldValuation => {
+            return new MineSweeperWorld(this.nbrows, this.nbcols, this.clicked, val);
+        };
+
+        return new SymbolicEpistemicModel(valToWorld, new SEModelDescriptorFormulaMineSweeper());
     }
 
     /* @returns the Kripke model where the agent looses*/

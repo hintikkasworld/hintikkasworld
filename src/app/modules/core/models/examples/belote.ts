@@ -234,7 +234,8 @@ export class Belote extends ExampleDescription {
             }
         }
 
-        return new SymbolicEpistemicModel(BeloteWorld, new SEModelDescriptorFormulaBelote());
+        let valToWorld = (val: Valuation): WorldValuation => { return new BeloteWorld(val); };
+        return new SymbolicEpistemicModel(valToWorld, new SEModelDescriptorFormulaBelote());
     }
 
     getAtomicPropositions(): string[] {

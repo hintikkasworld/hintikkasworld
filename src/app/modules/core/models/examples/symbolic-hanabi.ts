@@ -12,6 +12,7 @@ import { SymbolicEvent } from '../eventmodel/symbolic-event';
 import { BDDNode } from '../../../../services/bdd.service';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
+import { Simple } from './simple';
 
 class Point {
     x: number;
@@ -419,7 +420,10 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         /* Create Obs <<SymbolicRelation>> which represent relations of each agent like var_a_c <-> var_a_c_p */
 
         // SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, this.variables, symbolicRelations, rules, new Valuation(propositions));
-        return new SymbolicEpistemicModel(SimpleHanabiWorld, new SEModelDescriptorHanabi());
+        let valToWorld = (val: Valuation): WorldValuation => {
+            return new SimpleHanabiWorld(val);
+        }
+        return new SymbolicEpistemicModel(valToWorld, new SEModelDescriptorHanabi());
     }
 
     async getEventModelPlay(agent: string, card: number, destination: string): Promise<SymbolicEventModel> {
