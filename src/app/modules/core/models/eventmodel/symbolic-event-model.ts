@@ -1,13 +1,13 @@
 import { EventModel } from './event-model';
 import { SymbolicEvent } from './symbolic-event';
-import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
+import { SymbolicEpistemicModelBDD } from '../epistemicmodel/symbolic-epistemic-model-bdd';
 import { BDDNode } from '../../../../services/bdd.service';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
 
 type EventId = string;
 type AgentId = string;
 
-export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel> {
+export class SymbolicEventModel implements EventModel<SymbolicEpistemicModelBDD> {
     /**
      * Construct SymbolicEventModel
      * @param agents list of agent as strings
@@ -70,7 +70,7 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel> {
      * @param varName variable
      */
     static getPrimedPostedVarName(varName: string): string {
-        return SymbolicEventModel.getPostedString() + varName + SymbolicEpistemicModel.getPrimedString();
+        return SymbolicEventModel.getPostedString() + varName + SymbolicEpistemicModelBDD.getPrimedString();
     }
 
     /**
@@ -91,7 +91,7 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel> {
     }
 
     static removePrime(variable: string): string {
-        return variable.replace(SymbolicEpistemicModel.getPrimedString(), '');
+        return variable.replace(SymbolicEpistemicModelBDD.getPrimedString(), '');
     }
 
     static getMapPostedToNotPosted(variables: string[]): Map<string, string> {
@@ -121,8 +121,8 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel> {
 
             if (prime) {
                 /* if primed : var1 = var1' , var2 = var2' */
-                var1 = SymbolicEpistemicModel.getPrimedVarName(vari);
-                var2 = SymbolicEpistemicModel.getPrimedVarName(var2);
+                var1 = SymbolicEpistemicModelBDD.getPrimedVarName(vari);
+                var2 = SymbolicEpistemicModelBDD.getPrimedVarName(var2);
             }
 
             let equiv: BDDNode = await BDDWorkerService.applyEquiv(
@@ -140,10 +140,10 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel> {
     }
 
     /**
-     * Apply the SymbolicEventModel (this) to the SymbolicEpistemicModel
-     * @param M1 SymbolicEpistemicModel
+     * Apply the SymbolicEventModel (this) to the SymbolicEpistemicModelBDD
+     * @param M1 SymbolicEpistemicModelBDD
      */
-    apply(M: SymbolicEpistemicModel): SymbolicEpistemicModel {
+    apply(M: SymbolicEpistemicModelBDD): SymbolicEpistemicModelBDD {
         // TO BE REWRITTEN
         // let example = this;
 
@@ -217,14 +217,14 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel> {
         // }
 
         // /* Find the new true world */
-        // const bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModel.valuationToFormula(M.getPointedWorld().valuation));
+        // const bdd_valuation = BDD.buildFromFormula(SymbolicEpistemicModelBDD.valuationToFormula(M.getPointedWorld().valuation));
         // DEBUGLOG("pointed world bdd", bdd_valuation);
         // const bdd_pointed_framed_post: BDDNode = this.getPointedAction().post;
         // DEBUGLOG("postcond bdd on pointed event", bdd_pointed_framed_post);
         // const w = BDD.bddService.applyAnd([bdd_valuation, BDD.bddService.createCopy(bdd_pointed_framed_post)]);
         // DEBUGLOG("and new world", w)
 
-        // if(BDD.bddService.isFalse(w)) throw new Error("An error has occured in the application of SymbolicEventModel on SymbolicEpistemicModel. Are sure that event '" +
+        // if(BDD.bddService.isFalse(w)) throw new Error("An error has occured in the application of SymbolicEventModel on SymbolicEpistemicModelBDD. Are sure that event '" +
         //     this.pointed + "' can be apply on valuation " + M.getPointedWorld().valuation);
 
         // let res = BDD.bddService.applyExistentialForget(w, M.getPropositionalAtoms().concat(M.getPropositionalPrimes()));  //  Projection on + variables
@@ -235,8 +235,8 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel> {
         // // console.log("LISTES", listTransfert, SymbolicEventModel.getMapPostedToNotPosted(listTransfert))
         // res = BDD.bddService.applyRenaming(res, SymbolicEventModel.getMapPostedToNotPosted(listTransfert));  // Renaming + var into normal variables
         // DEBUGLOG("renamed new world", res)
-        // //let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula(), BDD.bddService.toValuation(res));
-        // let newSEM = new SymbolicEpistemicModel(M.getWorldClass(), new SEModelDescriptorFormulaEvent());
+        // //let newSEM = new SymbolicEpistemicModelBDD(M.getWorldClass(), M.getAgents(), M.getPropositionalAtoms(), M.getPropositionalPrimes(), M.getInitialFormula(), BDD.bddService.toValuation(res));
+        // let newSEM = new SymbolicEpistemicModelBDD(M.getWorldClass(), new SEModelDescriptorFormulaEvent());
 
         // /* DEBUG LOOP */
         // {
@@ -247,9 +247,9 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel> {
         //       BDD.bddService.applyRenaming(
         //           BDD.bddService.applyExistentialForget(
         //               BDD.bddService.applyAnd(
-        //                   [BDD.bddService.createCopy(newSEM.getAgentSymbolicRelation(agent)), BDD.bddService.createCopy(BDD.bddService.createCube(SymbolicEpistemicModel.valuationToMap((<WorldValuation>newSEM.getPointedWorld()).valuation)))]),
+        //                   [BDD.bddService.createCopy(newSEM.getAgentSymbolicRelation(agent)), BDD.bddService.createCopy(BDD.bddService.createCube(SymbolicEpistemicModelBDD.valuationToMap((<WorldValuation>newSEM.getPointedWorld()).valuation)))]),
         //               newSEM.getPropositionalAtoms()),
-        //           SymbolicEpistemicModel.getMapPrimeToNotPrime(newSEM.getPropositionalAtoms()))
+        //           SymbolicEpistemicModelBDD.getMapPrimeToNotPrime(newSEM.getPropositionalAtoms()))
         //       )
         //   }
         // }
@@ -268,7 +268,7 @@ export class SymbolicEventModel implements EventModel<SymbolicEpistemicModel> {
         return this.getUniqueEvent(this.pointed);
     }
 
-    async isApplicableIn(M: SymbolicEpistemicModel): Promise<boolean> {
+    async isApplicableIn(M: SymbolicEpistemicModelBDD): Promise<boolean> {
         return await M.check(this.getPointedAction().pre);
     }
 

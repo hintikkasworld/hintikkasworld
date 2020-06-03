@@ -1,13 +1,13 @@
 import { ExampleDescription } from '../environment/exampledescription';
 import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { Valuation } from '../epistemicmodel/valuation';
-import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
+import { SymbolicEpistemicModelBDD } from '../epistemicmodel/symbolic-epistemic-model-bdd';
 import { Obs } from '../epistemicmodel/symbolic-relation';
 import { AndFormula, AtomicFormula, ExactlyFormula, Formula, ImplyFormula, NotFormula, OrFormula, TrueFormula } from '../formula/formula';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 import { Environment } from '../environment/environment';
 import { EventModelAction } from '../environment/event-model-action';
-import { SymbolicPublicAnnouncement } from '../eventmodel/symbolic-public-announcement';
+import { SymbolicPublicAnnouncementBDD } from '../eventmodel/symbolic-public-announcement';
 
 class Cell {
     row: number;
@@ -611,7 +611,7 @@ export class BattleShip extends ExampleDescription {
             );
         };
 
-        return new SymbolicEpistemicModel(valToWorld, new SEModelDescriptorBattleShip());
+        return new SymbolicEpistemicModelBDD(valToWorld, new SEModelDescriptorBattleShip());
     }
 
     getValuationExample(): Valuation {
@@ -683,7 +683,7 @@ export class BattleShip extends ExampleDescription {
     }
 
     onRealWorldClick(env: Environment, point) {
-        let M: SymbolicEpistemicModel = env.epistemicModel as SymbolicEpistemicModel;
+        let M: SymbolicEpistemicModelBDD = env.epistemicModel as SymbolicEpistemicModelBDD;
         let pointedWorld: BattleShipWorld = M.getPointedWorld() as BattleShipWorld;
         let cella = pointedWorld.getCellA(point);
         let cellb = pointedWorld.getCellB(point);
@@ -701,7 +701,7 @@ export class BattleShip extends ExampleDescription {
             return;
         }
         let phi = this.getFormulaCellOccupied(agent, cell.col, cell.row);
-        if (M.checkBooleanFormula(phi)) {
+        if (M.getPointedValuation().checkBooleanFormula(phi)) {
             if (agent == 'a') {
                 this.hasshipa[cella.row * (this.nbcols + 1) + cella.col] = true;
             } else {
@@ -710,7 +710,7 @@ export class BattleShip extends ExampleDescription {
             env.perform(
                 new EventModelAction({
                     name: 'give hint',
-                    eventModel: new SymbolicPublicAnnouncement(phi)
+                    eventModel: new SymbolicPublicAnnouncementBDD(phi)
                 })
             );
         } else {
@@ -722,7 +722,7 @@ export class BattleShip extends ExampleDescription {
             env.perform(
                 new EventModelAction({
                     name: 'give hint',
-                    eventModel: new SymbolicPublicAnnouncement(new NotFormula(phi))
+                    eventModel: new SymbolicPublicAnnouncementBDD(new NotFormula(phi))
                 })
             );
         }

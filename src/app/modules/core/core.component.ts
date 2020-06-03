@@ -9,8 +9,8 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Formula, FormulaFactory } from './models/formula/formula';
 import { ExplicitEventModel } from './models/eventmodel/explicit-event-model';
-import { SymbolicPublicAnnouncement } from './models/eventmodel/symbolic-public-announcement';
-import { SymbolicEpistemicModel } from './models/epistemicmodel/symbolic-epistemic-model';
+import { SymbolicPublicAnnouncementBDD } from './models/eventmodel/symbolic-public-announcement';
+import { SymbolicEpistemicModelBDD } from './models/epistemicmodel/symbolic-epistemic-model-bdd';
 
 @Component({
     selector: 'app-core',
@@ -71,8 +71,8 @@ export class CoreComponent implements OnInit {
             new EventModelAction({
                 name: 'public announcement',
                 eventModel:
-                    this.bsEnv.value.epistemicModel instanceof SymbolicEpistemicModel
-                        ? new SymbolicPublicAnnouncement(this.getFormulaGUI())
+                    this.bsEnv.value.epistemicModel instanceof SymbolicEpistemicModelBDD
+                        ? new SymbolicPublicAnnouncementBDD(this.getFormulaGUI())
                         : ExplicitEventModel.getEventModelPublicAnnouncement(this.getFormulaGUI())
             })
         );

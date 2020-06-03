@@ -1,14 +1,15 @@
 import { EventModelAction } from '../environment/event-model-action';
-import { SymbolicPublicAnnouncement } from '../eventmodel/symbolic-public-announcement';
+import { SymbolicPublicAnnouncementBDD } from '../eventmodel/symbolic-public-announcement';
 import { AndFormula, AtomicFormula, ExactlyFormula, Formula, NotFormula } from '../formula/formula';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Environment } from '../environment/environment';
 import { Valuation } from '../epistemicmodel/valuation';
-import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
+import { EpistemicModel } from '../epistemicmodel/epistemic-model';
+import { SymbolicEpistemicModelBDD } from '../epistemicmodel/symbolic-epistemic-model-bdd';
 
 class Cell {
     row: number;
@@ -237,7 +238,7 @@ export class MineSweeper extends ExampleDescription {
      * @returns the initial Kripke model of MineSweeper
      * where agent 2 only knows there are exactly two bombs.
      */
-    getInitialEpistemicModel(): SymbolicEpistemicModel {
+    getInitialEpistemicModel(): EpistemicModel {
         let example = this;
 
         /**
@@ -275,7 +276,7 @@ export class MineSweeper extends ExampleDescription {
             return new MineSweeperWorld(this.nbrows, this.nbcols, this.clicked, val);
         };
 
-        return new SymbolicEpistemicModel(valToWorld, new SEModelDescriptorFormulaMineSweeper());
+        return new SymbolicEpistemicModelBDD(valToWorld, new SEModelDescriptorFormulaMineSweeper());
     }
 
     /* @returns the Kripke model where the agent looses*/
@@ -347,7 +348,7 @@ export class MineSweeper extends ExampleDescription {
             return new AndFormula(phis);
         };
 
-        let M: SymbolicEpistemicModel = env.epistemicModel as SymbolicEpistemicModel;
+        let M: SymbolicEpistemicModelBDD = env.epistemicModel as SymbolicEpistemicModelBDD;
         let pointedWorld: MineSweeperWorld = M.getPointedWorld() as MineSweeperWorld;
 
         let cell: Cell = pointedWorld.getCell(point);
@@ -365,7 +366,7 @@ export class MineSweeper extends ExampleDescription {
             env.perform(
                 new EventModelAction({
                     name: 'give hint',
-                    eventModel: new SymbolicPublicAnnouncement(phi)
+                    eventModel: new SymbolicPublicAnnouncementBDD(phi)
                 })
             );
         }

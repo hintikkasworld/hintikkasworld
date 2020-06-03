@@ -1,7 +1,7 @@
-import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
+import { SymbolicEpistemicModelBDD } from '../epistemicmodel/symbolic-epistemic-model-bdd';
 import { SimpleSymbolicHanabi } from './symbolic-hanabi';
 
-describe('SymbolicEpistemicModel', () => {
+describe('SymbolicEpistemicModelBDD', () => {
     it('Test creation SimpleSymbolicHanabi', () => {
         let hanabi = new SimpleSymbolicHanabi();
         expect(hanabi).toBeTruthy();

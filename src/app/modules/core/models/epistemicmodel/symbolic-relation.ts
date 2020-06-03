@@ -1,6 +1,6 @@
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
 import { AndFormula, AtomicFormula, EquivFormula, Formula } from '../formula/formula';
-import { SymbolicEpistemicModel } from './symbolic-epistemic-model';
+import { SymbolicEpistemicModelBDD } from './symbolic-epistemic-model-bdd';
 import { BDDNode } from '../../../../services/bdd.service';
 
 export interface SymbolicRelation {
@@ -30,9 +30,9 @@ export class Obs implements SymbolicRelation {
     toFormula(): Formula {
         let list_formula: Formula[] = this.observedVariables.map((form) => {
             if (typeof form === 'string') {
-                return new EquivFormula(new AtomicFormula(form), new AtomicFormula(SymbolicEpistemicModel.getPrimedVarName(form)));
+                return new EquivFormula(new AtomicFormula(form), new AtomicFormula(SymbolicEpistemicModelBDD.getPrimedVarName(form)));
             } else {
-                return new EquivFormula(form, form.renameAtoms(SymbolicEpistemicModel.getPrimedVarName));
+                return new EquivFormula(form, form.renameAtoms(SymbolicEpistemicModelBDD.getPrimedVarName));
             }
         });
         return new AndFormula(list_formula);

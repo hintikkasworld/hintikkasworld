@@ -4,7 +4,7 @@ import { World } from './world';
 import { Valuation } from './valuation';
 import { BDDNode } from './bddnode';
 
-export class SymbolicSuccessorSet implements SuccessorSet {
+export class SymbolicSuccessorSetBDD implements SuccessorSet {
     private bdd: Promise<BDDNode>;
     private atoms: string[];
     private toWorld: (Valuation) => World;

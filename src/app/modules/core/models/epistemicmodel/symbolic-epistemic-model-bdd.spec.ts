@@ -1,11 +1,11 @@
 import { WorldValuation } from './world-valuation';
-import { SymbolicEpistemicModel } from './symbolic-epistemic-model';
 import { Obs, SymbolicRelation } from './symbolic-relation';
 import { AtomicFormula } from '../formula/formula';
 import { Valuation } from './valuation';
+import { SymbolicEpistemicModelBDD } from './symbolic-epistemic-model-bdd';
 
-describe('SymbolicEpistemicModel', () => {
-    it('should create an instance of SymbolicEpistemicModel', () => {
+describe('SymbolicEpistemicModelBDD', () => {
+    it('should create an instance of SymbolicEpistemicModelBDD', () => {
         let relationsSymboliques: Map<string, SymbolicRelation> = new Map();
         relationsSymboliques['a'] = new Obs(['var1']);
 
@@ -21,7 +21,7 @@ describe('SymbolicEpistemicModel', () => {
             getPointedValuation: () => new Valuation(['var1'])
         };
 
-        let sem = new SymbolicEpistemicModel(WorldValuation, descr);
+        let sem = new SymbolicEpistemicModelBDD((val) => new WorldValuation(val), descr);
 
         expect(sem).toBeTruthy();
         expect(sem.getAgents() == ['a']);

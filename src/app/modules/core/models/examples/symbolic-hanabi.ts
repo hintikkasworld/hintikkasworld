@@ -3,11 +3,11 @@ import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
-import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
+import { SymbolicEpistemicModelBDD } from '../epistemicmodel/symbolic-epistemic-model-bdd';
 import { AndFormula, AtomicFormula, ExactlyFormula, Formula, NotFormula } from '../formula/formula';
 import { EventModelAction } from '../environment/event-model-action';
 import { SymbolicEventModel } from '../eventmodel/symbolic-event-model';
-import { SymbolicPublicAnnouncement } from '../eventmodel/symbolic-public-announcement';
+import { SymbolicPublicAnnouncementBDD } from '../eventmodel/symbolic-public-announcement';
 import { SymbolicEvent } from '../eventmodel/symbolic-event';
 import { BDDNode } from '../../../../services/bdd.service';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
@@ -419,11 +419,11 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
         /* Create Obs <<SymbolicRelation>> which represent relations of each agent like var_a_c <-> var_a_c_p */
 
-        // SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, this.variables, symbolicRelations, rules, new Valuation(propositions));
+        // SymbolicEpistemicModelBDD.build(SimpleHanabiWorld, this.agents, this.variables, symbolicRelations, rules, new Valuation(propositions));
         let valToWorld = (val: Valuation): WorldValuation => {
             return new SimpleHanabiWorld(val);
         };
-        return new SymbolicEpistemicModel(valToWorld, new SEModelDescriptorHanabi());
+        return new SymbolicEpistemicModelBDD(valToWorld, new SEModelDescriptorHanabi());
     }
 
     async getEventModelPlay(agent: string, card: number, destination: string): Promise<SymbolicEventModel> {
@@ -486,7 +486,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         events.set(name, new SymbolicEvent(pre, bdd_transfert));
         events_bdd.set(name, bdd_transfert);
 
-        let transfert = SymbolicEpistemicModel.getMapNotPrimeToPrime(
+        let transfert = SymbolicEpistemicModelBDD.getMapNotPrimeToPrime(
             this.variables.concat(this.variables.map((v) => SymbolicEventModel.getPostedVarName(v)))
         );
 
@@ -512,7 +512,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         const cacheDrawSymbolic = new Map<string, SymbolicEventModel>();
         let cacheDrawAction = new Map<string, SymbolicEventModel>();
 
-        function valueAnnoucement(agent: string, nbCards: number, value: number): SymbolicPublicAnnouncement {
+        function valueAnnoucement(agent: string, nbCards: number, value: number): SymbolicPublicAnnouncementBDD {
             // console.log("ValueAnnoucement " + agent + " has " + nbCards + " card(s) of value '" + value + "'")
 
             if (SimpleSymbolicHanabi.nb_values_per_color != 10) {
@@ -534,11 +534,11 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
             // console.log(liste_var)
 
-            return new SymbolicPublicAnnouncement(pre, that.agents);
+            return new SymbolicPublicAnnouncementBDD(pre, that.agents);
             // return new SymbolicEventModel(that.agents, that.variables, events, agentRelations, name);
         }
 
-        function colorAnnoucement(agent: string, nbCards: number, color: string): SymbolicPublicAnnouncement {
+        function colorAnnoucement(agent: string, nbCards: number, color: string): SymbolicPublicAnnouncementBDD {
             // console.log(agent + " " + nbCards + " " + color)
 
             let liste_var = [];
@@ -555,7 +555,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
             let pre = new ExactlyFormula(nbCards, liste_var);
 
-            return new SymbolicPublicAnnouncement(pre, that.agents);
+            return new SymbolicPublicAnnouncementBDD(pre, that.agents);
             // return new SymbolicEventModel(that.agents, that.variables, events, agentRelations, name);
         }
 
