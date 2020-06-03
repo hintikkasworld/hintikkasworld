@@ -14,11 +14,11 @@ describe('Formula', () => {
     });
 
     it('the pretty printer works on true', () => {
-        expect(FormulaFactory.createFormula('true').prettyPrint() == 'true').toBeTruthy();
+        expect(FormulaFactory.createFormula('true').prettyPrint() == 'Top').toBeTruthy();
     });
 
     it('the pretty printer works on false', () => {
-        expect(FormulaFactory.createFormula('false').prettyPrint() == 'false').toBeTruthy();
+        expect(FormulaFactory.createFormula('false').prettyPrint() == 'Bot').toBeTruthy();
     });
 
     it('the pretty printer works on atoms 1', () => {
@@ -73,12 +73,12 @@ describe('Formula', () => {
         expect(FormulaFactory.createFormula('(Kw a p)').prettyPrint() == '(Kw a p)').toBeTruthy();
     });
 
-    it('the pretty printer works on ->', () => {
-        expect(FormulaFactory.createFormula('(p -> q)').prettyPrint() == '(p -> q)').toBeTruthy();
+    it('the pretty printer works on =>', () => {
+        expect(FormulaFactory.createFormula('(p => q)').prettyPrint() == '(p => q)').toBeTruthy()
     });
 
-    it('the pretty printer works on <->', () => {
-        expect(FormulaFactory.createFormula('(p <-> q)').prettyPrint() == '(p <-> q)').toBeTruthy();
+    it('the pretty printer works on <=>', () => {
+        expect(FormulaFactory.createFormula('(p <=> q)').prettyPrint() == '(p <=> q)').toBeTruthy();
     });
 
     it('the pretty printer works on exactly with 2 elements', () => {
