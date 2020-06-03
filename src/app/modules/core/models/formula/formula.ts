@@ -376,12 +376,10 @@ export class ExactlyFormula implements Formula {
         return s;
     }
 
-
     /**
      * convert the Exactly formula in a Boolean formula that contains only And, Or, Not operators
      */
     convertToNormalFormula(): Formula {
-
         let uid = Math.random().toString(36).substr(2, 9);
 
         /**
@@ -391,24 +389,21 @@ export class ExactlyFormula implements Formula {
          * @param n number of variables
          */
         const name = (k, n) => {
-
             if (n == 0) {
-                if (k == 0)
-                    return new TrueFormula();
-                else
-                    return new FalseFormula();
+                if (k == 0) return new TrueFormula();
+                else return new FalseFormula();
             }
 
             if (k == 0) {
                 return new AndFormula(this.variables.slice(0, n).map((v) => new NotFormula(new AtomicFormula(v))));
             }
 
-            return new AtomicFormula("C" + uid + "_" + k + "_" + n);
+            return new AtomicFormula('C' + uid + '_' + k + '_' + n);
         };
 
         let conjuction = [];
 
-        for(let n = 1; n <= this.variables.length; n++) {
+        for (let n = 1; n <= this.variables.length; n++) {
             for (let k = Math.max(1, this.count - (this.variables.length - n)); k <= this.count; k++) {
                 let Cnk = name(k, n);
 
@@ -416,10 +411,7 @@ export class ExactlyFormula implements Formula {
                 const subform_if_x = name(k - 1, n - 1);
                 const subform_if_not_x = name(k, n - 1);
 
-                let res = new OrFormula([
-                    new AndFormula([x, subform_if_x]),
-                    new AndFormula([new NotFormula(x), subform_if_not_x])
-                ]);
+                let res = new OrFormula([new AndFormula([x, subform_if_x]), new AndFormula([new NotFormula(x), subform_if_not_x])]);
 
                 conjuction.push(new EquivFormula(Cnk, res));
             }

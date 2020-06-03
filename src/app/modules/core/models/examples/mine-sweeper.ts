@@ -166,10 +166,10 @@ export class MineSweeper extends ExampleDescription {
     readonly nbcols: number;
     readonly nbrows: number;
     readonly nbmines: number;
-    clicked: {[pos: number]: boolean};
+    clicked: { [pos: number]: boolean };
 
     static getAtomicProposition(r, c) {
-        return "p_" + r.toString() + '_' + c.toString();
+        return 'p_' + r.toString() + '_' + c.toString();
     }
 
     getDescription(): string[] {
@@ -177,18 +177,20 @@ export class MineSweeper extends ExampleDescription {
             'There is a grid with mines in certain cells. Other cells either contain the number of mines adjacent (including diagonals) or are empty.'
         ];
         A.push('');
-        let mine_s = "mines";
+        let mine_s = 'mines';
         if (this.nbmines < 2) {
-            mine_s = "mine";
+            mine_s = 'mine';
         }
         A.push(
             'The grid is of size ' +
-            this.nbrows.toString() +
-            'x' +
-            this.nbcols.toString() +
-            ' and there is ' +
-            this.nbmines.toString() +
-            ' ' + mine_s + '.'
+                this.nbrows.toString() +
+                'x' +
+                this.nbcols.toString() +
+                ' and there is ' +
+                this.nbmines.toString() +
+                ' ' +
+                mine_s +
+                '.'
         );
         return A;
     }

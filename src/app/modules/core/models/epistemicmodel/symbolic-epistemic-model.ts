@@ -254,7 +254,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         return this.propositionalAtoms;
     }
 
-    getValToWorld(): ((Valuation) => WorldValuation) {
+    getValToWorld(): (Valuation) => WorldValuation {
         return this.valToWorld;
     }
 

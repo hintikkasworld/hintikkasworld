@@ -607,8 +607,9 @@ export class BattleShip extends ExampleDescription {
                 this.clickedb,
                 this.hasshipa,
                 this.hasshipb,
-                val);
-        }
+                val
+            );
+        };
 
         return new SymbolicEpistemicModel(valToWorld, new SEModelDescriptorBattleShip());
     }

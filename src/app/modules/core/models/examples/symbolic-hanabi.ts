@@ -422,7 +422,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
         // SymbolicEpistemicModel.build(SimpleHanabiWorld, this.agents, this.variables, symbolicRelations, rules, new Valuation(propositions));
         let valToWorld = (val: Valuation): WorldValuation => {
             return new SimpleHanabiWorld(val);
-        }
+        };
         return new SymbolicEpistemicModel(valToWorld, new SEModelDescriptorHanabi());
     }
 
