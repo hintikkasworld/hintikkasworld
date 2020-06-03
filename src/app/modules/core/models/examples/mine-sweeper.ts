@@ -1,5 +1,3 @@
-import { BDDWorkerService } from '../../../../services/bddworker.service';
-import { SEModelInternalDescriptor } from '../epistemicmodel/descriptor/se-model-internal-descriptor';
 import { EventModelAction } from '../environment/event-model-action';
 import { SymbolicPublicAnnouncement } from '../eventmodel/symbolic-public-announcement';
 import { AndFormula, AtomicFormula, ExactlyFormula, Formula, NotFormula } from '../formula/formula';
@@ -12,8 +10,6 @@ import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-mod
 import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { WorldValuationType } from '../epistemicmodel/world-valuation-type';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
-import jsonMineSweeper_8_8_10 from '../../../../../assets/bdds/minesweeper_8_8_10.json';
-import jsonMineSweeper_12_15_20 from '../../../../../assets/bdds/minesweeper_12_15_20.json';
 
 class Cell {
     row: number;
@@ -193,7 +189,7 @@ export class MineSweeper extends ExampleDescription {
     readonly nbcols: number;
     readonly nbrows: number;
     readonly nbmines: number;
-    clicked;
+    clicked: {[pos: number]: boolean};
 
     static getAtomicProposition(r, c) {
         return "p_" + r.toString() + '_' + c.toString();
@@ -204,27 +200,19 @@ export class MineSweeper extends ExampleDescription {
             'There is a grid with mines in certain cells. Other cells either contain the number of mines adjacent (including diagonals) or are empty.'
         ];
         A.push('');
+        let mine_s = "mines";
         if (this.nbmines < 2) {
-            A.push(
-                'The grid is of size ' +
-                    this.nbrows.toString() +
-                    'x' +
-                    this.nbcols.toString() +
-                    ' and there is ' +
-                    this.nbmines.toString() +
-                    ' mine.'
-            );
-        } else {
-            A.push(
-                'The grid is of size ' +
-                    this.nbrows.toString() +
-                    'x' +
-                    this.nbcols.toString() +
-                    ' and there are ' +
-                    this.nbmines.toString() +
-                    ' mines.'
-            );
+            mine_s = "mine";
         }
+        A.push(
+            'The grid is of size ' +
+            this.nbrows.toString() +
+            'x' +
+            this.nbcols.toString() +
+            ' and there is ' +
+            this.nbmines.toString() +
+            ' ' + mine_s + '.'
+        );
         return A;
     }
 
@@ -283,7 +271,7 @@ export class MineSweeper extends ExampleDescription {
          * to create a symbolic epistemic model from crash.
          */
         class SEModelDescriptorFormulaMineSweeper implements SEModelDescriptor {
-            getAtomicPropositions() {
+            getAtomicPropositions(): string[] {
                 return example.getAtomicPropositions();
             }
 
@@ -306,46 +294,8 @@ export class MineSweeper extends ExampleDescription {
             }
         }
 
-        class SEModelDescriptorInternalMineSweeper implements SEModelInternalDescriptor {
-            worlds = undefined;
-
-            constructor(r, c, m) {
-                if (r == 12 && c == 15 && m == 20) {
-                    this.worlds = BDDWorkerService.createBDDFromJSON(jsonMineSweeper_12_15_20);
-                } else if (r == 8 && c == 8 && m == 10) {
-                    this.worlds = BDDWorkerService.createBDDFromJSON(jsonMineSweeper_8_8_10);
-                }
-            }
-
-            getAtomicPropositions() {
-                return example.getAtomicPropositions();
-            }
-
-            getAgents() {
-                return ['a'];
-            }
-
-            getSetWorldsBDDDescription(): Promise<number> {
-                return this.worlds;
-            }
-
-            getRelationBDD(agent: string): Promise<number> {
-                return this.worlds;
-            }
-
-            getPointedValuation(): Valuation {
-                return example.getValuationExample();
-            }
-        }
-
         this.clicked = {};
 
-        /*
-        if (this.nbrows == 12 && this.nbcols == 15 && this.nbmines == 20)
-            return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorInternalMineSweeper(12, 15, 20));
-        if (this.nbrows == 8 && this.nbcols == 8 && this.nbmines == 10)
-            return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorInternalMineSweeper(8, 8, 10));
-        else*/
         return new SymbolicEpistemicModel(this.getWorldClass(), new SEModelDescriptorFormulaMineSweeper());
     }
 
