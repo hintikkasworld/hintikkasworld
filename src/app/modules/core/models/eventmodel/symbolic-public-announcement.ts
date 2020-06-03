@@ -3,6 +3,7 @@ import { BDDNode } from 'src/app/services/bdd.service';
 import { EventModel } from './event-model';
 import { SymbolicEpistemicModel } from '../epistemicmodel/symbolic-epistemic-model';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
+import { SEModelBddDescriptor } from '../epistemicmodel/descriptor/se-model-bdd-descriptor';
 
 /**
  * Only supports boolean formulas for now
@@ -32,7 +33,7 @@ export class SymbolicPublicAnnouncement implements EventModel<SymbolicEpistemicM
         const descr = M.getInternalDescription();
         const bddWorldsPromise = M.queryWorldsSatisfyingBooleanFormula(this.precondition);
 
-        const newDescr = {
+        const newDescr: SEModelBddDescriptor = {
             getAgents: () => descr.getAgents(),
             getAtomicPropositions: () => descr.getAtomicPropositions(),
             getSetWorldsBDDDescription: async (): Promise<BDDNode> => await bddWorldsPromise,

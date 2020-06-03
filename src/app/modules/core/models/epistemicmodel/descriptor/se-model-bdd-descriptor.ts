@@ -8,9 +8,9 @@ import { Valuation } from '../valuation';
  * about the symbolic epistemic model object. Keep in mind
  * that in order to create a symbolic epistemic model we need
  * to pass to its constructor a SEModelDescriptor or a
- * SEModelInternalDescriptor.
+ * SeModelBddDescriptor.
  */
-export interface SEModelInternalDescriptor {
+export interface SEModelBddDescriptor {
     getAtomicPropositions(): string[];
 
     getAgents(): string[];

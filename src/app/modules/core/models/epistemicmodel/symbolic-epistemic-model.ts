@@ -8,7 +8,7 @@ import { AndFormula, AtomicFormula, Formula, NotFormula } from '../formula/formu
 import * as types from './../formula/formula';
 import { BDDNode } from '../../../../services/bdd.service';
 import { SEModelDescriptor } from './descriptor/se-model-descriptor';
-import { SEModelInternalDescriptor } from './descriptor/se-model-internal-descriptor';
+import { SEModelBddDescriptor } from './descriptor/se-model-bdd-descriptor';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
 import { BehaviorSubject } from 'rxjs';
 
@@ -43,7 +43,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * @param valToWorld a function to transform a valuation into the symbolic world
      * @param descr a descriptor to initialize every
      */
-    constructor(valToWorld: (val: Valuation) => WorldValuation, descr: SEModelDescriptor | SEModelInternalDescriptor) {
+    constructor(valToWorld: (val: Valuation) => WorldValuation, descr: SEModelDescriptor | SEModelBddDescriptor) {
         console.log('SymbolicEpistemicModel.constructor');
         this.valToWorld = valToWorld;
         this.pointedValuation = descr.getPointedValuation();
@@ -176,7 +176,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
      * loadDescriptor will call the worker to pass down the heavy part of constructing a binary decision diagram
      * @param descr
      */
-    private async loadDescriptor(descr: SEModelDescriptor | SEModelInternalDescriptor) {
+    private async loadDescriptor(descr: SEModelDescriptor | SEModelBddDescriptor) {
         console.log('begin loadDescriptor...');
         this.propositionalAtoms = descr.getAtomicPropositions();
         console.log('   propositionalAtoms set!');
@@ -186,8 +186,8 @@ export class SymbolicEpistemicModel implements EpistemicModel {
             // we intend  "instanceof SEModelDescriptor"
             await this.loadModelDescriptor(descr as SEModelDescriptor);
         } else {
-            // we intend  "instanceof SEModelInternalDescriptor"
-            await this.loadModelInternalDescriptor(descr as SEModelInternalDescriptor);
+            // we intend  "instanceof SEModelBddDescriptor"
+            await this.loadModelBddDescriptor(descr as SEModelBddDescriptor);
         }
 
         this._isLoaded.next(true);
@@ -209,8 +209,8 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         }
     }
 
-    private async loadModelInternalDescriptor(descr: SEModelInternalDescriptor) {
-        let descriptor = descr as SEModelInternalDescriptor;
+    private async loadModelBddDescriptor(descr: SEModelBddDescriptor) {
+        let descriptor = descr as SEModelBddDescriptor;
         this.bddSetWorlds = await descriptor.getSetWorldsBDDDescription();
         for (let agent of this.agents) {
             let bddRelation: BDDNode = await descriptor.getRelationBDD(agent);
@@ -376,7 +376,7 @@ export class SymbolicEpistemicModel implements EpistemicModel {
         throw new Error('Unknown instance of phi:' + JSON.stringify(phi));
     }
 
-    getInternalDescription(): SEModelInternalDescriptor {
+    getInternalDescription(): SEModelBddDescriptor {
         return {
             getAgents: () => this.agents,
             getAtomicPropositions: () => this.propositionalAtoms,
