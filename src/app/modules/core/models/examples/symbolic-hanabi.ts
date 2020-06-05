@@ -7,7 +7,7 @@ import { SymbolicEpistemicModelBDD } from '../epistemicmodel/symbolic-epistemic-
 import { AndFormula, AtomicFormula, ExactlyFormula, Formula, NotFormula } from '../formula/formula';
 import { EventModelAction } from '../environment/event-model-action';
 import { SymbolicEventModel } from '../eventmodel/symbolic-event-model';
-import { SymbolicPublicAnnouncementBDD } from '../eventmodel/symbolic-public-announcement';
+import { SymbolicPublicAnnouncementBDD } from '../eventmodel/symbolic-public-announcement-bdd';
 import { SymbolicEvent } from '../eventmodel/symbolic-event';
 import { BDDNode } from '../../../../services/bdd.service';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';

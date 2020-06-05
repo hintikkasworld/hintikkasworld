@@ -1,5 +1,5 @@
 import { EventModelAction } from '../environment/event-model-action';
-import { SymbolicPublicAnnouncementBDD } from '../eventmodel/symbolic-public-announcement';
+import { SymbolicPublicAnnouncementBDD } from '../eventmodel/symbolic-public-announcement-bdd';
 import { AndFormula, AtomicFormula, ExactlyFormula, Formula, NotFormula } from '../formula/formula';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 import { WorldValuation } from '../epistemicmodel/world-valuation';

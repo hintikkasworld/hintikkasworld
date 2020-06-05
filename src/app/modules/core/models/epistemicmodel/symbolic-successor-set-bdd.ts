@@ -34,8 +34,6 @@ export class SymbolicSuccessorSetBDD implements SuccessorSet {
     }
 
     async getSomeSuccessors(): Promise<World[]> {
-        console.log('load getSomeSuccessors');
-
         let n = await this.length();
         if (this.successors_given >= n) {
             console.log('set of successors finished!');

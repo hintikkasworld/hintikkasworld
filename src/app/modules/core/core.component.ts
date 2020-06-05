@@ -9,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Formula, FormulaFactory } from './models/formula/formula';
 import { ExplicitEventModel } from './models/eventmodel/explicit-event-model';
-import { SymbolicPublicAnnouncementBDD } from './models/eventmodel/symbolic-public-announcement';
+import { SymbolicPublicAnnouncementBDD } from './models/eventmodel/symbolic-public-announcement-bdd';
 import { SymbolicEpistemicModelBDD } from './models/epistemicmodel/symbolic-epistemic-model-bdd';
 
 @Component({

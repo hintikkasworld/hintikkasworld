@@ -7,7 +7,7 @@ import { AndFormula, AtomicFormula, ExactlyFormula, Formula, ImplyFormula, NotFo
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 import { Environment } from '../environment/environment';
 import { EventModelAction } from '../environment/event-model-action';
-import { SymbolicPublicAnnouncementBDD } from '../eventmodel/symbolic-public-announcement';
+import { SymbolicPublicAnnouncementBDD } from '../eventmodel/symbolic-public-announcement-bdd';
 
 class Cell {
     row: number;
