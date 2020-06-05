@@ -368,11 +368,9 @@ export class ExactlyFormula implements Formula {
     }
 
     prettyPrint(): string {
-        let s = '(exactly ' + this._count.toString();
-        for (let i = 0; i < this._variables.length; i += 1) {
-            s += ' ' + this._variables[i];
-        }
-        s += ')';
+        let s = 'exactp(' + this._count.toString() + ', [';
+        s += this._variables.join(', ');
+        s += '])';
         return s;
     }
 
