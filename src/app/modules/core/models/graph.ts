@@ -104,7 +104,7 @@ export class Graph<T> {
      * @param agent, an agent (label)
      * @returns an array of all successors of node via the agent
      * */
-    getSuccessorsID(node, agent): string[] {
+    getSuccessorsID(node: string, agent: string): string[] {
         if (this.nodes[node] == undefined) {
             throw new Error('getSuccessors : There is no source node of ID ' + node);
         }

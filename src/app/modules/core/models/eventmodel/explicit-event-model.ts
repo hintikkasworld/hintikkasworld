@@ -9,6 +9,10 @@ import { Event } from './event';
 import { World } from '../epistemicmodel/world';
 
 export class ExplicitEventModel extends Graph<Event> implements EventModel<ExplicitEpistemicModel> {
+    constructor() {
+        super();
+    }
+
     static getEventModelPublicAnnouncement(formula: Formula): ExplicitEventModel {
         let E = new ExplicitEventModel();
         E.addAction('e', formula, new TrivialPostcondition());

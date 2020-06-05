@@ -3,12 +3,16 @@ import { ExplicitSuccessorSet } from './explicit-successor-set';
 import * as types from './../formula/formula';
 import { Graph } from '../graph';
 import { EpistemicModel } from './epistemic-model';
-import { environment } from 'src/environments/environment';
 import { World } from './world';
 import { SuccessorSet } from './successor-set';
 
 export class ExplicitEpistemicModel extends Graph<World> implements EpistemicModel {
     nodeToID: Map<World, string> = new Map();
+
+    constructor() {
+        super();
+        this.nodes = {};
+    }
 
     isLoadedObservable(): BehaviorSubject<boolean> {
         return new BehaviorSubject<boolean>(true);
@@ -24,7 +28,7 @@ export class ExplicitEpistemicModel extends Graph<World> implements EpistemicMod
 
     getSuccessors(w: World, a: string): SuccessorSet {
         let successorIDs = this.getSuccessorsID(this.nodeToID.get(w), a);
-        return new ExplicitSuccessorSet(successorIDs.map(this.getNode));
+        return new ExplicitSuccessorSet(successorIDs.map((v) => this.getNode(v)));
     }
 
     /**
