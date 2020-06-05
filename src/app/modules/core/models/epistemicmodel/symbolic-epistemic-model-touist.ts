@@ -18,6 +18,8 @@ export class SymbolicEpistemicModelTouist implements EpistemicModel {
     private pointedValuation: Valuation; // the valuation that corresponds to the pointed world
     private propositionalAtoms: string[];
     private propositionalPrimes: string[];
+    private validPrimeWorlds: Formula;
+
     private readonly agents: string[];
     private readonly valToWorld: (val: Valuation) => WorldValuation;
     /**
@@ -46,6 +48,8 @@ export class SymbolicEpistemicModelTouist implements EpistemicModel {
 
         this.propositionalAtoms = descr.getAtomicPropositions();
         this.propositionalPrimes = this.propositionalAtoms.map(SymbolicEpistemicModelTouist.getPrimedVarName);
+
+        this.validPrimeWorlds = descr.getSetWorldsFormulaDescription().renameAtoms((s) => SymbolicEpistemicModelTouist.getPrimedVarName(s));
 
         this.symbolicRelations = {};
         for (let agent of this.agents) {
@@ -108,7 +112,7 @@ export class SymbolicEpistemicModelTouist implements EpistemicModel {
         let relation = this.symbolicRelations[a];
 
         // make the formula satisfied for all v': world, where w --> a --> v'
-        let f = new AndFormula([w_formula, relation]);
+        let f = new AndFormula([w_formula, relation, this.validPrimeWorlds]);
 
         // primes will be removed by the successor set using the primeMap
         let primeMap = this.getMapPrimeToNotPrime();

@@ -9,43 +9,47 @@ export class SymbolicSuccessorSetTouist implements SuccessorSet {
     private toWorld: (Valuation) => World;
     private possibleWorlds: Formula;
     private successorsCache: Valuation[];
-    private fetched: boolean;
     private primeMap: (string) => string;
+    private n_successors: number;
+    private fetched: Promise<void>;
 
     constructor(toWorld: (Valuation) => World, primeAtoms: string[], primeMap: (string) => string, possibleWorlds: Formula) {
         this.toWorld = toWorld;
         this.possibleWorlds = possibleWorlds;
-        this.fetched = false;
         this.primeMap = primeMap;
+        this.successorsCache = [];
 
         this.primeAtoms = new Set<string>();
         for (let atom of primeAtoms) {
             this.primeAtoms.add(atom);
         }
+        this.n_successors = 0;
+        this.fetched = this.fetchData();
     }
 
-    async fetchSuccessors() {
-        if (this.fetched) {
-            return;
-        }
-        for (let rawProps of await TouistService.fetchModels(this.possibleWorlds, 50)) {
+    async fetchData() {
+        let vals = await TouistService.fetchModels(this.possibleWorlds, 50);
+        this.n_successors = vals.length;
+
+        console.log("Touist returned vals: ", vals);
+        for (let rawProps of vals) {
             let props = rawProps.filter((p) => this.primeAtoms.has(p))
                                 .map(this.primeMap);
 
             this.successorsCache.push(new Valuation(props));
         }
-        this.fetched = true;
     }
 
     /**
      * @returns the number of successors
      */
     async length(): Promise<number> {
-        return 0; // This is very expensive for SAT based solvers (at least with touist at the moment)
+        await this.fetched;
+        return this.n_successors; // This is very expensive for SAT based solvers, so it is only accurate when touist returned all successors
     }
 
     async getSomeSuccessors(): Promise<World[]> {
-        await this.fetchSuccessors();
+        await this.fetched;
 
         let sols: World[] = [];
         for (let i = 0; i < 5 && this.successorsCache.length > 0; i++) {
@@ -55,7 +59,7 @@ export class SymbolicSuccessorSetTouist implements SuccessorSet {
     }
 
     async getRandomSuccessor(): Promise<World> {
-        await this.fetchSuccessors();
+        await this.fetched;
 
         if (this.successorsCache.length > 0) {
             return this.toWorld(this.successorsCache.pop());
