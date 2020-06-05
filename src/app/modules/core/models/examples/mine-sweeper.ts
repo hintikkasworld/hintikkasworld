@@ -10,6 +10,7 @@ import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 import { SymbolicEpistemicModelBDD } from '../epistemicmodel/symbolic-epistemic-model-bdd';
+import { SymbolicEpistemicModelTouist } from '../epistemicmodel/symbolic-epistemic-model-touist';
 
 class Cell {
     row: number;
@@ -260,8 +261,8 @@ export class MineSweeper extends ExampleDescription {
             }
 
             getSetWorldsFormulaDescription(): Formula {
-                let f = new ExactlyFormula(example.nbmines, this.getAtomicPropositions());
-                console.log(f.convertToNormalFormula().prettyPrint());
+                let f = new ExactlyFormula(example.nbmines, this.getAtomicPropositions()).convertToNormalFormula();
+                console.log(f.prettyPrint());
                 return f;
             }
 
@@ -276,7 +277,7 @@ export class MineSweeper extends ExampleDescription {
             return new MineSweeperWorld(this.nbrows, this.nbcols, this.clicked, val);
         };
 
-        return new SymbolicEpistemicModelBDD(valToWorld, new SEModelDescriptorFormulaMineSweeper());
+        return new SymbolicEpistemicModelTouist(valToWorld, new SEModelDescriptorFormulaMineSweeper());
     }
 
     /* @returns the Kripke model where the agent looses*/
