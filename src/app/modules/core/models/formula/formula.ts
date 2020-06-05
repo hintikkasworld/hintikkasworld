@@ -123,7 +123,7 @@ export class AndFormula implements Formula {
 
     prettyPrint(): string {
         if (this._formulas.length == 0) {
-            return 'true';
+            return 'Top';
         }
 
         let s: string = '(' + this._formulas[0].prettyPrint();
@@ -518,7 +518,7 @@ export class FormulaFactory {
             }
         } else if (ast == 'top' || ast == 'true' || ast == '1') {
             return new TrueFormula();
-        } else if (ast == 'bottom' || ast == 'false' || ast == '0') {
+        } else if (ast == 'bot' || ast == 'false' || ast == '0') {
             return new FalseFormula();
         } else {
             return new AtomicFormula(ast);
