@@ -49,7 +49,7 @@
 
 \begin{document}
 
-\title{Debugging agents reasoning about knowledge}
+\title{You never explored such huge Kripke models!}
 \author{Authors}
 
 \maketitle
@@ -81,10 +81,58 @@ See \url{http://people.irisa.fr/Francois.Schwarzentruber/hdr/}
 \section{Succinct description of an epistemic model}
 
 \begin{definition}
-An epistemic model is succinctly described by a collection of Boolean formulas $\chi_a(\vec x, \vec x')$ for each agent $a$.
+An epistemic model is succinctly described by a family of Boolean formulas, one formula $\chi_a(\vec x, \vec x')$ for each agent $a$, where $\vec x$ and $\vec x'$ are both collections of Boolean variables.
 \end{definition}
 
 A valuation over $\vec x$ describes a possible world. The formula $\chi_a(\vec x, \vec x')$ describes that the world described a valuation over $\vec x'$ is possible for agent $a$ in the world  the world described a valuation over $\vec x$. 
+
+
+
+
+\begin{example}
+	The formula
+	$\chi_a(\vec x, \vec x') := (x_1' \lequiv x_1') \land (x_2 \lequiv x_2')$ means that agent $a$ actually knows the truth value of $x_1$ and $x_2$.
+\end{example}
+
+
+
+
+
+
+\section{Model checking}
+
+The model checking problem is defined as follows:
+\begin{itemize}
+	\item input: the succinct description of an epistemic model $\modelM$, the description of a world $w$, a formula $\phi$;
+	\item output: yes if $\modelM, w \models \phi$, no otherwise.
+\end{itemize}
+
+
+\newcommand\trmltoqbf[2]{tr#1(#2)}
+
+\begin{definition}
+	\label{definition:trmltoqbf}
+	We define $\trmltoqbf{}{\phi}$ and $
+	\trmltoqbf{'}{\phi}$ by mutual induction:
+	
+	\begin{itemize}
+		\item $\trmltoqbf{}{x} = x$; $\trmltoqbf{'}{x} = x'$;
+		\item $\trmltoqbf{}{\lnot \phi} = \lnot \trmltoqbf{}{\phi}$; $\trmltoqbf{'}{\lnot \phi} = \lnot \trmltoqbf{'}{\phi}$;
+		
+		
+		\item $\trmltoqbf{}{K_a \phi} = \forall \vec x' (\chi_a(\vec x, \vec x') \limply  \trmltoqbf{'}{\phi})$; 	 $\trmltoqbf{'}{K_a \phi} = \forall \vec x (\chi_a(\vec x', \vec x) \limply  \trmltoqbf{}{\phi})$.
+		
+	\end{itemize}
+	
+\end{definition}
+
+
+$\trmltoqbf\phi$ is the translation of $\phi$ in QBF (close to the standard translation of modal logic in first-order logic \cite{??} \todo{Blackburn}), the relation behind modalities $K_a$ being represented by $\chi_a(\vec x, \vec x')$.
+
+
+\begin{theorem}
+	$\modelM, w \models \phi$ iff $\trmltoqbf{}{\phi} \land descr(w)$ is QBF-true.
+\end{theorem}
 
 
 \section{Exploration of Huge Kripke structures}
@@ -98,7 +146,7 @@ In this section, we aim at solving the following problem.
 \end{itemize}
 
 The idea is to sample a valuation for variables $\vec x'$ such that $\chi_a(\vec x, \vec x')$ where $\vec x$ describes the world $w$.
-\todo{Rely on one of the tools of \cite{DBLP:conf/lpar/SharmaGRM18}}
+\todo{Rely on one of the tools of \cite{DBLP:conf/lpar/SharmaGRM18}, but they do not capture QBF, that is needed as we will see}
 
 
 
@@ -125,21 +173,36 @@ Let us consider an epistemic model $\modelM$ described by:
 
 The epistemic model after the announcement of a propositional formula $\phi$ is described by:
 \begin{itemize}
-	\item $\chi_a(\vec x, \vec x')\land \phi$ for all agents $a$.
+	\item $\chi_a(\vec x, \vec x')\land \phi'$ for all agents $a$.
 \end{itemize}
 
-
+where $\phi'$ is the formula obtained from $\phi$ by replacing variables $x$ by their copies $x'$.
 The epistemic model after the announcement of a modal formula $\phi$ is described by:
 \begin{itemize}
-	\item $\chi_a(\vec x, \vec x') \land tr(\phi)$ for all agents $a$.
+	\item $\chi_a(\vec x, \vec x') \land \trmltoqbf{'}\phi$ for all agents $a$.
 \end{itemize}
 
-where $tr(\phi)$ is the translation of $\phi$ in QBF (close to the standard translation of modal logic in first-order logic), the relation behind modalities $K_a$ being represented by $\chi_a(\vec x, \vec x')$.
+where $\trmltoqbf{'}\phi$ is defined in Definition~\ref{definition:trmltoqbf}.
 
 
 
+\begin{example}
+Suppose that the relation for an agent $a$ is represented by $\chi_a(\vec x, \vec x')$. After the announcement of $K_b \phi_1$, the relation for agent $b$ is represented by:
 
 
+$$\chi_a(\vec x, \vec x') \land (\forall \vec x (\chi_b(\vec x', \vec x) \limply \trmltoqbf{}{\phi_1})$$
+
+After the announcement of $K_a \phi_2$, the relation for agent $a$ is represented by:
+
+\begin{center}
+$[\chi_a(\vec x, \vec x') \land (\forall \vec x (\chi_b(\vec x', \vec x) \limply \trmltoqbf{}{\phi_1})] \land $
+
+$\forall \vec x ([\chi_a(\vec x', \vec x) \land (\forall \vec x' (\chi_b(\vec x, \vec x') \limply \trmltoqbf{'}{\phi_1})] \limply \trmltoqbf{}{\phi_2})$
+	
+\end{center}
+
+
+\end{example}
 
 
 
