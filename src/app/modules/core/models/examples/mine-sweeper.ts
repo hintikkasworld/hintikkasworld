@@ -273,7 +273,6 @@ export class MineSweeper extends ExampleDescription {
         this.clicked = {};
 
         let valToWorld = (val: Valuation): WorldValuation => {
-            console.log('valtoworld ', val);
             return new MineSweeperWorld(this.nbrows, this.nbcols, this.clicked, val);
         };
 

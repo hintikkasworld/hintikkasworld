@@ -5,12 +5,15 @@ import { Formula } from '../formula/formula';
 import { TouistService } from '../../services/touist.service';
 
 export class SymbolicSuccessorSetTouist implements SuccessorSet {
-    private primeAtoms: Set<string>;
     private toWorld: (Valuation) => World;
     private possibleWorlds: Formula;
-    private successorsCache: Valuation[];
+
+    private primeAtoms: Set<string>;
     private primeMap: (string) => string;
-    private n_successors: number;
+
+    private successorsCache: Valuation[];
+    private n_successors_given: number;
+
     private fetched: Promise<void>;
 
     constructor(toWorld: (Valuation) => World, primeAtoms: string[], primeMap: (string) => string, possibleWorlds: Formula) {
@@ -23,15 +26,13 @@ export class SymbolicSuccessorSetTouist implements SuccessorSet {
         for (let atom of primeAtoms) {
             this.primeAtoms.add(atom);
         }
-        this.n_successors = 0;
+        this.n_successors_given = 0;
         this.fetched = this.fetchData();
     }
 
     async fetchData() {
         let vals = await TouistService.fetchModels(this.possibleWorlds, 50);
-        this.n_successors = vals.length;
 
-        console.log('Touist returned vals: ', vals);
         for (let rawProps of vals) {
             let props = rawProps.filter((p) => this.primeAtoms.has(p)).map(this.primeMap);
 
@@ -44,26 +45,26 @@ export class SymbolicSuccessorSetTouist implements SuccessorSet {
      */
     async length(): Promise<number> {
         await this.fetched;
-        return this.n_successors; // This is very expensive for SAT based solvers, so it is only accurate when touist returned all successors
+        return this.successorsCache.length; // This is very expensive for SAT based solvers, so it is only accurate when touist returned all successors
     }
 
     async getSomeSuccessors(): Promise<World[]> {
         await this.fetched;
 
+        let n = this.n_successors_given;
         let sols: World[] = [];
-        for (let i = 0; i < 5 && this.successorsCache.length > 0; i++) {
-            sols.push(this.toWorld(this.successorsCache.pop()));
+        for (let i = n; i < n + 5 && i + n < this.successorsCache.length; i++) {
+            sols.push(this.toWorld(this.successorsCache[i+n]));
+            this.n_successors_given += 1;
         }
+        console.log(sols);
         return sols;
     }
 
     async getRandomSuccessor(): Promise<World> {
         await this.fetched;
 
-        if (this.successorsCache.length > 0) {
-            return this.toWorld(this.successorsCache.pop());
-        } else {
-            return null;
-        }
+        return this.toWorld(this.successorsCache[Math.floor(Math.random() * this.successorsCache.length)]);
     }
 }
+
