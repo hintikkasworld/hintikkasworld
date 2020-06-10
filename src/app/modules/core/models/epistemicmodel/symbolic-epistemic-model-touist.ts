@@ -16,9 +16,10 @@ export class SymbolicEpistemicModelTouist implements EpistemicModel {
     static primedString = '_pr';
     private _isLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private pointedValuation: Valuation; // the valuation that corresponds to the pointed world
-    private propositionalAtoms: string[];
-    private propositionalPrimes: string[];
-    private validPrimeWorlds: Formula;
+    public readonly propositionalAtoms: string[];
+    public readonly propositionalPrimes: string[];
+    public readonly validPrimeWorlds: Formula;
+    public readonly validWorlds: Formula;
 
     private readonly agents: string[];
     private readonly valToWorld: (val: Valuation) => WorldValuation;
@@ -49,11 +50,12 @@ export class SymbolicEpistemicModelTouist implements EpistemicModel {
         this.propositionalAtoms = descr.getAtomicPropositions();
         this.propositionalPrimes = this.propositionalAtoms.map(SymbolicEpistemicModelTouist.getPrimedVarName);
 
-        this.validPrimeWorlds = descr.getSetWorldsFormulaDescription().renameAtoms((s) => SymbolicEpistemicModelTouist.getPrimedVarName(s));
+        this.validWorlds = descr.getSetWorldsFormulaDescription();
+        this.validPrimeWorlds = this.validWorlds.renameAtoms((s) => SymbolicEpistemicModelTouist.getPrimedVarName(s));
 
         this.symbolicRelations = {};
         for (let agent of this.agents) {
-            this.symbolicRelations[agent] = descr.getRelationDescription(agent).toFormula();
+            this.symbolicRelations[agent] = descr.getRelationDescription(agent).formula();
         }
 
         this._isLoaded.next(true);
@@ -87,6 +89,10 @@ export class SymbolicEpistemicModelTouist implements EpistemicModel {
         return map;
     }
 
+    getRelation(agent: string): Formula {
+        return this.symbolicRelations[agent];
+    }
+
     isLoaded(): boolean {
         return this._isLoaded.value;
     }
@@ -116,7 +122,12 @@ export class SymbolicEpistemicModelTouist implements EpistemicModel {
 
         // primes will be removed by the successor set using the primeMap
         let primeMap = this.getMapPrimeToNotPrime();
-        return new SymbolicSuccessorSetTouist((val) => this.valToWorld(val), this.propositionalPrimes, (p) => primeMap[p], f);
+        return new SymbolicSuccessorSetTouist(
+            (val) => this.valToWorld(val),
+            this.propositionalPrimes,
+            (p) => primeMap[p],
+            f
+        );
     }
 
     /**

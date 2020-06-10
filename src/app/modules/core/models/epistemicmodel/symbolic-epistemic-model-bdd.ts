@@ -175,10 +175,6 @@ export class SymbolicEpistemicModelBDD implements EpistemicModel {
         return this.propositionalAtoms;
     }
 
-    getValToWorld(): (Valuation) => WorldValuation {
-        return this.valToWorld;
-    }
-
     async queryWorldsSatisfying(phi: Formula): Promise<BDDNode> {
         if (phi.isBoolean()) {
             return await this.queryWorldsSatisfyingBooleanFormula(phi);
@@ -237,7 +233,7 @@ export class SymbolicEpistemicModelBDD implements EpistemicModel {
         this.bddSetWorlds = await this.getRulesAndRulesPrime(descriptor.getSetWorldsFormulaDescription());
 
         for (let agent of this.agents) {
-            let bddRelation: BDDNode = await descriptor.getRelationDescription(agent).toBDD();
+            let bddRelation: BDDNode = await BDDWorkerService.formulaToBDD(descriptor.getRelationDescription(agent).formula());
             this.symbolicRelations[agent] = await BDDWorkerService.applyAnd([
                 await BDDWorkerService.createCopy(this.bddSetWorlds),
                 bddRelation

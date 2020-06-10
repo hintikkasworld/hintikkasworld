@@ -1,5 +1,4 @@
 import { EventModelAction } from '../environment/event-model-action';
-import { SymbolicPublicAnnouncementBDD } from '../eventmodel/symbolic-public-announcement-bdd';
 import { AndFormula, AtomicFormula, ExactlyFormula, Formula, NotFormula } from '../formula/formula';
 import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 import { WorldValuation } from '../epistemicmodel/world-valuation';
@@ -9,8 +8,8 @@ import { Valuation } from '../epistemicmodel/valuation';
 import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 import { EpistemicModel } from '../epistemicmodel/epistemic-model';
-import { SymbolicEpistemicModelBDD } from '../epistemicmodel/symbolic-epistemic-model-bdd';
 import { SymbolicEpistemicModelTouist } from '../epistemicmodel/symbolic-epistemic-model-touist';
+import { SymbolicPublicAnnouncementTouist } from '../eventmodel/symbolic-public-announcement-touist';
 
 class Cell {
     row: number;
@@ -274,6 +273,7 @@ export class MineSweeper extends ExampleDescription {
         this.clicked = {};
 
         let valToWorld = (val: Valuation): WorldValuation => {
+            console.log('valtoworld ', val);
             return new MineSweeperWorld(this.nbrows, this.nbcols, this.clicked, val);
         };
 
@@ -349,7 +349,7 @@ export class MineSweeper extends ExampleDescription {
             return new AndFormula(phis);
         };
 
-        let M: SymbolicEpistemicModelBDD = env.epistemicModel as SymbolicEpistemicModelBDD;
+        let M: SymbolicEpistemicModelTouist = env.epistemicModel as SymbolicEpistemicModelTouist;
         let pointedWorld: MineSweeperWorld = M.getPointedWorld() as MineSweeperWorld;
 
         let cell: Cell = pointedWorld.getCell(point);
@@ -363,11 +363,10 @@ export class MineSweeper extends ExampleDescription {
             env.setEpistemicModel(this.getMineSweeperGameOverKripkeModel());
         } else {
             let phi = getAnnouncement(cell);
-            // TODO SYMBOLIC PUBLIC ANNOUNCEMENT that the number of mines around cell is hint
             env.perform(
                 new EventModelAction({
                     name: 'give hint',
-                    eventModel: new SymbolicPublicAnnouncementBDD(phi)
+                    eventModel: new SymbolicPublicAnnouncementTouist(phi)
                 })
             );
         }

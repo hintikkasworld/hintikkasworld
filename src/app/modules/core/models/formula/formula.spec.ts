@@ -74,7 +74,7 @@ describe('Formula', () => {
     });
 
     it('the pretty printer works on =>', () => {
-        expect(FormulaFactory.createFormula('(p => q)').prettyPrint() == '(p => q)').toBeTruthy()
+        expect(FormulaFactory.createFormula('(p => q)').prettyPrint() == '(p => q)').toBeTruthy();
     });
 
     it('the pretty printer works on <=>', () => {

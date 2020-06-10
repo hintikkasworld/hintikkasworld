@@ -40,7 +40,6 @@ export class SymbolicPublicAnnouncementBDD implements EventModel<SymbolicEpistem
                 const previousRelation = M.getRelationBDD(agent);
 
                 if (this.observers == undefined || this.observers.includes(agent)) {
-
                     const possibleWorlds = await bddWorldsPromise;
 
                     const possibleWorldsPrime = await BS.applyRenaming(
@@ -57,7 +56,7 @@ export class SymbolicPublicAnnouncementBDD implements EventModel<SymbolicEpistem
             getPointedValuation: () => M.getPointedValuation()
         };
 
-        return new SymbolicEpistemicModelBDD(M.getValToWorld(), newDescr);
+        return new SymbolicEpistemicModelBDD((val) => M.getWorld(val), newDescr);
     }
 
     async isApplicableIn(M: SymbolicEpistemicModelBDD): Promise<boolean> {

@@ -52,7 +52,7 @@ export class SymbolicPublicAction implements EventModel<SymbolicEpistemicModelBD
             }
         };
 
-        return new SymbolicEpistemicModelBDD(M.getValToWorld(), newDescr);
+        return new SymbolicEpistemicModelBDD((val) => M.getWorld(val), newDescr);
     }
 
     async isApplicableIn(M: SymbolicEpistemicModelBDD): Promise<boolean> {

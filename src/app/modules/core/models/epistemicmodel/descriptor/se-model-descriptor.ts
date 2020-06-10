@@ -1,6 +1,6 @@
 import { Valuation } from '../valuation';
-import { SymbolicRelation } from '../symbolic-relation';
 import { Formula } from '../../formula/formula';
+import { SymbolicRelation } from '../symbolic-relation';
 
 /**
  * Every class which implements this interface will have the

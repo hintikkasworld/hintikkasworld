@@ -59,7 +59,6 @@ export class Valuation {
         return new AndFormula(literals);
     }
 
-
     toString() {
         const truePropositions = [];
         for (const proposition in this.propositions) {

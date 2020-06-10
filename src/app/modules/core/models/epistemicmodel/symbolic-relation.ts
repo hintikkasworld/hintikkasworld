@@ -1,12 +1,27 @@
-import { BDDWorkerService } from 'src/app/services/bddworker.service';
 import { AndFormula, AtomicFormula, EquivFormula, Formula } from '../formula/formula';
 import { SymbolicEpistemicModelBDD } from './symbolic-epistemic-model-bdd';
-import { BDDNode } from '../../../../services/bdd.service';
 
 export interface SymbolicRelation {
-    toFormula(): Formula;
+    formula(): Formula;
+}
 
-    toBDD(): Promise<BDDNode>;
+export class FormulaRelation implements SymbolicRelation {
+    /**
+     * What is known by the agent : String (which are atoms), or Formula.
+     * "a" <=> AtomicFormula("a")
+     */
+    protected readonly _formula: Formula;
+
+    constructor(formula: Formula) {
+        this._formula = formula;
+    }
+
+    /**
+     * Return the formula of the SymbolicRelation
+     */
+    formula(): Formula {
+        return this._formula;
+    }
 }
 
 /**
@@ -27,7 +42,7 @@ export class Obs implements SymbolicRelation {
     /**
      * Return the formula of the SymbolicRelation
      */
-    toFormula(): Formula {
+    formula(): Formula {
         let list_formula: Formula[] = this.observedVariables.map((form) => {
             if (typeof form === 'string') {
                 return new EquivFormula(new AtomicFormula(form), new AtomicFormula(SymbolicEpistemicModelBDD.getPrimedVarName(form)));
@@ -36,19 +51,5 @@ export class Obs implements SymbolicRelation {
             }
         });
         return new AndFormula(list_formula);
-    }
-
-    /**
-     * Return the BDD of the SymbolicRelation, build thanks to the toFormula()
-     */
-    async toBDD(): Promise<BDDNode> {
-        let formula = this.toFormula();
-        try {
-            return BDDWorkerService.formulaToBDD(formula);
-        } catch (error) {
-            console.log('Erreur dans la contruction de la formule !');
-            console.log('Trace : ', error);
-            throw error;
-        }
     }
 }

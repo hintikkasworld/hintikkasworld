@@ -31,10 +31,9 @@ export class SymbolicSuccessorSetTouist implements SuccessorSet {
         let vals = await TouistService.fetchModels(this.possibleWorlds, 50);
         this.n_successors = vals.length;
 
-        console.log("Touist returned vals: ", vals);
+        console.log('Touist returned vals: ', vals);
         for (let rawProps of vals) {
-            let props = rawProps.filter((p) => this.primeAtoms.has(p))
-                                .map(this.primeMap);
+            let props = rawProps.filter((p) => this.primeAtoms.has(p)).map(this.primeMap);
 
             this.successorsCache.push(new Valuation(props));
         }
