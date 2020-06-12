@@ -37,7 +37,7 @@
     <div class="interior">
         <h3>Touist input</h3>
         <label for="args">Args: </label>
-        <textarea type="text" id="args" rows="1" res></textarea>
+        <textarea id="args" rows="1"></textarea>
 
         <br/>
 
@@ -48,6 +48,7 @@
         <br/>
 
         <input type="submit" value="Envoyer" onclick="onSubmit()">
+        <input type="submit" value="Envoyer via ws" onclick="onSubmitWS()">
         <br/>
         <br/>
 
@@ -58,11 +59,18 @@
         <input type="button" value="Example 3" onclick="example3()">
         <br/>
         <input type="button" value="Example 4" onclick="example4()">
+
+        <div id="additional" hidden>
+            <label for="additionalstdin">Additional Stdin (interactive):</label>
+            <textarea id="additionalstdin" rows="2"></textarea>
+            <input type="submit" value="Envoyer additional" onclick="onSubmitAdditional()">
+        </div>
     </div>
 </div>
 <div class="split right">
     <div class="interior">
         <h3> Response </h3>
+        <label for="answer"></label>
         <textarea id="answer" rows="15" readonly></textarea>
     </div>
 </div>
@@ -79,11 +87,55 @@
             body: data,
         };
 
-        let response = await fetch(window.location.origin + "/touist_cmd", methodInit);
+        let hostname = window.location.hostname;
+        if (hostname === "") {
+            hostname = "localhost";
+        }
+
+        let response = await fetch("http://" + hostname + ":7015/touist_cmd", methodInit);
         let text = await response.text();
         console.log(text);
         document.getElementById("answer").value = text;
         document.getElementById("answer").rows = text.split('\n').length;
+    }
+
+    let ws;
+
+    async function onSubmitWS() {
+        let hostname = window.location.hostname;
+        if (hostname === "") {
+            hostname = "localhost";
+        }
+
+        ws = new WebSocket("ws://" + hostname + ":7015/touist_ws");
+
+        ws.onopen = function (_) {
+            ws.send(JSON.stringify({
+                args: document.getElementById("args").value,
+                stdin: document.getElementById("stdin").value,
+            }));
+            document.getElementById("answer").value = "";
+            document.getElementById("answer").rows = 1;
+            document.getElementById("additional").hidden = false;
+        };
+
+        ws.onmessage = function (event) {
+            let v = JSON.parse(event.data);
+            console.log(v);
+            document.getElementById("answer").value += v.msg;
+            document.getElementById("answer").value += '\n';
+            document.getElementById("answer").rows += 1;
+        };
+
+        ws.onclose = function (_) {
+            document.getElementById("additional").hidden = true;
+        }
+    }
+
+    function onSubmitAdditional() {
+        ws.send(JSON.stringify({
+            stdin: document.getElementById("additionalstdin").value
+        }));
     }
 
     function example1() {
