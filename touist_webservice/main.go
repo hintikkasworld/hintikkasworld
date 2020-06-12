@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"io"
@@ -40,13 +41,18 @@ func ServeTouist(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type TouistInput struct {
+type InputMsg struct {
 	Args  string `json:"args"`
 	Stdin string `json:"stdin"`
 }
 
-type TouistAdditionalInput struct {
+type AdditionalInputMsg struct {
 	Stdin string `json:"stdin"`
+}
+
+type OutMsg struct {
+	Type string `json:"type"`
+	Msg  string `json:"msg"`
 }
 
 var upgrader = websocket.Upgrader{
@@ -69,7 +75,7 @@ func ServeTouistWs(w http.ResponseWriter, r *http.Request) {
 		return nil
 	})
 
-	var inp TouistInput
+	var inp InputMsg
 
 	err = c.ReadJSON(&inp)
 	if err != nil {
@@ -112,7 +118,6 @@ func ServeTouistWs(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error creating StdoutPipe for Cmd: ", err)
 		return
 	}
-
 	// create a pipe for the output of the script
 	cmdReaderErr, err := cmd.StderrPipe()
 	if err != nil {
@@ -120,7 +125,8 @@ func ServeTouistWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	scanner := io.MultiReader(cmdReader, cmdReaderErr)
+	scanner := bufio.NewScanner(cmdReader)
+	scannererr := bufio.NewScanner(cmdReaderErr)
 
 	err = cmd.Start()
 	if err != nil {
@@ -141,22 +147,24 @@ func ServeTouistWs(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	msgdone := make(chan struct{}, 1)
-	msgs := make(chan []byte, 1)
+	stdoutmsgs := make(chan string, 1)
 	go func() {
-		buf := make([]byte, 100)
-		for {
-			n, err := scanner.Read(buf)
-			msgs <- buf[0:n]
-			if err != nil {
-				break
-			}
+		for scanner.Scan() {
+			stdoutmsgs <- string(scanner.Bytes())
 		}
 		msgdone <- struct{}{}
 	}()
 
+	stderrmsgs := make(chan string, 1)
+	go func() {
+		for scannererr.Scan() {
+			stderrmsgs <- string(scannererr.Bytes())
+		}
+	}()
+
 	inmsgs := make(chan string, 1)
 	go func() {
-		var addInput TouistAdditionalInput
+		var addInput AdditionalInputMsg
 		err := c.ReadJSON(&addInput)
 		inmsgs <- addInput.Stdin
 		for err == nil {
@@ -172,8 +180,13 @@ func ServeTouistWs(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				log.Println("Error trying to write to process: ", err)
 			}
-		case msg := <-msgs:
-			err = c.WriteMessage(websocket.TextMessage, append(msg, '\n'))
+		case msg := <-stdoutmsgs:
+			err = c.WriteJSON(OutMsg{Type: "stdout", Msg: msg})
+			if err != nil {
+				return
+			}
+		case msg := <-stderrmsgs:
+			err = c.WriteJSON(OutMsg{Type: "stderr", Msg: msg})
 			if err != nil {
 				return
 			}

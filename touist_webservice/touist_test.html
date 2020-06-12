@@ -120,8 +120,11 @@
         };
 
         ws.onmessage = function (event) {
-            document.getElementById("answer").value += event.data;
-            document.getElementById("answer").rows += event.data.split('\n').length - 1;
+            let v = JSON.parse(event.data);
+            console.log(v);
+            document.getElementById("answer").value += v.msg;
+            document.getElementById("answer").value += '\n';
+            document.getElementById("answer").rows += 1;
         };
 
         ws.onclose = function (_) {
