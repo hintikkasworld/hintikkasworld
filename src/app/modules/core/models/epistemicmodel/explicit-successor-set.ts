@@ -3,7 +3,7 @@ import { World } from './world';
 
 export class ExplicitSuccessorSet implements SuccessorSet {
     private readonly successors: World[];
-    private done = false;
+    private successors_given = 0;
 
     constructor(successors: World[]) {
         this.successors = successors;
@@ -13,11 +13,18 @@ export class ExplicitSuccessorSet implements SuccessorSet {
         return this.successors.length;
     }
 
+    async getSuccessor(): Promise<World> {
+        if (this.successors_given >= this.successors.length) {
+            return undefined;
+        }
+        return this.successors[this.successors_given++];
+    }
+
     async getSomeSuccessors(): Promise<World[]> {
-        if (this.done) {
+        if (this.successors_given >= this.successors.length) {
             return [];
         }
-        this.done = true;
+        this.successors_given = this.successors.length;
         return this.successors;
     }
 

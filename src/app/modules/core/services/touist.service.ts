@@ -1,9 +1,96 @@
 import { Formula } from '../models/formula/formula';
+import WebSocketClient from 'src/app/modules/core/services/websocket-client';
+
+export class LazyModelFetcher {
+    private ws: WebSocketClient;
+    private readonly connected: Promise<void>;
+    private locked: boolean;
+
+    constructor(ws: WebSocketClient, connected: Promise<void>) {
+        this.ws = ws;
+        this.connected = connected;
+        this.locked = false;
+    }
+
+    async fetchModels(n: number): Promise<string[][]> {
+        if (this.locked) {
+            return [];
+        }
+        this.locked = true;
+        await this.connected;
+
+        for (let i = 0; i < n; i++) {
+            try {
+                this.ws.send('{"stdin":"\\n"}');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        let line = '';
+        let true_props: string[] = undefined;
+        let res: string[][] = [];
+
+        while (true) {
+            try {
+                let v = await this.ws.receive();
+                v = JSON.parse(v);
+                if (v.type != 'stdout') {
+                    break;
+                }
+                line = v.msg;
+            } catch (e) {
+                break;
+            }
+
+            if (line.startsWith('unsat')) {
+                break;
+            }
+
+            if (line.startsWith('==')) {
+                if (true_props !== undefined) {
+                    res.push(true_props);
+                }
+                true_props = undefined;
+                if (res.length == n) {
+                    break;
+                }
+                continue;
+            }
+
+            let s = line.split(' ');
+            if (s.length != 2) {
+                continue;
+            }
+            if (s[0] == '1') {
+                if (true_props === undefined) {
+                    true_props = [];
+                }
+                true_props.push(s[1]);
+            }
+        }
+        if (true_props !== undefined) {
+            res.push(true_props);
+        }
+        this.locked = false;
+        return res;
+    }
+}
 
 export class TouistService {
+    static lazyModelFetcher(req: Formula): LazyModelFetcher {
+        let ws = new WebSocketClient();
+        let connected = ws.connect('ws://collagol.douady.paris:7015/touist_ws').then(() => ws.send(JSON.stringify({
+            args: '--solve --interactive',
+            stdin: req.prettyPrint()
+        })));
+
+        return new LazyModelFetcher(ws, connected);
+    }
+
     static async fetchModel(req: Formula): Promise<string[]> {
         let data = new FormData();
-        data.append('args', '--solve --limit 1');
+        data.append('args', '--solve');
         data.append('stdin', req.prettyPrint());
 
         let methodInit = {

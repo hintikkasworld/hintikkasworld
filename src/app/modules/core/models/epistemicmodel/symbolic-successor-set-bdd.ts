@@ -33,6 +33,27 @@ export class SymbolicSuccessorSetBDD implements SuccessorSet {
         return this.n_sucessors;
     }
 
+    async getSuccessor(): Promise<World> {
+        let n = await this.length();
+        if (this.successors_given >= n) {
+            console.log('set of successors finished!');
+            return undefined;
+        }
+
+        // Try 3 times before giving up
+        for(let i = 0; i < 3; i++) {
+            const val: Valuation = new Valuation(await BDDWorkerService.pickRandomSolution(await this.bdd, this.atoms));
+            let val_s = val.toString();
+            if (!this.alreadyOutput.hasOwnProperty(val_s)) {
+                this.alreadyOutput[val_s] = {};
+                this.successors_given++;
+                return this.toWorld(val);
+            }
+        }
+
+        return undefined;
+    }
+
     async getSomeSuccessors(): Promise<World[]> {
         let n = await this.length();
         if (this.successors_given >= n) {

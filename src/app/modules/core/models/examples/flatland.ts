@@ -195,7 +195,25 @@ class FlatlandSuccessorSet implements SuccessorSet {
         }
     }
 
-    async getSomeSuccessors() {
+    async getSuccessor(): Promise<World> {
+        if (this.isSingleSuccessor()) {
+            if (this.done) {
+                return undefined;
+            }
+            this.done = true;
+            return this.w;
+        }
+
+        for (let i = 0; i < 3; i++) {
+            let u: FlatlandWorld = await this.getRandomSuccessor();
+            if (u != undefined) {
+                return u;
+            }
+        }
+    }
+
+
+    async getSomeSuccessors(): Promise<World[]> {
         if (this.isSingleSuccessor()) {
             if (this.done) {
                 return [];

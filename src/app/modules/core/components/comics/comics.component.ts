@@ -326,29 +326,37 @@ export class ComicsComponent implements OnInit {
 
         let comics = this;
 
+        function showSuccessor(u: World) {
+            if(u === undefined) {
+                return;
+            }
+            if (levelContainer.children().length != 0) {
+                levelContainer.append('<div class="orBetweenWorlds"> or </div>');
+            }
+
+            let canvasWorld = comics.getNewCanvas();
+
+            if (u == comics.openWorlds[level - 1].world) {
+                $(canvasWorld).addClass('copyRealWorld');
+            }
+            comics.canvasFromWorld[level].set(u, canvasWorld);
+            levelContainer.append(canvasWorld);
+
+            (canvasWorld as any).draw = () => {
+                let context = comics.getContext(canvasWorld);
+                u.draw(context);
+            };
+            (canvasWorld as any).draw();
+            canvasWorld.addEventListener('mouseup', comics.modifyOpenWorldsClick(level, canvasWorld, u), false);
+        }
+
         function callForNewSuccessors() {
-            successorSet.getSomeSuccessors().then((succs) => {
-                for (let u of succs) {
-                    if (levelContainer.children().length != 0) {
-                        levelContainer.append('<div class="orBetweenWorlds"> or </div>');
-                    }
-
-                    let canvasWorld = comics.getNewCanvas();
-
-                    if (u == comics.openWorlds[level - 1].world) {
-                        $(canvasWorld).addClass('copyRealWorld');
-                    }
-                    comics.canvasFromWorld[level].set(u, canvasWorld);
-                    levelContainer.append(canvasWorld);
-
-                    (canvasWorld as any).draw = () => {
-                        let context = comics.getContext(canvasWorld);
-                        u.draw(context);
-                    };
-                    (canvasWorld as any).draw();
-                    canvasWorld.addEventListener('mouseup', comics.modifyOpenWorldsClick(level, canvasWorld, u), false);
-                }
-            });
+            let p: Promise<void> = Promise.resolve();
+            for (let i = 0 ; i < 5 ; i++) {
+                p = p.then(() => {
+                    return successorSet.getSuccessor();
+                }).then(showSuccessor);
+            }
         }
 
         callForNewSuccessors();

@@ -314,7 +314,7 @@ export class SymbolicEpistemicModelBDD implements EpistemicModel {
             return await this._query(all_worlds, new types.OrFormula([Knp, Kp]));
         }
         if (phi instanceof types.ExactlyFormula) {
-            return await this._query(all_worlds, phi.convertToNormalFormula());
+            return await this._query(all_worlds, phi.convertToBddFormula());
         }
 
         throw new Error('Unknown instance of phi:' + JSON.stringify(phi));
