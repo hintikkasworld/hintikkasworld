@@ -1,5 +1,5 @@
 <div>
-    <svg #svg [attr.width]="_options.width" [attr.height]="_options.height">
+    <svg #svg width="100%" [attr.height]="_options.height">
         <g>
             <g [app-edge]="edge" *ngFor="let edge of edges"></g>
             <g [app-node]="node" *ngFor="let node of nodes" [draggableNode]="node" [draggableInGraph]="graph"></g>

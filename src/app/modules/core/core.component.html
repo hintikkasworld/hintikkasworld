@@ -71,7 +71,9 @@
     </div>
 
     <div id="palette" valign="top">
-        <img id="hintikkasWorldLogo" src="assets/img/hintikkas_world_logo.png" alt="Hintikka's world"/>
+        <div id="hintikkaWorldLogo">
+            <img src="assets/img/hintikkas_world_logo.png" alt="Hintikka's world"/>
+        </div>
         <br/>
         <app-action-list [obsEnv]="bsEnv.asObservable()" (toPerform)="perform($event)"></app-action-list>
     </div>
@@ -84,18 +86,21 @@
     </div>
 
     <div id="hintikkasWorldKripkeModel" valign="top">
-        Description of the puzzle:
+        <h3>Description of the puzzle:</h3>
         <div id="description">
             <div class="descriptiontext" *ngFor="let desc of getDescription()">{{ desc }} <br/></div>
         </div>
         <br/>
         <div id="divGraphVisualizationEpistemicModel" [hidden]="!isExplicitModel()">
-            Epistemic state:
-            <br/>
+            <h3>
+                Epistemic state:
+            </h3>
             <app-graph [obsEnv]="bsEnv.asObservable()"></app-graph>
         </div>
         <br/>
-        Atomic propositions:
+        <h3>
+            Atomic propositions:
+        </h3>
         <div id="atomicPropositionList">
             <div class="proposition" *ngFor="let proposition of getAtomicPropositions()">
                 {{ proposition }}
@@ -109,6 +114,4 @@
             <svg id="graphVisualizationEpistemicModel2" class="main" width="1000" height="500"></svg>
         </div>
     </div>
-
-    <div id="test" style="float: left;"></div>
 </div>

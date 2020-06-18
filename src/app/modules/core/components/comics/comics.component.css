@@ -24,11 +24,10 @@
 #canvasRealWorld {
     width: 300px;
     height: 150px;
-    margin-top: 300px;
+    margin-top: 150px;
 }
 
 #explanationGUI {
-    margin-top: 100px;
     z-index: 2;
     font-size: 18pt;
     color: brown;

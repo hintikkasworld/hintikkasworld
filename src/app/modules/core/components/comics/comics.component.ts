@@ -129,7 +129,7 @@ export class ComicsComponent implements OnInit {
         this.obsEnv.subscribe((env) => (this.env = env)); // pas bon... pas besoin de compute
     }
 
-    private getMaxLevelWidth = () => 480;
+    private getMaxLevelWidth = () => 420;
 
     private getYLevelBulle(level: number): number {
         if (this.openWorlds.length == 1 && this.env.epistemicModel.getAgents().length == 1) {
@@ -386,7 +386,7 @@ export class ComicsComponent implements OnInit {
             levelLeft = 0;
         }
 
-        let w = $('#canvasBackground').width() - 30;
+        let w = $('#canvasBackground').width();
         if (levelLeft > w - levelWidth) {
             levelLeft = w - levelWidth;
         }
@@ -419,6 +419,8 @@ export class ComicsComponent implements OnInit {
         if (this.openWorlds.length > 1) {
             shiftY = (this.openWorlds.length - 1) * this.levelheight;
         }
+
+        $('#hintikkasWorldScene').height(shiftY + 350);
 
         $('#canvasBackground').css({ top: -shiftY });
         $('#canvas-wrap').animate({ top: shiftY });
