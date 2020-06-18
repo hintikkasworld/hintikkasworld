@@ -38,8 +38,12 @@ export class SymbolicSuccessorSetTouist implements SuccessorSet {
     /**
      * @returns the number of successors
      */
-    async length(): Promise<number> {
-        return this.successorsCache.length; // This is very expensive for SAT based solvers, so it is only accurate when touist returned all successors
+    async length(): Promise<number | {approximately: number}> {
+        if (this.fetcher.is_finished) {
+            return this.successorsCache.length;
+        } else {
+            return { approximately: this.successorsCache.length };
+        }
     }
 
     async getSuccessor(): Promise<World> {

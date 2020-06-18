@@ -12,6 +12,23 @@ import { World } from '../../models/epistemicmodel/world';
     encapsulation: ViewEncapsulation.None // because of JQuery dynamics
 })
 export class ComicsComponent implements OnInit {
+    @Input() obsEnv: Observable<Environment>;
+    @Input() readyObservable: BehaviorSubject<boolean>;
+    private perspectiveWorlds: SuccessorSet = undefined;
+    private ready: boolean;
+    /**
+     if openWorld = [], no thoughts are shown
+     if openWorld = [{world: "w", agent: "a"}], the real world is w and the GUI shows the thoughts of agent a
+     if openWorld = [{world: "w", agent: "a"}, {world: "u", agent: "b"}], then the real world is w, the GUI shows the thouhts of agent a, in which
+     there is a possible world u where we show the thoughts of agent b.
+     */
+    private openWorlds: { world: World; agent: string }[] = [];
+    private canvasRealWorldTop = 250;
+    private canvasFromWorld: Map<World, HTMLCanvasElement>[] = [];
+    private readonly canvasWorldStandardWidth = 128;
+    private zoomWorldCanvasInBubble = 1.5;
+    private levelheight = 170;
+
     constructor() {
         const initGui = () => {
             $('#explanationGUI').css({ top: 150, left: 50 });
@@ -55,34 +72,62 @@ export class ComicsComponent implements OnInit {
         setTimeout(initGui.bind(this), 500);
     }
 
-    public set env(env: Environment) {
-        this._env = env;
-        this.compute(0);
-    }
+    private _env: Environment;
 
     public get env() {
         return this._env;
     }
 
-    private _env: Environment;
-    private perspectiveWorlds: SuccessorSet = undefined;
-    @Input() obsEnv: Observable<Environment>;
-    @Input() readyObservable: BehaviorSubject<boolean>;
-    private ready: boolean;
+    public set env(env: Environment) {
+        this._env = env;
+        this.compute(0);
+    }
 
     /**
-     if openWorld = [], no thoughts are shown
-     if openWorld = [{world: "w", agent: "a"}], the real world is w and the GUI shows the thoughts of agent a
-     if openWorld = [{world: "w", agent: "a"}, {world: "u", agent: "b"}], then the real world is w, the GUI shows the thouhts of agent a, in which
-           there is a possible world u where we show the thoughts of agent b.
-    */
-    private openWorlds: { world: World; agent: string }[] = [];
+     @returns the coordinates of element in canvas-wrap
+     */
+    private static cumulativeOffset(element) {
+        let top = 0,
+            left = 0;
+        do {
+            top += element.offsetTop || 0;
+            left += element.offsetLeft || 0;
+            top -= element.scrollTop || 0;
+            left -= element.scrollLeft || 0;
+            element = element.offsetParent;
+        } while (element != document.getElementById('canvas-wrap'));
 
-    private canvasRealWorldTop = 250;
-    private canvasFromWorld: Map<World, HTMLCanvasElement>[] = [];
-    private readonly canvasWorldStandardWidth = 128;
-    private zoomWorldCanvasInBubble = 1.5;
-    private levelheight = 170;
+        return { x: left, y: top };
+    }
+
+    /**
+     @description make so that DOM element element is shown
+     */
+    private static checkIfInView(element) {
+        let parent = element.parent();
+
+        let offset = element.offset().top + parent.scrollTop();
+
+        let height = element.innerHeight();
+        let offset_end = offset + height;
+        if (!element.is(':visible')) {
+            element.css({ visibility: 'hidden' }).show();
+            offset = element.offset().top;
+            element.css({ visibility: '', display: '' });
+        }
+
+        let visible_area_start = parent.scrollTop();
+        let visible_area_end = visible_area_start + parent.innerHeight();
+
+        if (offset - height < visible_area_start) {
+            parent.animate({ scrollTop: offset - height }, 600);
+            return false;
+        } else if (offset_end > visible_area_end) {
+            parent.animate({ scrollTop: parent.scrollTop() + offset_end - visible_area_end }, 600);
+            return false;
+        }
+        return true;
+    }
 
     ngOnInit() {
         this.obsEnv.subscribe((env) => (this.env = env)); // pas bon... pas besoin de compute
@@ -147,23 +192,6 @@ export class ComicsComponent implements OnInit {
     }
 
     /**
-     @returns the coordinates of element in canvas-wrap
-     */
-    private static cumulativeOffset(element) {
-        let top = 0,
-            left = 0;
-        do {
-            top += element.offsetTop || 0;
-            left += element.offsetLeft || 0;
-            top -= element.scrollTop || 0;
-            left -= element.scrollLeft || 0;
-            element = element.offsetParent;
-        } while (element != document.getElementById('canvas-wrap'));
-
-        return { x: left, y: top };
-    }
-
-    /**
      @param level level of nesting
      @param worldID ID of a world in the Kripke model
      @returns the coordinates of the world of ID worldID at level
@@ -225,35 +253,6 @@ export class ComicsComponent implements OnInit {
     }
 
     /**
-     @description make so that DOM element element is shown
-     */
-    private static checkIfInView(element) {
-        let parent = element.parent();
-
-        let offset = element.offset().top + parent.scrollTop();
-
-        let height = element.innerHeight();
-        let offset_end = offset + height;
-        if (!element.is(':visible')) {
-            element.css({ visibility: 'hidden' }).show();
-            offset = element.offset().top;
-            element.css({ visibility: '', display: '' });
-        }
-
-        let visible_area_start = parent.scrollTop();
-        let visible_area_end = visible_area_start + parent.innerHeight();
-
-        if (offset - height < visible_area_start) {
-            parent.animate({ scrollTop: offset - height }, 600);
-            return false;
-        } else if (offset_end > visible_area_end) {
-            parent.animate({ scrollTop: parent.scrollTop() + offset_end - visible_area_end }, 600);
-            return false;
-        }
-        return true;
-    }
-
-    /**
      @description make the GUI to show an error
      */
     private guiError() {
@@ -293,9 +292,7 @@ export class ComicsComponent implements OnInit {
         levelDiv.attr('id', 'level' + level);
         levelDiv.addClass('bulle');
 
-        successorSet.length().then((number) => {
-            levelDiv.prepend(`<div class="count">${number} possible worlds</div>`);
-        });
+        levelDiv.prepend(`<div id="count${level}" class="count"></div>`);
 
         let levelDivContent = $('<div>');
         levelDivContent.attr('id', 'level-content' + level);
@@ -327,9 +324,10 @@ export class ComicsComponent implements OnInit {
         let comics = this;
 
         function showSuccessor(u: World) {
-            if(u === undefined) {
+            if (u === undefined) {
                 return;
             }
+
             if (levelContainer.children().length != 0) {
                 levelContainer.append('<div class="orBetweenWorlds"> or </div>');
             }
@@ -352,11 +350,23 @@ export class ComicsComponent implements OnInit {
 
         function callForNewSuccessors() {
             let p: Promise<void> = Promise.resolve();
-            for (let i = 0 ; i < 5 ; i++) {
-                p = p.then(() => {
-                    return successorSet.getSuccessor();
-                }).then(showSuccessor);
+            for (let i = 0; i < 5; i++) {
+                p = p
+                    .then(() => {
+                        return successorSet.getSuccessor();
+                    })
+                    .then(showSuccessor);
             }
+
+            p.then(() => successorSet.length().then((number) => {
+                let s = "";
+                if (number.hasOwnProperty("approximately")) {
+                    s = `At least ${number["approximately"]} possible worlds`
+                } else if (number > 0) {
+                    s = `${number} possible worlds`;
+                }
+                $('#count' + level).html(s)
+            }));
         }
 
         callForNewSuccessors();

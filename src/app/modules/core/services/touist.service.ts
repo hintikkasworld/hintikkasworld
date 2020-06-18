@@ -5,11 +5,13 @@ export class LazyModelFetcher {
     private ws: WebSocketClient;
     private readonly connected: Promise<void>;
     private locked: boolean;
+    public is_finished: boolean;
 
     constructor(ws: WebSocketClient, connected: Promise<void>) {
         this.ws = ws;
         this.connected = connected;
         this.locked = false;
+        this.is_finished = false;
     }
 
     async fetchModels(n: number): Promise<string[][]> {
@@ -18,6 +20,8 @@ export class LazyModelFetcher {
         }
         this.locked = true;
         await this.connected;
+
+        this.is_finished = !this.ws.connected;
 
         for (let i = 0; i < n; i++) {
             try {
