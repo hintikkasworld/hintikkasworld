@@ -20,14 +20,6 @@ export class ExplicitSuccessorSet implements SuccessorSet {
         return this.successors[this.successors_given++];
     }
 
-    async getSomeSuccessors(): Promise<World[]> {
-        if (this.successors_given >= this.successors.length) {
-            return [];
-        }
-        this.successors_given = this.successors.length;
-        return this.successors;
-    }
-
     async getRandomSuccessor(): Promise<World> {
         return this.successors[Math.floor(Math.random() * this.successors.length)];
     }

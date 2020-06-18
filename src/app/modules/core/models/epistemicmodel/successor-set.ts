@@ -5,7 +5,5 @@ export interface SuccessorSet {
 
     getSuccessor(): Promise<World>;
 
-    getSomeSuccessors(): Promise<World[]>;
-
     getRandomSuccessor(): Promise<World>;
 }

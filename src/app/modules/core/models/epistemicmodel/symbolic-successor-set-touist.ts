@@ -53,18 +53,6 @@ export class SymbolicSuccessorSetTouist implements SuccessorSet {
         return undefined;
     }
 
-    async getSomeSuccessors(): Promise<World[]> {
-        await this.fetchMore(5);
-
-        let n = this.n_successors_given;
-        let sols: World[] = [];
-        for (let i = n; i < n + 5 && i + n < this.successorsCache.length; i++) {
-            sols.push(this.toWorld(this.successorsCache[i+n]));
-            this.n_successors_given += 1;
-        }
-        return sols;
-    }
-
     async getRandomSuccessor(): Promise<World> {
         await this.fetchMore(1);
 
