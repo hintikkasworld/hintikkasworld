@@ -19,6 +19,10 @@ input[type='radio'] {
     display: none;
 }
 
+input[type='radio']:hover + label {
+    background-color: #e3cf92;
+}
+
 input[type='radio']:checked + label {
     background-color: #8888ff;
 }
@@ -43,6 +47,7 @@ input[type='radio'] + label {
 }
 
 button {
+    border: none;
     background-color: white;
     border-radius: 16px;
     margin-top: 8px;
@@ -59,8 +64,8 @@ button:focus {
     outline: none;
 }
 
-button :hover {
-    background-color: #eeddaa;
+button:hover {
+    background-color: #e3cf92;
 }
 
 .vr {

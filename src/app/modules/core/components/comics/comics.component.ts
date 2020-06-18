@@ -38,11 +38,8 @@ export class ComicsComponent implements OnInit {
             });
 
             let canvasRealWorld = $('#canvasRealWorld')[0] as HTMLCanvasElement;
-            console.log('before ready;jakd;flkajl;kfjal;kdjfal;sdkfj;sdlakjf');
             this.readyObservable.subscribe((ready) => {
-                console.log(ready);
                 if (ready) {
-                    console.log('ready to be clicked');
                     canvasRealWorld.addEventListener('click', (evt) => {
                         if (!this.modifyOpenWorldsClick(0, canvasRealWorld, this.env.epistemicModel.getPointedWorld())(evt)) {
                             let point = this.getMousePos(canvasRealWorld, evt);
@@ -59,7 +56,6 @@ export class ComicsComponent implements OnInit {
                 this.env.exampleDescription.onRealWorldClickRightButton(this.env, point);
                 evt.preventDefault();
                 this.drawCanvasWorld();
-                console.log('Hello this is canva real world');
             });
 
             $('#canvasBackground').click(() => {
