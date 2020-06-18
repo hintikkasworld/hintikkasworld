@@ -11,6 +11,7 @@ import { Formula, FormulaFactory } from './models/formula/formula';
 import { ExplicitEventModel } from './models/eventmodel/explicit-event-model';
 import { SymbolicPublicAnnouncementBDD } from './models/eventmodel/symbolic-public-announcement-bdd';
 import { SymbolicEpistemicModelBDD } from './models/epistemicmodel/symbolic-epistemic-model-bdd';
+import { ExplicitEpistemicModel } from './models/epistemicmodel/explicit-epistemic-model';
 
 @Component({
     selector: 'app-core',
@@ -37,6 +38,10 @@ export class CoreComponent implements OnInit {
         this.bsEnv = new BehaviorSubject(env);
 
         this.bsEnv.subscribe((env) => this.initModelChecking());
+    }
+
+    isExplicitModel(): boolean {
+        return this.bsEnv.value.epistemicModel instanceof ExplicitEpistemicModel;
     }
 
     isEpistemicModelReady(): boolean {

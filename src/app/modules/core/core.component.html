@@ -87,20 +87,21 @@
             </td>
 
             <td id="hintikkasWorldKripkeModel" valign="top">
+                Description of the puzzle:
+                <div id="description">
+                    <br />
+                    <div class="descriptiontext" *ngFor="let desc of getDescription()">{{ desc }} <br /></div>
+                </div>
+                <div id="divGraphVisualizationEpistemicModel" [hidden]="!isExplicitModel()">
+                    Epistemic state:
+                    <br />
+                    <app-graph [obsEnv]="bsEnv.asObservable()"></app-graph>
+                </div>
                 Atomic propositions:
                 <div id="atomicPropositionList">
                     <div class="proposition" *ngFor="let proposition of getAtomicPropositions()">
                         {{ proposition }}
                     </div>
-                </div>
-                <div id="divGraphVisualizationEpistemicModel">
-                    Epistemic state:<br />
-                    <app-graph [obsEnv]="bsEnv.asObservable()"></app-graph>
-                </div>
-                Description of the puzzle:
-                <div id="description">
-                    <br />
-                    <div class="descriptiontext" *ngFor="let desc of getDescription()">{{ desc }} <br /></div>
                 </div>
                 <div hidden id="divgraphVisualizationActionModel">
                     Action:<br />
