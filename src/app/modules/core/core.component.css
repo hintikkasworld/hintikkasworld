@@ -28,9 +28,29 @@ input[type='radio']:checked + label {
 }
 
 input[type='radio'] + label {
+    margin-left: 2px;
+    margin-right: 2px;
     background-color: white;
     border-radius: 16px;
     padding: 4px;
+}
+
+#palette {
+    float: left;
+    width: 20%;
+    text-align: right;
+}
+
+#hintikkasWorldScene {
+    float: left;
+    text-align: center;
+    width: 45%;
+}
+
+#hintikkasWorldKripkeModel {
+    float: right;
+    width: 35%;
+    text-align: left;
 }
 
 #hintikkasWorldLogo {
@@ -54,6 +74,10 @@ button {
     margin-left: 2px;
     margin-bottom: 0px;
     padding: 4px 4px 4px 4px;
+}
+
+#topbar {
+    text-align: center;
 }
 
 #topbar button {
@@ -89,25 +113,29 @@ button:hover {
 }
 
 #atomicPropositionList {
-    max-width: 500px;
-    border-radius: 20px;
+    max-width: 496px;
     border-color: brown;
     border-width: 3px;
     border-style: solid;
     overflow: auto;
+    padding: 2px;
+    background-color: #ffe577;
 }
+
 #description {
+    background-color: #ffe577;
     max-width: 500px;
     max-height: 200px;
     height: 200px;
-    border-radius: 20px;
+    border-radius: 10px;
     border-color: brown;
     border-width: 3px;
     border-style: solid;
     overflow: auto;
 }
+
 .descriptiontext {
-    display: inline;
+    padding: 8px;
 }
 #error {
     color: red;

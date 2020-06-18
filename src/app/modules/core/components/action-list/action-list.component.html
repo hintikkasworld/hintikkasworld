@@ -1,3 +1,6 @@
-<div *ngFor="let action of (obsEnv | async)?.executableActions">
-    <button (click)="perform(action)">{{ action.getName() }}</button>
+<div id="actionList">
+    <h3 [hidden]="(obsEnv | async)?.executableActions.length == 0"> List of possible actions: </h3>
+    <div *ngFor="let action of (obsEnv | async)?.executableActions">
+        <button (click)="perform(action)">{{ action.getName() }}</button>
+    </div>
 </div>

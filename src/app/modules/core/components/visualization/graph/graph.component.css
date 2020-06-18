@@ -1,6 +1,8 @@
 div {
-    border-radius: 20px;
+    border-radius: 10px;
     border-color: brown;
     border-width: 3px;
     border-style: solid;
+    max-width: 500px;
+    background-color: #ffe577;
 }

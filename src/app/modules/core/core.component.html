@@ -2,117 +2,113 @@
     <div class="background-image"></div>
 
     <div id="error"></div>
-    <table>
-        <tr>
-            <td id="topbar">
-                <a
-                    ><button id="chooseExample" title="Choose an other example" (click)="chooseAnotherExample()">
-                        <img width="24px" src="assets/img/examples.png" /></button
-                ></a>
-                <button (click)="reset()" title="Reset">
-                    <img width="24px" src="assets/img/reset.png" />
-                </button>
+    <div id="topbar">
+        <a
+        >
+            <button id="chooseExample" title="Choose an other example" (click)="chooseAnotherExample()">
+                <img width="24px" src="assets/img/examples.png"/></button
+            >
+        </a>
+        <button (click)="reset()" title="Reset">
+            <img width="24px" src="assets/img/reset.png"/>
+        </button>
 
-                <div id="exampleName"></div>
-                <div class="vr"></div>
+        <div id="exampleName"></div>
+        <div class="vr"></div>
 
-                <input checked type="radio" name="perspective" value="" id="externalPerspective" (click)="setExternalPerspective()" />
-                <label id="labelexternalPerspective" for="externalPerspective" title="External perspective">
-                    <img width="32px" src="assets/img/god.svg" />
-                </label>
+        <input checked type="radio" name="perspective" value="" id="externalPerspective"
+               (click)="setExternalPerspective()"/>
+        <label id="labelexternalPerspective" for="externalPerspective" title="External perspective">
+            <img width="32px" src="assets/img/god.svg"/>
+        </label>
 
-                <div id="internalPerspectiveAgent" *ngFor="let agent of getAgents()">
-                    <input
-                        type="radio"
-                        name="perspective"
-                        value="agent"
-                        [id]="'internalPerspectiveAgent' + agent"
-                        (click)="setInternalPerspective(agent)"
-                    />
-                    <label
-                        id="'labelinternalPerspectiveAgent' + agent"
-                        [for]="'internalPerspectiveAgent' + agent"
-                        [title]="'Internal perspective of agent ' + agent"
-                    >
-                        <img width="32px" [src]="'assets/img/agent' + agent + '.png'" />
-                    </label>
-                </div>
+        <div id="internalPerspectiveAgent" *ngFor="let agent of getAgents()">
+            <input
+                    type="radio"
+                    name="perspective"
+                    value="agent"
+                    [id]="'internalPerspectiveAgent' + agent"
+                    (click)="setInternalPerspective(agent)"
+            />
+            <label
+                    id="'labelinternalPerspectiveAgent' + agent"
+                    [for]="'internalPerspectiveAgent' + agent"
+                    [title]="'Internal perspective of agent ' + agent"
+            >
+                <img width="32px" [src]="'assets/img/agent' + agent + '.png'"/>
+            </label>
+        </div>
 
-                <div class="vr"></div>
-                <a hidden class="roundButton" onclick="GUIExportInTikz(); return false;" title="Export in Tikz (latex)" href="#">tikz</a>
-                <a hidden class="roundButton" target="_blank" href="displayMEstar.html" title="Advanced mode">A</a>
+        <div class="vr"></div>
+        <a hidden class="roundButton" onclick="GUIExportInTikz(); return false;" title="Export in Tikz (latex)"
+           href="#">tikz</a>
+        <a hidden class="roundButton" target="_blank" href="displayMEstar.html" title="Advanced mode">A</a>
 
-                φ =
-                <input
-                    id="formula"
-                    (input)="initModelChecking()"
-                    (keydown.enter)="modelChecking()"
-                    title="Type a formula."
-                    value="(K a p)"
-                />
-                <button id="modelCheckingButton" title="Model checking of the formula" (click)="modelChecking()">
-                    <img id="modelCheckingButtonImage" width="24px" src="assets/img/mc.png" />
-                </button>
+        φ =
+        <input
+                id="formula"
+                (input)="initModelChecking()"
+                (keydown.enter)="modelChecking()"
+                title="Type a formula."
+                value="(K a p)"
+        />
+        <button id="modelCheckingButton" title="Model checking of the formula" (click)="modelChecking()">
+            <img id="modelCheckingButtonImage" width="24px" src="assets/img/mc.png"/>
+        </button>
 
-                <span id="error"></span>
-                <button title="Public announcement of the formula." (click)="performPublicAnnouncement()">
-                    <img width="24px" src="assets/img/announce.png" />
-                </button>
+        <span id="error"></span>
+        <button title="Public announcement of the formula." (click)="performPublicAnnouncement()">
+            <img width="24px" src="assets/img/announce.png"/>
+        </button>
 
-                <div class="vr"></div>
-                <button id="helpButton" (click)="showHelp()" title="Help/About">
-                    <img width="24px" src="assets/img/help.png" />
-                </button>
-            </td>
-            <td>
-                <span id="test" *ngIf="!isEpistemicModelReady()">
-                    <div class="lds-hourglass"></div>
-                </span>
-            </td>
-        </tr>
-    </table>
+        <div class="vr"></div>
+        <button id="helpButton" (click)="showHelp()" title="Help/About">
+            <img width="24px" src="assets/img/help.png"/>
+        </button>
+        <span id="test" *ngIf="!isEpistemicModelReady()">
+            <div class="lds-hourglass"></div>
+        </span>
+    </div>
 
-    <table>
-        <tr>
-            <td id="palette" valign="top">
-                <img id="hintikkasWorldLogo" src="assets/img/hintikkas_world_logo.png" alt="Hintikka's world" />
-                <app-action-list [obsEnv]="bsEnv.asObservable()" (toPerform)="perform($event)"></app-action-list>
-            </td>
+    <div id="palette" valign="top">
+        <img id="hintikkasWorldLogo" src="assets/img/hintikkas_world_logo.png" alt="Hintikka's world"/>
+        <br/>
+        <app-action-list [obsEnv]="bsEnv.asObservable()" (toPerform)="perform($event)"></app-action-list>
+    </div>
 
-            <td id="hintikkasWorldScene" valign="top">
-                <app-comics
-                    [obsEnv]="bsEnv.asObservable()"
-                    [readyObservable]="bsEnv.value.epistemicModel.isLoadedObservable()"
-                ></app-comics>
-            </td>
+    <div id="hintikkasWorldScene" valign="top">
+        <app-comics
+                [obsEnv]="bsEnv.asObservable()"
+                [readyObservable]="bsEnv.value.epistemicModel.isLoadedObservable()"
+        ></app-comics>
+    </div>
 
-            <td id="hintikkasWorldKripkeModel" valign="top">
-                Description of the puzzle:
-                <div id="description">
-                    <br />
-                    <div class="descriptiontext" *ngFor="let desc of getDescription()">{{ desc }} <br /></div>
-                </div>
-                <div id="divGraphVisualizationEpistemicModel" [hidden]="!isExplicitModel()">
-                    Epistemic state:
-                    <br />
-                    <app-graph [obsEnv]="bsEnv.asObservable()"></app-graph>
-                </div>
-                Atomic propositions:
-                <div id="atomicPropositionList">
-                    <div class="proposition" *ngFor="let proposition of getAtomicPropositions()">
-                        {{ proposition }}
-                    </div>
-                </div>
-                <div hidden id="divgraphVisualizationActionModel">
-                    Action:<br />
-                    <svg id="graphVisualizationActionModel" class="main" width="1000" height="500"></svg>
-                    <br />
-                    Epistemic state after executing the action:<br />
-                    <svg id="graphVisualizationEpistemicModel2" class="main" width="1000" height="500"></svg>
-                </div>
-            </td>
-        </tr>
-    </table>
+    <div id="hintikkasWorldKripkeModel" valign="top">
+        Description of the puzzle:
+        <div id="description">
+            <div class="descriptiontext" *ngFor="let desc of getDescription()">{{ desc }} <br/></div>
+        </div>
+        <br/>
+        <div id="divGraphVisualizationEpistemicModel" [hidden]="!isExplicitModel()">
+            Epistemic state:
+            <br/>
+            <app-graph [obsEnv]="bsEnv.asObservable()"></app-graph>
+        </div>
+        <br/>
+        Atomic propositions:
+        <div id="atomicPropositionList">
+            <div class="proposition" *ngFor="let proposition of getAtomicPropositions()">
+                {{ proposition }}
+            </div>
+        </div>
+        <div hidden id="divgraphVisualizationActionModel">
+            Action:<br/>
+            <svg id="graphVisualizationActionModel" class="main" width="1000" height="500"></svg>
+            <br/>
+            Epistemic state after executing the action:<br/>
+            <svg id="graphVisualizationEpistemicModel2" class="main" width="1000" height="500"></svg>
+        </div>
+    </div>
 
     <div id="test" style="float: left;"></div>
 </div>

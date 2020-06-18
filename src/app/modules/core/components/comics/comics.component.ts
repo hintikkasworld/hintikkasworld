@@ -386,7 +386,7 @@ export class ComicsComponent implements OnInit {
             levelLeft = 0;
         }
 
-        let w = $('#canvasBackground').width();
+        let w = $('#canvasBackground').width() - 30;
         if (levelLeft > w - levelWidth) {
             levelLeft = w - levelWidth;
         }

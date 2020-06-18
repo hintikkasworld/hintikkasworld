@@ -19,7 +19,7 @@ export class GraphComponent implements OnInit {
 
     graph: Graph;
 
-    private readonly _options: { width; height } = { width: 500, height: 400 };
+    private readonly _options: { width; height } = { width: 400, height: 400 };
 
     constructor(private d3Service: D3Service) {}
 
