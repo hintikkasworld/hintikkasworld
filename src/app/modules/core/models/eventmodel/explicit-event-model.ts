@@ -103,7 +103,7 @@ export class ExplicitEventModel extends Graph<Event> implements EventModel<Expli
      precondition of e
      * */
     getPrecondition(e): Formula {
-        return (this.nodes[e] as Event).pre;
+        return this.nodes[e].pre;
     }
 
     /**
@@ -112,7 +112,7 @@ export class ExplicitEventModel extends Graph<Event> implements EventModel<Expli
      should implement
      * */
     getPostcondition(e): Postcondition {
-        return (this.nodes[e] as Event).post;
+        return this.nodes[e].post;
     }
 
     async isApplicableIn(M: ExplicitEpistemicModel): Promise<boolean> {

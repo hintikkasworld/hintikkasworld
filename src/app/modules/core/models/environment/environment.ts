@@ -21,8 +21,15 @@ export class Environment {
         return this._executableActions;
     }
 
-    private computeExecutableActions() {
-        this._executableActions = this.exampleDescription.getActions().filter(async (a) => await a.isApplicableIn(this._epistemicModel));
+    private async computeExecutableActions() {
+        this._executableActions = [];
+        const actions = this.exampleDescription.getActions();
+
+        for (let a of actions) {
+            if (await a.isApplicableIn(this._epistemicModel)) {
+                this._executableActions.push(a);
+            }
+        }
     }
 
     setEpistemicModel(M: EpistemicModel) {

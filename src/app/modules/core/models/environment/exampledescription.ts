@@ -1,6 +1,7 @@
 import { Environment } from './environment';
 import { EpistemicModel } from '../epistemicmodel/epistemic-model';
 import { World } from '../epistemicmodel/world';
+import { Action } from './action';
 
 class Point {
     x: number;
@@ -12,7 +13,7 @@ export abstract class ExampleDescription {
     abstract getName();
     abstract getInitialEpistemicModel(): EpistemicModel;
     abstract getDescription(): string[];
-    abstract getActions();
+    abstract getActions(): Action[];
 
     getWorldExample(): World {
         let M = this.getInitialEpistemicModel();
