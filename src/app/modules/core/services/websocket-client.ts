@@ -27,19 +27,18 @@
  * await webSocketClient.disconnect();
  */
 export default class WebSocketClient {
-
     _socket: WebSocket;
 
-//    _closeEvent: CloseEvent;
+    //    _closeEvent: CloseEvent;
 
-    _receiveCallbacksQueue: Array<{ resolve: (data: any) => void, reject: (reason: any) => void }>;
+    _receiveCallbacksQueue: Array<{ resolve: (data: any) => void; reject: (reason: any) => void }>;
 
     _receiveDataQueue: Array<any>;
-    
+
     constructor() {
         this._reset();
     }
-    
+
     /**
      * Whether a connection is currently open.
      * @returns true if the connection is open.
@@ -48,7 +47,7 @@ export default class WebSocketClient {
         // Checking != null also checks against undefined.
         return this._socket != null && this._socket.readyState === WebSocket.OPEN;
     }
-    
+
     /**
      * The number of messages available to receive.
      * @returns The number of queued messages that can be retrieved with {@link #receive}
@@ -58,7 +57,7 @@ export default class WebSocketClient {
     }
 
     /**
-     * Sets up a WebSocket connection to specified url. Resolves when the 
+     * Sets up a WebSocket connection to specified url. Resolves when the
      * connection is established. Can be called again to reconnect to any url.
      */
     connect(url: string, protocols?: string): Promise<void> {
@@ -86,7 +85,7 @@ export default class WebSocketClient {
     /**
      * Asynchronously receive data from the websocket.
      * Resolves immediately if there is buffered, unreceived data.
-     * Otherwise, resolves with the next rececived message, 
+     * Otherwise, resolves with the next rececived message,
      * or rejects if disconnected.
      * @returns A promise that resolves with the data received.
      */
@@ -110,14 +109,14 @@ export default class WebSocketClient {
      * The promise resolves once the WebSocket connection is closed.
      */
     disconnect(code?: number, reason?: string): Promise<void> {
-        if(!this.connected) {
+        if (!this.connected) {
             return Promise.resolve();
         }
 
         return new Promise((resolve, reject) => {
             // It's okay to call resolve/reject multiple times in a promise.
             const callbacks = {
-                resolve: dummy => {
+                resolve: (dummy) => {
                     // Make sure this object always stays in the queue
                     // until callbacks.reject() (which is resolve) is called.
                     this._receiveCallbacksQueue.push(callbacks);
@@ -141,8 +140,7 @@ export default class WebSocketClient {
         const socket = this._socket;
 
         return new Promise((resolve, reject) => {
-
-            const handleMessage: EventListener = event => {
+            const handleMessage: EventListener = (event) => {
                 const messageEvent: MessageEvent = event as MessageEvent;
                 // The cast was necessary because Flow's libdef's don't contain
                 // a MessageEventListener definition.
@@ -155,9 +153,9 @@ export default class WebSocketClient {
                 this._receiveDataQueue.push(messageEvent.data);
             };
 
-            const handleOpen: EventListener = event => {
+            const handleOpen: EventListener = (event) => {
                 socket.addEventListener('message', handleMessage);
-                socket.addEventListener('close', event => {
+                socket.addEventListener('close', (event) => {
                     //this._closeEvent = event as CloseEvent;
 
                     // Whenever a close event fires, the socket is effectively dead.
@@ -181,6 +179,6 @@ export default class WebSocketClient {
     _reset() {
         this._receiveDataQueue = [];
         this._receiveCallbacksQueue = [];
-       // this._closeEvent = null;
+        // this._closeEvent = null;
     }
 }

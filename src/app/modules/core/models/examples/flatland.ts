@@ -212,7 +212,6 @@ class FlatlandSuccessorSet implements SuccessorSet {
         }
     }
 
-
     async getSomeSuccessors(): Promise<World[]> {
         if (this.isSingleSuccessor()) {
             if (this.done) {

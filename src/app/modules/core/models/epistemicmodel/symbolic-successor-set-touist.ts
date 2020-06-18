@@ -47,7 +47,7 @@ export class SymbolicSuccessorSetTouist implements SuccessorSet {
         let n = this.n_successors_given;
 
         if (n < this.successorsCache.length) {
-            this.n_successors_given ++;
+            this.n_successors_given++;
             return this.toWorld(this.successorsCache[n]);
         }
         return undefined;
@@ -59,4 +59,3 @@ export class SymbolicSuccessorSetTouist implements SuccessorSet {
         return this.toWorld(this.successorsCache[Math.floor(Math.random() * this.successorsCache.length)]);
     }
 }
-

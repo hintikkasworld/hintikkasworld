@@ -41,7 +41,7 @@ export class SymbolicSuccessorSetBDD implements SuccessorSet {
         }
 
         // Try 3 times before giving up
-        for(let i = 0; i < 3; i++) {
+        for (let i = 0; i < 3; i++) {
             const val: Valuation = new Valuation(await BDDWorkerService.pickRandomSolution(await this.bdd, this.atoms));
             let val_s = val.toString();
             if (!this.alreadyOutput.hasOwnProperty(val_s)) {

@@ -80,10 +80,14 @@ export class LazyModelFetcher {
 export class TouistService {
     static lazyModelFetcher(req: Formula): LazyModelFetcher {
         let ws = new WebSocketClient();
-        let connected = ws.connect('ws://206.189.53.26:7015/touist_ws').then(() => ws.send(JSON.stringify({
-            args: '--solve --interactive',
-            stdin: req.prettyPrint()
-        })));
+        let connected = ws.connect('ws://206.189.53.26:7015/touist_ws').then(() =>
+            ws.send(
+                JSON.stringify({
+                    args: '--solve --interactive',
+                    stdin: req.prettyPrint()
+                })
+            )
+        );
 
         return new LazyModelFetcher(ws, connected);
     }
