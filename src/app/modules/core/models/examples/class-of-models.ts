@@ -7,7 +7,7 @@ import { World } from '../epistemicmodel/world';
 
 export class ClassOfModels extends ExampleDescription {
     getDescription(): string[] {
-        return ['Actions generate Kripke models belonging to the class of their names.'];
+        return ['Actions generate Kripke models in order to illustrate some classes.'];
     }
 
     getAtomicPropositions(): string[] {
@@ -84,19 +84,19 @@ export class ClassOfModels extends ExampleDescription {
     getActions() {
         return [
             new ActionSetEpistemicModel({
-                name: 'K',
+                name: 'K: class of all models',
                 epistemicModel: this.getModelK()
             }),
             new ActionSetEpistemicModel({
-                name: 'KT',
+                name: 'KT: class of reflexive models',
                 epistemicModel: this.getModelKT()
             }),
             new ActionSetEpistemicModel({
-                name: 'KD45',
+                name: 'KD45: class of serial, transitive and Euclidean models',
                 epistemicModel: this.getModelKD45()
             }),
             new ActionSetEpistemicModel({
-                name: 'S5',
+                name: 'S5: class of models in which the relations are equivalence relations',
                 epistemicModel: this.getModelS5()
             })
         ];
