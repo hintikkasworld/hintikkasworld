@@ -8,6 +8,7 @@ import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descrip
 import { Environment } from '../environment/environment';
 import { EventModelAction } from '../environment/event-model-action';
 import { SymbolicPublicAnnouncementBDD } from '../eventmodel/symbolic-public-announcement-bdd';
+import { SymbolicEpistemicModelTouist } from '../epistemicmodel/symbolic-epistemic-model-touist';
 
 class Cell {
     row: number;
@@ -611,7 +612,7 @@ export class BattleShip extends ExampleDescription {
             );
         };
 
-        return new SymbolicEpistemicModelBDD(valToWorld, new SEModelDescriptorBattleShip());
+        return new SymbolicEpistemicModelTouist(valToWorld, new SEModelDescriptorBattleShip());
     }
 
     getValuationExample(): Valuation {

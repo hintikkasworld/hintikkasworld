@@ -5,6 +5,7 @@ import { ExampleDescription } from '../environment/exampledescription';
 import { Valuation } from '../epistemicmodel/valuation';
 import { Obs, SymbolicRelation } from '../epistemicmodel/symbolic-relation';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
+import { SymbolicEpistemicModelTouist } from '../epistemicmodel/symbolic-epistemic-model-touist';
 
 /**
  * @param truePropositions an array of true propositions
@@ -237,7 +238,7 @@ export class Belote extends ExampleDescription {
         let valToWorld = (val: Valuation): WorldValuation => {
             return new BeloteWorld(val);
         };
-        return new SymbolicEpistemicModelBDD(valToWorld, new SEModelDescriptorFormulaBelote());
+        return new SymbolicEpistemicModelTouist(valToWorld, new SEModelDescriptorFormulaBelote());
     }
 
     getAtomicPropositions(): string[] {
