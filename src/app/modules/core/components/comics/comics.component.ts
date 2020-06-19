@@ -129,7 +129,7 @@ export class ComicsComponent implements OnInit {
         this.obsEnv.subscribe((env) => (this.env = env)); // pas bon... pas besoin de compute
     }
 
-    private getMaxLevelWidth = () => 420;
+    private getMaxLevelWidth = () => 450;
 
     private getYLevelBulle(level: number): number {
         if (this.openWorlds.length == 1 && this.env.epistemicModel.getAgents().length == 1) {
