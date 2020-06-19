@@ -120,7 +120,7 @@ export class CoordinatedAttackProblem extends ExampleDescription {
     }
 
     getDescription(): string[] {
-        return ['The coordinated attack problem shows that common knowledge is not reachable.'];
+        return ['The coordinated attack problem is an emblematic example to illustrate that common knowledge is not reachable. Common knowledge is then agent a knows that agent b knows that ... that agent a will be ready to attack tomorrow.', 'At the beginning agent a will be ready to attack tomorrow (symbolized by the sword), but agent b does not know it. So agent a sends a message.'];
     }
 
     getActions() {

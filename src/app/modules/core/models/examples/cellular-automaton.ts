@@ -150,7 +150,7 @@ export class CellularAutomaton extends ExampleDescription {
     }
 
     getName() {
-        return 'Simulation of rule 110 cellular automaton';
+        return 'Undecidability of epistemic planning. Simulation of rule 110 cellular automaton';
     }
 
     getInitialEpistemicModel(): EpistemicModel {

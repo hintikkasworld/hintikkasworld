@@ -67,7 +67,7 @@ export class MuddyChildren extends ExampleDescription {
     getDescription(): string[] {
         return [
             this.nbChildren +
-                " children play in the garden and some of them become muddy. Their father comes and say 'At least one of you has mud on her forehead'. He then asks several times 'Does any one of you know whether she has mud on her forehead?'"
+                " children play in the garden and some of them become muddy. Their father comes and say 'At least one of you has mud on her forehead'. He then asks several times 'Does any one of you know whether she has mud on her forehead?'", 'As you will see, announcing that an agent does not know a fact actually gives information to others!'
         ];
     }
 

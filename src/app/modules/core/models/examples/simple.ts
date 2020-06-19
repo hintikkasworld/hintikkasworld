@@ -38,7 +38,7 @@ export class SimpleWorld extends WorldValuation {
 
 export class Simple extends ExampleDescription {
     getDescription(): string[] {
-        return ['A simple example.'];
+        return ['Welcome to the first example. There are two agents: a red one on the left called "a" and a blue one on the right called "b". They both do not know whether the basket contains a marble or not.Note that they both know they do not know the content of the basket. ' + 'An atomic proposition denoted by p denotes the fact that the basket contains a marble.', 'Click on the agent to see their possible worlds. You may click on agents that are in possible worlds too: that is higher-order knowledge.'];
     }
 
     getAtomicPropositions(): string[] {
@@ -46,7 +46,7 @@ export class Simple extends ExampleDescription {
     }
 
     getName() {
-        return 'Simple example';
+        return 'My first example';
     }
 
     getInitialEpistemicModel(): EpistemicModel {
