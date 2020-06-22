@@ -141,7 +141,8 @@ class CellularAutomatonPostcondition extends Postcondition {
 export class CellularAutomaton extends ExampleDescription {
     getDescription(): string[] {
         return [
-            "The model is a simulation of rule 110 in cellular automata. Agents' knowledge simulate the current word and the actions simulate the computation steps."
+            "The model is a simulation of rule 110 in cellular automata. Agents' knowledge simulate the current word and the action simulates one computation step.",
+            "As there are cellular automata that are universal, it proves that the epistemic planning (with the sole action that simulates a computation step of a universal automaton) is undecidable."
         ];
     }
 
@@ -150,7 +151,7 @@ export class CellularAutomaton extends ExampleDescription {
     }
 
     getName() {
-        return 'Simulation of rule 110 cellular automaton';
+        return 'Undecidability of epistemic planning. Simulation of rule 110 cellular automaton';
     }
 
     getInitialEpistemicModel(): EpistemicModel {
@@ -276,7 +277,7 @@ export class CellularAutomaton extends ExampleDescription {
 
         return [
             new EventModelAction({
-                name: 'one-step computation',
+                name: 'One-step computation',
                 eventModel: getCellularAutomataEventModel(getRule110CellularAutomataTransitionFunctionText())
             })
         ];

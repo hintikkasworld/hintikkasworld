@@ -94,6 +94,7 @@ class SallyAndAnneWorld extends WorldValuation {
 export class SallyAndAnn extends ExampleDescription {
     getDescription(): string[] {
         return [
+            'The Sally–Anne test is a psychological test to measure the ability of a person to attribute false beliefs to others. Here is how this test works.',
             'There is a ball in a basket. Agent b goes out for a walk, and in the meantime, agent a hides the ball. When Agent b comes back, what does Agent a think of the position of the ball?'
         ];
     }

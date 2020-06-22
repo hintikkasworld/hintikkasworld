@@ -175,7 +175,7 @@ export class MineSweeper extends ExampleDescription {
 
     getDescription(): string[] {
         let A = [
-            'There is a grid with mines in certain cells. Other cells either contain the number of mines adjacent (including diagonals) or are empty.'
+            'Consider a grid with mines in certain cells. The mine-free cells contain the number of mines adjacent (including diagonals) or are empty.'
         ];
         A.push('');
         let mine_s = 'mines';

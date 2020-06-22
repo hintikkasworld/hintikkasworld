@@ -20,7 +20,7 @@ export class CommonknowledgeStrictlyMoreExpressive extends ExampleDescription {
     }
 
     getName() {
-        return 'Language with Common knowledge is more expressive';
+        return 'Language with Common Knowledge is more expressive';
     }
 
     getModel(lastPTrue: boolean) {
@@ -55,11 +55,11 @@ export class CommonknowledgeStrictlyMoreExpressive extends ExampleDescription {
     getActions() {
         return [
             new ActionSetEpistemicModel({
-                name: 'epistemic state of depth ' + this.d + ' with CK p',
+                name: 'Epistemic state of depth ' + this.d + ' with CK p',
                 epistemicModel: this.getModel(true)
             }),
             new ActionSetEpistemicModel({
-                name: 'epistemic state with p false at modal depth ' + this.d,
+                name: 'Epistemic state with p false at modal depth ' + this.d,
                 epistemicModel: this.getModel(false)
             })
         ];
