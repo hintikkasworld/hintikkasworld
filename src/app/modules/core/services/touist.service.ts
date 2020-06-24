@@ -84,7 +84,7 @@ export class LazyModelFetcher {
 export class TouistService {
     static lazyModelFetcher(req: Formula): LazyModelFetcher {
         let ws = new WebSocketClient();
-        let connected = ws.connect('ws://161.35.195.241:7015/touist_ws').then(() =>
+        let connected = ws.connect('ws://161.35.199.83:7015/touist_ws').then(() =>
             ws.send(
                 JSON.stringify({
                     args: '--solve --interactive',
@@ -106,7 +106,7 @@ export class TouistService {
             body: data
         };
 
-        let response = await fetch('http://161.35.195.241:7015/touist_cmd', methodInit);
+        let response = await fetch('http://161.35.199.83:7015/touist_cmd', methodInit);
         let text = await response.text();
         if (text.startsWith('unsat')) {
             return [];
@@ -131,7 +131,7 @@ export class TouistService {
             body: data
         };
 
-        let response = await fetch('http://161.35.195.241:7015/touist_cmd', methodInit);
+        let response = await fetch('http://161.35.199.83:7015/touist_cmd', methodInit);
         let text = await response.text();
         if (text.startsWith('unsat')) {
             return [];
