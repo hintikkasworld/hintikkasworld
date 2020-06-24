@@ -5,7 +5,8 @@
 export const environment = {
     production: false,
 
-    agents: ['a', 'b', 'c', 'd'],
+    // p and e is for hanabi (pile and exit)
+    agents: ['a', 'b', 'c', 'd', 'p', 'e'],
     agentColor: { a: '#ED5D1B', b: '#80AAFF', c: '#72267C', d: '#008800' },
     agentImageURL: {
         a: 'assets/img/agenta.png',

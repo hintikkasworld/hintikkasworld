@@ -114,7 +114,7 @@ export abstract class World {
 
     protected static drawCard(context: CanvasRenderingContext2D, card: any) {
         if (card.fontSize == undefined) {
-            card.fontSize = 16;
+            card.fontSize = 14;
         }
 
         if (card.h == undefined) {

@@ -12,7 +12,7 @@ import { SymbolicEvent } from '../eventmodel/symbolic-event';
 import { BDDNode } from '../../../../services/bdd.service';
 import { SEModelDescriptor } from '../epistemicmodel/descriptor/se-model-descriptor';
 import { BDDWorkerService } from 'src/app/services/bddworker.service';
-import { Simple } from './simple';
+import { SymbolicEpistemicModelTouist } from '../epistemicmodel/symbolic-epistemic-model-touist';
 
 class Point {
     x: number;
@@ -23,6 +23,12 @@ class Point {
  * @param valuation a valuation
  * */
 class SimpleHanabiWorld extends WorldValuation {
+    static readonly cardWidth = 6;
+    static readonly cardHeight = 6;
+    static readonly cardNumber = 5;
+    private state: HanabiState;
+    private agentHandPos = {};
+
     constructor(valuation: Valuation) {
         super(valuation);
         this.state = new HanabiState(valuation, environment.agents, SimpleSymbolicHanabi.colors); // note Alex: this is kinda weird to get the env agents here
@@ -53,14 +59,9 @@ class SimpleHanabiWorld extends WorldValuation {
             horizontal: true
         };
         this.agentHandPos['d'] = { x: 0, y: 10, horizontal: false };
+        this.agentHandPos['p'] = { x: 0, y: 50, horizontal: true };
+        this.agentHandPos['e'] = { x: 0, y: 50 - SimpleHanabiWorld.cardHeight - 1, horizontal: true };
     }
-
-    static readonly cardWidth = 9;
-    static readonly cardHeight = 8;
-    static readonly cardNumber = 5;
-
-    private state: HanabiState;
-    private agentHandPos = {};
 
     static drawHanabiCardArray(
         context: CanvasRenderingContext2D,
@@ -254,9 +255,8 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
     /**
      * Number of cards in hand
-     * Need to be : (nbCardsInHand_Begin * nb_agents) > nbCards
      */
-    readonly nbCardsInHand_Begin: number = 3;
+    static readonly nbCardsInHand_Begin: number = 3;
 
     /**
      * Sort deck of cards of not
@@ -267,10 +267,12 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
      * List of agents
      */
     private agents = ['a', 'b', 'c', 'd'];
+
     /**
      * List of cards owners : agents + t:table, p:draw, e:exil (or discarding like 'd' ?)
      */
     private owners = this.agents.concat(['t', 'p', 'e']); /* agents */
+
     /**
      * List of propositional variables
      */
@@ -290,7 +292,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
     }
 
     static getVarName(agent: string, card: number) {
-        return 'var_' + agent + '_' + card;
+        return agent + '_' + card;
     }
 
     getDescription(): string[] {
@@ -360,16 +362,13 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
                             }
                         });
 
-                    /* Enumeration of agent's card : : agent see the number of his cards : 0 <-> 0p and 1 <-> 1p and ... */
+                    /* Enumeration of agent's card: agent see the number of his cards */
                     let his_cards = [];
                     for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
                         his_cards.push(SimpleSymbolicHanabi.getVarName(agent, c));
                     }
-                    for (let c = 0; c < SimpleSymbolicHanabi.nbCards; c++) {
-                        for (let i = 0; i < example.nbCardsInHand_Begin + 1; i++) {
-                            seenFormulas.push(new ExactlyFormula(i, his_cards));
-                        }
-                    }
+                    seenFormulas.push(new ExactlyFormula(SimpleSymbolicHanabi.nbCardsInHand_Begin, his_cards));
+
                     symbolicRelations.set(agent, new Obs(seenFormulas));
                 });
                 return symbolicRelations.get(agent);
@@ -396,7 +395,7 @@ export class SimpleSymbolicHanabi extends ExampleDescription {
 
                 for (let i = 0; i < cards.length; i++) {
                     let c = cards[i];
-                    if (i < example.nbCardsInHand_Begin * example.agents.length) {
+                    if (i < SimpleSymbolicHanabi.nbCardsInHand_Begin * example.agents.length) {
                         let agent = example.agents[i % example.agents.length];
                         propositions[SimpleSymbolicHanabi.getVarName(agent, c)] = true;
                     } else {
