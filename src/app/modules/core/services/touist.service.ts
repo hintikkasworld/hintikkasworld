@@ -40,6 +40,7 @@ export class LazyModelFetcher {
                 let v = await this.ws.receive();
                 v = JSON.parse(v);
                 if (v.type != 'stdout') {
+                    console.log(v);
                     break;
                 }
                 line = v.msg;
