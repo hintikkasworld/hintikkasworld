@@ -32,6 +32,9 @@ class BeloteWorld extends WorldValuation {
 
     drawBeloteCard(context: CanvasRenderingContext2D, agent: string, i: number, cardSuit: string, cardValue: string) {
         let x, y, dx, dy;
+
+        const cardSuitSymbol = BeloteWorld.getCardSuitSymbol(cardSuit);
+
         if (agent == 'a') {
             x = 64 - 4 * BeloteWorld.cardWidth;
             y = 0;
@@ -59,7 +62,7 @@ class BeloteWorld extends WorldValuation {
 
         let color;
 
-        if (cardSuit == '♥' || cardSuit == '♦') {
+        if (cardSuitSymbol == '♥' || cardSuitSymbol == '♦') {
             color = '#FF0000';
         } else {
             color = '#000000';
@@ -72,8 +75,17 @@ class BeloteWorld extends WorldValuation {
             h: BeloteWorld.cardHeight,
             fontSize: 5,
             color,
-            text: cardValue + cardSuit
+            text: cardValue + cardSuitSymbol
         });
+    }
+
+
+    static getCardSuitSymbol(cardSuit: string) {
+        if(cardSuit == "c") return "♦";
+        if(cardSuit == "t") return "♣";
+        if(cardSuit == "h") return "♥";
+        if(cardSuit == "p") return "♠";
+        
     }
 
     draw(context: CanvasRenderingContext2D) {
