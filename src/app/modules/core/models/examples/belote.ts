@@ -32,6 +32,9 @@ class BeloteWorld extends WorldValuation {
 
     drawBeloteCard(context: CanvasRenderingContext2D, agent: string, i: number, cardSuit: string, cardValue: string) {
         let x, y, dx, dy;
+
+        const cardSuitSymbol = BeloteWorld.getCardSuitSymbol(cardSuit);
+
         if (agent == 'a') {
             x = 64 - 4 * BeloteWorld.cardWidth;
             y = 0;
@@ -59,7 +62,7 @@ class BeloteWorld extends WorldValuation {
 
         let color;
 
-        if (cardSuit == '♥' || cardSuit == '♦') {
+        if (cardSuitSymbol == '♥' || cardSuitSymbol == '♦') {
             color = '#FF0000';
         } else {
             color = '#000000';
@@ -72,8 +75,17 @@ class BeloteWorld extends WorldValuation {
             h: BeloteWorld.cardHeight,
             fontSize: 5,
             color,
-            text: cardValue + cardSuit
+            text: cardValue + cardSuitSymbol
         });
+    }
+
+
+    static getCardSuitSymbol(cardSuit: string) {
+        if(cardSuit == "c") return "♦";
+        if(cardSuit == "t") return "♣";
+        if(cardSuit == "h") return "♥";
+        if(cardSuit == "p") return "♠";
+        
     }
 
     draw(context: CanvasRenderingContext2D) {
@@ -93,11 +105,11 @@ class BeloteWorld extends WorldValuation {
 }
 
 export class Belote extends ExampleDescription {
-    static readonly cardSuits: string[] = ['♦', '♣', '♥']; // ["♥", "♠"];//["♦", "♣", "♥", "♠"]; //
-    static readonly cardValues: string[] = ['1', '7', '9', 'Q', 'K']; // [ "1", "7", "8", "9", "J", "Q", "K"];//["1", "7", "8", "9", "10", "J", "Q", "K"];
+    static readonly cardSuits: string[] = ['c', 't', 'h', 'p']; // ["♥", "♠"];//["♦", "♣", "♥", "♠"]; //
+    static readonly cardValues: string[] = ['1', '7', '8', '9', 'J', 'Q', 'K']; // [ "1", "7", "8", "9", "J", "Q", "K"];//["1", "7", "8", "9", "10", "J", "Q", "K"];
 
     static getAgents(): string[] {
-        return ['a', 'b', 'c'];
+        return ['a', 'b', 'c', 'd'];
     }
 
     static getInitialNumberOfCardsByAgent() {
@@ -238,6 +250,7 @@ export class Belote extends ExampleDescription {
         let valToWorld = (val: Valuation): WorldValuation => {
             return new BeloteWorld(val);
         };
+
         return new SymbolicEpistemicModelTouist(valToWorld, new SEModelDescriptorFormulaBelote());
     }
 
