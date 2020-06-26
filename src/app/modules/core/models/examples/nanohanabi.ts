@@ -38,7 +38,7 @@ class NanoHanabiWorld extends WorldValuation {
                     }
 
                     if (this.modelCheck(a + pos + i)) {
-                        WorldValuation.drawCard(context, {
+                        this.drawCard(context, {
                             x: this.agentPos[a].x + xshift,
                             y: 12,
                             w: 16,
@@ -50,7 +50,7 @@ class NanoHanabiWorld extends WorldValuation {
         }
         for (let i = 0; i <= 4; i++) {
             if (this.modelCheck('c' + i)) {
-                WorldValuation.drawCard(context, {
+                this.drawCard(context, {
                     x: this.agentPos['c'].x - 4,
                     y: 12,
                     w: 16,

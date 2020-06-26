@@ -12,6 +12,20 @@ export abstract class World {
      * this.agentPos["c"] = {x: 96, y:32, r: 16};
      */
     protected agentPos: { [id: string]: { x: number; y: number; r: number } } = {};
+    protected objects = [];
+
+
+    getObject(point) {
+        for(let o of this.objects) {
+            if((new Rectangle(
+                o.x,
+                o.y,
+                o.w,
+                o.h).isPointIn(point)))
+                return o;
+        }
+        return undefined;
+    }
 
     protected constructor() {}
 
@@ -112,7 +126,7 @@ export abstract class World {
         }
     }
 
-    protected static drawCard(context: CanvasRenderingContext2D, card: any) {
+    protected drawCard(context: CanvasRenderingContext2D, card: any) {
         if (card.fontSize == undefined) {
             card.fontSize = 14;
         }
@@ -141,6 +155,8 @@ export abstract class World {
 
         context.fillStyle = card.color;
         context.fillText(card.text, card.x + card.w / 2 - context.measureText(card.text).width / 2, card.y + card.h / 2 + card.h / 3);
+
+        this.objects.push(card);
     }
 
     drawAgents(context: CanvasRenderingContext2D): void {

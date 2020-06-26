@@ -31,7 +31,7 @@ class ConsecutiveNumbersWorld extends WorldValuation {
         for (let a of environment.agents) {
             for (let i = 1; i <= ConsecutiveNumbersWorld.consequenceNumbersImax; i++) {
                 if (this.modelCheck(a + i)) {
-                    ConsecutiveNumbersWorld.drawCard(context, {
+                    this.drawCard(context, {
                         x: this.agentPos[a].x,
                         y: 48,
                         w: 16,

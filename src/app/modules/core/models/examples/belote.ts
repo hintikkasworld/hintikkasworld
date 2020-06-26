@@ -1,3 +1,9 @@
+import { EventModelAction } from './../environment/event-model-action';
+import { FormulaFactory } from './../formula/formula';
+import { SymbolicPublicAnnouncementTouist } from './../eventmodel/symbolic-public-announcement-touist';
+import { SymbolicPublicAnnouncementBDD } from './../eventmodel/symbolic-public-announcement-bdd';
+import { SymbolicPublicAction } from './../eventmodel/symbolic-public-action';
+import { Environment } from './../environment/environment';
 import { AndFormula, ExactlyFormula, Formula } from '../formula/formula';
 import { SymbolicEpistemicModelBDD } from '../epistemicmodel/symbolic-epistemic-model-bdd';
 import { WorldValuation } from '../epistemicmodel/world-valuation';
@@ -28,9 +34,12 @@ class BeloteWorld extends WorldValuation {
         if (Belote.getAgents().length >= 4) {
             this.agentPos['d'] = { x: 20, y: 32, r: 8 };
         }
+
+
+
     }
 
-    drawBeloteCard(context: CanvasRenderingContext2D, agent: string, i: number, cardSuit: string, cardValue: string) {
+    setupBeloteCard(context: CanvasRenderingContext2D, agent: string, i: number, cardSuit: string, cardValue: string) {
         let x, y, dx, dy;
 
         const cardSuitSymbol = BeloteWorld.getCardSuitSymbol(cardSuit);
@@ -60,15 +69,12 @@ class BeloteWorld extends WorldValuation {
             dy = BeloteWorld.cardHeight;
         }
 
-        let color;
-
-        if (cardSuitSymbol == '♥' || cardSuitSymbol == '♦') {
-            color = '#FF0000';
-        } else {
-            color = '#000000';
-        }
-
-        BeloteWorld.drawCard(context, {
+        const color = (cardSuitSymbol == '♥' || cardSuitSymbol == '♦') ? '#FF0000' : '#000000';
+        
+        this.drawCard(context, {
+            agent: agent,
+            cardSuit: cardSuit,
+            cardValue:cardValue,
             x: x + i * dx,
             y: y + i * dy,
             w: BeloteWorld.cardWidth,
@@ -94,7 +100,23 @@ class BeloteWorld extends WorldValuation {
             for (let cardSuit of Belote.cardSuits) {
                 for (let cardValue of Belote.cardValues) {
                     if (this.modelCheck(Belote.getVar(agent, cardSuit, cardValue))) {
-                        this.drawBeloteCard(context, agent, i, cardSuit, cardValue);
+                        this.setupBeloteCard(context, agent, i, cardSuit, cardValue);
+                        i++;
+                    }
+                }
+            }
+            this.drawAgents(context);
+        }
+    }
+
+
+    setup(context: CanvasRenderingContext2D) {
+        for (let agent of Belote.getAgents()) {
+            let i = 0;
+            for (let cardSuit of Belote.cardSuits) {
+                for (let cardValue of Belote.cardValues) {
+                    if (this.modelCheck(Belote.getVar(agent, cardSuit, cardValue))) {
+                        this.setupBeloteCard(context, agent, i, cardSuit, cardValue);
                         i++;
                     }
                 }
@@ -272,5 +294,25 @@ export class Belote extends ExampleDescription {
 
     getActions() {
         return [];
+    }
+
+
+    onRealWorldClick(env: Environment, point) {
+        let M: SymbolicEpistemicModelTouist = env.epistemicModel as SymbolicEpistemicModelTouist;
+        let pointedWorld: BeloteWorld = M.getPointedWorld() as BeloteWorld;
+
+        let card = pointedWorld.getObject(point);
+
+        if(card == undefined)
+            return;
+
+        let A = new SymbolicPublicAnnouncementTouist(FormulaFactory.createFormula(Belote.getVar(card.agent, card.cardSuit, card.cardValue)));
+
+        env.perform(
+            new EventModelAction({
+                name: 'give hint',
+                eventModel: A
+            }));
+
     }
 }

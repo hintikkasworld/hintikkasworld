@@ -32,7 +32,7 @@ class RussianCardsWorld extends WorldValuation {
 
         for (let i = 0; i <= 6; i++) {
             if (this.modelCheck('c' + i)) {
-                WorldValuation.drawCard(context, { x: this.agentPos['c'].x, y: yCards, w: 16, text: i });
+                this.drawCard(context, { x: this.agentPos['c'].x, y: yCards, w: 16, text: i });
             }
         }
 
@@ -41,9 +41,9 @@ class RussianCardsWorld extends WorldValuation {
                 for (let j = i + 1; j <= 5; j++) {
                     for (let k = j + 1; k <= 6; k++) {
                         if (this.modelCheck(a + i) && this.modelCheck(a + j) && this.modelCheck(a + k)) {
-                            WorldValuation.drawCard(context, { x: this.agentPos[a].x - 13, y: yCards, w: 16, text: i });
-                            WorldValuation.drawCard(context, { x: this.agentPos[a].x, y: yCards, w: 16, text: j });
-                            WorldValuation.drawCard(context, { x: this.agentPos[a].x + 13, y: yCards, w: 16, text: k });
+                            this.drawCard(context, { x: this.agentPos[a].x - 13, y: yCards, w: 16, text: i });
+                            this.drawCard(context, { x: this.agentPos[a].x, y: yCards, w: 16, text: j });
+                            this.drawCard(context, { x: this.agentPos[a].x + 13, y: yCards, w: 16, text: k });
                         }
 
                     }

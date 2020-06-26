@@ -63,7 +63,7 @@ class SimpleHanabiWorld extends WorldValuation {
         this.agentHandPos['e'] = { x: 0, y: 50 - SimpleHanabiWorld.cardHeight - 1, horizontal: true };
     }
 
-    static drawHanabiCardArray(
+    drawHanabiCardArray(
         context: CanvasRenderingContext2D,
         pos: { x: number; y: number; horizontal: boolean },
         cards: number[],
@@ -73,7 +73,7 @@ class SimpleHanabiWorld extends WorldValuation {
         const dy = pos.horizontal ? 0 : allVisible ? SimpleHanabiWorld.cardHeight : SimpleHanabiWorld.cardHeight / 2;
         // console.log("drawing cards: ", cards);
         for (const [posInHand, card] of Array.from(cards.entries())) {
-            SimpleHanabiWorld.drawCard(context, {
+            this.drawCard(context, {
                 x: pos.x + posInHand * dx,
                 y: pos.y + posInHand * dy,
                 w: SimpleHanabiWorld.cardWidth,
@@ -116,11 +116,11 @@ class SimpleHanabiWorld extends WorldValuation {
 
     draw(context: CanvasRenderingContext2D) {
         console.log('DBRAWING WORLD with state', this.state);
-        SimpleHanabiWorld.drawHanabiCardArray(context, { x: 200, y: 0, horizontal: false }, this.state.discardedCards);
+        this.drawHanabiCardArray(context, { x: 200, y: 0, horizontal: false }, this.state.discardedCards);
         const colorDy = SimpleHanabiWorld.cardHeight;
         let colorY = 200;
         for (const color of SimpleSymbolicHanabi.colors) {
-            SimpleHanabiWorld.drawHanabiCardArray(
+            this.drawHanabiCardArray(
                 context,
                 {
                     x: 80,
@@ -132,11 +132,11 @@ class SimpleHanabiWorld extends WorldValuation {
             );
             colorY += colorDy;
         }
-        SimpleHanabiWorld.drawHanabiCardArray(context, { x: 0, y: colorY, horizontal: true }, this.state.stackCards);
+        this.drawHanabiCardArray(context, { x: 0, y: colorY, horizontal: true }, this.state.stackCards);
 
         for (let agent of environment.agents) {
             const hand = this.state.handCardsByAgent.get(agent);
-            SimpleHanabiWorld.drawHanabiCardArray(context, this.agentHandPos[agent], hand);
+            this.drawHanabiCardArray(context, this.agentHandPos[agent], hand);
         }
         this.drawAgents(context);
     }
