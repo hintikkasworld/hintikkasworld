@@ -1,3 +1,4 @@
+import { RussianCards } from './../core/models/examples/russian_cards';
 import { CoordinatedAttackProblem } from '../core/models/examples/coordinated-attack-problem';
 import { ClassOfModels } from '../core/models/examples/class-of-models';
 import { DiningCryptographersProblem } from '../core/models/examples/dining-cryptographers-problem';
@@ -39,6 +40,7 @@ export class MenuComponent implements OnInit {
         new NanoHanabi(),
         new Cherylsbirthday(),
         //new LinesBirthday(),
+        new RussianCards(),
         new CoordinatedAttackProblem()
     ];
 

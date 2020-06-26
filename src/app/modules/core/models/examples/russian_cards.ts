@@ -1,9 +1,14 @@
+import { EpistemicModel } from './../epistemicmodel/epistemic-model';
+import { FormulaFactory } from './../formula/formula';
+import { ExplicitEventModel } from './../eventmodel/explicit-event-model';
+import { EventModelAction } from './../environment/event-model-action';
 'use strict';
 
 import { WorldValuation } from '../epistemicmodel/world-valuation';
 import { Valuation } from '../epistemicmodel/valuation';
 import { ExampleDescription } from '../environment/exampledescription';
 import { Action } from '../environment/action';
+import { ExplicitEpistemicModel } from '../epistemicmodel/explicit-epistemic-model';
 
 /**
  * @param truePropositions an array of true propositions
@@ -50,50 +55,41 @@ class RussianCardsWorld extends WorldValuation {
 }
 
 export class RussianCards extends ExampleDescription {
-    public c0, c1, c2, c3, c4, c5, c6, c7;
+    private c0;
+    private c1;
+    private c2;
+    private c3;
+    private c4;
+    private c5;
+    private c6;
+    private c7;
 
     getActions(): Action[] {
-        let actionAgivesSeveralPossibleHands = () => getActionModelPublicAnnouncement('(K a ((a' + c1 + ' and a' + c2 + ' and a' + c3 + ') or (a' + c1 + ' and a' + c4 + ' and a' + c0 + ') or (a' + c3 + ' and a' + c6 + ' and a' + c0 + ') or (a' + c2 + ' and a' + c5 + ' and a' + c0 + ') or (a' + c3 + ' and a' + c4 + ' and a' + c5 + ') or (a' + c1 + ' and a' + c5 + ' and a' + c6 + ') or (a' + c2 + ' and a' + c4 + ' and a' + c6 + ')))');
 
-        return [{
-            label: 'Agent a says that his hand is one of the following ' + c1 + c2 + c3 + ', ' + c1 + c4 + c0 + ', ' + c3 + c6 + c0 + ', ' + c2 + c5 + c0 + ', ' + c3 + c4 + c5 + ', ' + c1 + c5 + c6 + ', ' + c2 + c4 + c6 + '.',
-            actionModel: actionAgivesSeveralPossibleHands(),
-            message: 'My hand is one of these',
-            saidby: 'a'
-        }
-
-            , {
-                label: 'Agent b says agent c\'s card.',
-                precondition: '(K b c' + c0 + ')',
-                actionModel: getActionModelPublicAnnouncement('(K b c' + c0 + ')'),
-                message: 'The card of agent c is ' + c0,
-                saidby: 'b'
-            }];
+        return [new EventModelAction({
+            name: 'Agent a says that his hand is one of the following ' + this.c1 + this.c2 + this.c3 + ', ' + this.c1 + this.c4 + this.c0 + ', ' + this.c3 + this.c6 + this.c0 + ', ' + this.c2 + this.c5 + this.c0 + ', ' + this.c3 + this.c4 + this.c5 + ', ' + this.c1 + this.c5 + this.c6 + ', ' + this.c2 + this.c4 + this.c6 + '.',
+            eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('(K a ((a' + this.c1 + ' and a' + this.c2 + ' and a' + this.c3 + ') or (a' + this.c1 + ' and a' + this.c4 + ' and a' + this.c0 + ') or (a' + this.c3 + ' and a' + this.c6 + ' and a' + this.c0 + ') or (a' + this.c2 + ' and a' + this.c5 + ' and a' + this.c0 + ') or (a' + this.c3 + ' and a' + this.c4 + ' and a' + this.c5 + ') or (a' + this.c1 + ' and a' + this.c5 + ' and a' + this.c6 + ') or (a' + this.c2 + ' and a' + this.c4 + ' and a' + this.c6 + ')))'))
+        }),
+        new EventModelAction({
+            name: 'Agent b says agent c\'s card.',
+            eventModel: ExplicitEventModel.getEventModelPublicAnnouncement(FormulaFactory.createFormula('(K b c' + this.c0 + ')'))
+        })];
     }
 
     getAtomicPropositions(): string[] {
-        return [];
+        let result = [];
+        ["a", "b", "c"].forEach(
+            (a) => result = result.concat([0, 1, 2, 3, 4, 5, 6].map((i) => a + i.toString())));
+
+        return result;
     }
 
     getDescription(): string[] {
-        return ['This example shows how agents a and b can communicate publicly so that they commonly know their hands, whereas agent c does not know.'];
+        return ['This example shows how agents a and b can exchange publicly information in order to commonly know their hands, whereas an intruder (agent c) does not know.', "First agent a announces publicly some information about her hand. Agent b will then infer agent a' hand and also agent c' card. Agent c will not know agent a's cards.", "Then agent b simply publicly announces the card of c. Of course, agent c will not get more information. But agent c's card is sufficient for agent a to infer the hand of agent b."];
     }
 
     getInitialEpistemicModel(): EpistemicModel {
-        return undefined;
-    }
-
-    getName() {
-    }
-
-}
-
-function setExampleRussianCards() {
-    var c0, c1, c2, c3, c4, c5, c6, c7;
-
-    function getExampleRussianCards() {
-
-        let M = new EpistemicModel();
+        let M = new ExplicitEpistemicModel();
 
         //Construction des 140 mondes possibles. (représentant toutes les distributions possibles de cartes)
         var pioche = new Set([0, 1, 2, 3, 4, 5, 6]);
@@ -109,7 +105,7 @@ function setExampleRussianCards() {
                                 if (pioche.has(ia3)) {
                                     pioche.delete(ia3);
                                     var ib = Array.from(pioche).sort();
-                                    M.addWorld('w' + ic + ia1 + ia2 + ia3 + ib[0] + ib[1] + ib[2], new RussianCardsWorld(['c' + ic, 'a' + ia1, 'a' + ia2, 'a' + ia3, 'b' + ib[0], 'b' + ib[1], 'b' + ib[2]]));
+                                    M.addWorld('w' + ic + ia1 + ia2 + ia3 + ib[0] + ib[1] + ib[2], new RussianCardsWorld(new Valuation(['c' + ic, 'a' + ia1, 'a' + ia2, 'a' + ia3, 'b' + ib[0], 'b' + ib[1], 'b' + ib[2]])));
                                     pioche.add(ia3);
                                 }
                             }
@@ -122,9 +118,22 @@ function setExampleRussianCards() {
             pioche.add(ic);
         }
 
+        function getRandomIntInclusive(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+
         //création des Edges => deux mondes sont reliés par l'agent c si c a la meme carte dans les deux mondes,
         // par l'agent a si a a la meme main dans les deux mondes, par l'agent b si b a la meme main dans les deux mondes.
-        agents.forEach(a =>
+        ["a", "b", "c"].forEach(a =>
             M.addEdgeIf(a,
                 (w1, w2) =>
                     [0, 1, 2, 3, 4, 5, 6].map((i) => a + i)
@@ -143,19 +152,19 @@ function setExampleRussianCards() {
         let maina = new Array(mains[0], mains[1], mains[2]).sort();
         let mainb = new Array(mains[3], mains[4], mains[5]).sort();
         M.setPointedWorld('w' + c + maina[0] + maina[1] + maina[2] + mainb[0] + mainb[1] + mainb[2]); //utilise le nom du monde...
-        c0 = c;
-        c1 = maina[0];
-        c2 = maina[1];
-        c3 = maina[2];
-        c4 = mainb[0];
-        c5 = mainb[1];
-        c6 = mainb[2];
+        this.c0 = c;
+        this.c1 = maina[0];
+        this.c2 = maina[1];
+        this.c3 = maina[2];
+        this.c4 = mainb[0];
+        this.c5 = mainb[1];
+        this.c6 = mainb[2];
 
         return M;
-
     }
 
-    M = getExampleRussianCards();
-
+    getName() {
+        return "Russian cards";
+    }
 
 }
