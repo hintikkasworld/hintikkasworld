@@ -1,6 +1,9 @@
 import { Formula } from '../models/formula/formula';
 import WebSocketClient from 'src/app/modules/core/services/websocket-client';
 
+
+const SERVER_LOCATION = "161.35.199.83:7015";
+
 export class LazyModelFetcher {
     private ws: WebSocketClient;
     private readonly connected: Promise<void>;
@@ -85,7 +88,7 @@ export class LazyModelFetcher {
 export class TouistService {
     static lazyModelFetcher(req: Formula): LazyModelFetcher {
         let ws = new WebSocketClient();
-        let connected = ws.connect('ws://161.35.199.83:7015/touist_ws').then(() =>
+        let connected = ws.connect(`ws://${SERVER_LOCATION}/touist_ws`).then(() =>
             ws.send(
                 JSON.stringify({
                     args: '--solve --interactive',
@@ -107,7 +110,7 @@ export class TouistService {
             body: data
         };
 
-        let response = await fetch('http://161.35.199.83:7015/touist_cmd', methodInit);
+        let response = await fetch(`http://${SERVER_LOCATION}/touist_cmd`, methodInit);
         let text = await response.text();
         if (text.startsWith('unsat')) {
             return [];
@@ -132,7 +135,7 @@ export class TouistService {
             body: data
         };
 
-        let response = await fetch('http://161.35.199.83:7015/touist_cmd', methodInit);
+        let response = await fetch(`http://${SERVER_LOCATION}/touist_cmd`, methodInit);
         let text = await response.text();
         if (text.startsWith('unsat')) {
             return [];
