@@ -1,7 +1,12 @@
 # Hintikka's World
 
 Welcome to Hintikka's World! This website shows intelligent artificial agents reasoning about higher-order knowledge (a knows that b knows that...).
-It enables to explore mental states of the agents by clicking on them. It contains many classical AI examples.
+It enables to explore mental states of the agents by clicking on them.
+
+<img width="489" height="684" alt="hintikkasworld_muddychildren" src="https://github.com/user-attachments/assets/0ab78e3f-3573-4ac7-b46f-b28da3834c57" />
+
+
+It contains many classical AI examples.
 It is a tribute to Jaakko Hintikka. This tool can be used for:
 - learning modal logic, model checking and satisfiability problem;
 - learning models of dynamic epistemic logic;
